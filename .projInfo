@@ -1,0 +1,7 @@
+#Sun Sep 16 19:44:19 COT 2012
+generateSchema=false
+ConnectionName=log4db2
+useridCurrentSchema=false
+currentPath=SYSIBM,SYSFUN,SYSPROC,SYSIBMADM,ANDRES
+currentSchema=LOGGER
+ProjectAnnotation=log4db2\:jdbc\:db2\://localhost\:50000/log4db2\:retrieveMessagesFromServerOnGetMessage\=true;

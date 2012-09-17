@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<DB2Model:DB2Procedure xmi:version="2.0"
+    xmlns:xmi="http://www.omg.org/XMI"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:DB2Model="http:///com/ibm/db/models/db2/db2.ecore" name="GET_LOGGER"
+    language="SQL"
+    sqlDataAccess="MODIFIES_SQL_DATA"
+    security="SECURITY DB2"
+    maxResultSets="1"
+    implicitSchema="true"
+    changeState="2">
+  <source xsi:type="DB2Model:DB2Source">
+    <clearBody><![CDATA[CREATE PROCEDURE GET_LOGGER ()
+	DYNAMIC RESULT SETS 1
+P1: BEGIN
+	-- Declare cursor
+	DECLARE cursor1 CURSOR WITH RETURN for
+	-- #######################################################################
+	-- # Replace the SQL statement with your statement.
+	-- #  Note: Be sure to end statements with the terminator character (usually ';')
+	-- #
+	-- # The example SQL statement SELECT NAME FROM SYSIBM.SYSTABLES
+	-- # returns all names from SYSIBM.SYSTABLES.
+	-- ######################################################################
+	SELECT NAME FROM SYSIBM.SYSTABLES;
+
+	-- Cursor left open for client application
+	OPEN cursor1;
+END P1]]></clearBody>
+  </source>
+  <extendedOptions/>
+</DB2Model:DB2Procedure>
