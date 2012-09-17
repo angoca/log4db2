@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<DB2Model:DB2Procedure xmi:version="2.0"
+    xmlns:xmi="http://www.omg.org/XMI"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:DB2Model="http:///com/ibm/db/models/db2/db2.ecore" name="LOG"
+    language="SQL"
+    sqlDataAccess="MODIFIES_SQL_DATA"
+    security="SECURITY DB2"
+    implicitSchema="true"
+    changeState="2">
+  <source xsi:type="DB2Model:DB2Source">
+    <clearBody><![CDATA[CREATE PROCEDURE LOG (IN SMALLINT loggerId, IN SMALLINT levelId, IN VARCHAR(256) message)
+LOG: BEGIN
+BOOLEAN validLevel
+SMALLINT currentLevelId;
+SELECT level_id INTO currentLevelId 
+FROM logger.conf_loggers_efective 
+WHERE logger_id = logger_Id
+OPTIMIZED FOR 1 ROWS
+FETCH FIRST 1 ROW ONLY
+WITH UR;
+IF (currentLevelId <= levelId) THEN
+  CASE ()
+  IF 1:
+  	
+  
+END IF;
+END LOG]]></clearBody>
+  </source>
+  <extendedOptions/>
+</DB2Model:DB2Procedure>
