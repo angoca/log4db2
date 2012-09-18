@@ -1,20 +1,78 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<DB2Model:DB2Procedure xmi:version="2.0"
+<xmi:XMI xmi:version="2.0"
     xmlns:xmi="http://www.omg.org/XMI"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xmlns:DB2Model="http:///com/ibm/db/models/db2/db2.ecore" name="GET_LOGGER"
-    language="SQL"
-    sqlDataAccess="MODIFIES_SQL_DATA"
-    security="SECURITY DB2"
-    maxResultSets="1"
-    implicitSchema="true"
-    changeState="2">
-  <source xsi:type="DB2Model:DB2Source">
-    <clearBody><![CDATA[ALTER MODULE logger ADD
- FUNCTION get_logger (
-  IN name VARCHAR(64)
- ) RETURNS ANCHOR logger.conf_loggers.logger_id
- GET]]></clearBody>
-  </source>
-  <extendedOptions/>
-</DB2Model:DB2Procedure>
+    xmlns:DB2Model="http:///com/ibm/db/models/db2/db2.ecore"
+    xmlns:SQLDataTypes="http:///org/eclipse/datatools/modelbase/sql/datatypes.ecore">
+  <DB2Model:DB2Procedure
+      name="GET_LOGGER"
+      language="SQL"
+      sqlDataAccess="MODIFIES_SQL_DATA"
+      security="SECURITY DB2"
+      schema="/1"
+      implicitSchema="true"
+      changeState="2">
+    <parameters name="NAME">
+      <containedType
+          xsi:type="SQLDataTypes:CharacterStringDataType"
+          name="VARCHAR"
+          primitiveType="CHARACTER_VARYING"
+          length="64"/>
+    </parameters>
+    <parameters name="RET"
+        mode="OUT">
+      <containedType
+          xsi:type="SQLDataTypes:CharacterStringDataType"
+          name="VARCHAR"
+          primitiveType="CHARACTER_VARYING"
+          length="256"/>
+    </parameters>
+    <source xsi:type="DB2Model:DB2Source">
+      <clearBody><![CDATA[/**
+ * Registers the logger and retrieves the id that identifies it in the
+ * hierarchy, that is stored in the conf_loggers table. This method also
+ * updates the values of the conf_logger_effective in order to have a complete
+ * hierarchy with a logger level for each level.
+ * 
+ * IN NAME
+ *      Complete name of the logger including its ancestry.
+ * RETURN Id of the ancestry.
+ */
+
+--TODO ALTER MODULE logger ADD
+ CREATE OR REPLACE FUNCTION GET_LOGGER (
+  IN NAME VARCHAR(64)
+ ) RETURNS VARCHAR(256)--ANCHOR LOGGER.CONF_LOGGERS.LOGGER_ID
+ GET_LOGGER: BEGIN
+  -- Declare variables.
+  DECLARE LENGTH SMALLINT;
+  DECLARE POS SMALLINT; -- Position of a dot sign.
+  DECLARE SUBS_PRE VARCHAR(256); -- Substring before the dot.
+  DECLARE SUBS_POS VARCHAR(256); -- Sustring after the dot.
+  --DECLARE HIERAR HIERARCHY_ARRAY; -- Array to store the hierarchy.
+  
+  SET SUBS_POS = NAME;
+  SET LENGTH = LENGTH(SUBS_POS);
+  SET POS = 0;
+  
+  WHILE (POS < LENGTH) DO
+   SET POS = POSSTR (SUBS_POS, '.');
+   IF (POS <> 0) THEN
+    SET SUBS_PRE = SUBSTR(SUBS_POS, 1, POS - 1);
+    SET SUBS_POS = SUBSTR(SUBS_POS, POS + 1);
+   ELSE
+    SET POS = LENGTH;
+   END IF;
+  
+  END WHILE;
+  RETURN SUBS_POS;
+ END GET_LOGGER]]></clearBody>
+    </source>
+    <extendedOptions
+        preCompileOpts=""
+        forDebug="true"/>
+  </DB2Model:DB2Procedure>
+  <DB2Model:DB2Schema
+      name="LOGGER"
+      routines="/0"/>
+</xmi:XMI>
