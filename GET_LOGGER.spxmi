@@ -10,23 +10,11 @@
     implicitSchema="true"
     changeState="2">
   <source xsi:type="DB2Model:DB2Source">
-    <clearBody><![CDATA[CREATE PROCEDURE GET_LOGGER ()
-	DYNAMIC RESULT SETS 1
-P1: BEGIN
-	-- Declare cursor
-	DECLARE cursor1 CURSOR WITH RETURN for
-	-- #######################################################################
-	-- # Replace the SQL statement with your statement.
-	-- #  Note: Be sure to end statements with the terminator character (usually ';')
-	-- #
-	-- # The example SQL statement SELECT NAME FROM SYSIBM.SYSTABLES
-	-- # returns all names from SYSIBM.SYSTABLES.
-	-- ######################################################################
-	SELECT NAME FROM SYSIBM.SYSTABLES;
-
-	-- Cursor left open for client application
-	OPEN cursor1;
-END P1]]></clearBody>
+    <clearBody><![CDATA[ALTER MODULE logger ADD
+ FUNCTION get_logger (
+  IN name VARCHAR(64)
+ ) RETURNS ANCHOR logger.conf_loggers.logger_id
+ GET]]></clearBody>
   </source>
   <extendedOptions/>
 </DB2Model:DB2Procedure>

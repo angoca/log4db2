@@ -7,25 +7,39 @@
     sqlDataAccess="MODIFIES_SQL_DATA"
     security="SECURITY DB2"
     implicitSchema="true"
-    changeState="2">
+    changeState="2"
+    nullInput="true">
   <source xsi:type="DB2Model:DB2Source">
-    <clearBody><![CDATA[CREATE PROCEDURE LOG (IN SMALLINT loggerId, IN SMALLINT levelId, IN VARCHAR(256) message)
-LOG: BEGIN
-BOOLEAN validLevel
-SMALLINT currentLevelId;
-SELECT level_id INTO currentLevelId 
-FROM logger.conf_loggers_efective 
-WHERE logger_id = logger_Id
-OPTIMIZED FOR 1 ROWS
-FETCH FIRST 1 ROW ONLY
-WITH UR;
-IF (currentLevelId <= levelId) THEN
-  CASE ()
-  IF 1:
-  	
-  
-END IF;
-END LOG]]></clearBody>
+    <clearBody><![CDATA[ALTER MODULE logger 
+ ADD 
+  --create 
+  PROCEDURE log (
+  IN loggerId ANCHOR logger.conf_loggers.logger_id,
+  IN levelId ANCHOR logger.levels.level_id,
+  IN message ANCHOR logger.logs.message)
+BEGIN
+ DECLARE BOOLEAN validLevel; -- 
+ DECLARE SMALLINT currentLevelId; -- Level in the configuration.
+ 
+ DECLARE r_error INT DEFAULT 0;
+ DECLARE CONTINUE HANDLER FOR SQLWARNING, SQLEXCEPTION, NOT FOUND
+ BEGIN
+  SET r_error = SQLCODE;
+ END;
+
+ -- Retrieves the current level in the configuration for the given logger.
+ SELECT level_id INTO currentLevelId 
+ FROM logger.conf_loggers_efective 
+ WHERE logger_id = loggerId
+ --OPTIMIZED FOR 1 ROWS
+ FETCH FIRST 1 ROW ONLY
+ WITH UR;
+
+--IF (currentLevelId <= levelId) THEN
+--  CASE ()
+--  IF 1:
+--END IF;
+END ]]></clearBody>
   </source>
   <extendedOptions/>
 </DB2Model:DB2Procedure>
