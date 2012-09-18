@@ -2,6 +2,7 @@ DROP TABLE logger.logs;
 DROP TABLE logger.references;
 DROP TABLE logger.conf_appenders;
 DROP TABLE logger.appenders;
+DROP TABLE logger.conf_loggers_effective;
 DROP TABLE logger.conf_loggers;
 DROP TABLE logger.levels;
 DROP TABLE logger.configuration;
@@ -57,6 +58,21 @@ COMMENT ON logger.conf_loggers (
   level_id IS 'Log level to register (Optional)'
 );
 
+-- Table for the effecetive loggers configuration.
+CREATE TABLE logger.conf_loggers_effective
+ LIKE logger.conf_loggers IN logger_space;
+ALTER TABLE logger.conf_loggers_effective ALTER COLUMN level_id SET NOT NULL;
+CALL SYSPROC.ADMIN_CMD ('REORG TABLE logger.conf_loggers_effective');
+ALTER TABLE logger.conf_loggers_effective ADD CONSTRAINT log_loggers_eff_pk PRIMARY KEY (logger_id);
+ALTER TABLE logger.conf_loggers_effective ADD CONSTRAINT log_loggers_eff_fk_levels FOREIGN KEY (level_id) REFERENCES logger.levels (level_id) ON DELETE CASCADE;
+COMMENT ON TABLE logger.conf_loggers_effective IS 'Configuration table for the effective logger levels';
+COMMENT ON logger.conf_loggers_effective (
+  logger_Id IS 'Logger identifier',
+  name IS 'Hierarchy name to log',
+  parent_id IS 'Parent logger id',
+  level_id IS 'Log level to register'
+);
+
 -- Table for the appenders.
 CREATE TABLE logger.appenders (
     appender_id SMALLINT NOT NULL,
@@ -73,7 +89,8 @@ COMMENT ON logger.appenders (
 CREATE TABLE logger.conf_appenders (
   ref_id SMALLINT NOT NULL,
   name CHAR(16),
-  appender_id SMALLINT NOT NULL
+  appender_id SMALLINT NOT NULL,
+  configuration VARCHAR(256)
   --pattern VARCHAR(256)
 ) IN logger_space;
 ALTER TABLE logger.conf_appenders ADD CONSTRAINT log_conf_append_pk PRIMARY KEY (ref_id);
@@ -82,7 +99,8 @@ COMMENT ON TABLE logger.conf_appenders IS 'Configuration about how to write the 
 COMMENT ON logger.conf_appenders (
   ref_id IS 'Id of the configuration appender',
   name IS 'Alias of the configuration to write the logs',
-  appender_id IS 'Id of the appender where the logs will be written'
+  appender_id IS 'Id of the appender where the logs will be written',
+  configuration IS 'Configuration of the appender'
   --pattern IS 'Pattern to write the message in the log'
 );
 
