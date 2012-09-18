@@ -1,17 +1,21 @@
 -- Module for all code for the logger utility.
-CREATE OR REPLACE MODULE logger;
+CREATE OR REPLACE MODULE LOGGER;
 
 -- Public functions and procedures.
 -- Procedure to write logs.
-ALTER MODULE logger PUBLISH
- PROCEDURE log (
-  IN loggerId ANCHOR logger.conf_loggers.logger_id,
-  IN levelId ANCHOR logger.levels.level_id,
-  IN message ANCHOR logger.logs.message
+ALTER MODULE LOGGER PUBLISH
+ PROCEDURE LOG (
+  IN LOGGERID ANCHOR LOGGER.CONF_LOGGERS.LOGGER_ID,
+  IN LEVELID ANCHOR LOGGER.LEVELS.LEVEL_ID,
+  IN MESSAGE ANCHOR LOGGER.LOGS.MESSAGE
  );
-  
+
 -- Function to register the logger.
-ALTER MODULE logger PUBLISH
- FUNCTION get_logger (
-  IN name VARCHAR(64)
- ) RETURNS ANCHOR logger.conf_loggers.logger_id;
+ALTER MODULE LOGGER PUBLISH
+ FUNCTION GET_LOGGER (
+  IN NAME VARCHAR(64)
+ ) RETURNS ANCHOR LOGGER.CONF_LOGGERS.LOGGER_ID;
+
+-- Array to store the hierarhy of a logger.
+ALTER MODULE LOGGER ADD
+ TYPE HIERARCHY_ARRAY AS VARCHAR(32) ARRAY[16];
