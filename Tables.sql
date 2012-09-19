@@ -62,6 +62,7 @@ COMMENT ON logger.conf_loggers (
 CREATE TABLE logger.conf_loggers_effective
  LIKE logger.conf_loggers IN logger_space;
 ALTER TABLE logger.conf_loggers_effective ALTER COLUMN level_id SET NOT NULL;
+ALTER TABLE logger.conf_loggers_effective ALTER COLUMN logger_id set GENERATED ALWAYS AS IDENTITY (START WITH 0);
 CALL SYSPROC.ADMIN_CMD ('REORG TABLE logger.conf_loggers_effective');
 ALTER TABLE logger.conf_loggers_effective ADD CONSTRAINT log_loggers_eff_pk PRIMARY KEY (logger_id);
 ALTER TABLE logger.conf_loggers_effective ADD CONSTRAINT log_loggers_eff_fk_levels FOREIGN KEY (level_id) REFERENCES logger.levels (level_id) ON DELETE CASCADE;
@@ -152,6 +153,9 @@ INSERT INTO logger.levels (level_id, name) VALUES
 -- Root logger.
 INSERT INTO logger.conf_loggers (logger_id, name, parent_id, level_id) VALUES
 (0, 'ROOT', NULL, 3);
+-- TODO remove this, and create it with a trigger
+INSERT INTO logger.conf_loggers_effective (name, parent_id, level_id) VALUES
+('ROOT', NULL, 3);
 
 -- Basic appender.
 INSERT INTO logger.appenders (appender_id, name) VALUES
