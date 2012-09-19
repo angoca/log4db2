@@ -1,0 +1,14 @@
+call logger.test('111.222.333',?);
+call logger.test('',?);
+call logger.test(' ',?);
+call logger.test('.',?);
+call logger.test('..',?);
+call logger.test('a',?);
+call logger.test('.b',?);
+call logger.test('c.c',?);
+call logger.test('d.',?);
+call logger.test('.e.',?);
+call logger.test('f.g.h',?);
+call logger.test('ii.jj.kk',?);
+call logger.test('lll',?);
+call logger.test('mm.nn',?);
