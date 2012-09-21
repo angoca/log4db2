@@ -1,4 +1,66 @@
 /**
+ * Internal method that analyzes a string against the tables to see if the level
+ * name is already registered there, and finally retrieves the logging level and
+ * logger id.
+ *
+ * IN STRING
+ *   This is the string to analyze.
+ * INOUT PARENT SMALLINT
+ *   Enters as the parent Id of this string, and goes out as the new id.
+ * INOUT PARENT_LEVEL
+ *   Logger level for this id.
+ */
+ALTER MODULE LOGGER ADD
+  PROCEDURE ANALYZE_NAME (
+  IN STRING VARCHAR(256),
+  INOUT PARENT SMALLINT,
+  INOUT PARENT_LEVEL SMALLINT
+  )
+  SPECIFIC P_ANALYZE
+  DYNAMIC RESULT SETS 0
+  MODIFIES SQL DATA
+  NOT DETERMINISTIC -- The same name could refers to a different logger.
+  COMMIT ON RETURN YES
+  LANGUAGE SQL
+  NO EXTERNAL ACTION
+ P_ANALYZE: BEGIN
+  DECLARE SON SMALLINT; -- Id of the current logger.
+  DECLARE LEVEL SMALLINT; -- Id of the associated level for the logger.
+
+  -- Looks for the logger with the given name in the configuration table.
+  SELECT C.LOGGER_ID, C.LEVEL_ID INTO SON, LEVEL
+    FROM CONF_LOGGERS C 
+    WHERE C.NAME = STRING
+    AND C.PARENT_ID = PARENT;
+  -- If the logger is NOT already registered.
+  IF (SON IS NULL) THEN
+   -- Searches in the effective configuration if this is already registered.
+   SELECT C.LOGGER_ID, C.LEVEL_ID INTO SON, LEVEL
+     FROM CONF_LOGGERS_EFFECTIVE C
+     WHERE C.NAME = STRING
+     AND C.PARENT_ID = PARENT;
+   -- Logger is NOT registered in none of the tables.
+   IF (SON IS NULL) THEN
+    -- Registers the new logger and retrieves the id. Switches the parent id.
+    SELECT LOGGER_ID INTO PARENT FROM FINAL TABLE (
+      INSERT INTO LOGGER.CONF_LOGGERS_EFFECTIVE (NAME, PARENT_ID, LEVEL_ID)
+      VALUES (STRING, PARENT, PARENT_LEVEL));
+    COMMIT;
+   ELSE
+    -- It is already register in the effective table, thus take the id of that
+    -- logger as parent.
+    SET PARENT = SON;
+    SET PARENT_LEVEL = LEVEL;
+   END IF;
+  ELSE
+   -- It is registered in the configuration table, thus take the id of that
+   -- logger.
+   SET PARENT = SON;
+   SET PARENT_LEVEL = LEVEL;
+  END IF;
+ END P_ANALYZE@
+
+/**
  * Registers the logger name in the system, and retrieves the corresponding ID
  * for that logger. This ID will allow to write messages into that logger if
  * the level configuration allows it. This method processes the logger name
@@ -10,15 +72,19 @@
  *   bar is the second and toto is the last one.
  *   The name could have a maximum of 256 characters, representing just one
  *   level, or several levels with short names.
- * RETURNS The ID of the logger.
+ * OUT LOGGER_ID
+ *   The ID of the logger.
  */
 
 ALTER MODULE LOGGER ADD
- FUNCTION GET_LOGGER (
-  IN NAME VARCHAR(256)
- ) RETURNS ANCHOR LOGGER.CONF_LOGGERS.LOGGER_ID
- -- TODO NO EXTERNAL ACTION
- MODIFIES SQL DATA
+  PROCEDURE GET_LOGGER (
+  IN NAME VARCHAR(256),
+  OUT LOGGER_ID ANCHOR LOGGER.CONF_LOGGERS.LOGGER_ID
+  )
+  LANGUAGE SQL
+  DETERMINISTIC -- Returns the same ID for the same logger name.
+  NO EXTERNAL ACTION
+  MODIFIES SQL DATA
  F_GET_LOGGER: BEGIN
   -- Declare variables.
   DECLARE LENGTH SMALLINT; -- Length of the logger name. Limits the guard.
@@ -27,9 +93,7 @@ ALTER MODULE LOGGER ADD
   DECLARE SUBS_POS VARCHAR(256); -- Substring after the dot (current loop.)
   
   DECLARE PARENT SMALLINT; -- Parent Id of the current logger.
-  DECLARE SON SMALLINT; -- Id of the current logger.
   DECLARE PARENT_LEVEL SMALLINT; -- Id of the parent level.
-  DECLARE LEVEL SMALLINT; -- Id of the associated level for the logger.
   
   -- Remove spaces at the beginning and at the end.
   SET NAME = TRIM(BOTH FROM NAME);
@@ -61,83 +125,15 @@ ALTER MODULE LOGGER ADD
     -- Rest of the logger name.
     SET SUBS_POS = SUBSTR(SUBS_POS, POS + 1);
 
-    -- Looks for the logger with the given name in the configuration table.
-    SELECT C.LOGGER_ID, C.LEVEL_ID INTO SON, LEVEL
-      FROM CONF_LOGGERS C 
-      WHERE C.NAME = SUBS_PRE
-      AND C.PARENT_ID = PARENT;
-
-    -- If the logger is NOT already registered.
-    IF (SON IS NULL) THEN
-     -- Searches in the effective configuration if this is already registered.
-     SELECT C.LOGGER_ID, C.LEVEL_ID INTO SON, LEVEL
-       FROM CONF_LOGGERS_EFFECTIVE C
-       WHERE C.NAME = SUBS_PRE
-       AND C.PARENT_ID = PARENT;
-
-     -- Logger is NOT registered in none of the tables.
-     IF (SON IS NULL) THEN
-     
-      -- Registers the new logger and retrieves the id.
-      SELECT LOGGER_ID INTO PARENT FROM FINAL TABLE (
-        INSERT INTO CONF_LOGGERS_EFFECTIVE (NAME, PARENT_ID, LEVEL_ID)
-        VALUES (SUBS_PRE, PARENT, PARENT_LEVEL));
-     ELSE
-      -- It is already register in the effective table, thus take the id of that
-      -- logger as parent.
-      SET PARENT = SON;
-      SET PARENT_LEVEL = LEVEL;
-     END IF;
-    ELSE
-     -- It is registered in the configuration table, thus take the id of that
-     -- logger.
-     SET PARENT = SON;
-     SET PARENT_LEVEL = LEVEL;
-    END IF;
+    CALL ANALYZE_NAME(SUBS_PRE, PARENT, PARENT_LEVEL);
    ELSE -- No dot was found (in the remainding string).
-    -- Looks for the logger with the given name in the configuration table.
-    SELECT C.LOGGER_ID, C.LEVEL_ID INTO SON, LEVEL
-      FROM CONF_LOGGERS C 
-      WHERE C.NAME = SUBS_POS
-      AND C.PARENT_ID = PARENT;
-
-    -- If the logger is NOT already registered.
-    IF (SON IS NULL) THEN
-    
-     -- Searches in the effective configuration if this is already registered.
-     SELECT C.LOGGER_ID, C.LEVEL_ID INTO SON, LEVEL
-       FROM CONF_LOGGERS_EFFECTIVE C
-       WHERE C.NAME = SUBS_POS
-       AND C.PARENT_ID = PARENT;
-
-     -- Logger is NOT registered in none of the tables.
-     IF (SON IS NULL) THEN
-     
-      -- Registers the new logger and retrieves the id.
-      SELECT LOGGER_ID INTO PARENT FROM FINAL TABLE (
-      INSERT INTO CONF_LOGGERS_EFFECTIVE (NAME, PARENT_ID, LEVEL_ID)
-        VALUES (SUBS_POS, PARENT, PARENT_LEVEL));
-     ELSE
-      -- It is already register in the effective table, thus take the id of that
-      -- logger as parent.
-      SET PARENT = SON;
-      
-     END IF;
-    ELSE
-     -- It is registered in the configuration table, thus take the id of that
-     -- logger.
-     SET PARENT = SON;
-    END IF;
-       
+    CALL ANALYZE_NAME(SUBS_POS, PARENT, PARENT_LEVEL);
     -- Ends the while.
     SET POS = LENGTH;
    END IF;
-   -- No son for the next iteration.
-   SET SON = NULL;
   END WHILE;
-  
-  RETURN PARENT;
- END F_GET_LOGGER
+  SET LOGGER_ID = PARENT;
+ END F_GET_LOGGER@
  
  -- TODO Check the logger structure, in order to have different names for the
  -- sons of a given father. root>toto root>tata root>tata is an error, and should
