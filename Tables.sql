@@ -109,6 +109,7 @@ COMMENT ON logger.conf_appenders (
   );
 
 -- Table for the loggers and appenders association.
+-- TODO this table is not necessary
 CREATE TABLE logger.references (
   logger_id SMALLINT NOT NULL,
   appender_ref_id SMALLINT NOT NULL
@@ -160,13 +161,17 @@ INSERT INTO logger.conf_loggers (logger_id, name, parent_id, level_id) VALUES
 INSERT INTO logger.conf_loggers_effective (name, parent_id, level_id) VALUES
   ('ROOT', NULL, 3);
 
--- Basic appender.
+-- Basic appenders.
 INSERT INTO logger.appenders (appender_id, name) VALUES
-  (0, 'Pure SQL - Tables'),
-  (1, 'db2diag.log'),
-  (2, 'UTL_FILE'),
-  (3, 'DB2 logger'),
-  (4, 'slf4j');
+  (1, 'Pure SQL PL - Tables'),
+  (2, 'db2diag.log'),
+  (3, 'UTL_FILE'),
+  (4, 'DB2 logger'),
+  (5, 'Java logger');
+
+-- Configuration for included appender.
+INSERT INTO LOGGER.CONF_APPENDERS (REF_ID, NAME, APPENDER_ID, CONFIGURATION) VALUES
+  (1, 'DB2 Tables', 1, NULL);
 
 -- Module for all code for the logger utility.
 CREATE OR REPLACE MODULE LOGGER;
