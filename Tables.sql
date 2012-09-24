@@ -130,7 +130,7 @@ CREATE TABLE LOGS (
   date TIMESTAMP NOT NULL,
   level_id SMALLINT NOT NULL,
   logger_id SMALLINT NOT NULL,
-  thread VARCHAR(32) NOT NULL,
+  environment VARCHAR(32) NOT NULL,
   message VARCHAR(256) NOT NULL
   ) IN logger_space;
 COMMENT ON TABLE logs IS 'Table where the logs are written';
@@ -138,7 +138,7 @@ COMMENT ON logs (
   date IS 'Date where the event was reported',
   level_id IS 'Log level',
   logger_id IS 'Logger that generated this message',
-  thread IS 'Process or agent name that called the logger',
+  environment IS 'Process or agent name that called the logger',
   message IS 'Message logged'
   );
 
