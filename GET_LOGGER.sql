@@ -1,3 +1,6 @@
+--#SET TERMINATOR @;
+SET CURRENT SCHEMA LOGGER@
+
 /**
  * Internal method that analyzes a string against the tables to see if the level
  * name is already registered there, and finally retrieves the logging level and
@@ -29,21 +32,21 @@ ALTER MODULE LOGGER ADD
 
   -- Looks for the logger with the given name in the configuration table.
   SELECT C.LOGGER_ID, C.LEVEL_ID INTO SON, LEVEL
-    FROM LOGGER.CONF_LOGGERS C 
+    FROM CONF_LOGGERS C 
     WHERE C.NAME = STRING
     AND C.PARENT_ID = PARENT;
   -- If the logger is NOT already registered.
   IF (SON IS NULL) THEN
    -- Searches in the effective configuration if this is already registered.
    SELECT C.LOGGER_ID, C.LEVEL_ID INTO SON, LEVEL
-     FROM LOGGER.CONF_LOGGERS_EFFECTIVE C
+     FROM CONF_LOGGERS_EFFECTIVE C
      WHERE C.NAME = STRING
      AND C.PARENT_ID = PARENT;
    -- Logger is NOT registered in none of the tables.
    IF (SON IS NULL) THEN
     -- Registers the new logger and retrieves the id. Switches the parent id.
     SELECT LOGGER_ID INTO PARENT FROM FINAL TABLE (
-      INSERT INTO LOGGER.CONF_LOGGERS_EFFECTIVE (NAME, PARENT_ID, LEVEL_ID)
+      INSERT INTO CONF_LOGGERS_EFFECTIVE (NAME, PARENT_ID, LEVEL_ID)
       VALUES (STRING, PARENT, PARENT_LEVEL));
     COMMIT;
    ELSE
@@ -79,8 +82,9 @@ ALTER MODULE LOGGER ADD
 ALTER MODULE LOGGER ADD
   PROCEDURE GET_LOGGER (
   IN NAME VARCHAR(256),
-  OUT LOGGER_ID ANCHOR LOGGER.CONF_LOGGERS.LOGGER_ID
+  OUT LOGGER_ID ANCHOR CONF_LOGGERS.LOGGER_ID
   )
+  SPECIFIC P_GET_LOGGER
   LANGUAGE SQL
   DETERMINISTIC -- Returns the same ID for the same logger name.
   NO EXTERNAL ACTION
@@ -106,7 +110,7 @@ ALTER MODULE LOGGER ADD
   SET PARENT = 0; -- Root logger is always 0.
   -- Retrieves the logger level for the root logger.
   SELECT C.LEVEL_ID INTO PARENT_LEVEL
-    FROM LOGGER.CONF_LOGGERS C
+    FROM CONF_LOGGERS C
     WHERE C.LOGGER_ID = 0;
   -- TODO To check the value defaultRootLevel before assign Warn as default.
   -- If the root logger is not defined, then set the default level: WARN-3.
@@ -166,3 +170,5 @@ ALTER MODULE LOGGER ADD
  -- info foo
  -- debug foo.bar
  -- info tata
+ 
+ 
