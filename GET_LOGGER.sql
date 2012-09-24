@@ -29,14 +29,14 @@ ALTER MODULE LOGGER ADD
 
   -- Looks for the logger with the given name in the configuration table.
   SELECT C.LOGGER_ID, C.LEVEL_ID INTO SON, LEVEL
-    FROM CONF_LOGGERS C 
+    FROM LOGGER.CONF_LOGGERS C 
     WHERE C.NAME = STRING
     AND C.PARENT_ID = PARENT;
   -- If the logger is NOT already registered.
   IF (SON IS NULL) THEN
    -- Searches in the effective configuration if this is already registered.
    SELECT C.LOGGER_ID, C.LEVEL_ID INTO SON, LEVEL
-     FROM CONF_LOGGERS_EFFECTIVE C
+     FROM LOGGER.CONF_LOGGERS_EFFECTIVE C
      WHERE C.NAME = STRING
      AND C.PARENT_ID = PARENT;
    -- Logger is NOT registered in none of the tables.
@@ -106,8 +106,8 @@ ALTER MODULE LOGGER ADD
   SET PARENT = 0; -- Root logger is always 0.
   -- Retrieves the logger level for the root logger.
   SELECT C.LEVEL_ID INTO PARENT_LEVEL
-  FROM CONF_LOGGERS C
-  WHERE C.LOGGER_ID = 0;
+    FROM LOGGER.CONF_LOGGERS C
+    WHERE C.LOGGER_ID = 0;
   -- TODO To check the value defaultRootLevel before assign Warn as default.
   -- If the root logger is not defined, then set the default level: WARN-3.
   IF (PARENT_LEVEL IS NULL) THEN
@@ -144,3 +144,25 @@ ALTER MODULE LOGGER ADD
  
  -- TODO Check if the logger levels between the conf and effective table are the
  -- same. In conf could be INFO but in effective could be WARN.@ @
+ 
+ -- TODO Check the registered loggers in the database, calculating the maximum
+ -- length of the concatenated inner levels, and this lenght should be less than
+ -- 256 chars. foo.bar.toto
+ 
+ -- TODO Add the optimized for
+ 
+ -- TODO Add the fetch first N rows only
+ 
+ -- TODO Add the isolation level.
+ 
+ -- TODO Create a trigger for CONF_LOGGER that each time a line is added, it
+ -- creates the row in the effective table and retrieve the generate ID of that
+ -- table and insertes the same in this table.
+ 
+ -- TODO Create a function / procedure that shows a table of all posible
+ -- loggers in the system and their levels. This graphical representation
+ -- helps to see the established configuration.
+ -- info ROOT
+ -- info foo
+ -- debug foo.bar
+ -- info tata
