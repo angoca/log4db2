@@ -1,3 +1,7 @@
+/**
+ * Tests for the undeletable root trigger.
+ */
+
 --#SET TERMINATOR @
 SET CURRENT SCHEMA LOGGER@
 BEGIN
@@ -50,7 +54,6 @@ SET RAISED = FALSE;
 
 -- Cleans the environment.
 INSERT INTO LOGS VALUES (CURRENT TIMESTAMP, 0, 0, SESSION_USER, 'Finished succesfully');
-
 
 END @
 
