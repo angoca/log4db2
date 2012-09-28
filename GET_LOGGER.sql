@@ -1,4 +1,4 @@
---#SET TERMINATOR @;
+--#SET TERMINATOR @
 SET CURRENT SCHEMA LOGGER@
 
 /**
@@ -16,8 +16,8 @@ SET CURRENT SCHEMA LOGGER@
 ALTER MODULE LOGGER ADD
   PROCEDURE ANALYZE_NAME (
   IN STRING VARCHAR(256),
-  INOUT PARENT SMALLINT,
-  INOUT PARENT_LEVEL SMALLINT
+  INOUT PARENT ANCHOR CONF_LOGGERS.LOGGER_ID,
+  INOUT PARENT_LEVEL ANCHOR CONF_LOGGERS.LEVEL_ID
   )
   SPECIFIC P_ANALYZE
   DYNAMIC RESULT SETS 0
@@ -89,7 +89,7 @@ ALTER MODULE LOGGER ADD
   DETERMINISTIC -- Returns the same ID for the same logger name.
   NO EXTERNAL ACTION
   MODIFIES SQL DATA
- F_GET_LOGGER: BEGIN
+ P_GET_LOGGER: BEGIN
   -- Declare variables.
   DECLARE LENGTH SMALLINT; -- Length of the logger name. Limits the guard.
   DECLARE POS SMALLINT; -- Position of a dot sign. Checks the boucle guard.
@@ -137,7 +137,7 @@ ALTER MODULE LOGGER ADD
    END IF;
   END WHILE;
   SET LOGGER_ID = PARENT;
- END F_GET_LOGGER@
+ END P_GET_LOGGER@
  
  -- TODO Check the logger structure, in order to have different names for the
  -- sons of a given father. root>toto root>tata root>tata is an error, and should
@@ -171,4 +171,12 @@ ALTER MODULE LOGGER ADD
  -- debug foo.bar
  -- info tata
  
+ -- TODO Create a view on the log table, that show directly the level name.
+ -- It is useful because it already done the join.
+ 
+ -- TODO Create a SP that register a logger with a given level. This will create
+ -- all the levels in the conf_loggers, and the relations.
+ 
+ -- TODO Validar cuando se borra un registro de effective, que también se debe
+ -- borrar de conf_loggers. Esto hacerlo con un trigger.
  
