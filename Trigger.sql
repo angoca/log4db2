@@ -10,11 +10,11 @@ SET CURRENT SCHEMA LOGGER @
  * table, as a "before" trigger. However, insert operations are now allowed in
  * this kind of triggers.
  */
-CREATE OR REPLACE TRIGGER CHECK_CONF_LOGGER_EFFECTIVE
+CREATE OR REPLACE TRIGGER CHECK_CONF_LOGGER
   BEFORE UPDATE OR INSERT ON CONF_LOGGERS
   REFERENCING NEW AS N
   FOR EACH ROW
- T_CHK_CONG_LOGGER: BEGIN
+ T_CHK_CONF_LOGGER: BEGIN
   DECLARE EXISTING_ID ANCHOR CONF_LOGGERS.LOGGER_ID;
   -- Retrieves the current ID from the effective table.
   -- Select Into is not allowed here, and I do not know why.
@@ -34,7 +34,21 @@ CREATE OR REPLACE TRIGGER CHECK_CONF_LOGGER_EFFECTIVE
       SET MESSAGE_TEXT = 'The only logger without parent is ROOT';
    END IF;
   END IF;
- END T_CHK_CONG_LOGGER @
+ END T_CHK_CONF_LOGGER @
+
+/**
+ * Verifies that the parent is not null. The only logger with null parent is
+ * root.
+ */
+CREATE OR REPLACE TRIGGER CHECK_CONF_LOGGER_EFFECTIVE
+  BEFORE INSERT OR UPDATE ON CONF_LOGGERS_EFFECTIVE
+  REFERENCING NEW AS N
+  FOR EACH ROW
+ WHEN (N.PARENT_ID = NULL)
+  T_CHK_CONF_LOGGER_EFFECTIVE: BEGIN
+   SIGNAL SQLSTATE VALUE 'LG002'
+     SET MESSAGE_TEXT = 'The only logger without parent is ROOT';
+  END T_CHK_CONF_LOGGER_EFFECTIVE@
 
 /**
  * Verifies that the root logger is not deleted from the effective table. This
