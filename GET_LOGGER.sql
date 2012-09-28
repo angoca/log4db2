@@ -17,7 +17,7 @@ ALTER MODULE LOGGER ADD
   PROCEDURE ANALYZE_NAME (
   IN STRING VARCHAR(256),
   INOUT PARENT ANCHOR CONF_LOGGERS.LOGGER_ID,
-  INOUT PARENT_LEVEL ANCHOR CONF_LOGGERS.LEVEL_ID
+  INOUT PARENT_LEVEL ANCHOR LEVELS.LEVEL_ID
   )
   SPECIFIC P_ANALYZE
   DYNAMIC RESULT SETS 0
@@ -27,8 +27,8 @@ ALTER MODULE LOGGER ADD
   LANGUAGE SQL
   NO EXTERNAL ACTION
  P_ANALYZE: BEGIN
-  DECLARE SON SMALLINT; -- Id of the current logger.
-  DECLARE LEVEL SMALLINT; -- Id of the associated level for the logger.
+  DECLARE SON ANCHOR CONF_LOGGERS.LOGGER_ID; -- Id of the current logger.
+  DECLARE LEVEL ANCHOR LEVELS.LEVEL_ID; -- Id of the associated level for the logger.
 
   -- Looks for the logger with the given name in the configuration table.
   SELECT C.LOGGER_ID, C.LEVEL_ID INTO SON, LEVEL
@@ -96,8 +96,8 @@ ALTER MODULE LOGGER ADD
   DECLARE SUBS_PRE VARCHAR(256); -- Sustring before the dot.
   DECLARE SUBS_POS VARCHAR(256); -- Substring after the dot (current loop.)
   
-  DECLARE PARENT SMALLINT; -- Parent Id of the current logger.
-  DECLARE PARENT_LEVEL SMALLINT; -- Id of the parent level.
+  DECLARE PARENT ANCHOR CONF_LOGGERS.LOGGER_ID; -- Parent Id of the current logger.
+  DECLARE PARENT_LEVEL ANCHOR LEVELS.LEVEL_ID; -- Id of the parent level.
   
   -- Remove spaces at the beginning and at the end.
   SET NAME = TRIM(BOTH FROM NAME);
