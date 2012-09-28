@@ -21,15 +21,15 @@ COMMENT ON configuration (
   );
 
 -- Table for the logger levels.
-CREATE TABLE levels (
-  level_id SMALLINT NOT NULL,
-  name CHAR(5) NOT NULL
-  ) IN logger_space;
-ALTER TABLE levels ADD CONSTRAINT log_levels_pk PRIMARY KEY (level_id);
-COMMENT ON TABLE levels IS 'Possible level for the logger';
-COMMENT ON levels (
-  level_id IS 'Level Id',
-  name IS 'Level name'
+CREATE TABLE LEVELS (
+  LEVEL_ID SMALLINT NOT NULL,
+  NAME CHAR(5) NOT NULL
+  ) IN LOGGER_SPACE;
+ALTER TABLE LEVELS ADD CONSTRAINT log_levels_pk PRIMARY KEY (LEVEL_ID);
+COMMENT ON TABLE LEVELS IS 'Possible level for the logger';
+COMMENT ON LEVELS (
+  LEVEL_ID IS 'Level Id',
+  NAME IS 'Level name'
   );
 
 -- Table for loggers configuration.
@@ -163,6 +163,10 @@ INSERT INTO CONF_APPENDERS (REF_ID, NAME, APPENDER_ID, CONFIGURATION) VALUES
 
 -- Module for all code for the logger utility.
 CREATE OR REPLACE MODULE LOGGER;
+
+-- Module version.
+ALTER MODULE LOGGER PUBLISH
+  VARIABLE VERSION VARCHAR(32) CONSTANT '2012-09-27 1.0';
 
 -- Public functions and procedures.
 -- Function to register the logger.
