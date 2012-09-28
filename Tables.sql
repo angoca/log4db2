@@ -41,6 +41,7 @@ CREATE TABLE CONF_LOGGERS (
   ) IN LOGGER_SPACE;
 ALTER TABLE CONF_LOGGERS ADD CONSTRAINT log_loggers_pk PRIMARY KEY (LOGGER_ID);
 ALTER TABLE CONF_LOGGERS ADD CONSTRAINT log_loggers_fk_levels FOREIGN KEY (LEVEL_ID) REFERENCES LEVELS (LEVEL_ID) ON DELETE CASCADE;
+ALTER TABLE CONF_LOGGERS ADD CONSTRAINT log_loggers_fk_parent FOREIGN KEY (PARENT_ID) REFERENCES CONF_LOGGERS (LOGGER_ID) ON DELETE CASCADE;
 COMMENT ON TABLE CONF_LOGGERS IS 'Configuration table for the logger levels';
 COMMENT ON CONF_LOGGERS (
   LOGGER_ID IS 'Logger identifier',
@@ -57,6 +58,7 @@ ALTER TABLE conf_loggers_effective ALTER COLUMN logger_id set GENERATED ALWAYS A
 CALL SYSPROC.ADMIN_CMD ('REORG TABLE LOGGER.conf_loggers_effective');
 ALTER TABLE conf_loggers_effective ADD CONSTRAINT log_loggers_eff_pk PRIMARY KEY (logger_id);
 ALTER TABLE conf_loggers_effective ADD CONSTRAINT log_loggers_eff_fk_levels FOREIGN KEY (level_id) REFERENCES levels (level_id) ON DELETE CASCADE;
+ALTER TABLE conf_loggers_effective ADD CONSTRAINT log_loggers_eff_fk_parent FOREIGN KEY (PARENT_ID) REFERENCES conf_loggers_effective (LOGGER_ID) ON DELETE CASCADE;
 COMMENT ON TABLE conf_loggers_effective IS 'Configuration table for the effective logger levels';
 COMMENT ON conf_loggers_effective (
   logger_Id IS 'Logger identifier',
@@ -82,8 +84,8 @@ CREATE TABLE conf_appenders (
   ref_id SMALLINT NOT NULL,
   name CHAR(16),
   appender_id SMALLINT NOT NULL,
-  configuration VARCHAR(256)
-  --pattern VARCHAR(256)
+  configuration VARCHAR(256),
+  pattern VARCHAR(256)
   ) IN logger_space;
 ALTER TABLE conf_appenders ADD CONSTRAINT log_conf_append_pk PRIMARY KEY (ref_id);
 ALTER TABLE conf_appenders ADD CONSTRAINT log_conf_append_fk_append FOREIGN KEY (appender_id) REFERENCES appenders (appender_id) ON DELETE CASCADE;
@@ -92,8 +94,8 @@ COMMENT ON conf_appenders (
   ref_id IS 'Id of the configuration appender',
   name IS 'Alias of the configuration to write the logs',
   appender_id IS 'Id of the appender where the logs will be written',
-  configuration IS 'Configuration of the appender'
-  --pattern IS 'Pattern to write the message in the log'
+  configuration IS 'Configuration of the appender',
+  pattern IS 'Pattern to write the message in the log'
   );
 
 -- Table for the loggers and appenders association.
