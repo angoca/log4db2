@@ -1,19 +1,5 @@
 SET CURRENT SCHEMA LOGGER;
 
--- Drops all objects.
-DROP MODULE LOGGER;
-
-DROP TABLE logs;
-DROP TABLE references;
-DROP TABLE conf_appenders;
-DROP TABLE appenders;
-DROP TABLE conf_loggers_effective;
-DROP TABLE conf_loggers;
-DROP TABLE levels;
-DROP TABLE configuration;
-DROP SCHEMA LOGGER RESTRICT;
-DROP TABLESPACE logger_space;
-
 -- Tablespace for logger utility.
 CREATE TABLESPACE logger_space PAGESIZE 4 K;
 COMMENT ON TABLESPACE logger_space IS 'All objects for the logger utility';
@@ -47,20 +33,20 @@ COMMENT ON levels (
   );
 
 -- Table for loggers configuration.
-CREATE TABLE conf_loggers (
-  logger_id SMALLINT NOT NULL,
-  name VARCHAR(256) NOT NULL,
-  parent_id SMALLINT,
-  level_id SMALLINT
-  ) IN logger_space;
-ALTER TABLE conf_loggers ADD CONSTRAINT log_loggers_pk PRIMARY KEY (logger_id);
-ALTER TABLE conf_loggers ADD CONSTRAINT log_loggers_fk_levels FOREIGN KEY (level_id) REFERENCES levels (level_id) ON DELETE CASCADE;
-COMMENT ON TABLE conf_loggers IS 'Configuration table for the logger levels';
-COMMENT ON conf_loggers (
-  logger_Id IS 'Logger identifier',
-  name IS 'Hierarchy name to log',
-  parent_id IS 'Parent logger id',
-  level_id IS 'Log level to register (Optional)'
+CREATE TABLE CONF_LOGGERS (
+  LOGGER_ID SMALLINT NOT NULL,
+  NAME VARCHAR(256) NOT NULL,
+  PARENT_ID SMALLINT,
+  LEVEL_ID SMALLINT
+  ) IN LOGGER_SPACE;
+ALTER TABLE CONF_LOGGERS ADD CONSTRAINT log_loggers_pk PRIMARY KEY (LOGGER_ID);
+ALTER TABLE CONF_LOGGERS ADD CONSTRAINT log_loggers_fk_levels FOREIGN KEY (LEVEL_ID) REFERENCES LEVELS (LEVEL_ID) ON DELETE CASCADE;
+COMMENT ON TABLE CONF_LOGGERS IS 'Configuration table for the logger levels';
+COMMENT ON CONF_LOGGERS (
+  LOGGER_ID IS 'Logger identifier',
+  NAME IS 'Hierarchy name to log',
+  PARENT_ID IS 'Parent logger id',
+  LEVEL_ID IS 'Log level to register (Optional)'
   );
 
 -- Table for the effecetive loggers configuration.
@@ -130,7 +116,7 @@ CREATE TABLE LOGS (
   date TIMESTAMP NOT NULL,
   level_id SMALLINT NOT NULL,
   logger_id SMALLINT NOT NULL,
-  environment VARCHAR(32) NOT NULL,
+  environment VARCHAR(64) NOT NULL,
   message VARCHAR(256) NOT NULL
   ) IN logger_space;
 COMMENT ON TABLE logs IS 'Table where the logs are written';
@@ -197,8 +183,4 @@ ALTER MODULE LOGGER PUBLISH
   IN LEVEL_ID ANCHOR LEVELS.LEVEL_ID,
   IN MESSAGE ANCHOR LOGS.MESSAGE
   );
-
--- Array to store the hierarhy of a logger.
---ALTER MODULE LOGGER ADD
--- TYPE HIERARCHY_ARRAY AS VARCHAR(32) ARRAY[16];
 
