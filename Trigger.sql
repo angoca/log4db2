@@ -48,4 +48,30 @@ CREATE OR REPLACE TRIGGER ROOT_LOGGER_UNDELETABLE
   T_UNDELETABLE: BEGIN
    SIGNAL SQLSTATE VALUE 'LG003'
      SET MESSAGE_TEXT = 'ROOT logger cannot be deleted';
-  END T_UNDELETABLE
+  END T_UNDELETABLE@
+
+/**
+ * Checks that the Ref_id for an appender is greater or equal to zero.
+ */
+CREATE OR REPLACE TRIGGER REF_ID_GREATER_EQUAL_ZERO
+  BEFORE INSERT OR UPDATE ON CONF_APPENDERS
+  REFERENCING NEW AS N
+  FOR EACH ROW
+ WHEN (N.REF_ID <0)
+  T_REF_ID_ZERO: BEGIN
+   SIGNAL SQLSTATE VALUE 'LG004'
+     SET MESSAGE_TEXT = 'Ref_id for conf_appender should be greater or equal to zero';
+  END T_REF_ID_ZERO@
+
+/**
+ * Checks that the appender_id for an appender is greater or equal to zero.
+ */
+CREATE OR REPLACE TRIGGER APPENDER_GREATER_EQUAL_ZERO
+  BEFORE INSERT OR UPDATE ON APPENDERS
+  REFERENCING NEW AS N
+  FOR EACH ROW
+ WHEN (N.APPENDER_ID <0)
+  T_APPENDER_ID_ZERO: BEGIN
+   SIGNAL SQLSTATE VALUE 'LG005'
+     SET MESSAGE_TEXT = 'Appender_id for appenders should be greater or equal to zero';
+  END T_APPENDER_ID_ZERO@
