@@ -85,6 +85,7 @@ ALTER MODULE LOGGER ADD
   -- no está activo.
   IF (CURRENT_LEVEL_ID >= LEVEL_ID) THEN
    -- TODO Format the message according to the pattern.
+   -- SYSPROC.MON_GET_APPLICATION_ID()
    -- Retrieves all the configurations for the appenders.
    OPEN APPENDERS;
    SET AT_END = FALSE;
