@@ -84,6 +84,7 @@ ALTER MODULE LOGGER ADD
   -- TODO Verificar esto, ya que aquí se puede usar la tabla references, si root
   -- no está activo.
   IF (CURRENT_LEVEL_ID >= LEVEL_ID) THEN
+   -- TODO Format the message according to the pattern.
    -- Retrieves all the configurations for the appenders.
    OPEN APPENDERS;
    SET AT_END = FALSE;
