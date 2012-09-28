@@ -222,6 +222,8 @@ SET RAISED_LG003 = FALSE;
 
 -- Test21: Updates root logger when it is the only existing to other id.
 INSERT INTO LOGS VALUES (CURRENT TIMESTAMP, 0, 0, SESSION_USER, 'Test21: Updates root logger when it is the only existing to other id');
+INSERT INTO CONF_LOGGERS_EFFECTIVE (NAME, PARENT_ID, LEVEL_ID) VALUES
+  ('test21', 0, 0);
 DELETE FROM CONF_LOGGERS_EFFECTIVE
   WHERE LOGGER_ID <> 0;
 -- Compilation error.
