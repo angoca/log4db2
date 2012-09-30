@@ -132,8 +132,9 @@ COMMENT ON logs (
 
 -- Global configuration.
 INSERT INTO configuration (key, value) VALUES
-  ('checkHierarchy', 'false'),
-  ('checkLevels', 'false');
+  ('checkHierarchy', 'false'), -- Checks the logger hierarchy.
+  ('logInternals', 'false'), -- Logs internal messages.
+  ('checkLevels', 'false'); -- Checks the levels definition.
 
 -- Levels of the logger utility.
 INSERT INTO levels (level_id, name) VALUES
