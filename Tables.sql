@@ -132,9 +132,12 @@ COMMENT ON logs (
 
 -- Global configuration.
 INSERT INTO configuration (key, value) VALUES
-  ('checkHierarchy', 'false'), -- Checks the logger hierarchy.
-  ('logInternals', 'false'), -- Logs internal messages.
-  ('checkLevels', 'false'); -- Checks the levels definition.
+  -- Checks the logger hierarchy.
+  ('checkHierarchy', 'false'),
+  -- Logs internal messages.
+  ('logInternals', 'false'),
+  -- Checks the levels definition.
+  ('checkLevels', 'false');
 
 -- Levels of the logger utility.
 INSERT INTO levels (level_id, name) VALUES
@@ -169,7 +172,7 @@ CREATE OR REPLACE MODULE LOGGER;
 
 -- Module version.
 ALTER MODULE LOGGER PUBLISH
-  VARIABLE VERSION VARCHAR(32) CONSTANT '2012-09-27 1.0';
+  VARIABLE VERSION VARCHAR(32) CONSTANT '2012-09-30 1.0';
 
 -- Public functions and procedures.
 -- Function to register the logger.
