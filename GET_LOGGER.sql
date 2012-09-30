@@ -141,8 +141,8 @@ ALTER MODULE LOGGER ADD
    END IF;
   END WHILE;
   SET LOGGER_ID = PARENT;
-  IF (GET_VALUE('logInternals') = 'true') THEN
-   CALL LOG_SQL(0, 5, 'Logger for ' || NAME || ' is ' || LOGGER_ID, '');
+  IF (GET_VALUE(LOGGER.LOG_INTERNALS) = LOGGER.VAL_TRUE) THEN
+   CALL DEBUG(-1, 'Logger ID for ' || NAME || ' is ' || LOGGER_ID);
   END IF;
  END P_GET_LOGGER@
  
