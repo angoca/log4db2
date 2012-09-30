@@ -2,36 +2,6 @@
 SET CURRENT SCHEMA LOGGER @
 
 /**
- * Function that returns the value of the given key from the configuration
- * table.
- *
- * IN KEY
- *  Identification of the key/value parameter of the configuration table.
- * RETURNS The associated value of the given key. NULL if there is not a key
- * with that value.
- */
-ALTER MODULE LOGGER ADD
-  FUNCTION GET_VALUE (
-  IN KEY ANCHOR CONFIGURATION.KEY
-  )
-  RETURNS ANCHOR CONFIGURATION.VALUE
-  LANGUAGE SQL
-  PARAMETER CCSID UNICODE
-  SPECIFIC F_GET_VAL
-  DETERMINISTIC
-  NO EXTERNAL ACTION
-  READS SQL DATA
-  SECURED
- BEGIN
-  DECLARE RET ANCHOR CONFIGURATION.KEY;
-  SELECT VALUE INTO RET
-    FROM CONFIGURATION C
-    WHERE C.KEY = KEY
-    FETCH FIRST 1 ROW ONLY;
-  RETURN RET;
- END @
-
-/**
  * Writes the given message in the log table. This is a pure SQL implementation,
  * without any external call.
  *
@@ -46,8 +16,8 @@ ALTER MODULE LOGGER ADD
  */
 ALTER MODULE LOGGER ADD 
   PROCEDURE LOG_SQL (
-  IN LOGGER_ID ANCHOR CONF_LOGGERS.LOGGER_ID DEFAULT 0,
-  IN LEVEL_ID ANCHOR LEVELS.LEVEL_ID DEFAULT 3,
+  IN LOGGER_ID ANCHOR CONF_LOGGERS.LOGGER_ID,
+  IN LEVEL_ID ANCHOR LEVELS.LEVEL_ID,
   IN MESSAGE ANCHOR LOGS.MESSAGE,
   IN CONFIGURATION ANCHOR CONF_APPENDERS.CONFIGURATION
   )
