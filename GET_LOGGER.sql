@@ -11,7 +11,7 @@ SET CURRENT SCHEMA LOGGER@
  * INOUT PARENT SMALLINT
  *   Enters as the parent Id of this string, and goes out as the new id.
  * INOUT PARENT_LEVEL
- *   Logger level for this id.
+ *   Logger level (parent -> son).
  */
 ALTER MODULE LOGGER ADD
   PROCEDURE ANALYZE_NAME (
@@ -19,13 +19,14 @@ ALTER MODULE LOGGER ADD
   INOUT PARENT ANCHOR CONF_LOGGERS.LOGGER_ID,
   INOUT PARENT_LEVEL ANCHOR LEVELS.LEVEL_ID
   )
+  LANGUAGE SQL
   SPECIFIC P_ANALYZE
   DYNAMIC RESULT SETS 0
   MODIFIES SQL DATA
   NOT DETERMINISTIC -- The same name could refers to a different logger.
-  COMMIT ON RETURN YES
-  LANGUAGE SQL
+  AUTONOMOUS
   NO EXTERNAL ACTION
+  PARAMETER CCSID UNICODE
  P_ANALYZE: BEGIN
   DECLARE SON ANCHOR CONF_LOGGERS.LOGGER_ID; -- Id of the current logger.
   DECLARE LEVEL ANCHOR LEVELS.LEVEL_ID; -- Id of the associated level for the logger.
@@ -84,11 +85,14 @@ ALTER MODULE LOGGER ADD
   IN NAME VARCHAR(256),
   OUT LOGGER_ID ANCHOR CONF_LOGGERS.LOGGER_ID
   )
-  SPECIFIC P_GET_LOGGER
   LANGUAGE SQL
-  DETERMINISTIC -- Returns the same ID for the same logger name.
-  NO EXTERNAL ACTION
+  SPECIFIC P_GET_LOGGER
+  DYNAMIC RESULT SETS 0
   MODIFIES SQL DATA
+  DETERMINISTIC -- Returns the same ID for the same logger name.
+  AUTONOMOUS
+  NO EXTERNAL ACTION
+  PARAMETER CCSID UNICODE
  P_GET_LOGGER: BEGIN
   -- Declare variables.
   DECLARE LENGTH SMALLINT; -- Length of the logger name. Limits the guard.
@@ -137,6 +141,9 @@ ALTER MODULE LOGGER ADD
    END IF;
   END WHILE;
   SET LOGGER_ID = PARENT;
+  IF (GET_VALUE('logInternals') = 'true') THEN
+   CALL LOG_SQL(0, 5, 'Logger for ' || NAME || ' is ' || LOGGER_ID, '');
+  END IF;
  END P_GET_LOGGER@
  
  -- TODO Check the logger structure, in order to have different names for the
