@@ -131,7 +131,7 @@ ALTER MODULE LOGGER PUBLISH
  * After validating the level, it checks all appenders to see in which it has to
  * log the message.
  *
- * IN LOGGER_ID
+ * IN LOG_ID
  *   This is the associated logger of the provided message. Default logger is
  *   ROOT, that is 0.
  * IN LEVEL_ID
@@ -141,7 +141,7 @@ ALTER MODULE LOGGER PUBLISH
  */
 ALTER MODULE LOGGER ADD 
   PROCEDURE LOG (
-  IN LOGGER_ID ANCHOR CONF_LOGGERS.LOGGER_ID DEFAULT 0,
+  IN LOG_ID ANCHOR CONF_LOGGERS.LOGGER_ID DEFAULT 0,
   IN LEVEL_ID ANCHOR LEVELS.LEVEL_ID DEFAULT 3,
   IN MESSAGE ANCHOR LOGS.MESSAGE
   )
@@ -171,8 +171,7 @@ ALTER MODULE LOGGER ADD
   -- Retrieves the current level in the configuration for the given logger.
   SELECT C.LEVEL_ID INTO CURRENT_LEVEL_ID 
     FROM CONF_LOGGERS_EFFECTIVE C
-    WHERE C.LOGGER_ID = LOGGER_ID
-    FETCH FIRST 1 ROW ONLY;
+    WHERE C.LOGGER_ID = LOG_ID;
 
   -- Checks if the current level is at least equal to the provided level.
   -- TODO Verificar esto, ya que aquí se puede usar la tabla references, si root
@@ -189,21 +188,24 @@ ALTER MODULE LOGGER ADD
     -- Checks the values
     CASE APPENDER_ID
       WHEN 1 THEN -- Pure SQL PL, writes in table.
-        CALL LOG_SQL(LOGGER_ID, LEVEL_ID, MESSAGE, CONFIGURATION);
+        CALL LOG_SQL(LOG_ID, LEVEL_ID, MESSAGE, CONFIGURATION);
       WHEN 2 THEN -- Writes in the db2diag.log file via a function.
-        CALL LOG_DB2DIAG(LOGGER_ID, LEVEL_ID, MESSAGE, CONFIGURATION);
+        CALL LOG_DB2DIAG(LOG_ID, LEVEL_ID, MESSAGE, CONFIGURATION);
       WHEN 3 THEN -- Writes in a file (Not available in express-c edition.)
-        CALL LOG_UTL_FILE(LOGGER_ID, LEVEL_ID, MESSAGE, CONFIGURATION);
+        CALL LOG_UTL_FILE(LOG_ID, LEVEL_ID, MESSAGE, CONFIGURATION);
       WHEN 4 THEN -- Sends the log to the DB2LOGGER in C.
-        CALL LOG_DB2LOGGER(LOGGER_ID, LEVEL_ID, MESSAGE, CONFIGURATION);
+        CALL LOG_DB2LOGGER(LOG_ID, LEVEL_ID, MESSAGE, CONFIGURATION);
       WHEN 5 THEN -- Sends the log to Java, and takes the configuration there.
-        CALL LOG_JAVA(LOGGER_ID, LEVEL_ID, MESSAGE, CONFIGURATION);
+        CALL LOG_JAVA(LOG_ID, LEVEL_ID, MESSAGE, CONFIGURATION);
       ELSE -- By default writes in the table.
-        CALL LOG_SQL(LOGGER_ID, LEVEL_ID, MESSAGE, CONFIGURATION);
+        CALL LOG_SQL(LOG_ID, LEVEL_ID, MESSAGE, CONFIGURATION);
     END CASE;
     FETCH APPENDERS INTO APPENDER_ID, CONFIGURATION;
    END WHILE;
    CLOSE APPENDERS;
+  ELSEIF (LOG_ID = -1) THEN
+   -- When the logged id is -1, this is for internal logging.
+   CALL LOG_SQL(LOG_ID, LEVEL_ID, MESSAGE, CONFIGURATION);
   END IF;
 END P_LOG @
 
