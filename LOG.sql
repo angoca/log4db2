@@ -302,14 +302,14 @@ ALTER MODULE LOGGER ADD
       WHEN 5 THEN -- Sends the log to Java, and takes the configuration there.
         CALL LOG_JAVA(LOG_ID, LEVEL_ID, MESSAGE, CONFIGURATION);
       ELSE -- By default writes in the table.
-        CALL LOG_SQL(LOG_ID, LEVEL_ID, MESSAGE, CONFIGURATION);
+        CALL LOG_SQL(LOG_ID, LEVEL_ID, MESSAGE);
     END CASE;
     FETCH APPENDERS INTO APPENDER_ID, CONFIGURATION, PATTERN;
    END WHILE;
    CLOSE APPENDERS;
   ELSEIF (LOG_ID = -1) THEN
    -- When the logged id is -1, this is for internal logging.
-   CALL LOG_SQL(LOG_ID, LEVEL_ID, MESSAGE, CONFIGURATION);
+   CALL LOG_SQL(LOG_ID, LEVEL_ID, MESSAGE);
   END IF;
 END P_LOG @
 
