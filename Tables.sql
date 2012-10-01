@@ -85,7 +85,7 @@ CREATE TABLE conf_appenders (
   name CHAR(16),
   appender_id SMALLINT NOT NULL,
   configuration VARCHAR(256),
-  pattern VARCHAR(256)
+  pattern VARCHAR(256) NOT NULL
   ) IN logger_space;
 ALTER TABLE conf_appenders ADD CONSTRAINT log_conf_append_pk PRIMARY KEY (ref_id);
 ALTER TABLE conf_appenders ADD CONSTRAINT log_conf_append_fk_append FOREIGN KEY (appender_id) REFERENCES appenders (appender_id) ON DELETE CASCADE;
@@ -118,7 +118,6 @@ CREATE TABLE LOGS (
   date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   level_id SMALLINT NOT NULL,
   logger_id SMALLINT NOT NULL,
-  environment VARCHAR(64) NOT NULL,
   message VARCHAR(256) NOT NULL
   ) IN logger_space;
 COMMENT ON TABLE logs IS 'Table where the logs are written';
@@ -126,7 +125,6 @@ COMMENT ON logs (
   date IS 'Date where the event was reported',
   level_id IS 'Log level',
   logger_id IS 'Logger that generated this message',
-  environment IS 'Process or agent name that called the logger',
   message IS 'Message logged'
   );
 
@@ -164,8 +162,8 @@ INSERT INTO appenders (appender_id, name) VALUES
   (5, 'Java logger');
 
 -- Configuration for included appender.
-INSERT INTO CONF_APPENDERS (REF_ID, NAME, APPENDER_ID, CONFIGURATION) VALUES
-  (1, 'DB2 Tables', 1, NULL);
+INSERT INTO CONF_APPENDERS (REF_ID, NAME, APPENDER_ID, CONFIGURATION, PATTERN) VALUES
+  (1, 'DB2 Tables', 1, NULL, '[%p] %c - %m');
 
 -- Module for all code for the logger utility.
 CREATE OR REPLACE MODULE LOGGER;
