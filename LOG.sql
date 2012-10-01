@@ -11,15 +11,12 @@ SET CURRENT SCHEMA LOGGER @
  *   Identification of the associates level.
  * IN MESSAGE
  *   Descriptive message to write in the log table.
- * IN CONFIGURATION
- *   Any particular configuration for the logger (TODO currently not used.) 
  */
 ALTER MODULE LOGGER ADD 
   PROCEDURE LOG_SQL (
   IN LOGGER_ID ANCHOR CONF_LOGGERS.LOGGER_ID,
   IN LEVEL_ID ANCHOR LEVELS.LEVEL_ID,
-  IN MESSAGE ANCHOR LOGS.MESSAGE,
-  IN CONFIGURATION ANCHOR CONF_APPENDERS.CONFIGURATION
+  IN MESSAGE ANCHOR LOGS.MESSAGE
   )
   LANGUAGE SQL
   SPECIFIC P_LOG_SQL
@@ -30,8 +27,8 @@ ALTER MODULE LOGGER ADD
   NO EXTERNAL ACTION
   PARAMETER CCSID UNICODE
  P_LOG_SQL: BEGIN
-  INSERT INTO LOGS (LEVEL_ID, LOGGER_ID, ENVIRONMENT, MESSAGE) VALUES
-    (LEVEL_ID, LOGGER_ID, CURRENT USER, MESSAGE);
+  INSERT INTO LOGS (LEVEL_ID, LOGGER_ID, MESSAGE) VALUES
+    (LEVEL_ID, LOGGER_ID, MESSAGE);
   COMMIT;
  END P_LOG_SQL @
 
@@ -125,6 +122,105 @@ ALTER MODULE LOGGER PUBLISH
   ) @
 
 /**
+ * Parses the provided message according to the defined pattern. It replaces
+ * the occurences of every conversion word with the corresponding value.
+ * In the next table, the possible replacements are described:
+ * 
+ * +-----------------+---------------------------------------------------------+
+ * | Conversion Word | Effect                                                  |
+ * +-----------------+---------------------------------------------------------+
+ * | p               | Inserts the level of the logging event.                 |
+ * +-----------------+---------------------------------------------------------+
+ * | c               | Inserts the name of the logger at the origin of the     |
+ * |                 | logging event.                                          |
+ * +-----------------+---------------------------------------------------------+
+ * | m               | Inserts the application-supplied message associated     |
+ * |                 | with the logging event.                                 |
+ * +-----------------+---------------------------------------------------------+
+ * | H               | Inserts the application handle.                         |
+ * +-----------------+---------------------------------------------------------+
+ * | N               | Inserts the application name.                           |
+ * +-----------------+---------------------------------------------------------+
+ * | I               | Inserts the application id.                             |
+ * +-----------------+---------------------------------------------------------+
+ * | S               | Inserts the session authorisation.                      |
+ * +-----------------+---------------------------------------------------------+
+ * | C               | Inserts the client hostname.                            |
+ * +-----------------+---------------------------------------------------------+
+ * 
+ * All this conversion words should be preceded by the % (percentage) sign.
+ * The environment information is retreived via table and scalar functions
+ * included in DB2.
+ *
+ * IN PATTERN
+ *   String that contains the pattern to parse the message.
+ * IN LOG_ID
+ *   ID of the associated logger.
+ * IN LEV_ID
+ *   ID of the associated level.
+ * INOUT MESSAGE
+ *   Message to log.
+ */
+ALTER MODULE LOGGER ADD
+  PROCEDURE PARSE_MESSAGE (
+  IN PATTERN ANCHOR CONF_APPENDERS.PATTERN, 
+  IN LOG_ID ANCHOR CONF_LOGGERS.LOGGER_ID,
+  IN LEV_ID ANCHOR LEVELS.LEVEL_ID,
+  INOUT MESSAGE ANCHOR LOGS.MESSAGE
+  )
+  LANGUAGE SQL
+  SPECIFIC P_PARSE_MESSAGE
+  DYNAMIC RESULT SETS 0
+  MODIFIES SQL DATA
+  DETERMINISTIC
+  NO EXTERNAL ACTION
+  PARAMETER CCSID UNICODE
+ P_PARSE: BEGIN
+  DECLARE NEW_MESSAGE ANCHOR LOGS.MESSAGE;
+  DECLARE LEVEL_NAME ANCHOR LEVELS.NAME;
+
+  SET NEW_MESSAGE = PATTERN;
+  -- Inserts the level.
+  SET NEW_MESSAGE = REPLACE(NEW_MESSAGE, '%p', (
+    SELECT UCASE(COALESCE(NAME,'UNK')) 
+    FROM LEVELS
+    WHERE LEVEL_ID = LEV_ID));
+  
+  -- Inserts the logger name.
+  -- TODO get_logger_name (log_id)
+  SET NEW_MESSAGE = REPLACE(NEW_MESSAGE, '%c', CHAR(LOG_ID));
+  
+  -- Inserts the message.
+  SET NEW_MESSAGE = REPLACE(NEW_MESSAGE, '%m', COALESCE(MESSAGE,'No message'));
+  
+  -- Inserts the application handle.
+  SET NEW_MESSAGE = REPLACE(NEW_MESSAGE, '%H', 
+    SYSPROC.MON_GET_APPLICATION_HANDLE());
+  
+  -- Inserts the application name.
+  SET NEW_MESSAGE = REPLACE(NEW_MESSAGE, '%N',
+    (SELECT APPLICATION_NAME
+    FROM TABLE(MON_GET_CONNECTION(SYSPROC.MON_GET_APPLICATION_HANDLE(),-1))));
+
+  -- Inserts the application id.
+  SET NEW_MESSAGE = REPLACE(NEW_MESSAGE, '%I',
+    (SELECT APPLICATION_ID
+    FROM TABLE(MON_GET_CONNECTION(SYSPROC.MON_GET_APPLICATION_HANDLE(),-1))));
+
+  -- Inserts the session authorisation.
+  SET NEW_MESSAGE = REPLACE(NEW_MESSAGE, '%S',
+    (SELECT TRIM(SESSION_AUTH_ID)
+    FROM TABLE(MON_GET_CONNECTION(SYSPROC.MON_GET_APPLICATION_HANDLE(),-1))));
+
+  -- Inserts the client hostname.
+  SET NEW_MESSAGE = REPLACE(NEW_MESSAGE, '%C',
+    (SELECT TRIM(CLIENT_HOSTNAME)
+    FROM TABLE(MON_GET_CONNECTION(SYSPROC.MON_GET_APPLICATION_HANDLE(),-1))));
+
+  SET MESSAGE = NEW_MESSAGE;
+ END P_PARSE@
+
+/**
  * Sends a message into the logger system. Before to log this message in an
  * appender, this method verifies the logger level given if it is superior or
  * or equal to the configured level. If not, it skips this process.
@@ -158,13 +254,14 @@ ALTER MODULE LOGGER ADD
   DECLARE CURRENT_LEVEL_ID ANCHOR LEVELS.LEVEL_ID; -- Level in the configuration.
   DECLARE APPENDER_ID ANCHOR CONF_APPENDERS.APPENDER_ID; -- Appender's ID.
   DECLARE CONFIGURATION ANCHOR CONF_APPENDERS.CONFIGURATION; -- Appender's configuration.
+  DECLARE PATTERN ANCHOR CONF_APPENDERS.PATTERN; -- Appender's pattern. 
   DECLARE AT_END BOOLEAN; -- End of the cursor.
   DECLARE APPENDERS CURSOR FOR
-    SELECT APPENDER_ID, CONFIGURATION
+    SELECT APPENDER_ID, CONFIGURATION, PATTERN
     FROM CONF_APPENDERS;
   DECLARE CONTINUE HANDLER FOR SQLSTATE '55019'
-    INSERT INTO LOGS (LEVEL_ID, LOGGER_ID, ENVIRONMENT, MESSAGE) VALUES 
-    (3, 0, CURRENT USER, 'Appender not available');
+    INSERT INTO LOGS (LEVEL_ID, LOGGER_ID, MESSAGE) VALUES 
+    (2, -1, 'Appender not available');
   DECLARE CONTINUE HANDLER FOR NOT FOUND
     SET AT_END = TRUE;
 
@@ -177,18 +274,25 @@ ALTER MODULE LOGGER ADD
   -- TODO Verificar esto, ya que aquí se puede usar la tabla references, si root
   -- no está activo.
   IF (CURRENT_LEVEL_ID >= LEVEL_ID) THEN
-   -- TODO Format the message according to the pattern.
+   -- Internal logging.
+   IF (GET_VALUE(LOGGER.LOG_INTERNALS) = LOGGER.VAL_TRUE) THEN
+    INSERT INTO LOGS (LEVEL_ID, LOGGER_ID, MESSAGE) VALUES 
+      (4, -1, 'Logging enable for level ' || LEVEL_ID || ' logger ' || LOG_ID);
+   END IF;
+
    -- SYSPROC.MON_GET_APPLICATION_ID()
    -- Retrieves all the configurations for the appenders.
    OPEN APPENDERS;
    SET AT_END = FALSE;
-   FETCH APPENDERS INTO APPENDER_ID, CONFIGURATION;
+   FETCH APPENDERS INTO APPENDER_ID, CONFIGURATION, PATTERN;
    -- Iterates over the results.
    WHILE (AT_END = FALSE) DO
+    -- Format the message according to the pattern.
+    CALL PARSE_MESSAGE(PATTERN, LOG_ID, LEVEL_ID, MESSAGE);
     -- Checks the values
     CASE APPENDER_ID
       WHEN 1 THEN -- Pure SQL PL, writes in table.
-        CALL LOG_SQL(LOG_ID, LEVEL_ID, MESSAGE, CONFIGURATION);
+        CALL LOG_SQL(LOG_ID, LEVEL_ID, MESSAGE);
       WHEN 2 THEN -- Writes in the db2diag.log file via a function.
         CALL LOG_DB2DIAG(LOG_ID, LEVEL_ID, MESSAGE, CONFIGURATION);
       WHEN 3 THEN -- Writes in a file (Not available in express-c edition.)
@@ -200,7 +304,7 @@ ALTER MODULE LOGGER ADD
       ELSE -- By default writes in the table.
         CALL LOG_SQL(LOG_ID, LEVEL_ID, MESSAGE, CONFIGURATION);
     END CASE;
-    FETCH APPENDERS INTO APPENDER_ID, CONFIGURATION;
+    FETCH APPENDERS INTO APPENDER_ID, CONFIGURATION, PATTERN;
    END WHILE;
    CLOSE APPENDERS;
   ELSEIF (LOG_ID = -1) THEN
