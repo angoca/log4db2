@@ -48,7 +48,7 @@ CREATE OR REPLACE TRIGGER CHECK_CONF_LOGGER_EFFECTIVE
   T_CHK_CONF_LOGGER_EFFECTIVE: BEGIN
    SIGNAL SQLSTATE VALUE 'LG002'
      SET MESSAGE_TEXT = 'The only logger without parent is ROOT';
-  END T_CHK_CONF_LOGGER_EFFECTIVE@
+  END T_CHK_CONF_LOGGER_EFFECTIVE @
 
 /**
  * Verifies that the root logger is not deleted from the effective table. This
@@ -62,7 +62,7 @@ CREATE OR REPLACE TRIGGER ROOT_LOGGER_UNDELETABLE
   T_UNDELETABLE: BEGIN
    SIGNAL SQLSTATE VALUE 'LG003'
      SET MESSAGE_TEXT = 'ROOT logger cannot be deleted';
-  END T_UNDELETABLE@
+  END T_UNDELETABLE @
 
 /**
  * Checks that the Ref_id for an appender is greater or equal to zero.
@@ -75,7 +75,7 @@ CREATE OR REPLACE TRIGGER REF_ID_GREATER_EQUAL_ZERO
   T_REF_ID_ZERO: BEGIN
    SIGNAL SQLSTATE VALUE 'LG004'
      SET MESSAGE_TEXT = 'Ref_id for conf_appender should be greater or equal to zero';
-  END T_REF_ID_ZERO@
+  END T_REF_ID_ZERO @
 
 /**
  * Checks that the appender_id for an appender is greater or equal to zero.
@@ -88,4 +88,4 @@ CREATE OR REPLACE TRIGGER APPENDER_GREATER_EQUAL_ZERO
   T_APPENDER_ID_ZERO: BEGIN
    SIGNAL SQLSTATE VALUE 'LG005'
      SET MESSAGE_TEXT = 'Appender_id for appenders should be greater or equal to zero';
-  END T_APPENDER_ID_ZERO@
+  END T_APPENDER_ID_ZERO @

@@ -218,7 +218,7 @@ ALTER MODULE LOGGER ADD
     FROM TABLE(MON_GET_CONNECTION(SYSPROC.MON_GET_APPLICATION_HANDLE(),-1))));
 
   SET MESSAGE = NEW_MESSAGE;
- END P_PARSE@
+ END P_PARSE @
 
 /**
  * Sends a message into the logger system. Before to log this message in an
