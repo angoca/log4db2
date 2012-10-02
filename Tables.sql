@@ -274,3 +274,7 @@ ALTER MODULE LOGGER PUBLISH
 -- Procedure that shows the used loggers.
 ALTER MODULE LOGGER PUBLISH
   PROCEDURE SHOW_LOGGERS ();
+
+-- Procedure that shows the logs.
+ALTER MODULE LOGGER PUBLISH
+  PROCEDURE LOGS ();
