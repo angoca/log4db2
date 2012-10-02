@@ -41,18 +41,7 @@ SET CURRENT SCHEMA LOGGER @
 
 -- TODO Validar cuando se borra un registro de effective, que tambi<E9>n se debe
 -- borrar de conf_loggers. Esto hacerlo con un trigger.
-/**
- * Internal method that analyzes a string against the tables to see if the level
- * name is already registered there, and finally retrieves the logging level and
- * logger id.
- *
- * IN STRING
- *   This is the string to analyze.
- * INOUT PARENT SMALLINT
- *   Enters as the parent Id of this string, and goes out as the new id.
- * INOUT PARENT_LEVEL
- *   Logger level (parent -> son).
- */
+
 /**
  * Registers the logger name in the system, and retrieves the corresponding ID
  * for that logger. This ID will allow to write messages into that logger if
@@ -92,9 +81,9 @@ ALTER MODULE LOGGER ADD
   DECLARE PARENT_LEVEL ANCHOR LEVELS.LEVEL_ID; -- Id of the parent level.
   
   /**
-   * Internal method that analyzes a string against the tables to see if the level
-   * name is already registered there, and finally retrieves the logging level and
-   * logger id.
+   * Internal method that analyzes a string against the tables to see if the
+   * level name is already registered there, and finally retrieves the logging
+   * level and logger id.
    *
    * IN STRING
    *   This is the string to analyze.
@@ -110,7 +99,7 @@ ALTER MODULE LOGGER ADD
     )
    P_ANALYZE: BEGIN
     DECLARE SON ANCHOR CONF_LOGGERS.LOGGER_ID; -- Id of the current logger.
-    DECLARE LEVEL ANCHOR LEVELS.LEVEL_ID; -- Id of the associated level for the logger.
+    DECLARE LEVEL ANCHOR LEVELS.LEVEL_ID; -- Id of the associated logger level.
 
     -- Looks for the logger with the given name in the configuration table.
     SELECT C.LOGGER_ID, C.LEVEL_ID INTO SON, LEVEL
@@ -143,6 +132,7 @@ ALTER MODULE LOGGER ADD
      SET PARENT_LEVEL = LEVEL;
     END IF;
    END P_ANALYZE ;
+  ------------------------------------------------------------------------------
 
   -- Remove spaces at the beginning and at the end.
   SET NAME = TRIM(BOTH FROM NAME);
