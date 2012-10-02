@@ -1,3 +1,4 @@
+--#SET TERMINATOR ;
 SET CURRENT SCHEMA LOGGER;
 
 -- Drops all objects.
