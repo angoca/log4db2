@@ -1,6 +1,8 @@
 --#SET TERMINATOR @
 SET CURRENT SCHEMA LOGGER @
 
+SET PATH = SYSPROC, LOGGER @
+
 /**
  * Writes the given message in the log table. This is a pure SQL implementation,
  * without any external call.
@@ -122,6 +124,51 @@ ALTER MODULE LOGGER PUBLISH
   ) @
 
 /**
+ * Retrieves the complete logger name for a given logged id.
+ *
+ * IN LOGGER_ID
+ *  Identification of the logger in the effective table.
+ * RETURNS the complete name of the logger (recursive.)
+ */
+ALTER MODULE LOGGER ADD
+ FUNCTION GET_LOGGER_NAME (
+  IN LOG_ID ANCHOR CONF_LOGGERS.LOGGER_ID
+  ) RETURNS VARCHAR(256)
+  LANGUAGE SQL
+  PARAMETER CCSID UNICODE
+  SPECIFIC F_GET_NAME
+  NOT DETERMINISTIC
+  NO EXTERNAL ACTION
+  READS SQL DATA
+  SECURED
+ F_GET_NAME: BEGIN
+  DECLARE COMPLETE_NAME VARCHAR(256);
+  DECLARE PARENT ANCHOR CONF_LOGGERS.LOGGER_ID;
+  DECLARE NAME ANCHOR CONF_LOGGERS.NAME;
+  DECLARE RETURNED VARCHAR(256);
+  
+  -- The logger is ROOT.
+  IF (LOG_ID = 0) THEN
+   SET COMPLETE_NAME = 'ROOT';
+  ELSE
+   -- Retrieves the id of the parent logger.
+   SELECT E.PARENT_ID, E.NAME INTO PARENT, NAME
+     FROM CONF_LOGGERS_EFFECTIVE E
+     WHERE E.LOGGER_ID = LOG_ID;
+
+   SET RETURNED = GET_LOGGER_NAME (PARENT) ;
+   -- The parent is ROOT, thus do not concatenate.
+   IF (RETURNED <> 'ROOT') THEN
+    SET COMPLETE_NAME = RETURNED || '.' || NAME;
+   ELSE
+      SET COMPLETE_NAME = NAME;
+   END IF;
+  END IF;
+  
+  RETURN COMPLETE_NAME;
+ END F_GET_NAME @
+
+/**
  * Parses the provided message according to the defined pattern. It replaces
  * the occurences of every conversion word with the corresponding value.
  * In the next table, the possible replacements are described:
@@ -187,8 +234,7 @@ ALTER MODULE LOGGER ADD
     WHERE LEVEL_ID = LEV_ID));
   
   -- Inserts the logger name.
-  -- TODO get_logger_name (log_id)
-  SET NEW_MESSAGE = REPLACE(NEW_MESSAGE, '%c', CHAR(LOG_ID));
+  SET NEW_MESSAGE = REPLACE(NEW_MESSAGE, '%c', COALESCE(GET_LOGGER_NAME(LOG_ID), 'No name'));
   
   -- Inserts the message.
   SET NEW_MESSAGE = REPLACE(NEW_MESSAGE, '%m', COALESCE(MESSAGE,'No message'));
@@ -203,19 +249,13 @@ ALTER MODULE LOGGER ADD
     FROM TABLE(MON_GET_CONNECTION(SYSPROC.MON_GET_APPLICATION_HANDLE(),-1))));
 
   -- Inserts the application id.
-  SET NEW_MESSAGE = REPLACE(NEW_MESSAGE, '%I',
-    (SELECT APPLICATION_ID
-    FROM TABLE(MON_GET_CONNECTION(SYSPROC.MON_GET_APPLICATION_HANDLE(),-1))));
+  SET NEW_MESSAGE = REPLACE(NEW_MESSAGE, '%I', SYSPROC.MON_GET_APPLICATION_ID());
 
   -- Inserts the session authorisation.
-  SET NEW_MESSAGE = REPLACE(NEW_MESSAGE, '%S',
-    (SELECT TRIM(SESSION_AUTH_ID)
-    FROM TABLE(MON_GET_CONNECTION(SYSPROC.MON_GET_APPLICATION_HANDLE(),-1))));
+  SET NEW_MESSAGE = REPLACE(NEW_MESSAGE, '%S', TRIM(SESSION_USER));
 
   -- Inserts the client hostname.
-  SET NEW_MESSAGE = REPLACE(NEW_MESSAGE, '%C',
-    (SELECT TRIM(CLIENT_HOSTNAME)
-    FROM TABLE(MON_GET_CONNECTION(SYSPROC.MON_GET_APPLICATION_HANDLE(),-1))));
+  SET NEW_MESSAGE = REPLACE(NEW_MESSAGE, '%C', CLIENT WRKSTNNAME);
 
   SET MESSAGE = NEW_MESSAGE;
  END P_PARSE @
@@ -280,7 +320,7 @@ ALTER MODULE LOGGER ADD
       (4, -1, 'Logging enable for level ' || LEVEL_ID || ' logger ' || LOG_ID);
    END IF;
 
-   -- SYSPROC.MON_GET_APPLICATION_ID()
+   -- 
    -- Retrieves all the configurations for the appenders.
    OPEN APPENDERS;
    SET AT_END = FALSE;
