@@ -180,7 +180,8 @@ ALTER MODULE LOGGER ADD
   SET LOGGER_ID = PARENT;
   -- Internal logging.
   IF (GET_VALUE(LOGGER.LOG_INTERNALS) = LOGGER.VAL_TRUE) THEN
-   CALL INFO(-1, 'Logger ID for ' || NAME || ' is ' || LOGGER_ID);
+    INSERT INTO LOGS (LEVEL_ID, LOGGER_ID, MESSAGE) VALUES 
+      (4, -1, 'Logger ID for ' || NAME || ' is ' || LOGGER_ID);
   END IF;
  END P_GET_LOGGER @
 
@@ -208,3 +209,27 @@ ALTER MODULE LOGGER ADD
     ORDER BY LOGGER_ID;
   OPEN C;
  END P_SHOW_LOGGERS @
+
+/**
+ * Returns an opened cursor showing the log messages truncated and the date.
+ */
+ALTER MODULE LOGGER ADD
+  PROCEDURE LOGS ()
+  LANGUAGE SQL
+  SPECIFIC P_LOGS
+  DYNAMIC RESULT SETS 1
+  READS SQL DATA
+  DETERMINISTIC
+  NO EXTERNAL ACTION
+  PARAMETER CCSID UNICODE
+ P_LOGS: BEGIN
+  -- The max is hardcoded to 72. When this value is dynamic, the screen output
+  -- is not reduced, and for this reason the message has to be truncated.
+  DECLARE C CURSOR
+    WITH RETURN TO CALLER 
+    FOR 
+    SELECT SUBSTR(DATE,12,15) AS TIME, SUBSTR(MESSAGE, 1, 72) AS MESSAGE
+   FROM LOGS
+   ORDER BY DATE;
+  OPEN C;
+ END P_LOGS @
