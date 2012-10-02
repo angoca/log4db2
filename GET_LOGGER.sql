@@ -53,55 +53,6 @@ SET CURRENT SCHEMA LOGGER @
  * INOUT PARENT_LEVEL
  *   Logger level (parent -> son).
  */
-ALTER MODULE LOGGER ADD
-  PROCEDURE ANALYZE_NAME (
-  IN STRING VARCHAR(256),
-  INOUT PARENT ANCHOR CONF_LOGGERS.LOGGER_ID,
-  INOUT PARENT_LEVEL ANCHOR LEVELS.LEVEL_ID
-  )
-  LANGUAGE SQL
-  SPECIFIC P_ANALYZE
-  DYNAMIC RESULT SETS 0
-  MODIFIES SQL DATA
-  NOT DETERMINISTIC -- The same name could refers to a different logger.
-  NO EXTERNAL ACTION
-  PARAMETER CCSID UNICODE
- P_ANALYZE: BEGIN
-  DECLARE SON ANCHOR CONF_LOGGERS.LOGGER_ID; -- Id of the current logger.
-  DECLARE LEVEL ANCHOR LEVELS.LEVEL_ID; -- Id of the associated level for the logger.
-
-  -- Looks for the logger with the given name in the configuration table.
-  SELECT C.LOGGER_ID, C.LEVEL_ID INTO SON, LEVEL
-    FROM CONF_LOGGERS C 
-    WHERE C.NAME = STRING
-    AND C.PARENT_ID = PARENT;
-  -- If the logger is NOT already registered.
-  IF (SON IS NULL) THEN
-   -- Searches in the effective configuration if this is already registered.
-   SELECT C.LOGGER_ID, C.LEVEL_ID INTO SON, LEVEL
-     FROM CONF_LOGGERS_EFFECTIVE C
-     WHERE C.NAME = STRING
-     AND C.PARENT_ID = PARENT;
-   -- Logger is NOT registered in none of the tables.
-   IF (SON IS NULL) THEN
-    -- Registers the new logger and retrieves the id. Switches the parent id.
-    SELECT LOGGER_ID INTO PARENT FROM FINAL TABLE (
-      INSERT INTO CONF_LOGGERS_EFFECTIVE (NAME, PARENT_ID, LEVEL_ID)
-      VALUES (STRING, PARENT, PARENT_LEVEL));
-   ELSE
-    -- It is already register in the effective table, thus take the id of that
-    -- logger as parent.
-    SET PARENT = SON;
-    SET PARENT_LEVEL = LEVEL;
-   END IF;
-  ELSE
-   -- It is registered in the configuration table, thus take the id of that
-   -- logger.
-   SET PARENT = SON;
-   SET PARENT_LEVEL = LEVEL;
-  END IF;
- END P_ANALYZE @
-
 /**
  * Registers the logger name in the system, and retrieves the corresponding ID
  * for that logger. This ID will allow to write messages into that logger if
@@ -140,6 +91,59 @@ ALTER MODULE LOGGER ADD
   DECLARE PARENT ANCHOR CONF_LOGGERS.LOGGER_ID; -- Parent Id of the current logger.
   DECLARE PARENT_LEVEL ANCHOR LEVELS.LEVEL_ID; -- Id of the parent level.
   
+  /**
+   * Internal method that analyzes a string against the tables to see if the level
+   * name is already registered there, and finally retrieves the logging level and
+   * logger id.
+   *
+   * IN STRING
+   *   This is the string to analyze.
+   * INOUT PARENT SMALLINT
+   *   Enters as the parent Id of this string, and goes out as the new id.
+   * INOUT PARENT_LEVEL
+   *   Logger level (parent -> son).
+   */
+  DECLARE  PROCEDURE ANALYZE_NAME (
+    IN STRING VARCHAR(256),
+    INOUT PARENT ANCHOR CONF_LOGGERS.LOGGER_ID,
+    INOUT PARENT_LEVEL ANCHOR LEVELS.LEVEL_ID
+    )
+   P_ANALYZE: BEGIN
+    DECLARE SON ANCHOR CONF_LOGGERS.LOGGER_ID; -- Id of the current logger.
+    DECLARE LEVEL ANCHOR LEVELS.LEVEL_ID; -- Id of the associated level for the logger.
+
+    -- Looks for the logger with the given name in the configuration table.
+    SELECT C.LOGGER_ID, C.LEVEL_ID INTO SON, LEVEL
+      FROM CONF_LOGGERS C 
+      WHERE C.NAME = STRING
+      AND C.PARENT_ID = PARENT;
+    -- If the logger is NOT already registered.
+    IF (SON IS NULL) THEN
+     -- Searches in the effective configuration if this is already registered.
+     SELECT C.LOGGER_ID, C.LEVEL_ID INTO SON, LEVEL
+       FROM CONF_LOGGERS_EFFECTIVE C
+       WHERE C.NAME = STRING
+       AND C.PARENT_ID = PARENT;
+     -- Logger is NOT registered in none of the tables.
+     IF (SON IS NULL) THEN
+      -- Registers the new logger and retrieves the id. Switches the parent id.
+      SELECT LOGGER_ID INTO PARENT FROM FINAL TABLE (
+        INSERT INTO CONF_LOGGERS_EFFECTIVE (NAME, PARENT_ID, LEVEL_ID)
+        VALUES (STRING, PARENT, PARENT_LEVEL));
+     ELSE
+      -- It is already register in the effective table, thus take the id of that
+      -- logger as parent.
+      SET PARENT = SON;
+      SET PARENT_LEVEL = LEVEL;
+     END IF;
+    ELSE
+     -- It is registered in the configuration table, thus take the id of that
+     -- logger.
+     SET PARENT = SON;
+     SET PARENT_LEVEL = LEVEL;
+    END IF;
+   END P_ANALYZE ;
+
   -- Remove spaces at the beginning and at the end.
   SET NAME = TRIM(BOTH FROM NAME);
   -- Remove dots at the beginning and at the end.
