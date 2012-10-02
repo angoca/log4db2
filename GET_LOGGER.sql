@@ -1,6 +1,46 @@
 --#SET TERMINATOR @
-SET CURRENT SCHEMA LOGGER@
+SET CURRENT SCHEMA LOGGER @
 
+-- TODO Check the logger structure, in order to have different names for the
+-- sons of a given father. root>toto root>tata root>tata is an error, and should
+-- remove this duplicate. Probably implement with a check constraint.
+
+-- TODO Check the IDs of the conf table and the effective table, in order to
+-- see if the effective ids correspond to conf ids.
+
+-- TODO Check if the logger levels between the conf and effective table are the
+-- same. In conf could be INFO but in effective could be WARN.@ @
+
+-- TODO Check the registered loggers in the database, calculating the maximum
+-- length of the concatenated inner levels, and this lenght should be less than
+-- 256 chars. foo.bar.toto
+
+-- TODO Add the optimized for
+
+-- TODO Add the fetch first N rows only
+
+-- TODO Add the isolation level.
+
+-- TODO Create a trigger for CONF_LOGGER that each time a line is added, it
+-- creates the row in the effective table and retrieve the generate ID of that
+-- table and insertes the same in this table.
+
+-- TODO Create a function / procedure that shows a table of all posible
+-- loggers in the system and their levels. This graphical representation
+-- helps to see the established configuration.
+-- info ROOT
+-- info foo
+-- debug foo.bar
+-- info tata
+
+-- TODO Create a view on the log table, that show directly the level name.
+-- It is useful because it already done the join.
+
+-- TODO Create a SP that register a logger with a given level. This will create
+-- all the levels in the conf_loggers, and the relations.
+
+-- TODO Validar cuando se borra un registro de effective, que tambi<E9>n se debe
+-- borrar de conf_loggers. Esto hacerlo con un trigger.
 /**
  * Internal method that analyzes a string against the tables to see if the level
  * name is already registered there, and finally retrieves the logging level and
@@ -62,7 +102,7 @@ ALTER MODULE LOGGER ADD
    SET PARENT = SON;
    SET PARENT_LEVEL = LEVEL;
   END IF;
- END P_ANALYZE@
+ END P_ANALYZE @
 
 /**
  * Registers the logger name in the system, and retrieves the corresponding ID
@@ -145,46 +185,29 @@ ALTER MODULE LOGGER ADD
   IF (GET_VALUE(LOGGER.LOG_INTERNALS) = LOGGER.VAL_TRUE) THEN
    CALL INFO(-1, 'Logger ID for ' || NAME || ' is ' || LOGGER_ID);
   END IF;
- END P_GET_LOGGER@
- 
- -- TODO Check the logger structure, in order to have different names for the
- -- sons of a given father. root>toto root>tata root>tata is an error, and should
- -- remove this duplicate. Probably implement with a check constraint.
- 
- -- TODO Check the IDs of the conf table and the effective table, in order to
- -- see if the effective ids correspond to conf ids.
- 
- -- TODO Check if the logger levels between the conf and effective table are the
- -- same. In conf could be INFO but in effective could be WARN.@ @
- 
- -- TODO Check the registered loggers in the database, calculating the maximum
- -- length of the concatenated inner levels, and this lenght should be less than
- -- 256 chars. foo.bar.toto
- 
- -- TODO Add the optimized for
- 
- -- TODO Add the fetch first N rows only
- 
- -- TODO Add the isolation level.
- 
- -- TODO Create a trigger for CONF_LOGGER that each time a line is added, it
- -- creates the row in the effective table and retrieve the generate ID of that
- -- table and insertes the same in this table.
- 
- -- TODO Create a function / procedure that shows a table of all posible
- -- loggers in the system and their levels. This graphical representation
- -- helps to see the established configuration.
- -- info ROOT
- -- info foo
- -- debug foo.bar
- -- info tata
- 
- -- TODO Create a view on the log table, that show directly the level name.
- -- It is useful because it already done the join.
- 
- -- TODO Create a SP that register a logger with a given level. This will create
- -- all the levels in the conf_loggers, and the relations.
- 
- -- TODO Validar cuando se borra un registro de effective, que también se debe
- -- borrar de conf_loggers. Esto hacerlo con un trigger.
- 
+ END P_GET_LOGGER @
+
+/**
+ * Returns a open cursor with the level names and complete logger names of the
+ * used loggers that are registered in the conf_loggers_effective table.
+ */
+ALTER MODULE LOGGER ADD
+  PROCEDURE SHOW_LOGGERS ()
+  LANGUAGE SQL
+  SPECIFIC P_SHOW_LOGGERS
+  DYNAMIC RESULT SETS 1
+  READS SQL DATA
+  DETERMINISTIC
+  NO EXTERNAL ACTION
+  PARAMETER CCSID UNICODE
+ P_SHOW_LOGGERS: BEGIN
+  DECLARE C CURSOR
+    WITH RETURN TO CALLER 
+    FOR 
+    SELECT L.NAME AS LEVEL, GET_LOGGER_NAME(LOGGER_ID) AS NAME
+    FROM CONF_LOGGERS_EFFECTIVE E,
+    LEVELS L
+    WHERE E.LEVEL_ID = L.LEVEL_ID
+    ORDER BY LOGGER_ID;
+  OPEN C;
+ END P_SHOW_LOGGERS @
