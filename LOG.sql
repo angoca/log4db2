@@ -31,7 +31,6 @@ ALTER MODULE LOGGER ADD
  P_LOG_SQL: BEGIN
   INSERT INTO LOGS (LEVEL_ID, LOGGER_ID, MESSAGE) VALUES
     (LEVEL_ID, LOGGER_ID, MESSAGE);
-  COMMIT;
  END P_LOG_SQL @
 
 /**
@@ -234,6 +233,7 @@ ALTER MODULE LOGGER ADD
     WHERE LEVEL_ID = LEV_ID));
   
   -- Inserts the logger name.
+  -- The function could be changed to reduce the quantity of internal calls.
   SET NEW_MESSAGE = REPLACE(NEW_MESSAGE, '%c', COALESCE(GET_LOGGER_NAME(LOG_ID), 'No name'));
   
   -- Inserts the message.
@@ -287,7 +287,6 @@ ALTER MODULE LOGGER ADD
   MODIFIES SQL DATA
   NOT DETERMINISTIC -- If the configuration changes, the log could not be
                     -- written in the same way.
-  AUTONOMOUS
   NO EXTERNAL ACTION
   PARAMETER CCSID UNICODE
  P_LOG: BEGIN
@@ -328,6 +327,7 @@ ALTER MODULE LOGGER ADD
    -- Iterates over the results.
    WHILE (AT_END = FALSE) DO
     -- Format the message according to the pattern.
+    -- TODO REMOVE THE STORED PROCEDURE, AND PUT THE CONTENT HERE.
     CALL PARSE_MESSAGE(PATTERN, LOG_ID, LEVEL_ID, MESSAGE);
     -- Checks the values
     CASE APPENDER_ID
@@ -354,7 +354,8 @@ ALTER MODULE LOGGER ADD
 END P_LOG @
 
 /**
- * Logs a message at debug (5) level.
+ * Logs a message at debug (5) level. This method reduces the quantity of
+ * internal calls by one.
  *
  * IN LOGGER_ID
  *   This is the associated logger of the provided message.
@@ -378,7 +379,8 @@ ALTER MODULE LOGGER ADD
  END P_DEBUG @
 
 /**
- * Logs a message at info (4) level.
+ * Logs a message at info (4) level. This method reduces the quantity of
+ * internal calls by one.
  *
  * IN LOGGER_ID
  *   This is the associated logger of the provided message.
@@ -402,7 +404,8 @@ ALTER MODULE LOGGER ADD
  END P_INFO @
 
 /**
- * Logs a message at warn (3) level.
+ * Logs a message at warn (3) level. This method reduces the quantity of
+ * internal calls by one.
  *
  * IN LOGGER_ID
  *   This is the associated logger of the provided message.
@@ -426,7 +429,8 @@ ALTER MODULE LOGGER ADD
  END P_WARN @
 
 /**
- * Logs a message at error (2) level.
+ * Logs a message at error (2) level. This method reduces the quantity of
+ * internal calls by one.
  *
  * IN LOGGER_ID
  *   This is the associated logger of the provided message.
@@ -450,7 +454,8 @@ ALTER MODULE LOGGER ADD
  END P_ERROR @
 
 /**
- * Logs a message at fatal (1) level.
+ * Logs a message at fatal (1) level. This method reduces the quantity of
+ * internal calls by one.
  *
  * IN LOGGER_ID
  *   This is the associated logger of the provided message.
