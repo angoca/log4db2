@@ -140,6 +140,4 @@ INSERT INTO CONF_APPENDERS (REF_ID, NAME, APPENDER_ID, CONFIGURATION,
   VALUES (1, 'DB2 Tables', 1, NULL, '[%p] %c - %m');
 INSERT INTO LOGS (MESSAGE) VALUES ('TestsConfAppenders: Finished succesfully');
 
-COMMIT;
-
 END @
