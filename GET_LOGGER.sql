@@ -61,7 +61,7 @@ SET CURRENT SCHEMA LOGGER @
 ALTER MODULE LOGGER ADD
   PROCEDURE GET_LOGGER (
   IN NAME VARCHAR(256),
-  OUT LOGGER_ID ANCHOR CONF_LOGGERS.LOGGER_ID
+  OUT LOGGER_ID ANCHOR LOGDATA.CONF_LOGGERS.LOGGER_ID
   )
   LANGUAGE SQL
   SPECIFIC P_GET_LOGGER
@@ -77,8 +77,8 @@ ALTER MODULE LOGGER ADD
   DECLARE SUBS_PRE VARCHAR(256); -- Sustring before the dot.
   DECLARE SUBS_POS VARCHAR(256); -- Substring after the dot (current loop.)
   
-  DECLARE PARENT ANCHOR CONF_LOGGERS.LOGGER_ID; -- Parent Id of the current logger.
-  DECLARE PARENT_LEVEL ANCHOR LEVELS.LEVEL_ID; -- Id of the parent level.
+  DECLARE PARENT ANCHOR LOGDATA.CONF_LOGGERS.LOGGER_ID; -- Parent Id of the current logger.
+  DECLARE PARENT_LEVEL ANCHOR LOGDATA.LEVELS.LEVEL_ID; -- Id of the parent level.
   
   /**
    * Internal method that analyzes a string against the tables to see if the
@@ -94,30 +94,30 @@ ALTER MODULE LOGGER ADD
    */
   DECLARE  PROCEDURE ANALYZE_NAME (
     IN STRING VARCHAR(256),
-    INOUT PARENT ANCHOR CONF_LOGGERS.LOGGER_ID,
-    INOUT PARENT_LEVEL ANCHOR LEVELS.LEVEL_ID
+    INOUT PARENT ANCHOR LOGDATA.CONF_LOGGERS.LOGGER_ID,
+    INOUT PARENT_LEVEL ANCHOR LOGDATA.LEVELS.LEVEL_ID
     )
    P_ANALYZE: BEGIN
-    DECLARE SON ANCHOR CONF_LOGGERS.LOGGER_ID; -- Id of the current logger.
-    DECLARE LEVEL ANCHOR LEVELS.LEVEL_ID; -- Id of the associated logger level.
+    DECLARE SON ANCHOR LOGDATA.CONF_LOGGERS.LOGGER_ID; -- Id of the current logger.
+    DECLARE LEVEL ANCHOR LOGDATA.LEVELS.LEVEL_ID; -- Id of the associated logger level.
 
     -- Looks for the logger with the given name in the configuration table.
     SELECT C.LOGGER_ID, C.LEVEL_ID INTO SON, LEVEL
-      FROM CONF_LOGGERS C 
+      FROM LOGDATA.CONF_LOGGERS C 
       WHERE C.NAME = STRING
       AND C.PARENT_ID = PARENT;
     -- If the logger is NOT already registered.
     IF (SON IS NULL) THEN
      -- Searches in the effective configuration if this is already registered.
      SELECT C.LOGGER_ID, C.LEVEL_ID INTO SON, LEVEL
-       FROM CONF_LOGGERS_EFFECTIVE C
+       FROM LOGDATA.CONF_LOGGERS_EFFECTIVE C
        WHERE C.NAME = STRING
        AND C.PARENT_ID = PARENT;
      -- Logger is NOT registered in none of the tables.
      IF (SON IS NULL) THEN
       -- Registers the new logger and retrieves the id. Switches the parent id.
       SELECT LOGGER_ID INTO PARENT FROM FINAL TABLE (
-        INSERT INTO CONF_LOGGERS_EFFECTIVE (NAME, PARENT_ID, LEVEL_ID)
+        INSERT INTO LOGDATA.CONF_LOGGERS_EFFECTIVE (NAME, PARENT_ID, LEVEL_ID)
         VALUES (STRING, PARENT, PARENT_LEVEL));
      ELSE
       -- It is already register in the effective table, thus take the id of that
@@ -145,7 +145,7 @@ ALTER MODULE LOGGER ADD
   SET PARENT = 0; -- Root logger is always 0.
   -- Retrieves the logger level for the root logger.
   SELECT C.LEVEL_ID INTO PARENT_LEVEL
-    FROM CONF_LOGGERS C
+    FROM LOGDATA.CONF_LOGGERS C
     WHERE C.LOGGER_ID = 0;
   -- TODO To check the value defaultRootLevel before assign Warn as default.
   -- If the root logger is not defined, then set the default level: WARN-3.
@@ -174,7 +174,7 @@ ALTER MODULE LOGGER ADD
   SET LOGGER_ID = PARENT;
   -- Internal logging.
   IF (GET_VALUE(LOGGER.LOG_INTERNALS) = LOGGER.VAL_TRUE) THEN
-    INSERT INTO LOGS (LEVEL_ID, LOGGER_ID, MESSAGE) VALUES 
+    INSERT INTO LOGDATA.LOGS (LEVEL_ID, LOGGER_ID, MESSAGE) VALUES 
       (4, -1, 'Logger ID for ' || NAME || ' is ' || LOGGER_ID);
   END IF;
  END P_GET_LOGGER @
@@ -197,8 +197,8 @@ ALTER MODULE LOGGER ADD
     WITH RETURN TO CALLER 
     FOR 
     SELECT L.NAME AS LEVEL, GET_LOGGER_NAME(LOGGER_ID) AS NAME
-    FROM CONF_LOGGERS_EFFECTIVE E,
-    LEVELS L
+    FROM LOGDATA.CONF_LOGGERS_EFFECTIVE E,
+    LOGDATA.LEVELS L
     WHERE E.LEVEL_ID = L.LEVEL_ID
     ORDER BY LOGGER_ID;
   OPEN C;
@@ -223,7 +223,7 @@ ALTER MODULE LOGGER ADD
     WITH RETURN TO CALLER 
     FOR 
     SELECT SUBSTR(DATE,12,15) AS TIME, SUBSTR(MESSAGE, 1, 72) AS MESSAGE
-   FROM LOGS
+   FROM LOGDATA.LOGS
    ORDER BY DATE;
   OPEN C;
  END P_LOGS @
