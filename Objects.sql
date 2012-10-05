@@ -9,7 +9,7 @@ COMMENT ON SCHEMA LOGGER IS 'Schema for objects of the log4db2 utility';
 -- Module for all code for the logger utility.
 CREATE OR REPLACE MODULE LOGGER;
 
--- TODO CREATE PUBLIC ALIAS LOGGER FOR MODULE LOGGER;
+CREATE PUBLIC ALIAS LOGGER FOR MODULE LOGGER;
 
 -- Module version.
 ALTER MODULE LOGGER PUBLISH
