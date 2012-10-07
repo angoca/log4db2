@@ -1,5 +1,5 @@
 --#SET TERMINATOR @
-SET CURRENT SCHEMA LOGGER @
+SET CURRENT SCHEMA LOGGER_1 @
 
 /**
  * This trigger checks the insertion in the conf_logger table to see

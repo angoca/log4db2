@@ -1,5 +1,5 @@
 --#SET TERMINATOR @
-SET CURRENT SCHEMA LOGGER @
+SET CURRENT SCHEMA LOGGER_1 @
 
 /**
  * Function that returns the value of the given key from the configuration

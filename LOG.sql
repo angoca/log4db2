@@ -1,7 +1,7 @@
 --#SET TERMINATOR @
-SET CURRENT SCHEMA LOGGER @
+SET CURRENT SCHEMA LOGGER_1 @
 
-SET PATH = SYSPROC, LOGGER @
+SET PATH = SYSPROC, LOGGER_1 @
 
 /**
  * Writes the given message in the log table. This is a pure SQL implementation,

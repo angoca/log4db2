@@ -1,5 +1,5 @@
 --#SET TERMINATOR @
-SET CURRENT SCHEMA LOGGER @
+SET CURRENT SCHEMA LOGGER_1 @
 
 -- TODO Check the logger structure, in order to have different names for the
 -- sons of a given father. root>toto root>tata root>tata is an error, and should
@@ -92,7 +92,7 @@ ALTER MODULE LOGGER ADD
    * INOUT PARENT_LEVEL
    *   Logger level (parent -> son).
    */
-  DECLARE  PROCEDURE ANALYZE_NAME (
+  DECLARE PROCEDURE ANALYZE_NAME (
     IN STRING VARCHAR(256),
     INOUT PARENT ANCHOR LOGDATA.CONF_LOGGERS.LOGGER_ID,
     INOUT PARENT_LEVEL ANCHOR LOGDATA.LEVELS.LEVEL_ID

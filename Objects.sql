@@ -1,10 +1,10 @@
 --#SET TERMINATOR ;
-SET CURRENT SCHEMA LOGGER;
+SET CURRENT SCHEMA LOGGER_1;
 
 -- Schema for logger utility's objects.
-CREATE SCHEMA LOGGER;
+CREATE SCHEMA LOGGER_1;
 
-COMMENT ON SCHEMA LOGGER IS 'Schema for objects of the log4db2 utility';
+COMMENT ON SCHEMA LOGGER_1 IS 'Schema for objects of the log4db2 utility';
 
 -- Module for all code for the logger utility.
 CREATE OR REPLACE MODULE LOGGER;
