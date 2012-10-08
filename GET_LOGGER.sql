@@ -205,25 +205,41 @@ ALTER MODULE LOGGER ADD
  END P_SHOW_LOGGERS @
 
 /**
- * Returns an opened cursor showing the log messages truncated and the date.
+ * Returns an opened cursor showing the log messages truncated to 72 characters
+ * by default, the date limited to the hour part with miliseconds, and just the
+ * last 100 (by deafult) log messages registered. The concurrence is uncommited
+ * read.
  */
 ALTER MODULE LOGGER ADD
-  PROCEDURE LOGS ()
+  PROCEDURE LOGS (
+  IN LENGTH SMALLINT DEFAULT 72,
+  IN QTY SMALLINT DEFAULT 100
+  )
   LANGUAGE SQL
   SPECIFIC P_LOGS
   DYNAMIC RESULT SETS 1
-  READS SQL DATA
+  MODIFIES SQL DATA
   DETERMINISTIC
   NO EXTERNAL ACTION
   PARAMETER CCSID UNICODE
  P_LOGS: BEGIN
-  -- The max is hardcoded to 72. When this value is dynamic, the screen output
-  -- is not reduced, and for this reason the message has to be truncated.
+  DECLARE STMT VARCHAR(256);
   DECLARE C CURSOR
-    WITH RETURN TO CALLER 
-    FOR 
-    SELECT SUBSTR(DATE,12,15) AS TIME, SUBSTR(MESSAGE, 1, 72) AS MESSAGE
-   FROM LOGDATA.LOGS
-   ORDER BY DATE;
+    WITH RETURN TO CALLER
+    FOR RS;
+   
+  SET STMT = 'SELECT SUBSTR(L.DATE, 12, 15) AS TIME, '
+    || 'SUBSTR(L.MESSAGE, 1, ' || LENGTH || ') AS MESSAGE '
+    || 'FROM LOGDATA.LOGS AS L '
+    || 'ORDER BY DATE DESC '
+    || 'FETCH FIRST ' || QTY || ' ROWS ONLY '
+    || 'WITH UR '
+    ;
+  IF (GET_VALUE(LOGGER.LOG_INTERNALS) = LOGGER.VAL_TRUE) THEN
+   INSERT INTO LOGDATA.LOGS (LEVEL_ID, LOGGER_ID, MESSAGE) VALUES 
+     (4, -1, 'Statement: ' || STMT);
+    COMMIT;
+  END IF;
+  PREPARE RS FROM STMT;
   OPEN C;
  END P_LOGS @
