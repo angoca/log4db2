@@ -262,8 +262,13 @@ ALTER MODULE LOGGER ADD
    FETCH APPENDERS INTO APPENDER_ID, CONFIGURATION, PATTERN;
    -- Iterates over the results.
    WHILE (AT_END = FALSE) DO
+    -- Internal logging.
+    IF (GET_VALUE(LOGGER.LOG_INTERNALS) = LOGGER.VAL_TRUE) THEN
+     INSERT INTO LOGDATA.LOGS (LEVEL_ID, LOGGER_ID, MESSAGE) VALUES 
+       (4, -1, 'Processing pattern ' || PATTERN);
+    END IF;
+   
     -- Format the message according to the pattern.
-    
     SET NEW_MESSAGE = PATTERN;
     -- Inserts the message.
     SET NEW_MESSAGE = REPLACE(NEW_MESSAGE, '%m', 
@@ -293,9 +298,15 @@ ALTER MODULE LOGGER ADD
 
     SET MESSAGE = NEW_MESSAGE;
     
+      
     -- Checks the values
     CASE APPENDER_ID
       WHEN 1 THEN -- Pure SQL PL, writes in table.
+       -- Internal logging.
+       IF (GET_VALUE(LOGGER.LOG_INTERNALS) = LOGGER.VAL_TRUE) THEN
+        INSERT INTO LOGDATA.LOGS (LEVEL_ID, LOGGER_ID, MESSAGE) VALUES 
+          (4, -1, 'Logging in tables');
+       END IF;
         CALL LOG_SQL(LOG_ID, LEV_ID, MESSAGE);
       WHEN 2 THEN -- Writes in the db2diag.log file via a function.
         CALL LOG_DB2DIAG(LOG_ID, LEV_ID, MESSAGE, CONFIGURATION);
