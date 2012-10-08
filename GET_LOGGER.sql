@@ -102,6 +102,7 @@ ALTER MODULE LOGGER ADD
     DECLARE LEVEL ANCHOR LOGDATA.LEVELS.LEVEL_ID; -- Id of the associated logger level.
 
     -- Looks for the logger with the given name in the configuration table.
+    -- This query waits for the data to be commited (CS Cursor stability)
     SELECT C.LOGGER_ID, C.LEVEL_ID INTO SON, LEVEL
       FROM LOGDATA.CONF_LOGGERS C 
       WHERE C.NAME = STRING
@@ -112,7 +113,8 @@ ALTER MODULE LOGGER ADD
      SELECT C.LOGGER_ID, C.LEVEL_ID INTO SON, LEVEL
        FROM LOGDATA.CONF_LOGGERS_EFFECTIVE C
        WHERE C.NAME = STRING
-       AND C.PARENT_ID = PARENT;
+       AND C.PARENT_ID = PARENT
+       WITH UR;
      -- Logger is NOT registered in none of the tables.
      IF (SON IS NULL) THEN
       -- Registers the new logger and retrieves the id. Switches the parent id.
@@ -144,9 +146,11 @@ ALTER MODULE LOGGER ADD
   SET POS = 0;
   SET PARENT = 0; -- Root logger is always 0.
   -- Retrieves the logger level for the root logger.
+  -- This query waits for the data to be commited (CS Cursor stability)
   SELECT C.LEVEL_ID INTO PARENT_LEVEL
     FROM LOGDATA.CONF_LOGGERS C
-    WHERE C.LOGGER_ID = 0;
+    WHERE C.LOGGER_ID = 0
+    WITH UR;
   -- TODO To check the value defaultRootLevel before assign Warn as default.
   -- If the root logger is not defined, then set the default level: WARN-3.
   IF (PARENT_LEVEL IS NULL) THEN
@@ -200,7 +204,8 @@ ALTER MODULE LOGGER ADD
     FROM LOGDATA.CONF_LOGGERS_EFFECTIVE E,
     LOGDATA.LEVELS L
     WHERE E.LEVEL_ID = L.LEVEL_ID
-    ORDER BY LOGGER_ID;
+    ORDER BY LOGGER_ID
+    WITH UR;
   OPEN C;
  END P_SHOW_LOGGERS @
 
@@ -228,12 +233,14 @@ ALTER MODULE LOGGER ADD
     WITH RETURN TO CALLER
     FOR RS;
    
-  SET STMT = 'SELECT SUBSTR(L.DATE, 12, 15) AS TIME, '
+  SET STMT = 'SELECT TIME, MESSAGE FROM ('
+    || 'SELECT SUBSTR(L.DATE, 12, 15) AS TIME, '
     || 'SUBSTR(L.MESSAGE, 1, ' || LENGTH || ') AS MESSAGE '
     || 'FROM LOGDATA.LOGS AS L '
     || 'ORDER BY DATE DESC '
     || 'FETCH FIRST ' || QTY || ' ROWS ONLY '
     || 'WITH UR '
+    || ') ORDER BY TIME'
     ;
   IF (GET_VALUE(LOGGER.LOG_INTERNALS) = LOGGER.VAL_TRUE) THEN
    INSERT INTO LOGDATA.LOGS (LEVEL_ID, LOGGER_ID, MESSAGE) VALUES 
