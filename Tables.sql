@@ -57,6 +57,8 @@ COMMENT ON LEVELS (
   );
 
 -- Table for loggers configuration.
+-- TODO create this table with temporal capabilities in order to save the
+-- modified configuration.
 CREATE TABLE CONF_LOGGERS (
   LOGGER_ID SMALLINT NOT NULL,
   NAME VARCHAR(256) NOT NULL,
@@ -163,6 +165,13 @@ COMMENT ON REFERENCES (
   );
 
 -- Table for the pure SQL appender.
+-- TODO create this table with temporal capabilities, in order to save any
+-- modified log.
+-- TODO make tests in order to check in a auto generated column for an id
+-- does not impact the performance, and provides a better way to sort messages.
+-- This ID column could be hidden to the user. The benefic is that the logs
+-- could be accessed via an index, but it impacts the writes, because this
+-- structure has to be maintained. 
 CREATE TABLE LOGS (
   DATE TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   LEVEL_ID SMALLINT,
@@ -184,7 +193,12 @@ COMMENT ON LOGS (
   MESSAGE IS 'Message logged'
   );
 
-CREATE PUBLIC ALIAS LOGS FOR TABLE LOGS;
+CREATE OR REPLACE VIEW LOG_MESSAGES AS
+  SELECT L.DATE, LE.NAME, L.LOGGER_ID, L.MESSAGE
+  FROM LOGDATA.LOGS AS L, LOGDATA.LEVELS AS LE
+  WHERE L.LEVEL_ID = LE.LEVEL_ID;
+
+CREATE OR REPLACE PUBLIC ALIAS LOGS FOR TABLE LOGS;
 
 -- Global configuration.
 -- checkHierarchy: Checks the logger hierarchy.
