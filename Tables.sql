@@ -26,6 +26,17 @@ CREATE SCHEMA LOGDATA;
 
 COMMENT ON SCHEMA LOGDATA IS 'Schema for table of the log4db2 utility';
 
+-- Helper table for sequence of numbers.
+CREATE TABLE NUMBER_SEQ(
+  NUM INT NOT NULL
+  );
+
+COMMENT ON TABLE NUMBER_SEQ IS 'Table for sequence of numbers';
+
+COMMENT ON NUMBER_SEQ (
+  NUM IS 'Number in the sequence'
+  );
+
 -- Table for the global configuration of the logger utility.
 CREATE TABLE CONFIGURATION (
   KEY VARCHAR(32) NOT NULL,
@@ -173,7 +184,7 @@ COMMENT ON REFERENCES (
 -- could be accessed via an index, but it impacts the writes, because this
 -- structure has to be maintained. 
 CREATE TABLE LOGS (
-  DATE TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  DATE TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, -- TODO CHAR(13) FOR BIT DATA NOT NULL
   LEVEL_ID SMALLINT,
   LOGGER_ID SMALLINT,
   MESSAGE VARCHAR(256) NOT NULL
@@ -200,14 +211,21 @@ CREATE OR REPLACE VIEW LOG_MESSAGES AS
 
 CREATE OR REPLACE PUBLIC ALIAS LOGS FOR TABLE LOGS;
 
+-- Populates the sequence helper table with OLAP function.
+INSERT INTO NUMBER_SEQ
+  SELECT ROW_NUMBER() OVER()
+  FROM SYSCAT.COLUMNS;
+
 -- Global configuration.
 -- checkHierarchy: Checks the logger hierarchy.
 -- logInternals: Logs internal messages.
 -- checkLevels: Checks the levels definition.
+-- secondsToRefresh: Quantity of second before refresh the conf.
 INSERT INTO CONFIGURATION (KEY, VALUE)
   VALUES ('checkHierarchy', 'false'),
          ('logInternals', 'false'),
-         ('checkLevels', 'false');
+         ('checkLevels', 'false'),
+         ('secondsToRefresh', '30');
 
 -- Levels of the logger utility.
 INSERT INTO LEVELS (LEVEL_ID, NAME)
