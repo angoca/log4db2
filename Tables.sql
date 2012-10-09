@@ -202,8 +202,9 @@ CREATE OR REPLACE PUBLIC ALIAS LOGS FOR TABLE LOGS;
 -- secondsToRefresh: Quantity of second before refresh the conf.
 INSERT INTO CONFIGURATION (KEY, VALUE)
   VALUES ('checkHierarchy', 'false'),
-         ('logInternals', 'false'),
          ('checkLevels', 'false'),
+         ('internalCache', 'true'),
+         ('logInternals', 'false'),
          ('secondsToRefresh', '30');
 
 -- Levels of the logger utility.
