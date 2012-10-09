@@ -4,7 +4,7 @@
  * Tests for the conf_appenders table.
  */
 
-SET CURRENT SCHEMA LOGGER_1 @
+SET CURRENT SCHEMA LOGGER_1A @
 
 BEGIN
 -- Reserved names for errors.
