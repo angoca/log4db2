@@ -15,6 +15,10 @@ CREATE PUBLIC ALIAS LOGGER FOR MODULE LOGGER;
 ALTER MODULE LOGGER PUBLISH
   VARIABLE VERSION VARCHAR(32) CONSTANT '2012-09-30 1.0';
 
+-- Procedure that show the configuration.
+ALTER MODULE LOGGER PUBLISH
+  PROCEDURE SHOW_CONF ();
+
 -- Public functions and procedures.
 -- Function to register the logger.
 ALTER MODULE LOGGER PUBLISH
