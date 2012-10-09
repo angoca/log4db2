@@ -1,5 +1,47 @@
 --#SET TERMINATOR @
-SET CURRENT SCHEMA LOGGER_1 @
+SET CURRENT SCHEMA LOGGER_1A @
+
+-- Constant logInternals
+ALTER MODULE LOGGER ADD
+  VARIABLE LOG_INTERNALS ANCHOR LOGDATA.CONFIGURATION.KEY CONSTANT 'logInternals' @
+
+-- Constant logInternals
+ALTER MODULE LOGGER ADD
+  VARIABLE REFRESH_CONS ANCHOR LOGDATA.CONFIGURATION.KEY CONSTANT 'secondsToRefresh' @
+
+-- Constant for true.
+ALTER MODULE LOGGER ADD
+  VARIABLE VAL_TRUE ANCHOR LOGDATA.CONFIGURATION.VALUE CONSTANT 'true' @
+
+/**
+ * Variable for the last time the configuration was loaded.
+ */
+ALTER MODULE LOGGER ADD
+  VARIABLE LAST_REFRESH TIMESTAMP DEFAULT CURRENT TIMESTAMP @
+
+/**
+ * Configutation keys type.
+ */
+ALTER MODULE LOGGER ADD
+  TYPE CONF_KEYS_TYPE AS ANCHOR LOGDATA.CONFIGURATION.KEY ARRAY [50] @
+
+/**
+ * Configuration values type.
+ */
+ALTER MODULE LOGGER ADD
+  TYPE CONF_VALUES_TYPE AS ANCHOR LOGDATA.CONFIGURATION.VALUE ARRAY [ANCHOR LOGDATA.CONFIGURATION.KEY] @
+
+/**
+ * Configuration keys in memory.
+ */
+ALTER MODULE LOGGER ADD
+  VARIABLE CONFIGURATION_KEYS CONF_KEYS_TYPE @
+
+/**
+ * Configuration values in memory.
+ */
+ALTER MODULE LOGGER ADD
+  VARIABLE CONFIGURATION CONF_VALUES_TYPE @
 
 /**
  * Function that returns the value of the given key from the configuration
@@ -23,16 +65,150 @@ ALTER MODULE LOGGER ADD
   READS SQL DATA
   SECURED
  F_GET_VAL: BEGIN
-  DECLARE RET ANCHOR LOGDATA.CONFIGURATION.KEY;
-  SELECT C.VALUE INTO RET
-    FROM LOGDATA.CONFIGURATION C
-    WHERE C.KEY = GIVEN_KEY;
+  DECLARE RET ANCHOR LOGDATA.CONFIGURATION.VALUE;
+  DECLARE SECS SMALLINT;
+  DECLARE EPOCH TIMESTAMP;
+  
+  -- Sets the quantity of seconds before refresh. 60 seconds by default.
+  REFRESH: BEGIN
+   -- Handle for the second time the function is called and the param has not
+   -- been defined.
+   DECLARE CONTINUE HANDLER FOR SQLSTATE '2202E'
+     SET SECS = 60;
+   SET SECS = INT(CONFIGURATION[REFRESH_CONS]);
+   IF (SECS IS NULL) THEN
+    SET SECS = 60;
+   END IF;
+  END REFRESH;
+  
+  -- Sets a reference date 1970-01-01.
+  SET EPOCH = DATE(719163);
+  IF (COALESCE(LAST_REFRESH, EPOCH) + SECS SECONDS > CURRENT TIMESTAMP) THEN
+   BEGIN
+    DECLARE VALUE ANCHOR LOGDATA.CONFIGURATION.VALUE;
+    DECLARE KEY ANCHOR LOGDATA.CONFIGURATION.KEY;
+    DECLARE AT_END BOOLEAN; -- End of the cursor.
+    DECLARE SIZE SMALLINT;
+    DECLARE POS SMALLINT;
+    DECLARE CONF CURSOR FOR
+      SELECT KEY, VALUE
+      FROM LOGDATA.CONFIGURATION;
+    DECLARE CONTINUE HANDLER FOR NOT FOUND
+      SET AT_END = TRUE;
+
+    -- Clears the current configuration.
+    SET SIZE = CARDINALITY(CONFIGURATION_KEYS);
+    IF (SIZE >= 1) THEN
+     SET POS = 1;
+     WHILE (POS < SIZE) DO
+      SET KEY = CONFIGURATION_KEYS[POS];
+      SET CONFIGURATION[KEY] = NULL;
+      SET CONFIGURATION_KEYS[POS] = NULL;
+      SET POS = POS + 1;
+     END WHILE;
+    END IF;
+    -- Reads current configuration.
+    SET POS = 1;
+    SET AT_END = FALSE;
+    OPEN CONF;
+    FETCH CONF INTO KEY, VALUE;
+    WHILE (AT_END = FALSE) DO
+     SET CONFIGURATION_KEYS[POS] = KEY;
+     SET CONFIGURATION[KEY] = VALUE;
+     SET POS = POS + 1;
+     FETCH CONF INTO KEY, VALUE;
+    END WHILE;
+
+    -- Sets the last configuration read as now.
+    SET LAST_REFRESH = CURRENT TIMESTAMP;
+   END;
+  END IF;
+  BEGIN
+   -- NULL if the key is not in the configuration.
+   DECLARE EXIT HANDLER FOR SQLSTATE '2202E'
+     SET RET = NULL;
+  
+   SET RET = CONFIGURATION[GIVEN_KEY];
+  END;
+  
   RETURN RET;
  END F_GET_VAL @
 
--- Constant logInternals
+/**
+ * Procedure that dumps the configuration. It returns two result set. The
+ * first is a one-row result set providing the information when the
+ * configuration was loaded, and when it will be reloaded (with its frequency).
+ * In the other result set, it shows the key-values from the configuration, if
+ * this was already loaded, otherwise a descriptive message appears.
+ */
 ALTER MODULE LOGGER ADD
-  VARIABLE LOG_INTERNALS ANCHOR LOGDATA.CONFIGURATION.KEY CONSTANT 'logInternals' @
+  PROCEDURE SHOW_CONF ()
+  LANGUAGE SQL
+  SPECIFIC P_SHOW_CONF
+  DYNAMIC RESULT SETS 2
+  MODIFIES SQL DATA
+  DETERMINISTIC
+  NO EXTERNAL ACTION
+  PARAMETER CCSID UNICODE
+ P_SHOW_CONF: BEGIN
+  -- Creates the cursor for the configuration refreshness.
+  BEGIN
+   DECLARE SECS SMALLINT;
+   DECLARE STMT VARCHAR(256);
+   DECLARE REF CURSOR
+     WITH RETURN TO CALLER
+     FOR RS;
+   -- Sets the value for the seconds.
+   BEGIN
+    DECLARE CONTINUE HANDLER FOR SQLSTATE '2202E'
+      SET SECS = -1;
+    SET SECS = INT(CONFIGURATION[REFRESH_CONS]);
+    IF (SECS IS NULL) THEN
+     SET SECS = -1;
+    END IF;
+   END;
+   -- Creates an prepares a dynamic query.
+   SET STMT = 'SELECT LAST_REFRESH AS LAST_REFRESH, '
+     || SECS || ' AS FREQUENCY, '
+     || 'CASE ' || SECS || ' '
+     || 'WHEN -1 THEN ''Not defined'' '
+     || 'ELSE CHAR(LAST_REFRESH + ' || SECS || ' SECONDS) '
+     || 'END AS NEXT_REFRESH '
+     || 'FROM SYSIBM.SYSDUMMY1';
+   PREPARE RS FROM STMT;
+   OPEN REF;
+  END;
 
-ALTER MODULE LOGGER ADD
-  VARIABLE VAL_TRUE ANCHOR LOGDATA.CONFIGURATION.KEY CONSTANT 'true' @
+  -- Creates a helper table with a sequence of numbers.
+  DECLARE GLOBAL TEMPORARY TABLE SESSION.NUMBER_SEQ (
+    NUM INT NOT NULL
+    ) WITH REPLACE;
+  INSERT INTO SESSION.NUMBER_SEQ
+    SELECT ROW_NUMBER() OVER()
+    FROM SYSCAT.COLUMNS;
+  
+  -- Creates a cursor for configuration values.
+  BEGIN
+   DECLARE CARD SMALLINT;
+   DECLARE CONF CURSOR
+     WITH RETURN TO CALLER 
+     FOR 
+     SELECT NUM, 
+     CONFIGURATION_KEYS[NUM] AS KEY,
+     CONFIGURATION[CONFIGURATION_KEYS[NUM]] AS VALUE
+     FROM SESSION.NUMBER_SEQ;
+   DECLARE NOTHING CURSOR
+     WITH RETURN TO CALLER
+     FOR
+     SELECT 'Configuration not loaded' AS MESSAGE
+     FROM SYSIBM.SYSDUMMY1;
+   
+   -- Checks if the configuration was already loaded.
+   SET CARD = CARDINALITY(CONFIGURATION_KEYS);
+   IF (CARD > 0) THEN
+    OPEN CONF;
+   ELSE
+    OPEN NOTHING;
+   END IF;
+  END;
+ END P_SHOW_CONF @
