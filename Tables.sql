@@ -26,17 +26,6 @@ CREATE SCHEMA LOGDATA;
 
 COMMENT ON SCHEMA LOGDATA IS 'Schema for table of the log4db2 utility';
 
--- Helper table for sequence of numbers.
-CREATE TABLE NUMBER_SEQ(
-  NUM INT NOT NULL
-  );
-
-COMMENT ON TABLE NUMBER_SEQ IS 'Table for sequence of numbers';
-
-COMMENT ON NUMBER_SEQ (
-  NUM IS 'Number in the sequence'
-  );
-
 -- Table for the global configuration of the logger utility.
 CREATE TABLE CONFIGURATION (
   KEY VARCHAR(32) NOT NULL,
@@ -210,11 +199,6 @@ CREATE OR REPLACE VIEW LOG_MESSAGES AS
   WHERE L.LEVEL_ID = LE.LEVEL_ID;
 
 CREATE OR REPLACE PUBLIC ALIAS LOGS FOR TABLE LOGS;
-
--- Populates the sequence helper table with OLAP function.
-INSERT INTO NUMBER_SEQ
-  SELECT ROW_NUMBER() OVER()
-  FROM SYSCAT.COLUMNS;
 
 -- Global configuration.
 -- checkHierarchy: Checks the logger hierarchy.
