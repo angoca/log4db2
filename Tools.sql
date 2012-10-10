@@ -186,6 +186,8 @@ ALTER MODULE LOGGER ADD
  * This procedure shows the configuration, but it does not reload it, for this
  * reason, the next refresh time could be in the past, because the get_value
  * is the only one that refreshes the configuration.
+ * The procedure shows an error message at the end: SQL20439N - SQLSTATE=2202E
+ * and it is due that when scanning the params it uses a helper table. 
  */
 ALTER MODULE LOGGER ADD
   PROCEDURE SHOW_CONF ()
