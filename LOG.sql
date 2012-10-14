@@ -1,6 +1,12 @@
 --#SET TERMINATOR @
 SET CURRENT SCHEMA LOGGER_1A @
 
+/**
+ * TODO DESCRIPTION
+ *
+ * Made in COLOMBIA.
+ */
+
 SET PATH = SYSPROC, LOGGER_1A @
 
 /**
@@ -260,7 +266,7 @@ ALTER MODULE LOGGER ADD
 
   -- Checks if the current level is at least equal to the provided level.
   -- TODO Verificar esto, ya que aquí se puede usar la tabla references, si root
-  -- no está activo.
+  -- no está activo, ya que diferentes loggers pueden tener diferente conf.
   IF (CURRENT_LEVEL_ID >= LEV_ID) THEN
    -- Internal logging.
    IF (GET_VALUE(LOGGER.LOG_INTERNALS) = LOGGER.VAL_TRUE) THEN
