@@ -31,7 +31,9 @@ ALTER MODULE LOGGER ADD
   VARIABLE LAST_REFRESH TIMESTAMP DEFAULT CURRENT TIMESTAMP @
 
 /**
- * Configutation keys type.
+ * Configutation keys type. This type is requiered in order to retrive the keys,
+ * because there is not an option in the API to retrieve the keys, just the
+ * indexes.
  */
 ALTER MODULE LOGGER ADD
   TYPE CONF_KEYS_TYPE AS ANCHOR LOGDATA.CONFIGURATION.KEY ARRAY [50] @
@@ -129,12 +131,11 @@ ALTER MODULE LOGGER ADD
        SET AT_END = TRUE;
 
      -- Clears the current configuration.
+     SET CONFIGURATION = ARRAY_DELETE(CONFIGURATION);
      SET SIZE = CARDINALITY(CONFIGURATION_KEYS);
      IF (SIZE >= 1) THEN
       SET POS = 1;
       WHILE (POS < SIZE) DO
-       SET KEY = CONFIGURATION_KEYS[POS];
-       SET CONFIGURATION[KEY] = NULL;
        SET CONFIGURATION_KEYS[POS] = NULL;
        SET POS = POS + 1;
       END WHILE;
@@ -145,8 +146,8 @@ ALTER MODULE LOGGER ADD
      OPEN CONF;
      FETCH CONF INTO KEY, VALUE;
      WHILE (AT_END = FALSE) DO
-      SET CONFIGURATION_KEYS[POS] = KEY;
       SET CONFIGURATION[KEY] = VALUE;
+      SET CONFIGURATION_KEYS[POS] = KEY;
       SET POS = POS + 1;
       FETCH CONF INTO KEY, VALUE;
      END WHILE;
@@ -241,7 +242,7 @@ ALTER MODULE LOGGER ADD
      SET SECS = -1;
     END IF;
    END;
-   -- Creates an prepares a dynamic query.
+   -- Creates and prepares a dynamic query.
    SET STMT = 'SELECT CASE CACHE WHEN TRUE '
      || 'THEN ''true'' ELSE ''false'' END AS INTERNAL_CACHE_ACTIVATED, '
      || 'LAST_REFRESH AS LAST_REFRESH, '
