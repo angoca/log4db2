@@ -88,6 +88,8 @@ COMMENT ON CONF_LOGGERS (
   );
 
 -- Table for the effecetive loggers configuration.
+-- This table allows to keep an id related to a specific logger across database
+-- activations.
 CREATE TABLE CONF_LOGGERS_EFFECTIVE
   LIKE CONF_LOGGERS IN LOGGER_SPACE;
 
