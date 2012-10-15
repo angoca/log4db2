@@ -10,13 +10,6 @@ SET CURRENT SCHEMA LOGGER_1A @
 SET PATH = SYSPROC, LOGGER_1A @
 
 /**
- * Complete logger name.
- * TODO Try to create a type instead of a variable
- */
-ALTER MODULE LOGGER ADD
-  VARIABLE COMPLETE_LOGGER_NAME VARCHAR(256)@
-
-/**
  * Writes the given message in the log table. This is a pure SQL implementation,
  * without any external call.
  *
