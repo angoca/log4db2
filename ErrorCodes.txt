@@ -1,0 +1,102 @@
+These are the possible error codes raised by log4db2
+
+ERROR CODE
+MESSAGE
+* DESCRIPTION
+* USER RESPONSE
+
+==== LEVELS TABLE
+
+LG0L1
+LEVEL_ID should be equal or greater than zero.
+* When inserting into the LEVELS table, any LEVEL_ID provided should be greater
+or equal to zero.
+* Reissue the insert statement with a LEVEL_ID greater than zero.
+
+LG0L2
+LEVEL_ID should be consecutive to the previous maximal value.
+* When inserting into the LEVELS table, it is not possible to have gaps in the
+LEVEL_ID values.
+* Check the current maximal value in the LEVELS table, and try a LEVEL_ID with
+a value of MAX + 1.
+
+LG0L3
+It is not possible to change the LEVEL_ID.
+* Once a LEVEL_ID has been inserted in a LEVELS row, it cannot be modified.
+There could be references to this value in other tables (for example LOGS)
+without enforcing the referential integrity. If this value is modified, it will
+appear incoherences. At the same time, it is not possible assign a new value
+without creating gaps in the table.
+* Delete values and re-insert, to adapt the structure to your
+requirements.
+
+LG0L4
+Trying to delete the minimal value.
+* The operation is trying to delete the minimal value which is 0, and this is
+not allowed because there must be at least a defined level in the LEVELS table.
+* Delete other values, but not the minimal one.
+
+LG0L5
+The only possible LEVEL_ID to delete is the maximal value.
+* The issued statement is trying to delete a LEVEL_ID different to the
+maximal in the LEVELS table. It is prohibit, because this will create gaps in
+the list of LEVELS.
+* You must delete levels by deleting the maximal LEVEL_ID value.
+
+==== CONF_LOGGERS TABLE
+
+LG0C1
+The only logger without parent is ROOT.
+* All loggers should have a parent. The only one that do not have ascendency is
+ROOT.
+* Assign a parent to the provided logger. Probably, its parent will be ROOT (0).
+
+LG0C2
+It is not possible to update any value in this table (only LEVEL_ID is 
+possible).
+* Once a logger has been created, most of its properties cannot be changed. The
+LOGGER_ID helps to uniquely identify it. NAME is a unique value in the
+hierarchy. PARENT_ID indicates its ancestry.
+* Do not try to modify the values of a logger. If a logger was mis-defined,
+create a new one (new LOGGER_ID, correct NAME, probably same PARENT_ID).
+
+==== CONF_LOGGERS_EFFECTIVE TABLE
+
+LG0E1
+The only logger without parent is ROOT.
+* All loggers should have a parent. The only one that do not have ascendency is
+ROOT. Remember that this table is managed by the application, this means that
+the users do not have to modify it directly.
+* Assign a parent to the provided logger. Probably, its parent will be ROOT (0).
+
+LG0E2
+It is not possible to update any value in this table (only LEVEL_ID is 
+possible).
+* Once a logger has been created, most of its properties cannot be changed. The
+LOGGER_ID helps to uniquely identify it. NAME is a unique value in the
+hierarchy. PARENT_ID indicates its ancestry. Remember that this table is managed
+by the application, this means that the users do not have to modify it directly.
+* Do not try to modify the values of a logger. If a logger was mis-defined,
+create a new one (new LOGGER_ID, correct NAME, probably same PARENT_ID).
+
+LG0E3
+It is not possible to update the LEVEL_ID manually.
+* The LEVEL_ID is updated when the associated configuration in the CONF_LOGGERS
+table is modified. However, this value cannot be modified manually, and it
+should match the established value in the configuration table.
+* Update the LEVEL_ID to the same level defined in the CONF_LOGGERS table.
+
+LG0C4
+ROOT logger cannot be deleted.
+* There should always exist the ROOT logger in the CONF_LOGGERS_EFFECTIVE table.
+It cannot be deleted, because this is the origin of the ancestry for any level.
+* If you are deleting in bulk (DELETE FROM CONF_LOGGERS_EFEFCTIVE) put a
+condition to not delete ROOT logger.
+
+==== CONF_APPENDERS TABLE
+
+LG0A1
+APPENDER_ID for appenders should be greater or equal to zero.
+* Any APPENDER_ID should be greater or equal to zero, and the statement is
+issuing a negative value.
+* Reissue the statement with a positive or zero value.
