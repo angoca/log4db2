@@ -7,15 +7,7 @@ ALTER MODULE LOGGER ADD
 
 -- Constant logInternals
 ALTER MODULE LOGGER ADD
-  VARIABLE LOG_INTERNALS ANCHOR LOGDATA.CONFIGURATION.KEY CONSTANT 'logInternals' @
-
--- Constant logInternals
-ALTER MODULE LOGGER ADD
   VARIABLE REFRESH_CONS ANCHOR LOGDATA.CONFIGURATION.KEY CONSTANT 'secondsToRefresh' @
-
--- Constant for true.
-ALTER MODULE LOGGER ADD
-  VARIABLE VAL_TRUE ANCHOR LOGDATA.CONFIGURATION.VALUE CONSTANT 'true' @
 
 /**
  * Variable to indicate the use of internal cache.
@@ -57,6 +49,25 @@ ALTER MODULE LOGGER ADD
  */
 ALTER MODULE LOGGER ADD
   VARIABLE CONFIGURATION CONF_VALUES_TYPE @
+
+/**
+ * Complete logger name.
+ * TODO Try to create a type instead of a variable
+ */
+ALTER MODULE LOGGER ADD
+  VARIABLE COMPLETE_LOGGER_NAME VARCHAR(256)@
+
+/**
+ * Loggers type.
+ */
+ALTER MODULE LOGGER ADD
+  TYPE LOGGERS_TYPE AS ANCHOR LOGDATA.CONF_LOGGERS.LOGGER_ID ARRAY [ANCHOR COMPLETE_LOGGER_NAME] @
+
+/**
+ * Logger's names and ids.
+ */
+ALTER MODULE LOGGER ADD
+  VARIABLE LOGGERS LOGGERS_TYPE @
 
 /**
  * Function that returns the value of the given key from the configuration
@@ -176,6 +187,18 @@ ALTER MODULE LOGGER ADD
 
   RETURN RET;
  END F_GET_VAL @
+
+/**
+ * Sets a value in the loggers cache.
+ */
+ALTER MODULE LOGGER ADD
+  PROCEDURE SET_LOGGER_CACHE (
+  IN LOGGER ANCHOR LOGDATA.CONF_LOGGERS.LOGGER_ID,
+  IN LEVEL ANCHOR LOGDATA.LEVELS.LEVEL_ID
+  )
+ P_SET_CACHE: BEGIN
+  SET LOGGERS[LOGGER] = LEVEL;
+ END P_SET_CACHE @
 
 /**
  * Procedure that dumps the configuration. It returns two result set. The
