@@ -1,0 +1,7 @@
+db2 DELETE FROM LOGDATA.LOGS
+
+db2 -tf %1
+
+db2 COMMIT
+
+db2 CALL LOGGER.LOGS()
