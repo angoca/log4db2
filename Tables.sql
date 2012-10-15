@@ -213,8 +213,10 @@ CREATE OR REPLACE SEQUENCE LOGGER_ID_SEQ
 
 -- Global configuration.
 -- checkHierarchy: Checks the logger hierarchy.
--- logInternals: Logs internal messages.
 -- checkLevels: Checks the levels definition.
+-- defaultRootLevel: Default ROOT logger when it is not defined.
+-- internalCache: Use internal cache instead of SELECT for each time.
+-- logInternals: Logs internal messages.
 -- secondsToRefresh: Quantity of second before refresh the conf.
 INSERT INTO CONFIGURATION (KEY, VALUE)
   VALUES ('checkHierarchy', 'false'),
@@ -237,7 +239,7 @@ INSERT INTO LEVELS (LEVEL_ID, NAME)
 INSERT INTO CONF_LOGGERS (LOGGER_ID, NAME, PARENT_ID, LEVEL_ID)
   VALUES (NEXT VALUE FOR LOGGER_ID_SEQ, 'ROOT', NULL, 3);
 
--- TODO remove this, and create it with a trigger
+-- Root logger in effective, it cannot be deleted after.
 INSERT INTO CONF_LOGGERS_EFFECTIVE (LOGGER_ID, NAME, PARENT_ID,
   LEVEL_ID)
   VALUES (PREVIOUS VALUE FOR LOGGER_ID_SEQ, 'ROOT', NULL, 3);
