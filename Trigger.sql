@@ -1,6 +1,39 @@
 --#SET TERMINATOR @
 SET CURRENT SCHEMA LOGGER_1A @
 
+-- TODO fix the error codes.
+
+-- Table LOGDATA.LEVELS.
+
+/**
+ * Checks that the level are consecutives.
+ */
+CREATE OR REPLACE TRIGGER T1_LEVELS_CONS
+  BEFORE INSERT ON LOGDATA.LEVELS
+  REFERENCING NEW AS N
+  FOR EACH ROW
+ T_LEV_CON: BEGIN
+  DECLARE MAX ANCHOR LOGDATA.LEVELS.LEVEL_ID;
+  SELECT MAX(LEVEL_ID) INTO MAX
+    FROM LOGDATA.LEVELS;
+  IF (N.LEVEL_ID < 0) THEN
+   SIGNAL SQLSTATE VALUE 'LG008'
+     SET MESSAGE_TEXT = 'LEVEL_ID should be equal or greater than zero';
+  ELSEIF (N.LEVEL_ID <> MAX + 1) THEN
+   SIGNAL SQLSTATE VALUE 'LG008'
+     SET MESSAGE_TEXT = 'LEVEL_ID should be consecutive to the previous max value';
+  END IF;
+ END T_LEV_CON @
+
+/**
+ * Prevents the change of level_id.
+ */
+CREATE OR REPLACE TRIGGER T2_LEVELS_NO_UPD
+  BEFORE UPDATE OF LEVEL_ID ON LOGDATA.LEVELS
+  FOR EACH ROW
+ SIGNAL SQLSTATE VALUE 'LG008'
+   SET MESSAGE_TEXT = 'It is not possible to change the LEVEL_ID' @
+
 -- Table LOGDATA.CONF_LOGGERS.
 
 /**
@@ -42,7 +75,7 @@ CREATE OR REPLACE TRIGGER T2_CONF_LOGGERS_NO_UPDATE
   BEFORE UPDATE OF LOGGER_ID, NAME, PARENT_ID ON LOGDATA.CONF_LOGGERS
   FOR EACH ROW
  SIGNAL SQLSTATE VALUE 'LG005'
-   SET MESSAGE_TEXT = 'It is not possible to update any value in this table (only LEVEL_ID is possible)'@
+   SET MESSAGE_TEXT = 'It is not possible to update any value in this table (only LEVEL_ID is possible)' @
 
 /**
  * Activates updates in the effective table to synchronize the new
@@ -59,7 +92,7 @@ CREATE OR REPLACE TRIGGER T3_CONF_LOGGER_SYNC
   UPDATE LOGDATA.CONF_LOGGERS_EFFECTIVE
     SET LEVEL_ID = 0
     WHERE LOGGER_ID = O.LOGGER_ID;
- END T_SYNC_CONF@
+ END T_SYNC_CONF @
 
 -- Table LOGDATA.CONF_LOGGERS_EFFECTIVE.
 
@@ -108,7 +141,7 @@ CREATE OR REPLACE TRIGGER T5_EFFECTIVE_INSERT
    -- Gets the value from the configuration. 
    SET N.LEVEL_ID = LEVEL;
   END IF;
- END T_EFFECT_INSERT@
+ END T_EFFECT_INSERT @
 
 /**
  * It restricts the update of any value in this table different to LEVEL_ID.
@@ -117,7 +150,7 @@ CREATE OR REPLACE TRIGGER T6_EFFECTIVE_NO_UPDATE
   BEFORE UPDATE OF LOGGER_ID, NAME, PARENT_ID ON LOGDATA.CONF_LOGGERS_EFFECTIVE
   FOR EACH ROW
  SIGNAL SQLSTATE VALUE 'LG008'
-   SET MESSAGE_TEXT = 'It is not possible to update any value in this table (only LEVEL_ID is possible)'@
+   SET MESSAGE_TEXT = 'It is not possible to update any value in this table (only LEVEL_ID is possible)' @
 
 /**
  * This trigger validates the Logger level provided. When the configuration of
@@ -147,7 +180,7 @@ CREATE OR REPLACE TRIGGER T7_EFFECTIVE_LEVEL_UPDATE_DELETE
    SIGNAL SQLSTATE VALUE 'LG007'
      SET MESSAGE_TEXT = 'It is not possible to update the level_id manually';
   END IF;
- END T_UPDATE_DELETE@
+ END T_UPDATE_DELETE @
 
 /**
  * Updates the descendancy based on the configuration. If the conf was deleted
@@ -163,7 +196,7 @@ CREATE OR REPLACE TRIGGER T8_EFFECTIVE_LEVEL_UPDATE
   -- The provided level was verified in the previous trigger, thus
   -- update the descendency.
   CALL LOGADMIN.MODIFY_DESCENDANTS (N.LOGGER_ID, LEV_ID_CONF);
- END T_UPDATE_EFFEC@
+ END T_UPDATE_EFFEC @
 
 /**
  * Verifies that the root logger is not deleted from the effective table. This
@@ -189,7 +222,7 @@ CREATE OR REPLACE TRIGGER T10_INSERT_CACHE
  T_INSERT_CACHE: BEGIN
   -- Refresh the catalog.
   CALL LOGGER.SET_LOGGER_CACHE(N.LOGGER_ID, N.LEVEL_ID);
- END T_INSERT_CACHE@
+ END T_INSERT_CACHE @
 
 /**
  * Deletes the value in the cache when the corresponding key/value is deleted
@@ -201,7 +234,7 @@ CREATE OR REPLACE TRIGGER T11_EFFECTIVE_DELETE_CACHE
   FOR EACH ROW
  T_EFFECTIVE_DELETE_CACHE: BEGIN
   CALL LOGGER.SET_LOGGER_CACHE(O.LOGGER_ID, NULL);
- END T_EFFECTIVE_DELETE_CACHE@
+ END T_EFFECTIVE_DELETE_CACHE @
 
 -- Table LOGDATA.APPENDERS.
 
@@ -240,7 +273,4 @@ CREATE OR REPLACE TRIGGER T14_LOGS_UNIQUE_DATE
   BEFORE INSERT ON LOGDATA.LOGS
   REFERENCING NEW AS N
   FOR EACH ROW
-  SET N.DATE = GENERATE_UNIQUE()@
-  
-  -- TODO triggers in levels: levels consecutivos
-  -- TODO TRIGER in level: level_id mayor a 0
+  SET N.DATE = GENERATE_UNIQUE()
