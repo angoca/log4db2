@@ -1,11 +1,15 @@
 --#SET TERMINATOR @
 SET CURRENT SCHEMA LOGGER_1A @
 
--- Constanct internalCache
+/**
+ * Constanct internalCache
+ */
 ALTER MODULE LOGGER ADD
   VARIABLE INTERNAL_CACHE ANCHOR LOGDATA.CONFIGURATION.KEY CONSTANT 'internalCache' @
 
--- Constant logInternals
+/**
+ * Constant logInternals
+ */
 ALTER MODULE LOGGER ADD
   VARIABLE REFRESH_CONS ANCHOR LOGDATA.CONFIGURATION.KEY CONSTANT 'secondsToRefresh' @
 
@@ -52,7 +56,6 @@ ALTER MODULE LOGGER ADD
 
 /**
  * Complete logger name.
- * TODO Try to create a type instead of a variable
  */
 ALTER MODULE LOGGER ADD
   VARIABLE COMPLETE_LOGGER_NAME VARCHAR(256)@
