@@ -1,111 +1,246 @@
 --#SET TERMINATOR @
 SET CURRENT SCHEMA LOGGER_1A @
 
+-- Table LOGDATA.CONF_LOGGERS.
+
 /**
  * This trigger checks the insertion in the conf_logger table to see
- * if the logger_id already exists in the conf_logger_effective table.
- * There should exist the record in the effective table before than in this
- * table.
- * The initial intent was a trigger that inserted the row in the effective
- * table, as a "before" trigger. However, insert operations are now allowed in
- * this kind of triggers.
+ * if the logger_id already exists in the conf_logger_effective table. If not,
+ * it retrieves the value from the sequence.
  */
-CREATE OR REPLACE TRIGGER CHECK_CONF_LOGGER
+CREATE OR REPLACE TRIGGER T1_CONF_LOGGERS_ID
   BEFORE UPDATE OR INSERT ON LOGDATA.CONF_LOGGERS
   REFERENCING NEW AS N
   FOR EACH ROW
- T_CHK_CONF_LOGGER: BEGIN
-  DECLARE EXISTING_ID ANCHOR LOGDATA.CONF_LOGGERS.LOGGER_ID;
-  -- Retrieves the current ID from the effective table.
-  -- Select Into is not allowed here, and I do not know why.
-  SET EXISTING_ID = (SELECT LOGGER_ID
-    FROM LOGDATA.CONF_LOGGERS_EFFECTIVE E
-    WHERE E.LOGGER_ID = N.LOGGER_ID);
-  -- Checks if the id exists in the effective table.
-  IF (EXISTING_ID IS NULL) THEN
-   -- It does not exist, then raise a signal.
-   SIGNAL SQLSTATE VALUE 'LG001'
-     SET MESSAGE_TEXT = 'Logger not defined in Effective table';
-  ELSEIF (N.LOGGER_ID <> 0) THEN
+ T_LOGGER_ID: BEGIN
+  DECLARE LOGGER ANCHOR LOGDATA.CONF_LOGGERS.LOGGER_ID;
+
    -- Checks that the only logger without parent is ROOT.
-   IF (N.PARENT_ID IS NULL) THEN
-    -- Raises an error.
-    SIGNAL SQLSTATE VALUE 'LG002'
-      SET MESSAGE_TEXT = 'The only logger without parent is ROOT';
-   END IF;
+  IF (N.PARENT_ID IS NULL AND N.LOGGER_ID <> 0) THEN
+   -- Raises an error.
+   SIGNAL SQLSTATE VALUE 'LG004'
+     SET MESSAGE_TEXT = 'The only logger without parent is ROOT';
   END IF;
- END T_CHK_CONF_LOGGER @
+  -- Gets the loggerId and level from conf.
+  SELECT LOGGER_ID INTO LOGGER
+    FROM LOGDATA.CONF_LOGGERS_EFFECTIVE
+    WHERE PARENT_ID = N.PARENT_ID;
+  -- Checks if the loggedId exist in conf.
+  IF (LOGGER IS NULL) THEN
+   -- Gets the value from the sequence.
+   SET N.LOGGER_ID = NEXT VALUE FOR LOGDATA.LOGGER_ID_SEQ;
+  ELSE
+   -- Gets the value from the configuration.
+   SET N.LOGGER_ID = LOGGER;
+  END IF;
+ END T_LOGGER_ID @
+
+/**
+ * It restricts to update any value in CONF_LOGGERS different to LEVEL_ID.
+ */
+CREATE OR REPLACE TRIGGER T2_CONF_LOGGERS_NO_UPDATE
+  BEFORE UPDATE OF LOGGER_ID, NAME, PARENT_ID ON LOGDATA.CONF_LOGGERS
+  FOR EACH ROW
+ SIGNAL SQLSTATE VALUE 'LG005'
+   SET MESSAGE_TEXT = 'It is not possible to update any value in this table (only LEVEL_ID is possible)'@
+
+/**
+ * Activates updates in the effective table to synchronize the new
+ * configuration.
+ */
+CREATE OR REPLACE TRIGGER T3_CONF_LOGGER_SYNC
+  AFTER INSERT OR UPDATE OR DELETE ON LOGDATA.CONF_LOGGERS
+  REFERENCING OLD AS O
+  FOR EACH ROW
+ T_SYNC_CONF: BEGIN
+  -- It updates the same logger in the configuration, but with the trigger
+  -- the descendancy is updated. The level_id provided is recalculated in the
+  -- trigger, so the provided is a dummy.
+  UPDATE LOGDATA.CONF_LOGGERS_EFFECTIVE
+    SET LEVEL_ID = 0
+    WHERE LOGGER_ID = O.LOGGER_ID;
+ END T_SYNC_CONF@
+
+-- Table LOGDATA.CONF_LOGGERS_EFFECTIVE.
 
 /**
  * Verifies that the parent is not null. The only logger with null parent is
  * root.
  */
-CREATE OR REPLACE TRIGGER CHECK_CONF_LOGGER_EFFECTIVE
+CREATE OR REPLACE TRIGGER T4_EFFECTIVE_CHECK
   BEFORE INSERT OR UPDATE ON LOGDATA.CONF_LOGGERS_EFFECTIVE
   REFERENCING NEW AS N
   FOR EACH ROW
  WHEN (N.PARENT_ID IS NULL AND N.LOGGER_ID <> 0)
   T_CHK_CONF_LOGGER_EFFECTIVE: BEGIN
-   SIGNAL SQLSTATE VALUE 'LG002'
+   SIGNAL SQLSTATE VALUE 'LG006'
      SET MESSAGE_TEXT = 'The only logger without parent is ROOT';
   END T_CHK_CONF_LOGGER_EFFECTIVE @
+
+/**
+ * Assigns the corresponding ID to the inserted logger.
+ */
+CREATE OR REPLACE TRIGGER T5_EFFECTIVE_INSERT
+  BEFORE INSERT ON LOGDATA.CONF_LOGGERS_EFFECTIVE
+  REFERENCING NEW AS N
+  FOR EACH ROW
+ T_EFFECT_INSERT: BEGIN
+  DECLARE LOGGER ANCHOR LOGDATA.CONF_LOGGERS.LOGGER_ID;
+  DECLARE LEVEL ANCHOR LOGDATA.LEVELS.LEVEL_ID;
+
+  -- Gets the loggerId and level from conf.
+  SELECT LOGGER_ID, LEVEL_ID INTO LOGGER, LEVEL
+    FROM LOGDATA.CONF_LOGGERS
+    WHERE PARENT_ID = N.PARENT_ID;
+  -- Checks if the loggedId exist in conf.
+  IF (LOGGER IS NULL) THEN
+   -- Gets the value from the sequence.
+   SET N.LOGGER_ID = NEXT VALUE FOR LOGDATA.LOGGER_ID_SEQ;
+  ELSE
+   -- Gets the value from the configuration.
+   SET N.LOGGER_ID = LOGGER;
+  END IF;
+  -- Checks if the level has been established. Ignores the provided value.
+  IF (LEVEL IS NULL) THEN
+   -- Gets the value from an ascendency or default.
+   SET N.LEVEL_ID = LOGADMIN.GET_DEFINED_PARENT_LOGGER(N.LOGGER_ID);
+  ELSE
+   -- Gets the value from the configuration. 
+   SET N.LEVEL_ID = LEVEL;
+  END IF;
+ END T_EFFECT_INSERT@
+
+/**
+ * It restricts the update of any value in this table different to LEVEL_ID.
+ */
+CREATE OR REPLACE TRIGGER T6_EFFECTIVE_NO_UPDATE
+  BEFORE UPDATE OF LOGGER_ID, NAME, PARENT_ID ON LOGDATA.CONF_LOGGERS_EFFECTIVE
+  FOR EACH ROW
+ SIGNAL SQLSTATE VALUE 'LG008'
+   SET MESSAGE_TEXT = 'It is not possible to update any value in this table (only LEVEL_ID is possible)'@
+
+/**
+ * This trigger validates the Logger level provided. When the configuration of
+ * it was deleted in the conf table, it searched in the ascendency or default
+ * value. If it was modified, it replaces the provided value with the correct
+ * one.
+ */
+CREATE OR REPLACE TRIGGER T7_EFFECTIVE_LEVEL_UPDATE_DELETE
+  BEFORE UPDATE OF LEVEL_ID ON LOGDATA.CONF_LOGGERS_EFFECTIVE
+  REFERENCING NEW AS N
+  FOR EACH ROW
+ T_UPDATE_DELETE: BEGIN
+  DECLARE LEV_ID_CONF ANCHOR LOGDATA.LEVELS.LEVEL_ID;
+
+  -- Gets the configured level for the logger.
+  SELECT LEVEL_ID INTO LEV_ID_CONF
+    FROM LOGDATA.CONF_LOGGERS
+    WHERE LOGGER_ID = N.LOGGER_ID;
+  IF (LEV_ID_CONF IS NULL) THEN
+   -- There is not a defined level for this logger, it was deleted in conf.
+   -- Gets the configured level from the closer ascendency or default value.
+   SET N.LEVEL_ID = LOGADMIN.GET_DEFINED_PARENT_LOGGER(N.LOGGER_ID);
+  ELSEIF (LEV_ID_CONF <> N.LEVEL_ID) THEN
+   -- The provided value is not the same that in the configuration. Abort.
+   -- Trying to update this value manually, with different value that the one
+   -- established in CONF_LOGGERS.
+   SIGNAL SQLSTATE VALUE 'LG007'
+     SET MESSAGE_TEXT = 'It is not possible to update the level_id manually';
+  END IF;
+ END T_UPDATE_DELETE@
+
+/**
+ * Updates the descendancy based on the configuration. If the conf was deleted
+ * from the same logger, it is retrieved from the ascendency or default value,
+ * in the BEFORE trigger for this table.
+ */
+CREATE OR REPLACE TRIGGER T8_EFFECTIVE_LEVEL_UPDATE
+  AFTER UPDATE OF LEVEL_ID ON LOGDATA.CONF_LOGGERS_EFFECTIVE
+  REFERENCING NEW AS N
+  FOR EACH ROW
+ T_UPDATE_EFFEC: BEGIN
+  DECLARE LEV_ID_CONF ANCHOR LOGDATA.LEVELS.LEVEL_ID;
+  -- The provided level was verified in the previous trigger, thus
+  -- update the descendency.
+  CALL LOGADMIN.MODIFY_DESCENDANTS (N.LOGGER_ID, LEV_ID_CONF);
+ END T_UPDATE_EFFEC@
 
 /**
  * Verifies that the root logger is not deleted from the effective table. This
  * is the basic logger and it should always exist in this table.
  */
-CREATE OR REPLACE TRIGGER ROOT_LOGGER_UNDELETABLE
+CREATE OR REPLACE TRIGGER T9_EFFECTIVE_ROOT_LOGGER_UNDELETABLE
   BEFORE DELETE ON LOGDATA.CONF_LOGGERS_EFFECTIVE
   REFERENCING OLD AS O
   FOR EACH ROW
  WHEN (O.LOGGER_ID = 0)
   T_UNDELETABLE: BEGIN
-   SIGNAL SQLSTATE VALUE 'LG003'
+   SIGNAL SQLSTATE VALUE 'LG009'
      SET MESSAGE_TEXT = 'ROOT logger cannot be deleted';
   END T_UNDELETABLE @
 
 /**
- * Checks that the Ref_id for an appender is greater or equal to zero.
+ * Updates the cache with the inserted/modified value.
  */
-CREATE OR REPLACE TRIGGER REF_ID_GREATER_EQUAL_ZERO
-  BEFORE INSERT OR UPDATE ON LOGDATA.CONF_APPENDERS
+CREATE OR REPLACE TRIGGER T10_INSERT_CACHE
+  AFTER INSERT OR UPDATE ON LOGDATA.CONF_LOGGERS_EFFECTIVE
   REFERENCING NEW AS N
   FOR EACH ROW
- WHEN (N.REF_ID < 0)
-  T_REF_ID_ZERO: BEGIN
-   SIGNAL SQLSTATE VALUE 'LG004'
-     SET MESSAGE_TEXT = 'Ref_id for conf_appender should be greater or equal to zero';
-  END T_REF_ID_ZERO @
+ T_INSERT_CACHE: BEGIN
+  -- Refresh the catalog.
+  CALL LOGGER.SET_LOGGER_CACHE(N.LOGGER_ID, N.LEVEL_ID);
+ END T_INSERT_CACHE@
 
 /**
- * Removes the spaces around a pattern.
+ * Deletes the value in the cache when the corresponding key/value is deleted
+ * in the effective table.
  */
-CREATE OR REPLACE TRIGGER CONF_APPENDER_PATTERN
-  BEFORE INSERT OR UPDATE ON LOGDATA.CONF_APPENDERS
-  REFERENCING NEW AS N
+CREATE OR REPLACE TRIGGER T11_EFFECTIVE_DELETE_CACHE
+  AFTER DELETE ON LOGDATA.CONF_LOGGERS_EFFECTIVE
+  REFERENCING OLD AS O
   FOR EACH ROW
- T_CONF_APPENDER_PATTERN: BEGIN
-  SET N.PATTERN = TRIM(N.PATTERN);
- END T_CONF_APPENDER_PATTERN @
+ T_EFFECTIVE_DELETE_CACHE: BEGIN
+  CALL LOGGER.SET_LOGGER_CACHE(O.LOGGER_ID, NULL);
+ END T_EFFECTIVE_DELETE_CACHE@
+
+-- Table LOGDATA.APPENDERS.
 
 /**
  * Checks that the appender_id for an appender is greater or equal to zero.
  */
-CREATE OR REPLACE TRIGGER APPENDER_GREATER_EQUAL_ZERO
+CREATE OR REPLACE TRIGGER T12_APPENDERS_GREATER_EQUAL_ZERO
   BEFORE INSERT OR UPDATE ON LOGDATA.APPENDERS
   REFERENCING NEW AS N
   FOR EACH ROW
  WHEN (N.APPENDER_ID < 0)
   T_APPENDER_ID_ZERO: BEGIN
-   SIGNAL SQLSTATE VALUE 'LG005'
+   SIGNAL SQLSTATE VALUE 'LG010'
      SET MESSAGE_TEXT = 'Appender_id for appenders should be greater or equal to zero';
   END T_APPENDER_ID_ZERO @
+
+-- Table LOGDATA.CONF_APPENDERS.
+
+/**
+ * Removes the spaces around a pattern of an appender.
+ */
+CREATE OR REPLACE TRIGGER T13_CONF_APPENDERS_PATTERN
+  BEFORE INSERT OR UPDATE ON LOGDATA.CONF_APPENDERS
+  REFERENCING NEW AS N
+  FOR EACH ROW
+ T_CONF_APPENDERS_PATTERN: BEGIN
+  SET N.PATTERN = TRIM(N.PATTERN);
+ END T_CONF_APPENDERS_PATTERN @
+
+-- Table LOGDATA.LOGS.
 
 /**
  * Generates a unique date for the logs.
  */
-CREATE OR REPLACE TRIGGER UNIQUE_DATE
+CREATE OR REPLACE TRIGGER T14_LOGS_UNIQUE_DATE
   BEFORE INSERT ON LOGDATA.LOGS
   REFERENCING NEW AS N
   FOR EACH ROW
   SET N.DATE = GENERATE_UNIQUE()@
+  
+  -- TODO triggers in levels: levels consecutivos
+  -- TODO TRIGER in level: level_id mayor a 0
