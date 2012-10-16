@@ -184,7 +184,7 @@ CREATE TABLE LOGS (
   DATE CHAR(13) FOR BIT DATA NOT NULL,
   LEVEL_ID SMALLINT,
   LOGGER_ID SMALLINT,
-  MESSAGE VARCHAR(256) NOT NULL
+  MESSAGE VARCHAR(512) NOT NULL
   ) IN LOG_DATA_SPACE;
 
 ALTER TABLE LOGS
@@ -223,7 +223,7 @@ INSERT INTO CONFIGURATION (KEY, VALUE)
          ('checkLevels', 'false'),
          ('defaultRootLevel', 'WARN'),
          ('internalCache', 'true'),
-         ('logInternals', 'true'),
+         ('logInternals', 'false'),
          ('secondsToRefresh', '30');
 
 -- Levels of the logger utility.
