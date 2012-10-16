@@ -60,6 +60,12 @@ hierarchy. PARENT_ID indicates its ancestry.
 * Do not try to modify the values of a logger. If a logger was mis-defined,
 create a new one (new LOGGER_ID, correct NAME, probably same PARENT_ID).
 
+LG0C3
+There could be only one ROOT logger
+* Trying to insert a second ROOT logger with values (ID = 0, PARENT = NULL),
+however it already exists in the table.
+* This operation is not permitted, insert other levels different to ROOT.
+
 ==== CONF_LOGGERS_EFFECTIVE TABLE
 
 LG0E1
@@ -86,12 +92,18 @@ table is modified. However, this value cannot be modified manually, and it
 should match the established value in the configuration table.
 * Update the LEVEL_ID to the same level defined in the CONF_LOGGERS table.
 
-LG0C4
+LG0E4
 ROOT logger cannot be deleted.
 * There should always exist the ROOT logger in the CONF_LOGGERS_EFFECTIVE table.
 It cannot be deleted, because this is the origin of the ancestry for any level.
 * If you are deleting in bulk (DELETE FROM CONF_LOGGERS_EFEFCTIVE) put a
 condition to not delete ROOT logger.
+
+LG0E5
+There could be only one ROOT logger
+* Trying to insert a second ROOT logger with values (ID = 0, PARENT = NULL),
+however it already exists in the table.
+* This operation is not permitted, insert other levels different to ROOT.
 
 ==== CONF_APPENDERS TABLE
 
