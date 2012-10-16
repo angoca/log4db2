@@ -24,6 +24,7 @@ ALTER MODULE LOGGER ADD
  */
 ALTER MODULE LOGGER ADD
   VARIABLE LOADED BOOLEAN DEFAULT FALSE @
+
 /**
  * Variable for the last time the configuration was loaded.
  */
@@ -60,7 +61,7 @@ ALTER MODULE LOGGER ADD
  * Complete logger name.
  */
 ALTER MODULE LOGGER ADD
-  VARIABLE COMPLETE_LOGGER_NAME VARCHAR(256)@
+  VARIABLE COMPLETE_LOGGER_NAME VARCHAR(256) @
 
 /**
  * Loggers type.
