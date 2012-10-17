@@ -100,12 +100,6 @@ It cannot be deleted, because this is the origin of the ancestry for any level.
 condition to not delete ROOT logger.
 
 LG0E5
-There could be only one ROOT logger.
-* Trying to insert a second ROOT logger with values (ID = 0, PARENT = NULL),
-however it already exists in the table.
-* This operation is not permitted, insert other levels different to ROOT.
-
-LG0E6
 Inserting a duplicate logger.
 * It already exists a logger with the same name in the same position of the
 hierarchy (same PARENT_ID).

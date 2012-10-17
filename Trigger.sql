@@ -148,19 +148,32 @@ CREATE OR REPLACE TRIGGER T1_EFFECTIVE_CHECK
   BEFORE INSERT OR UPDATE ON LOGDATA.CONF_LOGGERS_EFFECTIVE
   REFERENCING NEW AS N
   FOR EACH ROW
- WHEN (N.PARENT_ID IS NULL AND (N.LOGGER_ID <> 0 OR N.LOGGER_ID IS NULL))
-  T_CHK_CONF_LOGGER_EFFECTIVE: BEGIN
+ T_CHK_CONF_LOGGER_EFFECTIVE: BEGIN
+  DECLARE LOGGER ANCHOR LOGDATA.CONF_LOGGERS.LOGGER_ID;
 
   -- Debug
   -- INSERT INTO LOGS (LEVEL_ID, LOGGER_ID, MESSAGE) VALUES (5, -1, 'FLAG 3');
 
-   SIGNAL SQLSTATE VALUE 'LG0E1'
-     SET MESSAGE_TEXT = 'The only logger without parent is ROOT';
-  END T_CHK_CONF_LOGGER_EFFECTIVE @
+  -- ParentId is null.
+  IF (N.PARENT_ID IS NULL) THEN
+   --  Checks if there is root logger defined with 0 as id.
+   SELECT LOGGER_ID INTO LOGGER
+     FROM LOGDATA.CONF_LOGGERS_EFFECTIVE
+     WHERE LOGGER_ID = 0;
+   IF (N.LOGGER_ID <> 0 OR N.LOGGER_ID IS NULL) THEN
+   -- The provided id is diff to zero or is null
+    SIGNAL SQLSTATE VALUE 'LG0E1'
+      SET MESSAGE_TEXT = 'The only logger without parent is ROOT';
+   ELSEIF (LOGGER IS NOT NULL) THEN
+    -- There is a ROOT logged already defined.
+    SIGNAL SQLSTATE VALUE 'LG0E1'
+      SET MESSAGE_TEXT = 'The only logger without parent is ROOT';
+   END IF;
+  END IF;
+ END T_CHK_CONF_LOGGER_EFFECTIVE @
 
 /**
- * Checks that there could one be one ROOT logger in the table, and no
- * duplicates.
+ * Checks for duplicates.
  */
 CREATE OR REPLACE TRIGGER T2_EFFECTIVE_NO_DUPLICATES
   BEFORE INSERT ON LOGDATA.CONF_LOGGERS_EFFECTIVE
@@ -172,24 +185,13 @@ CREATE OR REPLACE TRIGGER T2_EFFECTIVE_NO_DUPLICATES
   -- Debug
   -- INSERT INTO LOGS (LEVEL_ID, LOGGER_ID, MESSAGE) VALUES (5, -1, 'FLAG 10 - ' || coalesce(N.LOGGER_ID,-1) || '-' || coalesce (N.PARENT_ID, -1) || '-' || coalesce (N.LEVEL_ID, -1));
 
-  -- Prevents to insert a second logger.
-  IF (N.LOGGER_ID = 0) THEN
-   SELECT LOGGER_ID INTO LOGGER
-     FROM LOGDATA.CONF_LOGGERS
-     WHERE LOGGER_ID = 0;
-   IF (LOGGER IS NOT NULL) THEN
-     -- Raises an error.
-     SIGNAL SQLSTATE VALUE 'LG0E5'
-       SET MESSAGE_TEXT = 'There could be only one ROOT logger';
-   END IF;
-  END IF;
   SELECT LOGGER_ID INTO LOGGER
     FROM LOGDATA.CONF_LOGGERS_EFFECTIVE
     WHERE NAME = N.NAME
     AND PARENT_ID = N.PARENT_ID;
   IF (LOGGER IS NOT NULL) THEN
      -- Raises an error.
-     SIGNAL SQLSTATE VALUE 'LG0E6'
+     SIGNAL SQLSTATE VALUE 'LG0E5'
        SET MESSAGE_TEXT = 'Inserting a duplicate logger';
   END IF;
  END T_EFFECT_NO_DUP @
