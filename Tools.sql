@@ -206,7 +206,7 @@ ALTER MODULE LOGGER ADD
  END P_SET_CACHE @
 
 /**
- * Procedure that dumps the configuration. It returns two result set. The
+ * Procedure that dumps the configuration. It returns two result setS. The
  * first is a one-row result set providing the information when the
  * configuration was loaded, and when it will be reloaded (with its frequency).
  * In the other result set, it shows the key-values from the configuration, if
@@ -214,6 +214,8 @@ ALTER MODULE LOGGER ADD
  * This procedure shows the configuration, but it does not reload it, for this
  * reason, the next refresh time could be in the past, because the get_value
  * is the only one that refreshes the configuration.
+ * If the cache is in false in the configuration, but the configuration has
+ * not been read, it will show that the cache is active (by default).
  * The procedure shows an error message at the end: SQL20439N - SQLSTATE=2202E
  * and it is due that when scanning the params it uses a helper table. 
  */
@@ -244,12 +246,12 @@ ALTER MODULE LOGGER ADD
     END IF;
    END;
    -- Creates and prepares a dynamic query.
-   SET STMT = 'SELECT CASE CACHE WHEN TRUE '
-     || 'THEN ''true'' ELSE ''false'' END AS INTERNAL_CACHE_ACTIVATED, '
+   SET STMT = 'SELECT CASE WHEN LOADED = FALSE THEN ''Unknown'' '
+     || 'WHEN CACHE = TRUE THEN ''true'' '
+     || 'ELSE ''false'' END AS INTERNAL_CACHE_ACTIVATED, '
      || 'LAST_REFRESH AS LAST_REFRESH, '
      || SECS || ' AS FREQUENCY, '
-     || 'CASE ' || SECS || ' '
-     || 'WHEN -1 THEN ''Not defined'' '
+     || 'CASE WHEN ' || SECS || ' = -1 OR CACHE = FALSE THEN ''Not defined'' '
      || 'ELSE CHAR(LAST_REFRESH + ' || SECS || ' SECONDS) '
      || 'END AS NEXT_REFRESH, '
      || '''' || CURRENT TIMESTAMP || ''' AS CURRENT_TIME '
