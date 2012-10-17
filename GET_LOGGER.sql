@@ -126,9 +126,9 @@ ALTER MODULE LOGGER ADD
        -- Logger is NOT registered in none of the tables.
        IF (SON IS NULL) THEN
         -- Registers the new logger and retrieves the id. Switches the parent id.
-        SELECT LOGGER_ID INTO PARENT FROM FINAL TABLE (
-          INSERT INTO LOGDATA.CONF_LOGGERS_EFFECTIVE (NAME, PARENT_ID, LEVEL_ID)
-          VALUES (STRING, PARENT, PARENT_LEVEL));
+        INSERT INTO LOGDATA.CONF_LOGGERS_EFFECTIVE (NAME, PARENT_ID, LEVEL_ID)
+          VALUES (STRING, PARENT, PARENT_LEVEL);
+        SET PARENT = PREVIOUS VALUE FOR LOGDATA.LOGGER_ID_SEQ;
        ELSE
         -- It is already register in the effective table, thus take the id of that
         -- logger as parent.
