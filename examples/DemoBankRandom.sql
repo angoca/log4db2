@@ -17,7 +17,7 @@ BEGIN
  
  CALL LOGGER.GET_LOGGER('DemoBank.Simulation', LOGGER_ID);
  
- CALL LOGGER.INFO (LOGGER_ID, 'Starting simulation');
+ CALL LOGGER.ERROR (LOGGER_ID, 'Starting simulation');
 
  SET FIRST_NAMES[1] = 'Andres';
  SET FIRST_NAMES[2] = 'David';
@@ -166,5 +166,5 @@ BEGIN
   SET ITERATION = ITERATION + 1;
  END WHILE;
  
- CALL LOGGER.INFO (LOGGER_ID, 'Ending simulation');
+ CALL LOGGER.ERROR (LOGGER_ID, 'Ending simulation');
 END @
