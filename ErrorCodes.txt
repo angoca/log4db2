@@ -68,7 +68,7 @@ however it already exists in the table.
 
 ==== CONF_LOGGERS_EFFECTIVE TABLE
 
-LG0E1
+LGxE1 (LGAE1, LGBE1)
 The only logger without parent is ROOT.
 * All loggers should have a parent. The only one that do not have ascendency is
 ROOT. Remember that this table is managed by the application, this means that
@@ -85,7 +85,7 @@ by the application, this means that the users do not have to modify it directly.
 * Do not try to modify the values of a logger. If a logger was mis-defined,
 create a new one (new LOGGER_ID, correct NAME, probably same PARENT_ID).
 
-LG0E3
+LG0E3 (LGAE3, LGBE3)
 It is not possible to update the LEVEL_ID manually.
 * The LEVEL_ID is updated when the associated configuration in the CONF_LOGGERS
 table is modified. However, this value cannot be modified manually, and it
