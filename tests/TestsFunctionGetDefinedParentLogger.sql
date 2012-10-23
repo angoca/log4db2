@@ -41,6 +41,9 @@ UPDATE LOGDATA.CONFIGURATION
 UPDATE LOGDATA.CONFIGURATION
   SET VALUE = 'false'
   WHERE KEY = 'internalCache';
+UPDATE LOGDATA.CONFIGURATION
+  SET VALUE = 'false'
+  WHERE KEY = 'logInternals';
 COMMIT;
 
 -- Test1: Get default ROOT level.
