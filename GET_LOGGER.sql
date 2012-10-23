@@ -66,8 +66,8 @@ ALTER MODULE LOGGER ADD
   PARAMETER CCSID UNICODE
  P_GET_LOGGER: BEGIN
   IF (GET_VALUE(LOGGER.LOG_INTERNALS) = LOGGER.VAL_TRUE) THEN
-   INSERT INTO LOGDATA.LOGS (LEVEL_ID, LOGGER_ID, MESSAGE) VALUES 
-     (4, -1, 'Getting logger name for ' || COALESCE(NAME, 'null'));
+   INSERT INTO LOGDATA.LOGS (DATE, LEVEL_ID, LOGGER_ID, MESSAGE) VALUES 
+     (GENERATE_UNIQUE(), 4, -1, 'Getting logger name for ' || COALESCE(NAME, 'null'));
   END IF;
   -- Checks the value in the cache if active.
   BEGIN
@@ -196,8 +196,8 @@ ALTER MODULE LOGGER ADD
       --SET LOGGERS_NAMES[POS + 1] = NAME;
       -- Internal logging.
       IF (GET_VALUE(LOGGER.LOG_INTERNALS) = LOGGER.VAL_TRUE) THEN
-       INSERT INTO LOGDATA.LOGS (LEVEL_ID, LOGGER_ID, MESSAGE) VALUES 
-         (4, -1, 'Logger not in cache ' || NAME || ' with ' || LOGGER_ID );--|| ' pos ' || POS);
+       INSERT INTO LOGDATA.LOGS (DATE, LEVEL_ID, LOGGER_ID, MESSAGE) VALUES 
+         (GENERATE_UNIQUE(), 4, -1, 'Logger not in cache ' || NAME || ' with ' || LOGGER_ID );--|| ' pos ' || POS);
       END IF;
      END;
     END IF;
@@ -205,7 +205,7 @@ ALTER MODULE LOGGER ADD
   END IF;
   -- Internal logging.
   IF (GET_VALUE(LOGGER.LOG_INTERNALS) = LOGGER.VAL_TRUE) THEN
-   INSERT INTO LOGDATA.LOGS (LEVEL_ID, LOGGER_ID, MESSAGE) VALUES 
-     (4, -1, 'Logger ID for ' || NAME || ' is ' || COALESCE(LOGGER_ID, -1));
+   INSERT INTO LOGDATA.LOGS (DATE, LEVEL_ID, LOGGER_ID, MESSAGE) VALUES 
+     (GENERATE_UNIQUE(), 4, -1, 'Logger ID for ' || NAME || ' is ' || COALESCE(LOGGER_ID, -1));
   END IF;
  END P_GET_LOGGER @
