@@ -799,7 +799,7 @@ IF (EXPECTED_LEVEL <> ACTUAL_LEVEL) THEN
 END IF;
 COMMIT;
 
--- TODO Test39: Update the level of ROOT logger, value from conf.
+-- Test39: Update the level of ROOT logger, value from conf.
 INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES (3, 'Test39: Update the level of ROOT logger, value from conf');
 SET EXPECTED_LOGGER = 0;
 SET EXPECTED_PARENT = NULL;
@@ -824,7 +824,7 @@ IF (EXPECTED_LEVEL <> ACTUAL_LEVEL) THEN
 END IF;
 COMMIT;
 
--- TODO Test40: Update the level of ROOT logger when conf is empty, takes default.
+-- Test40: Update the level of ROOT logger when conf is empty, takes default.
 INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES (3, 'Test40: Update the level of ROOT logger when conf is empty, takes default');
 SET EXPECTED_LOGGER = 0;
 SET EXPECTED_PARENT = NULL;
