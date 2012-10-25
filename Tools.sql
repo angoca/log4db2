@@ -156,6 +156,7 @@ ALTER MODULE LOGGER ADD
      SET LAST_REFRESH = CURRENT TIMESTAMP;
     END;
     -- Checks the variable for internal cache
+   -- TODO remove if the trigger works correctly
     BEGIN
      -- NULL if the key is not in the configuration.
      DECLARE EXIT HANDLER FOR SQLSTATE '2202E'
@@ -177,6 +178,7 @@ ALTER MODULE LOGGER ADD
     SET RET = CONFIGURATION[GIVEN_KEY];
    END;
   ELSE -- Does not use the internal cache but a query.
+   -- TODO remove if the trigger works correctly
    -- Checks the cache status.
    SELECT C.VALUE INTO RET
      FROM LOGDATA.CONFIGURATION C
@@ -204,6 +206,28 @@ ALTER MODULE LOGGER ADD
  P_SET_CACHE: BEGIN
   SET LOGGERS[LOGGER] = LEVEL;
  END P_SET_CACHE @
+
+/**
+ * Activates the cache.
+ */
+ALTER MODULE LOGGER ADD
+  PROCEDURE ACTIVATE_CACHE (
+  )
+ P_ACT_CACHE: BEGIN
+  SET CACHE = TRUE;
+  SET LOADED = FALSE;
+ END P_ACT_CACHE@
+
+/**
+ * Cleans the cache, and deactives it.
+ */
+ALTER MODULE LOGGER ADD
+  PROCEDURE DEACTIVATE_CACHE (
+  )
+ P_DEA_CACHE: BEGIN
+  SET CACHE = FALSE;
+  SET LOADED = FALSE;
+ END P_DEA_CACHE@
 
 /**
  * Procedure that dumps the configuration. It returns two result setS. The
