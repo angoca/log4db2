@@ -110,14 +110,15 @@ CREATE OR REPLACE TRIGGER T1_CONF_LOGGERS_ID
     -- Raises an error.
     SIGNAL SQLSTATE VALUE 'LG0C1'
       SET MESSAGE_TEXT = 'The only logger without parent is ROOT';
-   END IF;
-   SELECT LOGGER_ID INTO LOGGER
-     FROM LOGDATA.CONF_LOGGERS
-     WHERE LOGGER_ID = 0;
-   IF (LOGGER IS NOT NULL) THEN
-    -- Raises an error.
-    SIGNAL SQLSTATE VALUE 'LG0C3'
-      SET MESSAGE_TEXT = 'There could be only one ROOT logger';
+   ELSEIF (INSERTING) THEN
+    SELECT LOGGER_ID INTO LOGGER
+      FROM LOGDATA.CONF_LOGGERS
+      WHERE LOGGER_ID = 0;
+    IF (LOGGER IS NOT NULL) THEN
+     -- Raises an error.
+     SIGNAL SQLSTATE VALUE 'LG0C3'
+       SET MESSAGE_TEXT = 'There could be only one ROOT logger';
+    END IF;
    END IF;
   END IF;
   -- Prevents to insert a second logger.
@@ -153,20 +154,21 @@ CREATE OR REPLACE TRIGGER T2_CONF_LOGGERS_NO_UPDATE
  */
 CREATE OR REPLACE TRIGGER T3_CONF_LOGGER_SYNC
   AFTER INSERT OR UPDATE OR DELETE ON LOGDATA.CONF_LOGGERS
-  REFERENCING OLD AS O
+  REFERENCING OLD AS O NEW AS N
   FOR EACH ROW
  T_SYNC_CONF: BEGIN
 
   -- Debug
-  -- INSERT INTO LOGS (LEVEL_ID, LOGGER_ID, MESSAGE) VALUES (5, -1, 'tFLAG 4');
+  -- INSERT INTO LOGS (LEVEL_ID, LOGGER_ID, MESSAGE) VALUES (5, -1, 'tFLAG 4 ' || COALESCE(N.LEVEL_ID,-1) || '<>' ||COALESCE(O.LEVEL_ID,-1));
 
-  -- It updates the same logger in the configuration, but with the trigger
-  -- the descendancy is updated. The level_id provided is recalculated in the
-  -- trigger, so the provided is a dummy.
-  UPDATE LOGDATA.CONF_LOGGERS_EFFECTIVE
-    SET LEVEL_ID = 0
-    WHERE LOGGER_ID = O.LOGGER_ID
-    WITH UR;
+  IF (N.LEVEL_ID <> O.LEVEL_ID) THEN
+   -- It updates the same logger in the configuration, but with the trigger
+   -- the descendancy is updated. The level_id provided is recalculated in the
+   -- trigger, so the provided is a dummy.
+   UPDATE LOGDATA.CONF_LOGGERS_EFFECTIVE
+     SET LEVEL_ID = 0
+     WHERE LOGGER_ID = N.LOGGER_ID;
+  END IF;
  END T_SYNC_CONF @
 
 -- Table LOGDATA.CONF_LOGGERS_EFFECTIVE.
@@ -263,7 +265,8 @@ CREATE OR REPLACE TRIGGER T3_EFFECTIVE_INSERT
    -- INSERT INTO LOGS (LEVEL_ID, LOGGER_ID, MESSAGE) VALUES (5, -1, 'tFLAG 8 - ' || coalesce (N.LOGGER_ID, -1));
 
    -- Gets the value from an ascendency or default.
-   SET N.LEVEL_ID = LOGADMIN.GET_DEFINED_PARENT_LOGGER(N.LOGGER_ID);
+   -- SET N.LEVEL_ID = LOGADMIN.GET_DEFINED_PARENT_LOGGER(N.LOGGER_ID);
+   CALL LOGADMIN.GET_DEFINED_PARENT_LOGGER(N.LOGGER_ID, N.LEVEL_ID);
   ELSE
    -- Gets the value from the configuration. 
    SET N.LEVEL_ID = LEVEL;
@@ -309,7 +312,8 @@ CREATE OR REPLACE TRIGGER T5_EFFECTIVE_LEVEL_UPDATE_DELETE
    -- There is not a defined level for this logger, it was probably deleted in
    -- conf or this level has never been configured.
    -- Gets the configured level from the closer ascendency or default value.
-   SET N.LEVEL_ID = LOGADMIN.GET_DEFINED_PARENT_LOGGER(N.LOGGER_ID);
+   -- SET N.LEVEL_ID = LOGADMIN.GET_DEFINED_PARENT_LOGGER(N.LOGGER_ID);
+   CALL LOGADMIN.GET_DEFINED_PARENT_LOGGER(N.LOGGER_ID, N.LEVEL_ID);
   ELSEIF (LEV_ID_CONF <> N.LEVEL_ID AND N.LEVEL_ID <> 0) THEN
    -- The provided value is not the same that in the configuration. Abort.
    -- Trying to update this value manually, with different value that the one
@@ -318,7 +322,7 @@ CREATE OR REPLACE TRIGGER T5_EFFECTIVE_LEVEL_UPDATE_DELETE
      SET MESSAGE_TEXT = 'It is not possible to update the LEVEL_ID manually';
   ELSEIF (N.LOGGER_ID IS NULL) THEN
    SIGNAL SQLSTATE VALUE 'PAILA'
-     SET MESSAGE_TEXT = 'LOGGER_ID IS NULL';
+     SET MESSAGE_TEXT = 'LOGGER_ID IS NULL - TODO';
   END IF;
  END T_UPDATE_DELETE @
 
