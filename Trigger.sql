@@ -265,8 +265,8 @@ CREATE OR REPLACE TRIGGER T3_EFFECTIVE_INSERT
    -- INSERT INTO LOGS (LEVEL_ID, LOGGER_ID, MESSAGE) VALUES (5, -1, 'tFLAG 8 - ' || coalesce (N.LOGGER_ID, -1));
 
    -- Gets the value from an ascendency or default.
-   -- SET N.LEVEL_ID = LOGADMIN.GET_DEFINED_PARENT_LOGGER(N.LOGGER_ID);
-   CALL LOGADMIN.GET_DEFINED_PARENT_LOGGER(N.LOGGER_ID, N.LEVEL_ID);
+   SET N.LEVEL_ID = LOGADMIN.GET_DEFINED_PARENT_LOGGER(N.LOGGER_ID);
+   -- CALL LOGADMIN.GET_DEFINED_PARENT_LOGGER(N.LOGGER_ID, N.LEVEL_ID);
   ELSE
    -- Gets the value from the configuration. 
    SET N.LEVEL_ID = LEVEL;
@@ -312,8 +312,8 @@ CREATE OR REPLACE TRIGGER T5_EFFECTIVE_LEVEL_UPDATE_DELETE
    -- There is not a defined level for this logger, it was probably deleted in
    -- conf or this level has never been configured.
    -- Gets the configured level from the closer ascendency or default value.
-   -- SET N.LEVEL_ID = LOGADMIN.GET_DEFINED_PARENT_LOGGER(N.LOGGER_ID);
-   CALL LOGADMIN.GET_DEFINED_PARENT_LOGGER(N.LOGGER_ID, N.LEVEL_ID);
+   SET N.LEVEL_ID = LOGADMIN.GET_DEFINED_PARENT_LOGGER(N.LOGGER_ID);
+   -- CALL LOGADMIN.GET_DEFINED_PARENT_LOGGER(N.LOGGER_ID, N.LEVEL_ID);
   ELSEIF (LEV_ID_CONF <> N.LEVEL_ID AND N.LEVEL_ID <> 0) THEN
    -- The provided value is not the same that in the configuration. Abort.
    -- Trying to update this value manually, with different value that the one
