@@ -326,6 +326,21 @@ CREATE OR REPLACE TRIGGER T5_EFFECTIVE_LEVEL_UPDATE_DELETE
   END IF;
  END T_UPDATE_DELETE @
 
+create or replace trigger dump
+  before update or insert on logdata.conf_loggers_effective
+  referencing new as n
+  for each row
+ begin
+
+  if (N.LEVEL_ID is null) then
+  -- Debug
+  INSERT INTO LOGS (LEVEL_ID, LOGGER_ID, MESSAGE) VALUES (1, -1, 'tFLAG xxxxx - ' || coalesce (N.LOGGER_ID, -1) || '-' || coalesce (N.NAME, null) || '-' || coalesce (N.PARENT_id, -1) || '-' || coalesce (N.LEVEL_ID, -1));
+
+  SET N.LEVEL_ID = 0;
+  end if;
+  
+ end@
+
 /**
  * Updates the descendancy based on the configuration. If the conf was deleted
  * from the same logger, it is retrieved from the ascendency or default value,
