@@ -214,7 +214,7 @@ CREATE OR REPLACE SEQUENCE LOGGER_ID_SEQ
 -- Global configuration.
 -- checkHierarchy: Checks the logger hierarchy.
 -- checkLevels: Checks the levels definition.
--- defaultRootLevel: Default ROOT logger when it is not defined.
+-- defaultRootLevel: Default ROOT logger when it is not defined (not cached)
 -- internalCache: Use internal cache instead of SELECT for each time.
 -- logInternals: Logs internal messages.
 -- secondsToRefresh: Quantity of second before refresh the conf.
