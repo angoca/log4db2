@@ -17,13 +17,18 @@ CREATE OR REPLACE TRIGGER T1_CONF_CACHE
   -- Debug
   INSERT INTO LOGS (LEVEL_ID, LOGGER_ID, MESSAGE) VALUES (5, -1, 'tFLAG 0');
 
-  IF (N.KEY = 'internalCache') THEN
-   IF (N.VALUE = 'true') THEN
-    CALL LOGGER.ACTIVATE_CACHE();
+  CASE N.KEY
+   WHEN 'internalCache' THEN
+    IF (N.VALUE = 'true') THEN
+     CALL LOGGER.ACTIVATE_CACHE();
+    ELSE
+     CALL LOGGER.DEACTIVATE_CACHE();
+    END IF;
+   WHEN 'defaultRootLevel' THEN
+    -- TODO UPDATE EFFECTIVE
    ELSE
-    CALL LOGGER.DEACTIVATE_CACHE();
-   END IF;
-  END IF;
+    -- NOTHING.
+  END CASE;
  END T_CONF_CACHE@
 
 -- Table LOGDATA.LEVELS.
@@ -153,22 +158,45 @@ CREATE OR REPLACE TRIGGER T2_CONF_LOGGERS_NO_UPDATE
  * configuration.
  */
 CREATE OR REPLACE TRIGGER T3_CONF_LOGGER_SYNC
-  AFTER INSERT OR UPDATE OR DELETE ON LOGDATA.CONF_LOGGERS
+  AFTER INSERT OR UPDATE -- TODO OR DELETE 
+  ON LOGDATA.CONF_LOGGERS
   REFERENCING OLD AS O NEW AS N
   FOR EACH ROW
  T_SYNC_CONF: BEGIN
+  DECLARE LEVEL ANCHOR LOGDATA.LEVELS.LEVEL_ID;
+  DECLARE LOGGER ANCHOR LOGDATA.CONF_LOGGERS.LOGGER_ID;
 
   -- Debug
-  INSERT INTO LOGS (LEVEL_ID, LOGGER_ID, MESSAGE) VALUES (5, -1, 'tFLAG 4 ' || COALESCE(N.LEVEL_ID,-1) || '<>' ||COALESCE(O.LEVEL_ID,-1));
+  INSERT INTO LOGS (LEVEL_ID, LOGGER_ID, MESSAGE) VALUES (5, -1, 'tFLAG 4 ' || COALESCE(N.LOGGER_ID,-1) || '=' || COALESCE(N.LEVEL_ID,-1) || '<>' ||COALESCE(O.LEVEL_ID,-1));
 
-  IF (N.LEVEL_ID <> O.LEVEL_ID) THEN
-   -- It updates the same logger in the configuration, but with the trigger
-   -- the descendancy is updated. The level_id provided is recalculated in the
-   -- trigger, so the provided is a dummy.
-   UPDATE LOGDATA.CONF_LOGGERS_EFFECTIVE
-     SET LEVEL_ID = 0
-     WHERE LOGGER_ID = N.LOGGER_ID;
+  -- It updates the same logger in the configuration, but with the trigger
+  -- the descendancy is updated.
+  IF (N.LEVEL_ID IS NOT NULL) THEN
+   SET LEVEL = N.LEVEL_ID;
+   SET LOGGER = N.LOGGER_ID;
+  ELSE
+   IF (DELETING) THEN
+    IF (O.LOGGER_ID IS NULL) THEN
+     SET LOGGER = 0;
+    ELSE
+     SET LOGGER = O.LOGGER_ID;
+    END IF;
+   ELSE -- Inserting or updating.
+    SET LOGGER = N.LOGGER_ID;
+   END IF;
+
+   -- Debug
+   INSERT INTO LOGS (LEVEL_ID, LOGGER_ID, MESSAGE) VALUES (5, -1, 'tFLAG 4.0 ' || COALESCE(LOGGER,-1));
+
+   SET LEVEL = LOGADMIN.GET_DEFINED_PARENT_LOGGER(LOGGER);
   END IF;
+
+  -- Debug
+  INSERT INTO LOGS (LEVEL_ID, LOGGER_ID, MESSAGE) VALUES (5, -1, 'tFLAG 4.1 ' || COALESCE(LOGGER,-1) || '<>' ||COALESCE(LEVEL,-1));
+
+  UPDATE LOGDATA.CONF_LOGGERS_EFFECTIVE
+    SET LEVEL_ID = LEVEL
+    WHERE LOGGER_ID = LOGGER;
  END T_SYNC_CONF @
 
 -- Table LOGDATA.CONF_LOGGERS_EFFECTIVE.
@@ -185,7 +213,7 @@ CREATE OR REPLACE TRIGGER T1_EFFECTIVE_CHECK
   DECLARE LOGGER ANCHOR LOGDATA.CONF_LOGGERS.LOGGER_ID;
 
   -- Debug
-  INSERT INTO LOGS (LEVEL_ID, LOGGER_ID, MESSAGE) VALUES (5, -1, 'tFLAG 5');
+  INSERT INTO LOGS (LEVEL_ID, LOGGER_ID, MESSAGE) VALUES (5, -1, 'tFLAG 5 =' || coalesce(N.LOGGER_ID,-1));
 
   -- ParentId is null.
   IF (N.PARENT_ID IS NULL) THEN
@@ -326,21 +354,6 @@ CREATE OR REPLACE TRIGGER T5_EFFECTIVE_LEVEL_UPDATE_DELETE
   END IF;
  END T_UPDATE_DELETE @
 
-create or replace trigger dump
-  before update or insert on logdata.conf_loggers_effective
-  referencing new as n
-  for each row
- begin
-
-  if (N.LEVEL_ID is null) then
-  -- Debug
-  INSERT INTO LOGS (LEVEL_ID, LOGGER_ID, MESSAGE) VALUES (1, -1, 'tFLAG xxxxx - ' || coalesce (N.LOGGER_ID, -1) || '-' || coalesce (N.NAME, null) || '-' || coalesce (N.PARENT_id, -1) || '-' || coalesce (N.LEVEL_ID, -1));
-
-  SET N.LEVEL_ID = 0;
-  end if;
-  
- end@
-
 /**
  * Updates the descendancy based on the configuration. If the conf was deleted
  * from the same logger, it is retrieved from the ascendency or default value,
@@ -353,7 +366,7 @@ CREATE OR REPLACE TRIGGER T6_EFFECTIVE_LEVEL_UPDATE
  T_UPDATE_EFFEC: BEGIN
 
   -- Debug
-  INSERT INTO LOGS (LEVEL_ID, LOGGER_ID, MESSAGE) VALUES (5, -1, 'tFLAG 11 - ' || coalesce (N.LEVEL_ID, -1));
+  INSERT INTO LOGS (LEVEL_ID, LOGGER_ID, MESSAGE) VALUES (5, -1, 'tFLAG 11 = ' || coalesce (N.LOGGER_ID, -1) || '=' || coalesce (N.LEVEL_ID, -1));
 
   -- The provided level was verified in the previous trigger, thus
   -- update the descendency.
