@@ -233,6 +233,7 @@ COMMIT;
 -- Cleans the environment.
 INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES (3, 'TestsConfiguration: Cleaning environment');
 DELETE FROM LOGDATA.CONFIGURATION;
+-- TODO Restablish the correct configuration
 INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES (3, 'TestsConfiguration: Finished succesfully');
 COMMIT;
 
