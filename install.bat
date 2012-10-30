@@ -1,6 +1,3 @@
-db2 -tf CleanTriggers.sql
-db2 -tf CleanObjects.sql
-db2 -tf CleanTables.sql
 db2 -tf Tables.sql
 db2 -tf Objects.sql
 db2 -td@ -f Tools.sql
