@@ -1,7 +1,7 @@
 --#SET TERMINATOR @
 
 /**
- * Tests for the logger insertions.
+ * Tests for the configuration table.
  */
 
 SET CURRENT SCHEMA LOGGER_1A @
@@ -40,6 +40,8 @@ DECLARE CONTINUE HANDLER FOR NOT FOUND
 
 -- Prepares the environment.
 INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES (4, 'TestsConfiguration: Preparing environment');
+SET RAISED_407 = FALSE;
+SET RAISED_803 = FALSE;
 DELETE FROM LOGDATA.CONFIGURATION;
 COMMIT;
 
@@ -233,7 +235,13 @@ COMMIT;
 -- Cleans the environment.
 INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES (3, 'TestsConfiguration: Cleaning environment');
 DELETE FROM LOGDATA.CONFIGURATION;
--- TODO Restablish the correct configuration
+INSERT INTO CONFIGURATION (KEY, VALUE)
+  VALUES ('checkHierarchy', 'false'),
+         ('checkLevels', 'false'),
+         ('defaultRootLevel', 'WARN'),
+         ('internalCache', 'true'),
+         ('logInternals', 'false'),
+         ('secondsToRefresh', '30');
 INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES (3, 'TestsConfiguration: Finished succesfully');
 COMMIT;
 

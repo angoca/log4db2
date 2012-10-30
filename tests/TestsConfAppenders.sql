@@ -95,8 +95,8 @@ END IF;
 SET RAISED_798 = FALSE;
 COMMIT;
 
--- Test4: Inserts an appender_ref with negative id.
-INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES (3, 'Test4: Inserts an appender_ref with negative id');
+-- Test5: Inserts an appender_ref with negative id.
+INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES (3, 'Test5: Inserts an appender_ref with negative id');
 SET STMT = 'INSERT INTO LOGDATA.CONF_APPENDERS (REF_ID, NAME, APPENDER_ID, PATTERN) VALUES (-1, ''test4'', 1, ''%m'')';
 PREPARE PREP FROM STMT;
 IF (RAISED_798 = FALSE) THEN
@@ -107,9 +107,9 @@ END IF;
 SET RAISED_798 = FALSE;
 COMMIT;
 
--- Test5: Inserts an appender_ref with null id.
-INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES (3, 'Test5: Inserts an appender_ref with null id');
-SET STMT = 'INSERT INTO LOGDATA.CONF_APPENDERS (REF_ID, NAME, APPENDER_ID, PATTERN) VALUES (NULL, ''test5'', 1, ''%m'')';
+-- Test6: Inserts an appender_ref with null id.
+INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES (3, 'Test6: Inserts an appender_ref with null id');
+SET STMT = 'INSERT INTO LOGDATA.CONF_APPENDERS (REF_ID, NAME, APPENDER_ID, PATTERN) VALUES (NULL, ''test6'', 1, ''%m'')';
 PREPARE PREP FROM STMT;
 IF (RAISED_798 = FALSE) THEN
  INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES (3, 'Exception not raised');
@@ -119,11 +119,11 @@ END IF;
 SET RAISED_798 = FALSE;
 COMMIT;
 
--- Test6: Updates an appender_ref with null appender_id.
-INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES (3, 'Test6: Updates an appender_ref with null appender_id');
+-- Test7: Updates an appender_ref with null appender_id.
+INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES (3, 'Test7: Updates an appender_ref with null appender_id');
 SELECT REF_ID INTO ID FROM FINAL TABLE (
   INSERT INTO LOGDATA.CONF_APPENDERS (NAME, APPENDER_ID, PATTERN) VALUES
-  ('test6', 1, '%m'));
+  ('test7', 1, '%m'));
 UPDATE LOGDATA.CONF_APPENDERS
   SET APPENDER_ID = NULL
   WHERE REF_ID = ID;
@@ -135,11 +135,11 @@ END IF;
 SET RAISED_407 = FALSE;
 COMMIT;
 
--- Test7: Updates an appender with inexistant appender_id.
-INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES (3, 'Test7: Updates an appender_ref with inexistant appender_id');
+-- Test8: Updates an appender with inexistant appender_id.
+INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES (3, 'Test8: Updates an appender_ref with inexistant appender_id');
 SELECT REF_ID INTO ID FROM FINAL TABLE (
   INSERT INTO LOGDATA.CONF_APPENDERS (NAME, APPENDER_ID, PATTERN) VALUES
-  ('test7', 1, '%m'));
+  ('test8', 1, '%m'));
 UPDATE LOGDATA.CONF_APPENDERS
   SET APPENDER_ID = 0
   WHERE REF_ID = ID;
@@ -151,11 +151,11 @@ END IF;
 SET RAISED_530 = FALSE;
 COMMIT;
 
--- Test8: Updates an appender_ref with negative id.
-INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES (3, 'Test8: Updates an appender_ref with negative id');
+-- Test9: Updates an appender_ref with negative id.
+INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES (3, 'Test9: Updates an appender_ref with negative id');
 SELECT REF_ID INTO ID FROM FINAL TABLE (
   INSERT INTO LOGDATA.CONF_APPENDERS (NAME, APPENDER_ID, PATTERN) VALUES
-  ('test8', 1, '%m'));
+  ('test9', 1, '%m'));
 SET STMT = 'UPDATE LOGDATA.CONF_APPENDERS SET REF_ID = -1 WHERE REF_ID = ' || ID;
 PREPARE PREP FROM STMT;
 IF (RAISED_798 = FALSE) THEN
@@ -166,11 +166,11 @@ END IF;
 SET RAISED_798 = FALSE;
 COMMIT;
 
--- Test9: Updates an appender_ref with null id.
-INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES (3, 'Test9: Updates an appender_ref with null id');
+-- Test10: Updates an appender_ref with null id.
+INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES (3, 'Test10: Updates an appender_ref with null id');
 SELECT REF_ID INTO ID FROM FINAL TABLE (
   INSERT INTO LOGDATA.CONF_APPENDERS (NAME, APPENDER_ID, PATTERN) VALUES
-  ('test9', 1, '%m'));
+  ('test10', 1, '%m'));
 SET STMT = 'UPDATE LOGDATA.CONF_APPENDERS SET REF_ID = NULL WHERE REF_ID = ' || ID;
 PREPARE PREP FROM STMT;
 IF (RAISED_798 = FALSE) THEN
@@ -181,39 +181,39 @@ END IF;
 SET RAISED_798 = FALSE;
 COMMIT;
 
--- Test10: Updates an appender_ref normally.
-INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES (3, 'Test10: Updates an appender_ref normally');
+-- Test11: Updates an appender_ref normally.
+INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES (3, 'Test11: Updates an appender_ref normally');
 SELECT REF_ID INTO ID FROM FINAL TABLE (
   INSERT INTO LOGDATA.CONF_APPENDERS (NAME, APPENDER_ID, CONFIGURATION, PATTERN) VALUES
-  ('test10', 1, NULL, '%m'));
+  ('test11', 1, NULL, '%m'));
 UPDATE LOGDATA.CONF_APPENDERS
   SET NAME = 'TEST10', PATTERN = ' --%m-- ', CONFIGURATION = 'NOTHING'
   WHERE REF_ID = ID;
 COMMIT;
 
--- Test11: Deletes an appender.
-INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES (3, 'Test11: Deletes an appender');
+-- Test12: Deletes an appender.
+INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES (3, 'Test12: Deletes an appender');
 SELECT REF_ID INTO ID FROM FINAL TABLE (
   INSERT INTO LOGDATA.CONF_APPENDERS (NAME, APPENDER_ID, PATTERN) VALUES
-  ('test11', 1, '%m'));
+  ('test12', 1, '%m'));
 DELETE FROM LOGDATA.CONF_APPENDERS
   WHERE REF_ID = ID;
 COMMIT;
 
--- Test12: Deletes all appenders.
-INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES (3, 'Test12: Deletes all appenders');
+-- Test13: Deletes all appenders.
+INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES (3, 'Test13: Deletes all appenders');
 SELECT REF_ID INTO ID FROM FINAL TABLE (
   INSERT INTO LOGDATA.CONF_APPENDERS (NAME, APPENDER_ID, PATTERN) VALUES
-  ('test12', 1, '%m'));
+  ('test13', 1, '%m'));
 DELETE FROM LOGDATA.CONF_APPENDERS;
 COMMIT;
 
 -- Cleans the environment.
 INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES (3, 'TestsConfAppenders: Cleaning environment');
 DELETE FROM LOGDATA.CONF_APPENDERS;
-INSERT INTO LOGDATA.CONF_APPENDERS (REF_ID, NAME, APPENDER_ID, CONFIGURATION,
+INSERT INTO LOGDATA.CONF_APPENDERS (NAME, APPENDER_ID, CONFIGURATION,
   PATTERN)
-  VALUES (1, 'DB2 Tables', 1, NULL, '[%p] %c - %m');
+  VALUES ('DB2 Tables', 1, NULL, '[%p] %c - %m');
 INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES (3, 'TestsConfAppenders: Finished succesfully');
 
 END @

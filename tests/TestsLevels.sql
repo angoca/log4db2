@@ -1,7 +1,7 @@
 --#SET TERMINATOR @
 
 /**
- * Tests for the logger insertions.
+ * Tests for the levels table.
  */
 
 SET CURRENT SCHEMA LOGGER_1A @
@@ -76,7 +76,7 @@ SET RAISED_LG0L3 = FALSE;
 SET RAISED_LG0L4 = FALSE;
 SET RAISED_LG0L5 = FALSE;
 SET RAISED_407 = FALSE;
-SET RAISED_530 = FALSE;
+SET RAISED_803 = FALSE;
 DELETE FROM LOGDATA.CONF_LOGGERS;
 INSERT INTO LOGDATA.CONF_LOGGERS
   VALUES (0, 'ROOT', NULL, 0);
@@ -427,7 +427,6 @@ INSERT INTO LOGDATA.LEVELS (LEVEL_ID, NAME)
          (3, 'warn'),
          (4, 'info'),
          (5, 'debug');
-  
 INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES (3, 'TestsLevels: Finished succesfully');
 COMMIT;
 

@@ -1,3 +1,9 @@
+--#SET TERMINATOR @
+
+/**
+ * Tests for cascade calls.
+ */
+
 SET CURRENT SCHEMA TESTS @
 
 DROP MODULE TESTS @
@@ -41,3 +47,5 @@ BEGIN
  COMMIT;
  CALL TESTS.LOG_ID_MULT(VAL + 1);
 END @
+
+CALL TESTS.LOGGING(1)@

@@ -6,8 +6,9 @@
 
 SET CURRENT SCHEMA LOGGER_1A @
 
-!db2 connect to log4db2 > NUL@
-!db2 -tf CleanTriggers.sql +o@
+!DB2 CONNECT TO LOG4DB2 > NUL @
+
+!DB2 -TF CLEANTRIGGERS.SQL +O @
 
 BEGIN
 -- Reserved names for errors.
@@ -35,6 +36,7 @@ DECLARE CONTINUE HANDLER FOR NOT FOUND
 
 -- Prepares the environment.
 INSERT INTO LOGDATA.LOGS (DATE, LEVEL_ID, MESSAGE) VALUES (GENERATE_UNIQUE(), 3, 'TestsFunctionGetDefinedParentLoggeer: Preparing environment');
+SET RAISED_LG0F1 = FALSE;
 UPDATE LOGDATA.CONFIGURATION
   SET VALUE = 'WARN'
   WHERE KEY = 'defaultRootLevel';
@@ -485,5 +487,6 @@ INSERT INTO LOGDATA.LOGS (DATE, LEVEL_ID, MESSAGE) VALUES (GENERATE_UNIQUE(), 3,
 
 END @
 
-!db2 connect to log4db2 > NUL@
-!db2 -tf Trigger.sql +o@
+!DB2 CONNECT TO LOG4DB2 > NUL @
+
+!DB2 -TF TRIGGER.SQL +O @

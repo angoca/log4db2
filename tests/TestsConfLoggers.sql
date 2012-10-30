@@ -1,7 +1,7 @@
 --#SET TERMINATOR @
 
 /**
- * Tests for the logger insertions.
+ * Tests for the logger insertions (conf_loggers table).
  */
 
 SET CURRENT SCHEMA LOGGER_1A @
