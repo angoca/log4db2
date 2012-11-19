@@ -1,2 +1,2 @@
 call uninstall.bat
-call install.bat
+call install.bat %1
