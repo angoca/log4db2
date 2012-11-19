@@ -1,4 +1,13 @@
+:: Checks if there is already a connection established
+db2 connect
+if %ERRORLEVEL% EQU 0 (
+ goto version
+) else (
+ echo Please connect to a database before the execution of the installation.
+ goto exit
+)
 
+:version
 :: Checks in which DB2 version the utility will be installed.
 :: DB2 v10.1 is the default version.
 if "%1" EQU "" goto v10.1
