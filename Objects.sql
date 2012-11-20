@@ -98,6 +98,11 @@ ALTER MODULE LOGGER PUBLISH
   PROCEDURE SHOW_CACHE (
   );
 
+-- Procedure that refresh the configuration
+ALTER MODULE LOGGER PUBLISH
+  PROCEDURE REFRESH_CONF (
+  );
+
 -- Returns the value of a configuration key.
 ALTER MODULE LOGGER PUBLISH
   FUNCTION GET_VALUE (
