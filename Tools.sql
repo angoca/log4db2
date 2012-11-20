@@ -73,7 +73,7 @@ ALTER MODULE LOGGER ADD
  * Logger's names and ids.
  */
 ALTER MODULE LOGGER ADD
-  VARIABLE LOGGERS LOGGERS_TYPE @
+  VARIABLE LOGGERS_CACHE LOGGERS_TYPE @
 
 /**
  * Function that returns the value of the given key from the configuration
@@ -195,15 +195,14 @@ ALTER MODULE LOGGER ADD
  END F_GET_VAL @
 
 /**
- * Sets a value in the loggers cache.
+ * Deletes a value in the loggers cache.
  */
 ALTER MODULE LOGGER ADD
-  PROCEDURE SET_LOGGER_CACHE (
-  IN LOGGER ANCHOR LOGDATA.CONF_LOGGERS.LOGGER_ID,
-  IN LEVEL ANCHOR LOGDATA.LEVELS.LEVEL_ID
+  PROCEDURE DELETE_LOGGER_CACHE (
+  IN LOGGER ANCHOR LOGDATA.CONF_LOGGERS.LOGGER_ID
   )
  P_SET_CACHE: BEGIN
-  SET LOGGERS[LOGGER] = LEVEL;
+  SET LOGGERS_CACHE = ARRAY_DELETE(LOGGERS_CACHE, LOGGER);
  END P_SET_CACHE @
 
 /**
@@ -215,6 +214,8 @@ ALTER MODULE LOGGER ADD
  P_ACT_CACHE: BEGIN
   SET CACHE = TRUE;
   SET LOADED = FALSE;
+  -- Cleans the cache
+  SET LOGGERS_CACHE = ARRAY_DELETE(LOGGERS_CACHE);
  END P_ACT_CACHE@
 
 /**
@@ -227,29 +228,20 @@ ALTER MODULE LOGGER ADD
   SET CACHE = FALSE;
   SET LOADED = FALSE;
   -- Cleans the cache
-  SET LOGGERS = ARRAY_DELETE(LOGGERS);
+  SET LOGGERS_CACHE = ARRAY_DELETE(LOGGERS_CACHE);
  END P_DEA_CACHE@
 
 /**
- * Procedure that dumps the configuration. It returns two result setS. The
+ * Procedure that dumps the configuration. It returns two result sets. The
  * first is a one-row result set providing the information when the
  * configuration was loaded, and when it will be reloaded (with its frequency).
  * In the other result set, it shows the key-values from the configuration, if
  * this was already loaded, otherwise a descriptive message appears.
  * This procedure shows the configuration, but it does not reload it, for this
- * reason, the next refresh time could be in the past, because the get_value
- * is the only one that refreshes the configuration.
+ * reason, the next refresh time could be in the past. Please note that the
+ * get_value procedure is the only one that refreshes the configuration.
  * If the cache is in false in the configuration, but the configuration has
  * not been read, it will show that the cache is active (by default).
- *
- * If there is not a user temporary tablespace created in this database, the
- * error SQL0286N with SQLState 42727 will appear. It is necessary to create
- * at least one User Temporary Tablespace for this function. It can be done
- * by executing:
- *   db2 "create user temporary tablespace USRTMPSPC pagesize 4096"
- *
- * The procedure shows an error message at the end: SQL20439N - SQLSTATE=2202E
- * and it is due that when scanning the params it uses a helper table. 
  */
 ALTER MODULE LOGGER ADD
   PROCEDURE SHOW_CONF ()
@@ -268,14 +260,6 @@ ALTER MODULE LOGGER ADD
    DECLARE REF CURSOR
      WITH RETURN TO CALLER
      FOR RS;
-   -- There is not a User Temporary Tablespace
-   DECLARE CONTINUE HANDLER FOR SQLSTATE '42727'
-    BEGIN
-	 DECLARE TBLSPC CURSOR FOR
-       SELECT 'Please create a User Temporary Tablespace with 4K pagesize'
-       FROM SYSIBM.SYSDUMMY1;
-	 OPEN TBLSPC;
-	END;
    -- Sets the value for the seconds.
    BEGIN
     DECLARE CONTINUE HANDLER FOR SQLSTATE '2202E'
@@ -300,32 +284,20 @@ ALTER MODULE LOGGER ADD
    OPEN REF;
   END;
 
-  -- Creates a helper table with a sequence of numbers.
-  -- TODO To make the next creation in a Dynamic SQL in order to catch the
-  -- exception when there is not a Use Temporary tablespace.
-  DECLARE GLOBAL TEMPORARY TABLE SESSION.NUMBER_SEQ (
-    NUM INT NOT NULL
-    ) WITH REPLACE;
-  INSERT INTO SESSION.NUMBER_SEQ
-    SELECT ROW_NUMBER() OVER()
-    FROM SYSCAT.COLUMNS;
-  
   -- Creates a cursor for configuration values.
   BEGIN
    DECLARE CARD SMALLINT;
    DECLARE CONF CURSOR
-     WITH RETURN TO CALLER 
+     WITH RETURN TO CLIENT 
      FOR 
-     SELECT NUM, 
-     CONFIGURATION_KEYS[NUM] AS KEY,
-     CONFIGURATION[CONFIGURATION_KEYS[NUM]] AS VALUE
-     FROM SESSION.NUMBER_SEQ;
+     SELECT T.KEY AS KEY, T.VALUE AS VALUE
+     FROM UNNEST(CONFIGURATION) AS T(KEY, VALUE);
    DECLARE NOTHING CURSOR
-     WITH RETURN TO CALLER
+     WITH RETURN TO CLIENT
      FOR
      SELECT 'Configuration not loaded' AS MESSAGE
      FROM SYSIBM.SYSDUMMY1;
-   
+
    -- Checks if the configuration was already loaded.
    SET CARD = CARDINALITY(CONFIGURATION_KEYS);
    IF (CARD > 0) THEN
@@ -335,7 +307,11 @@ ALTER MODULE LOGGER ADD
    END IF;
   END;
  END P_SHOW_CONF @
- 
+
+/**
+ * This is a helper procedure that shows the content of the logger cache if it
+ * is currently used.
+ */
 ALTER MODULE LOGGER ADD
   PROCEDURE SHOW_CACHE ()
   LANGUAGE SQL
@@ -347,23 +323,22 @@ ALTER MODULE LOGGER ADD
   PARAMETER CCSID UNICODE
  P_SHOW_CACHE: BEGIN
   DECLARE CACHE_CURSOR CURSOR
-    WITH RETURN TO CALLER 
-    FOR 
+    WITH RETURN TO CLIENT 
+    FOR
     SELECT SUBSTR(T.LOGGER, 1, 64) AS LOGGER_NAME, T.ID AS LOGGER_ID
-    FROM UNNEST(LOGGERS) AS T(LOGGER, ID);
-  -- TODO To make the next creation in a Dynamic SQL in order to catch the
-  -- exception when there is not an User Temporary tablespace.
+    FROM UNNEST(LOGGERS_CACHE) AS T(LOGGER, ID);
   DECLARE GLOBAL TEMPORARY TABLE SESSION.LOGGER_CACHE (
-	DESC VARCHAR(64)
+	DESCRIPTION VARCHAR(64)
     ) WITH REPLACE;
   BEGIN
    DECLARE DESC_CURSOR CURSOR
-   WITH RETURN TO CALLER
+   WITH RETURN TO CLIENT
    FOR
-   SELECT *
+   SELECT DESCRIPTION
    FROM SESSION.LOGGER_CACHE;
-   INSERT INTO SESSION.LOGGER_CACHE (DESC) VALUES ('Cardinality: ' || COALESCE(CARDINALITY(LOGGERS), -1));
-   INSERT INTO SESSION.LOGGER_CACHE (DESC) VALUES ('Max cardinality: ' || COALESCE(MAX_CARDINALITY(LOGGERS), -1));
+   
+   INSERT INTO SESSION.LOGGER_CACHE (DESCRIPTION) VALUES ('Cardinality: ' || COALESCE(CARDINALITY(LOGGERS_CACHE), -1));
+   INSERT INTO SESSION.LOGGER_CACHE (DESCRIPTION) VALUES ('Max cardinality: ' || COALESCE(MAX_CARDINALITY(LOGGERS_CACHE), -1));
   
    OPEN DESC_CURSOR;
    OPEN CACHE_CURSOR;
