@@ -115,7 +115,7 @@ ALTER MODULE LOGGER ADD
    DECLARE CONTINUE HANDLER FOR SQLSTATE '2202E'
      SET LOGGER_ID = NULL;
    IF (CACHE = TRUE) THEN
-    SET LOGGER_ID = LOGGERS[NAME];
+    SET LOGGER_ID = LOGGERS_CACHE[NAME];
    END IF;
   END;
   IF (LOGGER_ID IS NULL) THEN
@@ -174,18 +174,11 @@ ALTER MODULE LOGGER ADD
     -- Adds this logger name in the cache.
     IF (CACHE = TRUE) THEN
      BEGIN
-      --DECLARE POS SMALLINT;
-      SET LOGGERS[NAME] = LOGGER_ID;
-      -- TODO delete
-      --SET POS = CARDINALITY(LOGGERS_NAMES);
-      --IF (POS IS NULL) THEN
-       --SET POS = 1;
-      --END IF;
-      --SET LOGGERS_NAMES[POS + 1] = NAME;
+      SET LOGGERS_CACHE[NAME] = LOGGER_ID;
       -- Internal logging.
       IF (GET_VALUE(LOGGER.LOG_INTERNALS) = LOGGER.VAL_TRUE) THEN
        INSERT INTO LOGDATA.LOGS (DATE, LEVEL_ID, LOGGER_ID, MESSAGE) VALUES 
-         (GENERATE_UNIQUE(), 4, -1, 'Logger not in cache ' || NAME || ' with ' || LOGGER_ID );--|| ' pos ' || POS);
+         (GENERATE_UNIQUE(), 4, -1, 'Logger not in cache ' || NAME || ' with ' || LOGGER_ID );
       END IF;
      END;
     END IF;

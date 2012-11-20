@@ -25,19 +25,6 @@ SET CURRENT SCHEMA LOGGER_1A @
 -- all the levels in the conf_loggers, and the relations.
 
 /**
- * Names of the registered loggers. This array is limited to the size of the
- * array, in this case 100.
- */
---ALTER MODULE LOGGER ADD
---  TYPE LOGGERS_NAMES_TYPE AS ANCHOR COMPLETE_LOGGER_NAME ARRAY [100] @
-
-/**
- * Logger's names.
- */
---ALTER MODULE LOGGER ADD
---  VARIABLE LOGGERS_NAMES LOGGERS_NAMES_TYPE @
-
-/**
  * Registers the logger name in the system, and retrieves the corresponding ID
  * for that logger. This ID will allow to write messages into that logger if
  * the configuration level allows it. This method processes the logger name
@@ -74,7 +61,7 @@ ALTER MODULE LOGGER ADD
    DECLARE CONTINUE HANDLER FOR SQLSTATE '2202E'
      SET LOGGER_ID = NULL;
    IF (CACHE = TRUE) THEN
-    SET LOGGER_ID = LOGGERS[NAME];
+    SET LOGGER_ID = LOGGERS_CACHE[NAME];
    END IF;
   END;
   IF (LOGGER_ID IS NULL) THEN
@@ -187,17 +174,11 @@ ALTER MODULE LOGGER ADD
     -- Adds this logger name in the cache.
     IF (CACHE = TRUE) THEN
      BEGIN
-      --DECLARE POS SMALLINT;
-      SET LOGGERS[NAME] = LOGGER_ID;
-      --SET POS = CARDINALITY(LOGGERS_NAMES);
-      --IF (POS IS NULL) THEN
-       --SET POS = 1;
-      --END IF;
-      --SET LOGGERS_NAMES[POS + 1] = NAME;
+      SET LOGGERS_CACHE[NAME] = LOGGER_ID;
       -- Internal logging.
       IF (GET_VALUE(LOGGER.LOG_INTERNALS) = LOGGER.VAL_TRUE) THEN
        INSERT INTO LOGDATA.LOGS (DATE, LEVEL_ID, LOGGER_ID, MESSAGE) VALUES 
-         (GENERATE_UNIQUE(), 4, -1, 'Logger not in cache ' || NAME || ' with ' || LOGGER_ID );--|| ' pos ' || POS);
+         (GENERATE_UNIQUE(), 4, -1, 'Logger not in cache ' || NAME || ' with ' || LOGGER_ID );
       END IF;
      END;
     END IF;
