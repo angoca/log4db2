@@ -93,6 +93,11 @@ ALTER MODULE LOGGER PUBLISH
   PROCEDURE SHOW_CONF (
   );
 
+-- Procedure that show the content of the cache.
+ALTER MODULE LOGGER PUBLISH
+  PROCEDURE SHOW_CACHE (
+  );
+
 -- Returns the value of a configuration key.
 ALTER MODULE LOGGER PUBLISH
   FUNCTION GET_VALUE (
