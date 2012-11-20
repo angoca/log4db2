@@ -127,3 +127,14 @@ Invalid parameter.
 * The provided value to call the function in not a valid value. It is probably
 a null value or a negative one.
 * Reissue the command calling the function with a positive or zero value.
+
+==== FUNCTIONS ====
+
+LG001
+<No message>
+* The call has arrive to the limit in cascade call and the log could had not
+be written correctly. It was written as ROOT logger and returned an error to
+the application.
+This message wraps the SQL Code SQL0724, SQLState 54038.
+* Control this error in the application, in order to continue the execution:
+  DECLARE CONITNUE HANDLER FOR SQLSTATE 'LG001' DO_SOMETHING;
