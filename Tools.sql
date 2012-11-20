@@ -202,6 +202,7 @@ ALTER MODULE LOGGER ADD
   PROCEDURE ACTIVATE_CACHE (
   )
  P_ACT_CACHE: BEGIN
+  -- TODO Check that the configuration variable is true
   SET CACHE = TRUE;
   SET LOADED = FALSE;
   -- Cleans the cache
@@ -215,6 +216,7 @@ ALTER MODULE LOGGER ADD
   PROCEDURE DEACTIVATE_CACHE (
   )
  P_DEA_CACHE: BEGIN
+  -- TODO Check that the configuration variable is false
   SET CACHE = FALSE;
   SET LOADED = FALSE;
   -- Cleans the cache
