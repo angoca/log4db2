@@ -226,6 +226,8 @@ ALTER MODULE LOGGER ADD
  P_DEA_CACHE: BEGIN
   SET CACHE = FALSE;
   SET LOADED = FALSE;
+  -- Cleans the cache
+  SET LOGGERS = ARRAY_DELETE(LOGGERS);
  END P_DEA_CACHE@
 
 /**
@@ -239,6 +241,13 @@ ALTER MODULE LOGGER ADD
  * is the only one that refreshes the configuration.
  * If the cache is in false in the configuration, but the configuration has
  * not been read, it will show that the cache is active (by default).
+ *
+ * If there is not a user temporary tablespace created in this database, the
+ * error SQL0286N with SQLState 42727 will appear. It is necessary to create
+ * at least one User Temporary Tablespace for this function. It can be done
+ * by executing:
+ *   db2 "create user temporary tablespace USRTMPSPC pagesize 4096"
+ *
  * The procedure shows an error message at the end: SQL20439N - SQLSTATE=2202E
  * and it is due that when scanning the params it uses a helper table. 
  */
@@ -259,6 +268,14 @@ ALTER MODULE LOGGER ADD
    DECLARE REF CURSOR
      WITH RETURN TO CALLER
      FOR RS;
+   -- There is not a User Temporary Tablespace
+   DECLARE CONTINUE HANDLER FOR SQLSTATE '42727'
+    BEGIN
+	 DECLARE TBLSPC CURSOR FOR
+       SELECT 'Please create a User Temporary Tablespace with 4K pagesize'
+       FROM SYSIBM.SYSDUMMY1;
+	 OPEN TBLSPC;
+	END;
    -- Sets the value for the seconds.
    BEGIN
     DECLARE CONTINUE HANDLER FOR SQLSTATE '2202E'
@@ -284,6 +301,8 @@ ALTER MODULE LOGGER ADD
   END;
 
   -- Creates a helper table with a sequence of numbers.
+  -- TODO To make the next creation in a Dynamic SQL in order to catch the
+  -- exception when there is not a Use Temporary tablespace.
   DECLARE GLOBAL TEMPORARY TABLE SESSION.NUMBER_SEQ (
     NUM INT NOT NULL
     ) WITH REPLACE;
@@ -316,3 +335,37 @@ ALTER MODULE LOGGER ADD
    END IF;
   END;
  END P_SHOW_CONF @
+ 
+ALTER MODULE LOGGER ADD
+  PROCEDURE SHOW_CACHE ()
+  LANGUAGE SQL
+  SPECIFIC P_SHOW_CACHE
+  DYNAMIC RESULT SETS 2
+  MODIFIES SQL DATA
+  DETERMINISTIC
+  NO EXTERNAL ACTION
+  PARAMETER CCSID UNICODE
+ P_SHOW_CACHE: BEGIN
+  DECLARE CACHE_CURSOR CURSOR
+    WITH RETURN TO CALLER 
+    FOR 
+    SELECT SUBSTR(T.LOGGER, 1, 64) AS LOGGER_NAME, T.ID AS LOGGER_ID
+    FROM UNNEST(LOGGERS) AS T(LOGGER, ID);
+  -- TODO To make the next creation in a Dynamic SQL in order to catch the
+  -- exception when there is not an User Temporary tablespace.
+  DECLARE GLOBAL TEMPORARY TABLE SESSION.LOGGER_CACHE (
+	DESC VARCHAR(64)
+    ) WITH REPLACE;
+  BEGIN
+   DECLARE DESC_CURSOR CURSOR
+   WITH RETURN TO CALLER
+   FOR
+   SELECT *
+   FROM SESSION.LOGGER_CACHE;
+   INSERT INTO SESSION.LOGGER_CACHE (DESC) VALUES ('Cardinality: ' || COALESCE(CARDINALITY(LOGGERS), -1));
+   INSERT INTO SESSION.LOGGER_CACHE (DESC) VALUES ('Max cardinality: ' || COALESCE(MAX_CARDINALITY(LOGGERS), -1));
+  
+   OPEN DESC_CURSOR;
+   OPEN CACHE_CURSOR;
+  END;
+ END P_SHOW_CACHE@
