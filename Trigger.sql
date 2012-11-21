@@ -463,7 +463,7 @@ CREATE OR REPLACE TRIGGER T1_LOGS_UNIQUE_DATE
  * Refreshes the value of root logger in Effective table. The value is
  * recalculated according the configuration (conf_loggers table or
  * default value from configuration table).
- * /
+ */
 UPDATE LOGDATA.CONF_LOGGERS_EFFECTIVE
   SET LEVEL_ID = 3
-  WHERE LOGGER_ID = 0@*/
+  WHERE LOGGER_ID = 0@
