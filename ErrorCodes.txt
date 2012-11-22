@@ -128,6 +128,7 @@ Invalid parameter.
 a null value or a negative one.
 * Reissue the command calling the function with a positive or zero value.
 
+
 ==== FUNCTIONS ====
 
 LG001
@@ -138,3 +139,14 @@ the application.
 This message wraps the SQL Code SQL0724, SQLState 54038.
 * Control this error in the application, in order to continue the execution:
   DECLARE CONITNUE HANDLER FOR SQLSTATE 'LG001' DO_SOMETHING;
+
+LG002
+Invalid configuration state
+* The loggers cache is trying to be activated or deactivated, but the
+configuration is the opposite of the requested function.
+This behaviour should never be an issue for the user, because the
+procedures used (ACTIVATE_CACHE and DEACTIVATE_CACHE) are called by triggers.
+* Reissue the command with the appropiated function according to the 
+configuration:
+  ACTIVATE_CACHE -> internalCache = true
+  DEACTIVATE_CACHE -> internalCache = false
