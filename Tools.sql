@@ -167,17 +167,6 @@ ALTER MODULE LOGGER ADD
     SET RET = CONFIGURATION[GIVEN_KEY];
    END;
   ELSE -- Does not use the internal cache but a query.
-   -- This is normally checked with the trigger, but when executing the tests,
-   -- there is an error, because the triggers are deleted for many tests.
-   -- Checks the cache status.
-   SELECT C.VALUE INTO RET
-     FROM LOGDATA.CONFIGURATION C
-     WHERE C.KEY = INTERNAL_CACHE;
-   SET CACHE = CASE RET
-     WHEN 'true' THEN TRUE
-     ELSE FALSE
-     END;
-
    SELECT C.VALUE INTO RET
      FROM LOGDATA.CONFIGURATION C
      WHERE C.KEY = GIVEN_KEY;
