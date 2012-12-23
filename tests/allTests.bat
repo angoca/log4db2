@@ -1,19 +1,19 @@
-call test.bat TestsAppenders.sql
+call tests\test.bat tests\TestsAppenders.sql
 pause
-call test.bat TestsCascadeCallLimit.sql
+call tests\test.bat tests\TestsCascadeCallLimit.sql
 pause
-call test.bat TestsConfAppenders.sql
+call tests\test.bat tests\TestsConfAppenders.sql
 pause
-call test.bat TestsConfiguration.sql
+call tests\test.bat tests\TestsConfiguration.sql
 pause
-call test.bat TestsConfLoggers.sql
+call tests\test.bat tests\TestsConfLoggers.sql
 pause
-call test.bat TestsConfLoggersDelete.sql
+call tests\test.bat tests\TestsConfLoggersDelete.sql
 pause
-call test.bat TestsConfLoggersEffective.sql
+call tests\test.bat tests\TestsConfLoggersEffective.sql
 pause
-call test.bat TestsFunctionGetDefinedParentLogger.sql
+call tests\test.bat tests\TestsFunctionGetDefinedParentLogger.sql
 pause
-call test.bat TestsGetLogger.sql
+call tests\test.bat tests\TestsGetLogger.sql
 pause
-call test.bat TestsLevels.sql
+call tests\test.bat tests\TestsLevels.sql
