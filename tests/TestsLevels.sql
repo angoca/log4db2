@@ -422,11 +422,15 @@ INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES (3, 'TestsLevels: Cleaning e
 DELETE FROM LOGDATA.LEVELS
   WHERE LEVEL_ID <> 0;
 INSERT INTO LOGDATA.LEVELS (LEVEL_ID, NAME)
-  VALUES (1, 'fatal'),
-         (2, 'error'),
-         (3, 'warn'),
-         (4, 'info'),
-         (5, 'debug');
+  VALUES (1, 'fatal');
+INSERT INTO LOGDATA.LEVELS (LEVEL_ID, NAME)
+  VALUES (2, 'error');
+INSERT INTO LOGDATA.LEVELS (LEVEL_ID, NAME)
+  VALUES (3, 'warn');
+INSERT INTO LOGDATA.LEVELS (LEVEL_ID, NAME)
+  VALUES (4, 'info');
+INSERT INTO LOGDATA.LEVELS (LEVEL_ID, NAME)
+  VALUES (5, 'debug');
 INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES (3, 'TestsLevels: Finished succesfully');
 COMMIT;
 
