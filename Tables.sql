@@ -2,9 +2,18 @@
 SET CURRENT SCHEMA LOGDATA;
 
 /**
- * TODO DESCRIPTION
+ * Defines the DDL of many objects:
+ * - Bufferpool
+ * - Tablespaces
+ * - Tables
+ * - Sequences
+ * - Referential integrity
+ * And also som DML for thhe basic content for the application to run.
  *
  * Made in COLOMBIA.
+ * Andres Gomez Casanova (AngocA)
+ * My nickname at y a h o o dot com
+ * 2012-12-26
  */
 
 -- Buffer pool for log data.
