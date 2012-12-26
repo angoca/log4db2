@@ -65,7 +65,7 @@ ALTER MODULE LOGGER ADD
  * Unload configuration. This is useful for tests, but it should not called
  * used in production.
  */
-ALTER MODULE LOGGER PUBLISH --TODO ADD
+ALTER MODULE LOGGER ADD
   PROCEDURE UNLOAD_CONF (
   )
   LANGUAGE SQL
@@ -163,18 +163,6 @@ ALTER MODULE LOGGER ADD
    IF (COALESCE(LAST_REFRESH, EPOCH) + SECS SECONDS < CURRENT TIMESTAMP OR LOADED = FALSE) THEN
     -- Refreshes the configuration
 	CALL LOGGER.REFRESH_CONF ();
-   -- Checks the variable for internal cache
-   -- TODO remove if the trigger works correctly
-    BEGIN
-     -- NULL if the key is not in the configuration.
-     DECLARE EXIT HANDLER FOR SQLSTATE '2202E'
-       SET CACHE = TRUE;
-
-     SET CACHE = CASE CONFIGURATION[INTERNAL_CACHE] 
-       WHEN 'true' THEN TRUE 
-       ELSE FALSE
-       END;
-    END;
     SET LOADED = TRUE;
    END IF;
 
@@ -212,7 +200,7 @@ ALTER MODULE LOGGER ADD
  END P_DELETE_CACHE @
 
 /**
- * Activates the cache.
+ * Activates the cache. Cleans any previous value on the cache.
  */
 ALTER MODULE LOGGER ADD
   PROCEDURE ACTIVATE_CACHE (
@@ -226,14 +214,15 @@ ALTER MODULE LOGGER ADD
  P_ACT_CACHE: BEGIN
   DECLARE VAL ANCHOR LOGDATA.CONFIGURATION.VALUE;
 
+  -- NOTE: Active for debugging.
   -- Check that the configuration variable is true
-  SELECT VALUE INTO VAL
-    FROM LOGDATA.CONFIGURATION
-	WHERE KEY = INTERNAL_CACHE;
-  IF (VAL <> 'true') THEN
-   SIGNAL SQLSTATE VALUE 'LG002'
-     SET MESSAGE_TEXT = 'Invalid configuration state';
-  END IF;
+  --SELECT VALUE INTO VAL
+  --  FROM LOGDATA.CONFIGURATION
+  --  WHERE KEY = INTERNAL_CACHE;
+  --IF (VAL <> 'true') THEN
+  -- SIGNAL SQLSTATE VALUE 'LG002'
+  --   SET MESSAGE_TEXT = 'Invalid configuration state';
+  --END IF;
   SET CACHE = TRUE;
   SET LOADED = FALSE;
   -- Cleans the cache
@@ -255,14 +244,15 @@ ALTER MODULE LOGGER ADD
  P_DEA_CACHE: BEGIN
   DECLARE VAL ANCHOR LOGDATA.CONFIGURATION.VALUE;
 
+  -- NOTE: Active for debugging.
   -- Check that the configuration variable is false
-  SELECT VALUE INTO VAL
-    FROM LOGDATA.CONFIGURATION
-	WHERE KEY = INTERNAL_CACHE;
-  IF (VAL = 'true') THEN
-   SIGNAL SQLSTATE VALUE 'LG002'
-     SET MESSAGE_TEXT = 'Invalid configuration state';
-  END IF;
+  --SELECT VALUE INTO VAL
+  --  FROM LOGDATA.CONFIGURATION
+  --  WHERE KEY = INTERNAL_CACHE;
+  --IF (VAL = 'true') THEN
+  -- SIGNAL SQLSTATE VALUE 'LG002'
+  --   SET MESSAGE_TEXT = 'Invalid configuration state';
+  --END IF;
   SET CACHE = FALSE;
   SET LOADED = FALSE;
   -- Cleans the cache
