@@ -11,7 +11,7 @@ such as log4j and slj4j/logback.
 
 The utility is licensed with BSD license.
 
-The data model is the next:
+The entity/relation diagram s the next:
 
        ++==============================---------------+
        ||                                             A
@@ -60,8 +60,31 @@ The data model is the next:
  | * MESSAGE   |
  +-------------+
 
+ +----------------------+ +------------------+ +-------------+
+ | CONF_APPENDER_HIST   | | CONF_LOGGER_HIST | | LOG_HIST    |
+ | # REF_ID             | | # LOGGER_ID      | | * DATE      |
+ | * NAME               | | * NAME           | | o LEVEL_ID  |
+ | * APPENDER_ID        | | o PARENT_ID      | | o LOGGER_ID |
+ | o CONFIGURATION      | | o LEVEL_ID       | | * MESSAGE   |
+ | * PATTERN            | | * BUS_START      | | * SYS_START |
+ | * BUS_START          | | * BUS_END        | | * SYS_END   |
+ | * BUS_END            | | * SYS_START      | +-------------+
+ | * SYS_START          | | * END_START      |
+ | * END_START          | | * TS_ID          |
+ | * TS_ID              | +------------------+
+ +----------------------+
+
+Remember that the real names of the tables are in plural, but in a E/R diagram
+are in singular.
+
 All these tables except LOGS are in the LOGGER_SPACE tablespace. LOGS is in the
 LOG_DATA_SPACE that has different characteristic to improve performance while
-writing. The tablespace with 8KB page size was selected because it could contain
-minimum 29 rows (when the message uses the full capacity), and a maximum of
-255 when the messages are very short.
+writing. The tablespace with 8KB page size was selected because it could
+contain minimum 29 rows (when the message uses the full capacity), and a
+maximum of 255 when the messages are very short.
+
+The LOG_HIST table is created like LOGS, but at that time, two more columns are
+added in order to enable the temporal capabilities.
+
+In a similar way, the CONF_LOGGER_HIST is created like CONF_LOGGERS, but the
+extra columns are addede when the temporal capabilities are enabled.
