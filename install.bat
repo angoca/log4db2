@@ -24,6 +24,11 @@ db2 -td@ -f AdminBody.sql
 db2 -td@ -f LOG.sql
 db2 -td@ -f GET_LOGGER.sql
 db2 -td@ -f Trigger.sql
+
+:: Temporal capabilities for tables.
+if "%2" EQU "t" db2 -tf Create_Tables_Time_Travel.sql
+if "%1" EQU "t" db2 -tf Create_Tables_Time_Travel.sql
+
 goto exit
 
 :: DB2 v9.7

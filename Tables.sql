@@ -72,8 +72,6 @@ COMMENT ON LEVELS (
   );
 
 -- Table for loggers configuration.
--- TODO create this table with temporal capabilities in order to save the
--- modified configuration.
 CREATE TABLE CONF_LOGGERS (
   LOGGER_ID SMALLINT NOT NULL,
   NAME VARCHAR(256) NOT NULL,
@@ -182,15 +180,13 @@ COMMENT ON REFERENCES (
   );
 
 -- Table for the pure SQL appender.
--- TODO create this table with temporal capabilities, in order to save any
--- modified log.
 -- TODO make tests in order to check in a auto generated column for an id
 -- does not impact the performance, and provides a better way to sort messages.
 -- This ID column could be hidden to the user. The benefic is that the logs
 -- could be accessed via an index, but it impacts the writes, because this
 -- structure has to be maintained. 
 CREATE TABLE LOGS (
-  DATE CHAR(13) FOR BIT DATA NOT NULL,
+  DATE CHAR(13) FOR BIT DATA NOT NULL IMPLICITLY HIDDEN,
   LEVEL_ID SMALLINT,
   LOGGER_ID SMALLINT,
   MESSAGE VARCHAR(512) NOT NULL
