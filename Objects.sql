@@ -2,9 +2,12 @@
 SET CURRENT SCHEMA LOGGER_1A;
 
 /**
- * TODO DESCRIPTION
+ * Defines the headers of the public procedures and functions.
  *
  * Made in COLOMBIA.
+ * Andres Gomez Casanova (AngocA)
+ * My nickname at y a h o o dot com
+ * 2012-12-26
  */
 
 -- Schema for logger utility's objects.
@@ -21,9 +24,9 @@ CREATE OR REPLACE PUBLIC ALIAS LOGGER FOR MODULE LOGGER;
 
 -- Module version.
 ALTER MODULE LOGGER PUBLISH
-  VARIABLE VERSION VARCHAR(32) CONSTANT '2012-10-14 1-Alpha';
+  VARIABLE VERSION VARCHAR(32) CONSTANT '2012-12-26 1-Alpha';
 
--- Constant logInternals
+-- Constant for logInternals
 ALTER MODULE LOGGER PUBLISH
   VARIABLE LOG_INTERNALS ANCHOR LOGDATA.CONFIGURATION.KEY CONSTANT 'logInternals';
 
@@ -38,7 +41,7 @@ ALTER MODULE LOGGER PUBLISH
   IN LOG_ID ANCHOR LOGDATA.CONF_LOGGERS.LOGGER_ID
   ) RETURNS VARCHAR(256);
 
--- Procedure to write logs.
+-- Writes a log.
 ALTER MODULE LOGGER PUBLISH
   PROCEDURE LOG (
   IN LOGGER_ID ANCHOR LOGDATA.CONF_LOGGERS.LOGGER_ID,
@@ -46,59 +49,64 @@ ALTER MODULE LOGGER PUBLISH
   IN MESSAGE ANCHOR LOGDATA.LOGS.MESSAGE
   );
 
--- Procedure to write logs in debug mode.
+-- Write a log in debug mode.
 ALTER MODULE LOGGER PUBLISH
   PROCEDURE DEBUG (
   IN LOGGER_ID ANCHOR LOGDATA.CONF_LOGGERS.LOGGER_ID,
   IN MESSAGE ANCHOR LOGDATA.LOGS.MESSAGE
   );
 
--- Procedure to write logs in info mode.
+-- Writes a log in info mode.
 ALTER MODULE LOGGER PUBLISH
   PROCEDURE INFO (
   IN LOGGER_ID ANCHOR LOGDATA.CONF_LOGGERS.LOGGER_ID,
   IN MESSAGE ANCHOR LOGDATA.LOGS.MESSAGE
   );
 
--- Procedure to write logs in warn mode.
+-- Writes a log in warn mode.
 ALTER MODULE LOGGER PUBLISH
   PROCEDURE WARN (
   IN LOGGER_ID ANCHOR LOGDATA.CONF_LOGGERS.LOGGER_ID,
   IN MESSAGE ANCHOR LOGDATA.LOGS.MESSAGE
   );
 
--- Procedure to write logs in error mode.
+-- Writes a log in error mode.
 ALTER MODULE LOGGER PUBLISH
   PROCEDURE ERROR (
   IN LOGGER_ID ANCHOR LOGDATA.CONF_LOGGERS.LOGGER_ID,
   IN MESSAGE ANCHOR LOGDATA.LOGS.MESSAGE
   );
 
--- Procedure to write logs in fatal mode.
+-- Writes a log in fatal mode.
 ALTER MODULE LOGGER PUBLISH
   PROCEDURE FATAL (
   IN LOGGER_ID ANCHOR LOGDATA.CONF_LOGGERS.LOGGER_ID,
   IN MESSAGE ANCHOR LOGDATA.LOGS.MESSAGE
   );
 
--- Procedure to register the logger.
+-- Registers the logger and retreives its ID.
 ALTER MODULE LOGGER PUBLISH
   PROCEDURE GET_LOGGER (
   IN NAME VARCHAR(256),
   OUT LOGGER_ID ANCHOR LOGDATA.CONF_LOGGERS.LOGGER_ID
   );
 
--- Procedure that show the configuration.
+-- Shows the current configuration.
 ALTER MODULE LOGGER PUBLISH
   PROCEDURE SHOW_CONF (
   );
 
--- Procedure that show the content of the cache.
+-- Shows the content of the cache.
 ALTER MODULE LOGGER PUBLISH
   PROCEDURE SHOW_CACHE (
   );
 
--- Procedure that refresh the configuration
+-- Cleans up the configuration.
+ALTER MODULE LOGGER PUBLISH
+  PROCEDURE UNLOAD_CONF (
+  );
+
+-- Refreshes the configuration.
 ALTER MODULE LOGGER PUBLISH
   PROCEDURE REFRESH_CONF (
   );
@@ -115,12 +123,12 @@ ALTER MODULE LOGGER PUBLISH
   IN LOGGER ANCHOR LOGDATA.CONF_LOGGERS.LOGGER_ID
   );
 
--- Deactivates the cache.
-ALTER MODULE LOGGER PUBLISH
-  PROCEDURE DEACTIVATE_CACHE (
-  );
-
 -- Activates the cache.
 ALTER MODULE LOGGER PUBLISH
   PROCEDURE ACTIVATE_CACHE (
+  );
+
+-- Deactivates the cache.
+ALTER MODULE LOGGER PUBLISH
+  PROCEDURE DEACTIVATE_CACHE (
   );
