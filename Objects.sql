@@ -96,12 +96,12 @@ ALTER MODULE LOGGER PUBLISH
   PROCEDURE SHOW_CONF (
   );
 
--- Shows the content of the cache.
+-- Shows the content of the cache. Useful for debuging.
 ALTER MODULE LOGGER PUBLISH
   PROCEDURE SHOW_CACHE (
   );
 
--- Cleans up the configuration.
+-- Cleans up the configuration. Useful for tests.
 ALTER MODULE LOGGER PUBLISH
   PROCEDURE UNLOAD_CONF (
   );
@@ -117,7 +117,7 @@ ALTER MODULE LOGGER PUBLISH
   IN GIVEN_KEY ANCHOR LOGDATA.CONFIGURATION.KEY
   ) RETURNS ANCHOR LOGDATA.CONFIGURATION.VALUE;
 
--- Deletes a value in the cache.
+-- Deletes a value in the cache. Useful for tests.
 ALTER MODULE LOGGER PUBLISH
   PROCEDURE DELETE_LOGGER_CACHE (
   IN LOGGER ANCHOR LOGDATA.CONF_LOGGERS.LOGGER_ID
