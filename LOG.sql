@@ -273,7 +273,6 @@ ALTER MODULE LOGGER ADD
       (4, -1, 'Logging enable for level ' || LEV_ID || ' logger ' || LOG_ID);
    END IF;
 
-   -- 
    -- Retrieves all the configurations for the appenders.
    OPEN APPENDERS;
    SET AT_END = FALSE;
