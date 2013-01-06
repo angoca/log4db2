@@ -154,10 +154,10 @@ ALTER MODULE LOGGER ADD
       FROM LOGDATA.CONF_LOGGERS C
       WHERE C.LOGGER_ID = 0
       WITH UR;
-    -- TODO To check the value defaultRootLevel before assign Warn as default.
+    -- TODO To check the value defaultRootLevelId before assign Warn as default.
     -- If the root logger is not defined, then set the default level: WARN-3.
     IF (PARENT_LEVEL IS NULL) THEN
-     SET PARENT_LEVEL = 2;
+     SET PARENT_LEVEL = 3;
     END IF;
 
     -- Takes each level of the logger name (dots), and retrieves or creates the

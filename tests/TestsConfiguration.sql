@@ -238,7 +238,7 @@ DELETE FROM LOGDATA.CONFIGURATION;
 INSERT INTO LOGDATA.CONFIGURATION (KEY, VALUE)
   VALUES ('checkHierarchy', 'false'),
          ('checkLevels', 'false'),
-         ('defaultRootLevel', 'WARN'),
+         ('defaultRootLevelId', '3'),
          ('internalCache', 'true'),
          ('logInternals', 'false'),
          ('secondsToRefresh', '30');
