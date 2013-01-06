@@ -24,8 +24,37 @@ CREATE OR REPLACE TRIGGER T1_CONF_CACHE
     ELSE
      CALL LOGGER.DEACTIVATE_CACHE();
     END IF;
-   WHEN 'defaultRootLevel' THEN
-    -- TODO UPDATE EFFECTIVE
+   WHEN 'defaultRootLevelId' THEN
+    BEGIN
+     DECLARE EXIST SMALLINT DEFAULT 0;
+     DECLARE VALUE ANCHOR LOGDATA.LEVELS.LEVEL_ID;
+
+     -- FIXME it does not work correctly when it should not update.
+     SELECT 1 INTO EXIST
+       FROM LOGDATA.CONF_LOGGERS
+       WHERE LOGGER_ID = 0;
+     -- Checks if root logger is defined.
+     IF (EXIST <> 1) THEN
+
+      -- Writes a message to indicate that is necessary to update the table
+      -- manually. If this is automatic, there is an error, because this
+      -- trigger is active when the configuration is modified, and the trigger
+      -- actives another one (T5) when update the table; this last does not
+      -- take into account the given value, but looks for the it in the
+      -- configuration (GET_DEFINED_PARENT_LOGGER > GET_DEFAULT_LEVEL >
+      -- GET_VALUE > REFRESH_CONF), and this creates a SQL0746, because the
+      -- table is being modified and queried at the same time.
+      INSERT INTO LOGS (LEVEL_ID, LOGGER_ID, MESSAGE)
+        VALUES (5, -1, 'A manual CONF_LOGGERS_EFFECTIVE update should be realized.');
+
+      -- There is nothing in conf_loggers, thus update conf_loggers_effective.
+      -- FIXME when uncommented, there is an error when trying to change the
+      -- configuration value
+      -- UPDATE LOGDATA.CONF_LOGGERS_EFFECTIVE
+      --   SET LEVEL_ID = SMALLINT(N.VALUE)
+      --   WHERE LOGGER_ID = 0;
+     END IF;
+    END;
    ELSE
     -- NOTHING.
   END CASE;
@@ -366,8 +395,12 @@ CREATE OR REPLACE TRIGGER T5_EFFECTIVE_LEVEL_UPDATE_DELETE
    SIGNAL SQLSTATE VALUE 'LGBE3'
      SET MESSAGE_TEXT = 'It is not possible to update the LEVEL_ID manually';
   ELSEIF (N.LOGGER_ID IS NULL) THEN
+   -- FIXME to change the 'paila' state.
    SIGNAL SQLSTATE VALUE 'PAILA'
      SET MESSAGE_TEXT = 'LOGGER_ID IS NULL - TODO';
+  -- TODO ELSE
+  -- ELSE
+  -- WRITE SOMETHING ABOUT A WEIRD STATUS
   END IF;
  END T_UPDATE_DELETE @
 
