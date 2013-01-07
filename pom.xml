@@ -1,0 +1,136 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+ <!-- Copyright (c) 2012 - 2013, Andres Gomez Casanova (AngocA) All rights 
+  reserved. -->
+ <!-- Redistribution and use in source and binary forms, with or without 
+  modification, are permitted provided that the following conditions are met: -->
+ <!-- 1. Redistributions of source code must retain the above copyright notice, 
+  this list of conditions and the following disclaimer. -->
+ <!-- 2. Redistributions in binary form must reproduce the above copyright 
+  notice, this list of conditions and the following disclaimer in the documentation 
+  and/or other materials provided with the distribution. -->
+ <!-- THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS 
+  "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED 
+  TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR 
+  PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS 
+  BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL 
+  DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR 
+  SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER 
+  CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, 
+  OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE 
+  USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. -->
+
+ <modelVersion>4.0.0</modelVersion>
+
+ <!-- The Basics -->
+ <groupId>com.github.angoca</groupId>
+ <artifactId>log4db2</artifactId>
+ <version>1.0-Alpha</version>
+ <packaging>pom</packaging>
+
+ <!-- Build Settings -->
+ <!-- "Project Build" contains more elements than just the BaseBuild set -->
+ <build>
+  <pluginManagement>
+   <plugins>
+
+    <!-- Cleans the target directory. -->
+    <!-- mvn clean -->
+    <plugin>
+     <artifactId>maven-clean-plugin</artifactId>
+     <version>2.4.1</version>
+     <executions>
+      <execution>
+       <id>auto-clean</id>
+       <phase>initialize</phase>
+       <goals>
+        <goal>clean</goal>
+       </goals>
+      </execution>
+     </executions>
+    </plugin>
+   </plugins>
+  </pluginManagement>
+  <plugins>
+
+   <!-- Packs all files in a tar. -->
+   <!-- mvn assembly:single -->
+   <plugin>
+    <artifactId>maven-assembly-plugin</artifactId>
+    <version>2.4</version>
+    <configuration>
+     <appendAssemblyId>false</appendAssemblyId>
+     <finalName>log4db2</finalName>
+     <descriptors>
+      <descriptor>src/main/assembly/assembly.xml</descriptor>
+     </descriptors>
+    </configuration>
+    <!-- Creates the assembly as part of package -->
+    <executions>
+     <execution>
+      <id>make-assembly</id>
+      <phase>package</phase>
+      <goals>
+       <goal>single</goal>
+      </goals>
+     </execution>
+    </executions>
+   </plugin>
+
+  </plugins>
+ </build>
+
+ <!-- More Project Information -->
+ <name>log4db2</name>
+ <description>
+  log4db2 is a framework that allows to write logs from
+  SQL-PL, with a configuration external to the application. This is an
+  approach or implementation of the log4j / logback but for DB2
+  procedure language SQL-PL.
+  </description>
+ <url>https://github.com/angoca/log4db2</url>
+ <inceptionYear>2012, 2013</inceptionYear>
+ <licenses>
+  <license>
+   <name>BSD 2-Clauses</name>
+   <distribution>repo</distribution>
+  </license>
+  <license>
+   <name>FreeBSD Documentation License</name>
+   <distribution>repo</distribution>
+   <comments>
+    This license is for the documentation, that is in the /doc
+    direectory.
+   </comments>
+  </license>
+ </licenses>
+
+ <developers>
+  <developer>
+   <id>angoca</id>
+   <name>Andres Gomez Casanova</name>
+   <email>angoca at yahoo dot com</email>
+   <timezone>-5</timezone>
+   <url>http://angoca.users.sourceforge.net/</url>
+   <roles>
+    <role>Designer</role>
+    <role>Developer</role>
+   </roles>
+  </developer>
+ </developers>
+
+ <!-- Environment Settings -->
+ <issueManagement>
+  <system>GitHub</system>
+  <url>https://github.com/angoca/log4db2/issues</url>
+ </issueManagement>
+
+ <scm>
+  <connection>scm:git:https://github.com/angoca/log4db2.git</connection>
+  <developerConnection>
+   scm:git:git@github.com:angoca/log4db2.git
+  </developerConnection>
+  <url>https://github.com/angoca/log4db2.git</url>
+ </scm>
+
+</project>
