@@ -9,7 +9,8 @@ stored procedure and then track them to see the progress.
 This utility / framework is based on the popular Java logger frameworks, 
 such as log4j and slj4j/logback.
 
-The utility is licensed with BSD 2-Clause license.
+The utility is licensed with BSD 2-Clause license. The documentation is
+licensed under FreeBSD Documentation license.
 
 The entity/relation diagram s the next:
 
