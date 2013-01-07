@@ -1,3 +1,4 @@
+@echo off
 :: Copyright (c) 2012 - 2013, Andres Gomez Casanova (AngocA)
 :: All rights reserved.
 ::
@@ -22,5 +23,8 @@
 :: ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 :: POSSIBILITY OF SUCH DAMAGE.
 
-call uninstall.bat
-call install.bat %1 %2
+if "%SRC_MAIN_SCRIPT_PATH%" EQU "" set SRC_MAIN_SCRIPT_PATH=.
+
+if EXIST init.bat call init.bat
+call %SRC_MAIN_SCRIPT_PATH%\uninstall.bat
+call %SRC_MAIN_SCRIPT_PATH%\install.bat %1 %2

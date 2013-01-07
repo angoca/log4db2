@@ -1,3 +1,4 @@
+@echo off
 :: Copyright (c) 2012 - 2013, Andres Gomez Casanova (AngocA)
 :: All rights reserved.
 ::
@@ -29,3 +30,5 @@ db2 -tf %1
 db2 COMMIT
 
 db2 "CALL LOGADMIN.LOGS(min_level=>4)"
+
+echo on

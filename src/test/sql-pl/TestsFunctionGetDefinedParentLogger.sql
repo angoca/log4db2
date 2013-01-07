@@ -26,7 +26,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 /**
- * Tests for the Get Defined Parent Logger table.
+ * Tests for the Get Defined Parent Logger function.
  */
 
 SET CURRENT SCHEMA LOGGER_1A @
@@ -35,7 +35,11 @@ SET CURRENT SCHEMA LOGGER_1A @
 
 !ECHO NOTE: Make sure triggers are deleted @
 
-!DB2 -TF CLEANTRIGGERS.SQL +O @
+--!DB2 -TF CLEANTRIGGERS.SQL +O @
+
+!%SRC_TEST_SCRIPT_PATH%\cleanTriggers @
+
+!$SRC_TEST_SCRIPT_PATH/cleanTriggers @
 
 CREATE OR REPLACE TRIGGER T1_CONF_CACHE
   AFTER INSERT OR UPDATE ON LOGDATA.CONFIGURATION
@@ -561,4 +565,8 @@ END @
 
 !DB2 CONNECT TO LOG4DB2 > NUL @
 
-!DB2 -TF TRIGGER.SQL +O @
+--!DB2 -TF TRIGGER.SQL +O @
+
+!%SRC_TEST_SCRIPT_PATH%\createTriggers @
+
+!$SRC_TEST_SCRIPT_PATH/createTriggers @

@@ -1,3 +1,4 @@
+@echo off
 :: Copyright (c) 2012 - 2013, Andres Gomez Casanova (AngocA)
 :: All rights reserved.
 ::
@@ -32,6 +33,10 @@ if %ERRORLEVEL% EQU 0 (
 )
 
 :version
+:: Sets the path.
+if "%SRC_MAIN_CODE_PATH%" EQU "" set SRC_MAIN_CODE_PATH=.
+if EXIST init.bat call init.bat
+
 :: Checks in which DB2 version the utility will be installed.
 :: DB2 v10.1 is the default version.
 if "%1" EQU "" goto v10.1
@@ -40,32 +45,36 @@ if /I "%1" EQU "-v9.7" goto v9.7
 
 :: DB2 v10.1.
 :v10.1
-db2 -tf Tables.sql
-db2 -tf Objects.sql
-db2 -td@ -f Tools.sql
-db2 -td@ -f AdminHeader.sql
-db2 -td@ -f AdminBody.sql
-db2 -td@ -f LOG.sql
-db2 -td@ -f GET_LOGGER.sql
-db2 -td@ -f Trigger.sql
+echo Installing application for v10.1
+echo on
+db2 -tf %SRC_MAIN_CODE_PATH%\Tables.sql
+db2 -tf %SRC_MAIN_CODE_PATH%\Objects.sql
+db2 -td@ -f %SRC_MAIN_CODE_PATH%\Tools.sql
+db2 -td@ -f %SRC_MAIN_CODE_PATH%\AdminHeader.sql
+db2 -td@ -f %SRC_MAIN_CODE_PATH%\AdminBody.sql
+db2 -td@ -f %SRC_MAIN_CODE_PATH%\LOG.sql
+db2 -td@ -f %SRC_MAIN_CODE_PATH%\GET_LOGGER.sql
+db2 -td@ -f %SRC_MAIN_CODE_PATH%\Trigger.sql
 
 :: Temporal capabilities for tables.
-if "%2" EQU "t" db2 -tf Create_Tables_Time_Travel.sql
-if "%1" EQU "t" db2 -tf Create_Tables_Time_Travel.sql
+if "%2" EQU "t" db2 -tf %SRC_MAIN_CODE_PATH%\Create_Tables_Time_Travel.sql
+if "%1" EQU "t" db2 -tf %SRC_MAIN_CODE_PATH%\Create_Tables_Time_Travel.sql
 
 goto exit
 
 :: DB2 v9.7
 :v9.7
 echo Installing application for DB2 v9.7
-db2 -tf Tables.sql
-db2 -tf Objects.sql
-db2 -td@ -f Tools.sql
-db2 -td@ -f AdminHeader.sql
-db2 -td@ -f AdminBody.sql
-db2 -td@ -f LOG.sql
-db2 -td@ -f GET_LOGGER_v9_7.sql
-db2 -td@ -f Trigger.sql
+echo on
+db2 -tf %SRC_MAIN_CODE_PATH%\Tables.sql
+db2 -tf %SRC_MAIN_CODE_PATH%\Objects.sql
+db2 -td@ -f %SRC_MAIN_CODE_PATH%\Tools.sql
+db2 -td@ -f %SRC_MAIN_CODE_PATH%\AdminHeader.sql
+db2 -td@ -f %SRC_MAIN_CODE_PATH%\AdminBody.sql
+db2 -td@ -f %SRC_MAIN_CODE_PATH%\LOG.sql
+db2 -td@ -f %SRC_MAIN_CODE_PATH%\GET_LOGGER_v9_7.sql
+db2 -td@ -f %SRC_MAIN_CODE_PATH%\Trigger.sql
+
 goto exit
 
 :exit

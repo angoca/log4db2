@@ -1,3 +1,4 @@
+@echo off
 :: Copyright (c) 2012 - 2013, Andres Gomez Casanova (AngocA)
 :: All rights reserved.
 ::
@@ -22,6 +23,10 @@
 :: ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 :: POSSIBILITY OF SUCH DAMAGE.
 
-db2 -tf CleanTriggers.sql
-db2 -tf CleanObjects.sql
-db2 -tf CleanTables.sql
+if "%SRC_MAIN_CODE_PATH%" EQU "" set SRC_MAIN_CODE_PATH=.
+if EXIST init.bat call init.bat
+echo Uninstalling...
+echo on
+db2 -tf %SRC_MAIN_CODE_PATH%\CleanTriggers.sql
+db2 -tf %SRC_MAIN_CODE_PATH%\CleanObjects.sql
+db2 -tf %SRC_MAIN_CODE_PATH%\CleanTables.sql

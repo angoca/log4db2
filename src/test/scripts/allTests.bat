@@ -1,3 +1,4 @@
+@echo off
 :: Copyright (c) 2012 - 2013, Andres Gomez Casanova (AngocA)
 :: All rights reserved.
 ::
@@ -22,22 +23,31 @@
 :: ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 :: POSSIBILITY OF SUCH DAMAGE.
 
-call tests\test.bat tests\TestsAppenders.sql
+if "%SRC_TEST_CODE_PATH%" EQU "" set SRC_TEST_CODE_PATH=.
+if "%SRC_TEST_SCRIPT_PATH%" EQU "" set SRC_TEST_SCRIPT_PATH=.
+if EXIST init.bat call init.bat
+
+echo Executing all tests with pauses in between.
+echo on
+
+call %SRC_TEST_SCRIPT_PATH%\test.bat %SRC_TEST_CODE_PATH%\TestsAppenders.sql
 pause
-call tests\test.bat tests\TestsCascadeCallLimit.sql
+call %SRC_TEST_SCRIPT_PATH%\test.bat %SRC_TEST_CODE_PATH%\TestsCache.sql
 pause
-call tests\test.bat tests\TestsConfAppenders.sql
+call %SRC_TEST_SCRIPT_PATH%\test.bat %SRC_TEST_CODE_PATH%\TestsCascadeCallLimit.sql
 pause
-call tests\test.bat tests\TestsConfiguration.sql
+call %SRC_TEST_SCRIPT_PATH%\test.bat %SRC_TEST_CODE_PATH%\TestsConfAppenders.sql
 pause
-call tests\test.bat tests\TestsConfLoggers.sql
+call %SRC_TEST_SCRIPT_PATH%\test.bat %SRC_TEST_CODE_PATH%\TestsConfiguration.sql
 pause
-call tests\test.bat tests\TestsConfLoggersDelete.sql
+call %SRC_TEST_SCRIPT_PATH%\test.bat %SRC_TEST_CODE_PATH%\TestsConfLoggers.sql
 pause
-call tests\test.bat tests\TestsConfLoggersEffective.sql
+call %SRC_TEST_SCRIPT_PATH%\test.bat %SRC_TEST_CODE_PATH%\TestsConfLoggersDelete.sql
 pause
-call tests\test.bat tests\TestsFunctionGetDefinedParentLogger.sql
+call %SRC_TEST_SCRIPT_PATH%\test.bat %SRC_TEST_CODE_PATH%\TestsConfLoggersEffective.sql
 pause
-call tests\test.bat tests\TestsGetLogger.sql
+call %SRC_TEST_SCRIPT_PATH%\test.bat %SRC_TEST_CODE_PATH%\TestsFunctionGetDefinedParentLogger.sql
 pause
-call tests\test.bat tests\TestsLevels.sql
+call %SRC_TEST_SCRIPT_PATH%\test.bat %SRC_TEST_CODE_PATH%\TestsGetLogger.sql
+pause
+call %SRC_TEST_SCRIPT_PATH%\test.bat %SRC_TEST_CODE_PATH%\TestsLevels.sql

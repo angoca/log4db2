@@ -23,27 +23,6 @@
 :: ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 :: POSSIBILITY OF SUCH DAMAGE.
 
-if "%SRC_TEST_CODE_PATH%" EQU "" set SRC_TEST_CODE_PATH=.
-if "%SRC_TEST_SCRIPT_PATH%" EQU "" set SRC_TEST_SCRIPT_PATH=.
+if "%SRC_MAIN_CODE_PATH%" EQU "" set SRC_MAIN_CODE_PATH=.
 if EXIST init.bat call init.bat
-db2 DELETE FROM LOGDATA.LOGS
-
-echo Executing all tests.
-echo on
-
-db2 -td@ -f %SRC_TEST_CODE_PATH%\TestsAppenders.sql
-db2 -td@ -f %SRC_TEST_CODE_PATH%\TestsCache.sql
-db2 -td@ -f %SRC_TEST_CODE_PATH%\TestsCascadeCallLimit.sql
-db2 -td@ -f %SRC_TEST_CODE_PATH%\TestsConfAppenders.sql
-db2 -td@ -f %SRC_TEST_CODE_PATH%\TestsConfiguration.sql
-db2 -td@ -f %SRC_TEST_CODE_PATH%\TestsConfLoggers.sql
-db2 -td@ -f %SRC_TEST_CODE_PATH%\TestsConfLoggersDelete.sql
-db2 -td@ -f %SRC_TEST_CODE_PATH%\TestsConfLoggersEffective.sql
-db2 -td@ -f %SRC_TEST_CODE_PATH%\TestsFunctionGetDefinedParentLogger.sql
-db2 -td@ -f %SRC_TEST_CODE_PATH%\TestsGetLogger.sql
-db2 -td@ -f %SRC_TEST_CODE_PATH%\TestsLevels.sql
-
-@echo off
-db2 COMMIT
-
-db2 "CALL LOGADMIN.LOGS(min_level=>4, qty=>300)"
+db2 -tf %SRC_MAIN_CODE_PATH%\Trigger.sql +O
