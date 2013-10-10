@@ -78,3 +78,5 @@ db2 -td@ -f %SRC_MAIN_CODE_PATH%\Trigger.sql
 goto exit
 
 :exit
+
+
