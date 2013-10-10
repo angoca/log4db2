@@ -88,4 +88,6 @@ The LOG_HIST table is created like LOGS, but at that time, two more columns are
 added in order to enable the temporal capabilities.
 
 In a similar way, the CONF_LOGGER_HIST is created like CONF_LOGGERS, but the
-extra columns are addede when the temporal capabilities are enabled.
+extra columns are added when the temporal capabilities are enabled.
+
+
