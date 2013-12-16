@@ -44,7 +44,7 @@ function v10.1() {
     db2 -tf ${SRC_MAIN_CODE_PATH}/Create_Tables_Time_Travel.sql
   fi
 
-goto exit
+  exit 0
 }
 
 # DB2 v9.7
@@ -58,7 +58,8 @@ function v9.7() {
   db2 -td@ -f ${SRC_MAIN_CODE_PATH}/LOG.sql
   db2 -td@ -f ${SRC_MAIN_CODE_PATH}/GET_LOGGER_v9_7.sql
   db2 -td@ -f ${SRC_MAIN_CODE_PATH}/Trigger.sql
-goto exit
+
+  exit 0
 }
 
 function version() {
@@ -73,10 +74,10 @@ function version() {
   # Checks in which DB2 version the utility will be installed.
   # DB2 v10.1 is the default version.
   if [[ $1 -eq "" ]] ; then
-    goto v10.1
+    v10.1
   fi
   if /I [[ $1 -eq "-v10.1" ]] ; then
-    goto v10.1
+    v10.1
   elif /I [[ $1 -eq "-v9.7" ]] ; then
     v9.7
   fi
@@ -88,7 +89,7 @@ if [[ $? -eq 0 ]] ; then
   version
 else
   echo "Please connect to a database before the execution of the installation."
-  goto exit
+  exit 0
 fi
 
 
