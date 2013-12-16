@@ -1,18 +1,69 @@
 log4db2
+=======
 
-This is a logger utility specially designed for DB2 UDB, that uses mainly SQL
-instructions with PL SQL code inside Stored Procedures.
+This is a logger utility specially designed for DB2 for LUW, that uses mainly
+SQL instructions with SQL PL code inside Stored Procedures.
 
-The main objective is to provide an easy way to write messages from a
-stored procedure and then track them to see the progress.
+The main objective is to provide an easy way to write messages from a stored
+procedure. These messages could be queried to see the progress of a process.
+This utility aims to reduce the time developping, debugging and monitoring, by
+centralizing the messages produced by the code.
 
 This utility / framework is based on the popular Java logger frameworks, 
-such as log4j and slj4j/logback.
+such as log4j and slf4j/logback.
 
-The utility is licensed with BSD 2-Clause license. The documentation is
-licensed under FreeBSD Documentation license.
+The utility is licensed with BSD 2-Clause license and the documentation is
+licensed under FreeBSD Documentation license. This means you are free to use,
+modify and distribute.
 
-The entity/relation diagram s the next:
+Installation
+------------
+
+The code is distributed according to the Maven's Standard Diretory Layout. This
+allows to developers (Specifically Java developers) to identify where each
+component is storedm folliwing the pattern Convention over Configuration.
+
+NOTE: At the moment, the only way to install the utility is from the source
+code. This is because the project is in a very early state, and it is
+improved constantly.
+
+4 variables need to the specified in order to run the install and test scripts.
+ * SRC_MAIN_CODE_PATH
+ * SRC_MAIN_SCRIPT_PATH
+ * SRC_TEST_CODE_PATH
+ * SRC_TEST_SCRIPT_PATH
+These variables are initialized via the init script.
+
+Before installing the scripts in a database, a connection to it has to be
+established before. If not, an error will be raised.
+
+Windows:
+
+cd src\main\scripts
+init.bat
+install.bat
+
+Linux:
+
+cd src/main/scripts
+./init
+./install
+
+
+After the install, all statements should have been successful.
+
+
+
+ER Model
+--------
+
+The utility  uses a set of tables to store the messages and the configuration.
+This is the diagram of the entity/relation diagram.
+
+First line: Table's name
+# Primary key (mandatory.)
+* Mandatory field.
+o Optiontal field.
 
        ++==============================---------------+
        ||                                             A
