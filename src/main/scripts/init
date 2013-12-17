@@ -25,7 +25,7 @@
 
 # This variable indicates the location of the sources, if it has not
 # defined before.
-if [[ ${LOG4DB2_PATH} ]] ; then
+if [[ -z ${LOG4DB2_PATH} ]] ; then
   LOG4DB2_PATH=../../..
 fi
 
