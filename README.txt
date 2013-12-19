@@ -35,20 +35,22 @@ improved constantly.
 These variables are initialized via the init script.
 
 Before installing the scripts in a database, a connection to it has to be
-established before. If not, an error will be raised.
+established. If not, an error will be raised.
 
-Windows:
+>> Windows:
 
 cd src\main\scripts
 init.bat
 install.bat
 
-Linux:
+>> Linux/UNIX:
 
 cd src/main/scripts
-./init
-./install
+. ./init
+. ./install
 
+Make sure to put the dot before the command. This will source the values and
+use the current connection.
 
 After the install, all statements should have been successful.
 
