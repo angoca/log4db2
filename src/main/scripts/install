@@ -37,14 +37,12 @@ function v10.1() {
   db2 -td@ -f ${SRC_MAIN_CODE_PATH}/Trigger.sql
 
   # Temporal capabilities for tables.
-  if [[ $2 -eq "t" ]] ; then
+  if [[ ${2} == "t" ]] ; then
     db2 -tf ${SRC_MAIN_CODE_PATH}/Create_Tables_Time_Travel.sql
   fi
-  if [[ $1 -eq "t" ]] ; then
+  if [[ ${1} == "t" ]] ; then
     db2 -tf ${SRC_MAIN_CODE_PATH}/Create_Tables_Time_Travel.sql
   fi
-
-  exit 0
 }
 
 # DB2 v9.7
@@ -58,38 +56,34 @@ function v9.7() {
   db2 -td@ -f ${SRC_MAIN_CODE_PATH}/LOG.sql
   db2 -td@ -f ${SRC_MAIN_CODE_PATH}/GET_LOGGER_v9_7.sql
   db2 -td@ -f ${SRC_MAIN_CODE_PATH}/Trigger.sql
-
-  exit 0
 }
 
 function version() {
   # Sets the path.
-  if [[ ${SRC_MAIN_CODE_PATH} -eq "" ]] ; then
+  if [[ ${SRC_MAIN_CODE_PATH} == "" ]] ; then
     SRC_MAIN_CODE_PATH=.
   fi
   if [[ -x init ]] ; then
-    init
+    . ./init
   fi
 
   # Checks in which DB2 version the utility will be installed.
   # DB2 v10.1 is the default version.
-  if [[ $1 -eq "" ]] ; then
+  if [[ ${1} -eq "" ]] ; then
     v10.1
-  fi
-  if /I [[ $1 -eq "-v10.1" ]] ; then
+  elif /I [[ ${1} -eq "-v10.1" ]] ; then
     v10.1
-  elif /I [[ $1 -eq "-v9.7" ]] ; then
+  elif /I [[ ${1} -eq "-v9.7" ]] ; then
     v9.7
   fi
 }
 
 # Checks if there is already a connection established
-db2 connect
-if [[ $? -eq 0 ]] ; then
+db2 connect > /dev/null
+if [[ ${?} -eq 0 ]] ; then
   version
 else
   echo "Please connect to a database before the execution of the installation."
-  exit 0
 fi
 
 
