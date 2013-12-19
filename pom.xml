@@ -31,6 +31,7 @@
  <!-- Build Settings -->
  <!-- "Project Build" contains more elements than just the BaseBuild set -->
  <build>
+  <defaultGoal>clean assembly:single</defaultGoal>
   <pluginManagement>
    <plugins>
 
@@ -38,7 +39,7 @@
     <!-- mvn clean -->
     <plugin>
      <artifactId>maven-clean-plugin</artifactId>
-     <version>2.4.1</version>
+     <version>2.5</version>
      <executions>
       <execution>
        <id>auto-clean</id>
@@ -133,4 +134,7 @@
   <url>https://github.com/angoca/log4db2.git</url>
  </scm>
 
+ <prerequisites>
+  <maven>3.1.1</maven>
+ </prerequisites>
 </project>
