@@ -31,10 +31,10 @@ else
   if [[ "${SRC_MAIN_CODE_PATH}" == "" ]] ; then
     SRC_MAIN_CODE_PATH=.
   fi
-  if [[ -x init.bat ]] ; then
-    . ./init.bat
+  if [[ -x init ]] ; then
+    . ./init
   fi
-  echo Uninstalling...
+  echo Uninstalling log4db2...
   db2 -tf ${SRC_MAIN_CODE_PATH}/CleanTriggers.sql
   db2 -tf ${SRC_MAIN_CODE_PATH}/CleanObjects.sql
   db2 -tf ${SRC_MAIN_CODE_PATH}/CleanTables.sql
