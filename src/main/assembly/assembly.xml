@@ -20,9 +20,9 @@
  USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. -->
 
 <assembly
- xmlns="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.1"
+ xmlns="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.2"
  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
- xsi:schemaLocation="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.1 http://maven.apache.org/xsd/assembly-1.1.1.xsd">
+ xsi:schemaLocation="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.2 http://maven.apache.org/xsd/assembly-1.1.2.xsd">
  <id>release</id>
  <formats>
   <format>zip</format>
@@ -34,12 +34,12 @@
  <fileSets>
   <!-- License and Readme files -->
   <fileSet>
-   <directory>/</directory>
+   <directory>.</directory>
    <includes>
     <include>README.txt</include>
     <include>COPYING.txt</include>
    </includes>
-   <fileMode>0555</fileMode>
+   <fileMode>0444</fileMode>
    <outputDirectory>/</outputDirectory>
   </fileSet>
   <!-- SQL PL code -->
@@ -48,8 +48,8 @@
    <includes>
     <include>**/*</include>
    </includes>
-   <fileMode>0555</fileMode>
-   <outputDirectory>/</outputDirectory>
+   <fileMode>0666</fileMode>
+   <outputDirectory>sql-pl</outputDirectory>
   </fileSet>
   <!-- Scripts -->
   <fileSet>
@@ -58,14 +58,16 @@
     <include>**/*</include>
    </includes>
    <excludes>
-    <exclude>init.bat</exclude>
+    <!-- These files define the variables for development. -->
+    <exclude>init-dev.bat</exclude>
+    <exclude>init-dev</exclude>
    </excludes>
-   <fileMode>0555</fileMode>
+   <fileMode>0777</fileMode>
    <outputDirectory>/</outputDirectory>
   </fileSet>
-  <!-- Documentation directory -->
+  <!-- Documentation directory (with its license)-->
   <fileSet>
-   <directory>/doc</directory>
+   <directory>doc</directory>
    <includes>
     <include>**/*</include>
    </includes>
