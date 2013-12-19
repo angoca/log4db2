@@ -26,12 +26,12 @@
 # This variable indicates the location of the sources, if it has not
 # defined before.
 if [[ -z ${LOG4DB2_PATH} ]] ; then
-  LOG4DB2_PATH=../../..
+  LOG4DB2_PATH=.
 fi
 
-SRC_MAIN_CODE_PATH=${LOG4DB2_PATH}/src/main/sql-pl
-SRC_MAIN_SCRIPT_PATH=${LOG4DB2_PATH}/src/main/scripts
-SRC_TEST_CODE_PATH=${LOG4DB2_PATH}/src/test/sql-pl
-SRC_TEST_SCRIPT_PATH=${LOG4DB2_PATH}/src/test/scripts
+SRC_MAIN_CODE_PATH=${LOG4DB2_PATH}/sql-pl
+SRC_MAIN_SCRIPT_PATH=${LOG4DB2_PATH}/
+SRC_TEST_CODE_PATH=${LOG4DB2_PATH}/test/sql-pl
+SRC_TEST_SCRIPT_PATH=${LOG4DB2_PATH}/test/scripts
 
 
