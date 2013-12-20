@@ -1,0 +1,54 @@
+#!/bin/bash
+# Copyright (c) 2012 - 2013, Andres Gomez Casanova (AngocA)
+# All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions are met:
+#
+# 1. Redistributions of source code must retain the above copyright notice,
+#    this list of conditions and the following disclaimer.
+# 2. Redistributions in binary form must reproduce the above copyright notice,
+#    this list of conditions and the following disclaimer in the documentation
+#    and/or other materials provided with the distribution.
+#
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+# ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
+# LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+# CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+# SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+# INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+# CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+# ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+# POSSIBILITY OF SUCH DAMAGE.
+
+if [[ -x init-dev ]] ; then
+  . ./init-dev
+fi
+
+echo Executing all tests with pauses in between.
+
+. ./${SRC_TEST_SCRIPT_PATH}/test ${SRC_TEST_CODE_PATH}/TestsAppenders.sql
+read -p "Press enter to continue (next TestsCache)"
+. ./${SRC_TEST_SCRIPT_PATH}/test ${SRC_TEST_CODE_PATH}/TestsCache.sql
+read -p "Press enter to continue (next TestsCascadeCallLimit)"
+. ./${SRC_TEST_SCRIPT_PATH}/test ${SRC_TEST_CODE_PATH}/TestsCascadeCallLimit.sql
+read -p "Press enter to continue (next TestsConfAppenders)"
+. ./${SRC_TEST_SCRIPT_PATH}/test ${SRC_TEST_CODE_PATH}/TestsConfAppenders.sql
+read -p "Press enter to continue (next TestConfiguration)"
+. ./${SRC_TEST_SCRIPT_PATH}/test ${SRC_TEST_CODE_PATH}/TestsConfiguration.sql
+read -p "Press enter to continue (next TestsConfLoggers)"
+. ./${SRC_TEST_SCRIPT_PATH}/test ${SRC_TEST_CODE_PATH}/TestsConfLoggers.sql
+read -p "Press enter to continue (next TestsConfLoggersDelete)"
+. ./${SRC_TEST_SCRIPT_PATH}/test ${SRC_TEST_CODE_PATH}/TestsConfLoggersDelete.sql
+read -p "Press enter to continue (next TestsConfLoggersEffective)"
+. ./${SRC_TEST_SCRIPT_PATH}/test ${SRC_TEST_CODE_PATH}/TestsConfLoggersEffective.sql
+read -p "Press enter to continue (next TestsFunctionsGetDefinedParentLogger)"
+. ./${SRC_TEST_SCRIPT_PATH}/test ${SRC_TEST_CODE_PATH}/TestsFunctionGetDefinedParentLogger.sql
+read -p "Press enter to continue (next TestsGetLogger)"
+. ./${SRC_TEST_SCRIPT_PATH}/test ${SRC_TEST_CODE_PATH}/TestsGetLogger.sql
+read -p "Press enter to continue (next TestsLevels)"
+. ./${SRC_TEST_SCRIPT_PATH}/test ${SRC_TEST_CODE_PATH}/TestsLevels.sql
+
+

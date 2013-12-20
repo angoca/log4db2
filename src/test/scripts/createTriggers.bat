@@ -26,3 +26,5 @@
 if "%SRC_MAIN_CODE_PATH%" EQU "" set SRC_MAIN_CODE_PATH=.
 if EXIST init.bat call init.bat
 db2 -tf %SRC_MAIN_CODE_PATH%\Trigger.sql +O
+
+
