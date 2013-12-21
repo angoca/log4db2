@@ -45,9 +45,13 @@ read -p "Press enter to continue (next TestsConfLoggersDelete)"
 read -p "Press enter to continue (next TestsConfLoggersEffective)"
 . ./${SRC_TEST_SCRIPT_PATH}/test ${SRC_TEST_CODE_PATH}/TestsConfLoggersEffective.sql
 read -p "Press enter to continue (next TestsFunctionsGetDefinedParentLogger)"
+. ./${SRC_TEST_SCRIPT_PATH}/cleanTriggers
 . ./${SRC_TEST_SCRIPT_PATH}/test ${SRC_TEST_CODE_PATH}/TestsFunctionGetDefinedParentLogger.sql
+. ./${SRC_TEST_SCRIPT_PATH}/createTriggers
 read -p "Press enter to continue (next TestsGetLogger)"
+. ./${SRC_TEST_SCRIPT_PATH}/cleanTriggers
 . ./${SRC_TEST_SCRIPT_PATH}/test ${SRC_TEST_CODE_PATH}/TestsGetLogger.sql
+. ./${SRC_TEST_SCRIPT_PATH}/createTriggers
 read -p "Press enter to continue (next TestsLevels)"
 . ./${SRC_TEST_SCRIPT_PATH}/test ${SRC_TEST_CODE_PATH}/TestsLevels.sql
 

@@ -46,9 +46,13 @@ call %SRC_TEST_SCRIPT_PATH%\test.bat %SRC_TEST_CODE_PATH%\TestsConfLoggersDelete
 pause
 call %SRC_TEST_SCRIPT_PATH%\test.bat %SRC_TEST_CODE_PATH%\TestsConfLoggersEffective.sql
 pause
+call %SRC_TEST_SCRIPT_PATH%\cleanTriggers.bat
 call %SRC_TEST_SCRIPT_PATH%\test.bat %SRC_TEST_CODE_PATH%\TestsFunctionGetDefinedParentLogger.sql
+call %SRC_TEST_SCRIPT_PATH%\createTriggers.bat
 pause
+call %SRC_TEST_SCRIPT_PATH%\cleanTriggers.bat
 call %SRC_TEST_SCRIPT_PATH%\test.bat %SRC_TEST_CODE_PATH%\TestsGetLogger.sql
+call %SRC_TEST_SCRIPT_PATH%\createTriggers.bat
 pause
 call %SRC_TEST_SCRIPT_PATH%\test.bat %SRC_TEST_CODE_PATH%\TestsLevels.sql
 
