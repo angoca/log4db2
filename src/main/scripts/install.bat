@@ -34,7 +34,6 @@ if %ERRORLEVEL% EQU 0 (
 
 :version
 :: Sets the path.
-if "%SRC_MAIN_CODE_PATH%" EQU "" set SRC_MAIN_CODE_PATH=.
 if EXIST init.bat call init.bat
 
 :: Checks in which DB2 version the utility will be installed.

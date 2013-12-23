@@ -23,12 +23,10 @@ Andres Gomez Casanova (AngocA)
 Installation
 ------------
 
-4 variables need to the specified in order to run the install and example
+2 variables need to the specified in order to run the install and example
 scripts.
  * SRC_MAIN_CODE_PATH
  * SRC_MAIN_SCRIPT_PATH
- * SRC_TEST_CODE_PATH
- * SRC_TEST_SCRIPT_PATH
 These variables are initialized via the init script.
 
 Before installing the scripts in a database, a connection to it has to be
