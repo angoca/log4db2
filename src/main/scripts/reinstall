@@ -23,10 +23,6 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-if [[ "${SRC_MAIN_SCRIPT_PATH}" == "" ]] ; then
-  SRC_MAIN_SCRIPT_PATH=.
-fi
-
 if [[ -x init ]] ; then
   . ./init
 fi

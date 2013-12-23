@@ -59,10 +59,6 @@ function v9.7() {
 }
 
 function version() {
-  # Sets the path.
-  if [[ ${SRC_MAIN_CODE_PATH} == "" ]] ; then
-    SRC_MAIN_CODE_PATH=.
-  fi
   if [[ -x init ]] ; then
     . ./init
   fi
