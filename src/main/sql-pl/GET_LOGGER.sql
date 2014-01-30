@@ -30,12 +30,15 @@ SET CURRENT SCHEMA LOGGER_1A @
 -- TODO Check the logger structure, in order to have different names for the
 -- sons of a given father. root>toto root>tata root>tata is an error, and should
 -- remove this duplicate. Probably implement with a check constraint.
+-- 20140106 - This is already checked if the values are introduced via the
+-- GET_LOGGER procedure. Probably, the conf table has to be checked in order
+-- to prevent this kind of problems.
 
 -- TODO Check the IDs of the conf table and the effective table, in order to
 -- see if the effective ids correspond to conf ids.
 
 -- TODO Check if the logger levels between the conf and effective table are the
--- same. In conf could be INFO but in effective could be WARN.@ @
+-- same. In conf could be INFO but in effective could be WARN.
 
 -- TODO Check the registered loggers in the database, calculating the maximum
 -- length of the concatenated inner levels, and this lenght should be less than

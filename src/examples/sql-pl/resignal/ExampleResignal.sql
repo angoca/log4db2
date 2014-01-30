@@ -72,3 +72,7 @@ END @
 DROP PROCEDURE TESTS.DIVISION( INTEGER, INTEGER, INTEGER ) @
 
 DROP SCHEMA TESTS RESTRICT @
+
+!echo "If the schema called 'tests' cannot be dropped, terminate the session,"@
+!echo "reconnect and issue again the command: DROP SCHEMA TESTS RESTRICT"@
+
