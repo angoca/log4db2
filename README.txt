@@ -89,6 +89,55 @@ use the current connection.
 After the install, all statements should have been successful.
 
 
+Configuration
+-------------
+
+These are the configuration parameters in the LOGDATA.CONFIGURATION table.
+
+defaultRootLevelId: This parameter defines the default level for the root
+    logger. If a given logger does not have a define level, and root logger
+    is neither defined, this value will be taken into account.
+internalCache: This value switches the cache on/off. The caches reduces the
+    select operations by querying an array where the logger configuration is
+    stored, instead of querying this each time a call is issued.
+logInternals: Activates the framework internal logging. This is most used for
+    debugging process.
+secondsToRefresh: Determines the configuration refresh frequency in seconds.
+    The configuration could be modified at any time, and it wil be reloaded.
+checkHierarchy: Checks the configuration defined in the CONF_LOGGERS table
+    before load it. TODO This feature has not been yet implemented.
+checkLevels: Checks the configruation defined in the LEVELS table before load
+    it. TODO This feature has not been yet implemented.
+
+
+Appenders
+---------
+
+There are different types of appenders to log the events in differents
+mechanisms, each on with a different configuration. Each configuration has
+also a name:
+
+Pure SQL PL - Tables: Writes the log messages directly in the LOG table. This
+    is a pure SQL PL implementation, and it works perfectly in DB2 Express-C
+    edition.
+db2diag.log: The log messages are written in the DB2 DIAG file. This uses the
+    db2AdminMsgWrite function to write in that file. In order to activate this
+    function, it is necessary to put the compiled C file in the DB2 binaries.
+    TODO This functions has not been yet implemented.
+UTL_FILE: The log messages are written in an external file. This uses the
+    built-in functions with the same name. This does not work when using DB2
+    Express-C edition. TODO This function has not been yet implemented.
+DB2 logger: This uses the existant logging facility for DB2 written in C. This
+    makes this framework like a wrapper. This mechanism need the installation
+    of that framework before using this facility. TODO This feature has not
+    been yet implemented.
+Java logger: This mechanism sends the messages to a Java Stored Procedure.
+    Depending on the Java Stored Procedure, and if there is a log4j or slf4j
+    configuration the logs will be written into files, or other mechanisms.
+    TODO This functions has not been yet implemented.
+
+The appenders has
+
 ER Model
 --------
 
