@@ -114,6 +114,10 @@ ALTER MODULE LOGGER PUBLISH
 /**
  * TODO Writes the provided message in the DB2LOGGER. This is an external logging
  * facility implemented in C, and that has only two levels for loggers.
+ * 
+ * For more information: 
+ * - http://www.ibm.com/developerworks/data/library/techarticle/dm-0601khatri/
+ * - http://www.zinox.com/node/89
  *
  * IN LOGGER_ID
  *   Identification of the associated logger.
