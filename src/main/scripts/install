@@ -48,7 +48,7 @@ function v10.1() {
 # DB2 v9.7
 function v9.7() {
   echo "Installing application for DB2 v9.7"
-  db2 -tf ${SRC_MAIN_CODE_PATH}/Tables.sql
+  db2 -tf ${SRC_MAIN_CODE_PATH}/Tables_v9_7.sql
   db2 -tf ${SRC_MAIN_CODE_PATH}/Objects.sql
   db2 -td@ -f ${SRC_MAIN_CODE_PATH}/Tools.sql
   db2 -td@ -f ${SRC_MAIN_CODE_PATH}/AdminHeader.sql

@@ -212,7 +212,7 @@ COMMENT ON REFERENCES (
 -- could be accessed via an index, but it impacts the writes, because this
 -- structure has to be maintained. 
 CREATE TABLE LOGS (
-  DATE CHAR(13) FOR BIT DATA NOT NULL IMPLICITLY HIDDEN,
+  DATE CHAR(13) FOR BIT DATA NOT NULL,
   LEVEL_ID SMALLINT,
   LOGGER_ID SMALLINT,
   MESSAGE VARCHAR(512) NOT NULL
