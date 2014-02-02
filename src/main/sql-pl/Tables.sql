@@ -250,12 +250,12 @@ CREATE OR REPLACE SEQUENCE LOGGER_ID_SEQ
 -- logInternals: Logs internal messages.
 -- secondsToRefresh: Quantity of second before refresh the conf.
 INSERT INTO CONFIGURATION (KEY, VALUE)
-  VALUES ('checkHierarchy', 'false'),
-         ('checkLevels', 'false'),
-         ('defaultRootLevelId', '3'),
+  VALUES ('defaultRootLevelId', '3'),
          ('internalCache', 'true'),
          ('logInternals', 'false'),
-         ('secondsToRefresh', '30');
+         ('secondsToRefresh', '30'),
+         ('checkHierarchy', 'false'),
+         ('checkLevels', 'false');
 
 -- Levels of the logger utility.
 INSERT INTO LEVELS (LEVEL_ID, NAME)
