@@ -27,7 +27,7 @@ if [[ -x init ]] ; then
   . ./init
 fi
 
-. ./${SRC_MAIN_SCRIPT_PATH}/uninstall
-. ./${SRC_MAIN_SCRIPT_PATH}/install ${1} ${2}
+. ./uninstall
+. ./install ${1} ${2}
 
 
