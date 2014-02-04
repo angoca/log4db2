@@ -42,15 +42,3 @@ UPDATE DB CFG USING CONNECT_PROC TESTS.CONNECTION_SETUP;
  
 CONNECT RESET;
 
--------------------------------------------------------------------------------
---#SET TERMINATOR @
--- The following statements are to reverse the configuration.
-CONNECT TO LOG4DB2@
-
-UPDATE DB CFG USING CONNECT_PROC NULL@
-
-DROP PROCEDURE TESTS.CONNECTION_SETUP@
-
-DROP SCHEMA TESTS RESTRICT@
-
-CONNECT RESET@
