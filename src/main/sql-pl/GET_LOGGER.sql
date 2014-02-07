@@ -80,12 +80,13 @@ ALTER MODULE LOGGER ADD
   DETERMINISTIC -- Returns the same ID for the same logger name.
   NO EXTERNAL ACTION
   PARAMETER CCSID UNICODE
+  SPECIFIC P_GET_LOGGER
  P_GET_LOGGER: BEGIN
   -- Handles the limit cascade call.
   DECLARE EXIT HANDLER FOR SQLSTATE '54038'
    BEGIN
     INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES 
-    (2, 'LG001. Cascade call limit achieve, for GET_LOGGER: ' || COALESCE(NAME, 'null'));
+      (2, 'LG001. Cascade call limit achieve, for GET_LOGGER: ' || COALESCE(NAME, 'null'));
     RESIGNAL SQLSTATE 'LG001';
    END;
 
@@ -129,7 +130,8 @@ ALTER MODULE LOGGER ADD
       INOUT PARENT ANCHOR LOGDATA.CONF_LOGGERS.LOGGER_ID,
       INOUT PARENT_LEVEL ANCHOR LOGDATA.LEVELS.LEVEL_ID
       )
-     P_ANALYZE: BEGIN
+      SPECIFIC P_ANALYZE_NAME
+     P_ANALYZE_NAME: BEGIN
       DECLARE SON ANCHOR LOGDATA.CONF_LOGGERS.LOGGER_ID; -- Id of the current logger.
       DECLARE LEVEL ANCHOR LOGDATA.LEVELS.LEVEL_ID; -- Id of the associated logger level.
 
@@ -165,7 +167,7 @@ ALTER MODULE LOGGER ADD
        SET PARENT = SON;
        SET PARENT_LEVEL = LEVEL;
       END IF;
-     END P_ANALYZE ;
+     END P_ANALYZE_NAME ;
     ------------------------------------------------------------------------------
 
     -- Remove spaces at the beginning and at the end.
@@ -227,3 +229,4 @@ ALTER MODULE LOGGER ADD
      (GENERATE_UNIQUE(), 4, -1, 'Logger ID for ' || NAME || ' is ' || COALESCE(LOGGER_ID, -1));
   END IF;
  END P_GET_LOGGER @
+
