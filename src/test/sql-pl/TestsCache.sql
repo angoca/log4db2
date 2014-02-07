@@ -1,7 +1,7 @@
 --#SET TERMINATOR @
 
 /*
-Copyright (c) 2012 - 2013, Andres Gomez Casanova (AngocA)
+Copyright (c) 2012 - 2014, Andres Gomez Casanova (AngocA)
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -85,7 +85,7 @@ COMMIT;
 
 -- Test5: Get, deactivate, delete different.
 INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES (3, 'Test5: Get, deactivate, delete different');
---pedir id, desactivar, borrar effective, y volver a pedir, y ver que es el nuevo id (no quedó en el cache)
+--pedir id, desactivar, borrar effective, y volver a pedir, y ver que es el nuevo id (no quedo en el cache)
 COMMIT;
 
 -- Test6: Null.
