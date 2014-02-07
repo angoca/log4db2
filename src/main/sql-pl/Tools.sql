@@ -105,7 +105,7 @@ ALTER MODULE LOGGER ADD
   SET LAST_REFRESH = CURRENT TIMESTAMP;
   SET CACHE = TRUE;
   SET LOADED = FALSE;
- END P_UNLOAD_CONF@ 
+ END P_UNLOAD_CONF @ 
 
 /**
  * Refreshes the configuration cache immediately.
@@ -144,7 +144,7 @@ ALTER MODULE LOGGER ADD
   END WHILE;
   -- Sets the last configuration read as now.
   SET LAST_REFRESH = CURRENT TIMESTAMP;
- END P_REFRESH_CONF@
+ END P_REFRESH_CONF @
 
 /**
  * Function that returns the value of the given key from the configuration
@@ -285,7 +285,7 @@ ALTER MODULE LOGGER ADD
   SET LOADED = FALSE;
   -- Cleans the cache
   SET LOGGERS_CACHE = ARRAY_DELETE(LOGGERS_CACHE);
- END P_DEACTIVATE_CACHE@
+ END P_DEACTIVATE_CACHE @
 
 /**
  * Procedure that dumps the configuration. It returns two result sets. The

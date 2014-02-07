@@ -49,7 +49,7 @@ CREATE OR REPLACE TRIGGER T1_CONF_CACHE
    ELSE
     -- NOTHING.
   END CASE;
- END T_CONF_CACHE@
+ END T_CONF_CACHE @
 
 BEGIN
 -- Reserved names for errors.
