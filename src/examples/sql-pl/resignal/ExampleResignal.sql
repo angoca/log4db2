@@ -34,7 +34,8 @@ CREATE SCHEMA TESTS @
 CREATE OR REPLACE PROCEDURE DIVISION (
   IN NUMERATOR INTEGER,
   IN DENOMINATOR INTEGER,
-  OUT RESULT INTEGER)
+  OUT RESULT INTEGER
+  )
   SPECIFIC P_DIVISION
 P_DIVISION: BEGIN
  DECLARE LOGGER_ID SMALLINT;
@@ -73,6 +74,6 @@ DROP PROCEDURE TESTS.DIVISION (INTEGER, INTEGER, INTEGER) @
 
 DROP SCHEMA TESTS RESTRICT @
 
-!echo "If the schema called 'tests' cannot be dropped, terminate the session,"@
-!echo "reconnect and issue again the command: DROP SCHEMA TESTS RESTRICT"@
+!echo "If the schema called 'tests' cannot be dropped, terminate the session," @
+!echo "reconnect and issue again the command: DROP SCHEMA TESTS RESTRICT" @
 
