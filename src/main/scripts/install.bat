@@ -64,9 +64,11 @@ db2 -td@ -f %SRC_MAIN_CODE_PATH%\Trigger.sql
 
 :: Temporal capabilities for tables.
 if "%2" EQU "t" (
+ echo Create table for Time Travel
  db2 -tf %SRC_MAIN_CODE_PATH%\Create_Tables_Time_Travel.sql
 )
 if "%1" EQU "t" (
+ echo Create table for Time Travel
  db2 -tf %SRC_MAIN_CODE_PATH%\Create_Tables_Time_Travel.sql
 )
 

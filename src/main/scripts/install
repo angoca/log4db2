@@ -36,10 +36,8 @@ function v10.1() {
  db2 -td@ -sf ${SRC_MAIN_CODE_PATH}/Trigger.sql
 
  # Temporal capabilities for tables.
- if [[ ${2} == "t" ]] ; then
-  db2 -tf ${SRC_MAIN_CODE_PATH}/Create_Tables_Time_Travel.sql
- fi
  if [[ ${1} == "t" ]] ; then
+  echo "Create table for Time Travel"
   db2 -tf ${SRC_MAIN_CODE_PATH}/Create_Tables_Time_Travel.sql
  fi
 }
@@ -66,10 +64,20 @@ function version() {
  # DB2 v10.1 is the default version.
  if [[ ${1} == "" ]] ; then
   v10.1
+ elif [[ ${1} == "t" ]] ; then
+  v10.1 t
  elif [[ ${1} == "-v10.1" ]] ; then
-  v10.1
+  if [[ ${2} == "" ]] ; then
+   v10.1
+  elif [[ ${2} == "t" ]] ; then
+   v10.1 t
+  else
+   echo ERROR
+  fi
  elif [[ ${1} == "-v9.7" ]] ; then
   v9.7
+ else
+  echo ERROR
  fi
 }
 
