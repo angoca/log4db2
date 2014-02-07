@@ -23,10 +23,11 @@
 :: ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 :: POSSIBILITY OF SUCH DAMAGE.
 
-if EXIST init.bat call init.bat
+if EXIST init-dev.bat (
+ call init-dev.bat
+)
 
 echo Executing all tests with pauses in between.
-echo on
 
 call %SRC_TEST_SCRIPT_PATH%\test.bat %SRC_TEST_CODE_PATH%\TestsAppenders.sql
 pause
@@ -53,5 +54,4 @@ call %SRC_TEST_SCRIPT_PATH%\test.bat %SRC_TEST_CODE_PATH%\TestsGetLogger.sql
 call %SRC_TEST_SCRIPT_PATH%\createTriggers.bat
 pause
 call %SRC_TEST_SCRIPT_PATH%\test.bat %SRC_TEST_CODE_PATH%\TestsLevels.sql
-
 

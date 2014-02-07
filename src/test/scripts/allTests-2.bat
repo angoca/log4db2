@@ -23,11 +23,13 @@
 :: ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 :: POSSIBILITY OF SUCH DAMAGE.
 
-if EXIST init.bat call init.bat
+if EXIST init-dev.bat (
+ call init-dev.bat
+)
+
 db2 DELETE FROM LOGDATA.LOGS
 
 echo Executing all tests.
-echo on
 
 db2 -td@ -f %SRC_TEST_CODE_PATH%\TestsAppenders.sql
 db2 -td@ -f %SRC_TEST_CODE_PATH%\TestsCache.sql
@@ -45,5 +47,4 @@ db2 -td@ -f %SRC_TEST_CODE_PATH%\TestsLevels.sql
 db2 COMMIT
 
 db2 "CALL LOGADMIN.LOGS(min_level=>4, qty=>300)"
-
 

@@ -55,4 +55,3 @@ read -p "Press enter to continue (next TestsGetLogger)"
 read -p "Press enter to continue (next TestsLevels)"
 . ./${SRC_TEST_SCRIPT_PATH}/test ${SRC_TEST_CODE_PATH}/TestsLevels.sql
 
-

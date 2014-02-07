@@ -34,4 +34,3 @@ SRC_MAIN_SCRIPT_PATH=${LOG4DB2_PATH}/src/main/scripts
 SRC_TEST_CODE_PATH=${LOG4DB2_PATH}/src/test/sql-pl
 SRC_TEST_SCRIPT_PATH=${LOG4DB2_PATH}/src/test/scripts
 
-
