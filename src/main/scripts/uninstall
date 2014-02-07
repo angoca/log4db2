@@ -27,6 +27,7 @@
 db2 connect > /dev/null
 if [[ ${?} -ne 0 ]] ; then
  echo "Please connect to a database before the execution of the uninstallation."
+ echo "Remember that to call the script the command is '. ./uninstall'"
 else
  if [[ -x init ]] ; then
   . ./init

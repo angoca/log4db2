@@ -87,5 +87,6 @@ if [[ ${?} -eq 0 ]] ; then
  version ${1} ${2}
 else
  echo "Please connect to a database before the execution of the installation."
+ echo "Remember that to call the script the command is '. ./install'"
 fi
 
