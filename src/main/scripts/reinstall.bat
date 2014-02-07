@@ -23,6 +23,9 @@
 :: ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 :: POSSIBILITY OF SUCH DAMAGE.
 
-if EXIST init.bat call init.bat
+if EXIST init.bat (
+ call init.bat
+)
 call %SRC_MAIN_SCRIPT_PATH%\uninstall.bat
 call %SRC_MAIN_SCRIPT_PATH%\install.bat %1 %2
+

@@ -30,4 +30,3 @@ fi
 . ./uninstall
 . ./install ${1} ${2}
 
-

@@ -24,7 +24,7 @@
 :: POSSIBILITY OF SUCH DAMAGE.
 
 :: Checks if there is already a connection established
-db2 connect
+db2 connect > NUL
 if %ERRORLEVEL% EQU 0 (
  goto version
 ) else (
@@ -34,18 +34,25 @@ if %ERRORLEVEL% EQU 0 (
 
 :version
 :: Sets the path.
-if EXIST init.bat call init.bat
+if EXIST init.bat (
+ call init.bat
+)
 
 :: Checks in which DB2 version the utility will be installed.
 :: DB2 v10.1 is the default version.
-if "%1" EQU "" goto v10.1
-if /I "%1" EQU "-v10.1" goto v10.1
-if /I "%1" EQU "-v9.7" goto v9.7
+if "%1" EQU "" (
+ goto v10.1
+)
+if /I "%1" EQU "-v10.1" (
+ goto v10.1
+)
+if /I "%1" EQU "-v9.7" (
+ goto v9.7
+)
 
 :: DB2 v10.1.
 :v10.1
 echo Installing application for v10.1
-echo on
 db2 -tf %SRC_MAIN_CODE_PATH%\Tables.sql
 db2 -tf %SRC_MAIN_CODE_PATH%\Objects.sql
 db2 -td@ -f %SRC_MAIN_CODE_PATH%\Tools.sql
@@ -56,16 +63,19 @@ db2 -td@ -f %SRC_MAIN_CODE_PATH%\GET_LOGGER.sql
 db2 -td@ -f %SRC_MAIN_CODE_PATH%\Trigger.sql
 
 :: Temporal capabilities for tables.
-if "%2" EQU "t" db2 -tf %SRC_MAIN_CODE_PATH%\Create_Tables_Time_Travel.sql
-if "%1" EQU "t" db2 -tf %SRC_MAIN_CODE_PATH%\Create_Tables_Time_Travel.sql
+if "%2" EQU "t" (
+ db2 -tf %SRC_MAIN_CODE_PATH%\Create_Tables_Time_Travel.sql
+)
+if "%1" EQU "t" (
+ db2 -tf %SRC_MAIN_CODE_PATH%\Create_Tables_Time_Travel.sql
+)
 
 goto exit
 
 :: DB2 v9.7
 :v9.7
 echo Installing application for DB2 v9.7
-echo on
-db2 -tf %SRC_MAIN_CODE_PATH%\Tables.sql
+db2 -tf %SRC_MAIN_CODE_PATH%\Tables_v9_7.sql
 db2 -tf %SRC_MAIN_CODE_PATH%\Objects.sql
 db2 -td@ -f %SRC_MAIN_CODE_PATH%\Tools.sql
 db2 -td@ -f %SRC_MAIN_CODE_PATH%\AdminHeader.sql
@@ -77,5 +87,4 @@ db2 -td@ -f %SRC_MAIN_CODE_PATH%\Trigger.sql
 goto exit
 
 :exit
-
 
