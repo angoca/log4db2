@@ -38,7 +38,8 @@ ALTER MODULE LOGADMIN ADD
  * the used loggers that are registered in the conf_loggers_effective table.
  */
 ALTER MODULE LOGADMIN ADD
-  PROCEDURE SHOW_LOGGERS ()
+  PROCEDURE SHOW_LOGGERS (
+  )
   LANGUAGE SQL
   SPECIFIC P_SHOW_LOGGERS
   DYNAMIC RESULT SETS 1
