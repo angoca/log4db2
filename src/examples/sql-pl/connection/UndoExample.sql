@@ -1,17 +1,17 @@
 --#SET TERMINATOR @
 
 /*
-Copyright (c) 2012 - 2014, Andres Gomez Casanova (AngocA)
+Copyright (c) 2012 - 2013, Andres Gomez Casanova (AngocA)
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
 modification, are permitted provided that the following conditions are met:
 
- 1. Redistributions of source code must retain the above copyright notice, this
-    list of conditions and the following disclaimer.
- 2. Redistributions in binary form must reproduce the above copyright notice,
-    this list of conditions and the following disclaimer in the documentation
-    and/or other materials provided with the distribution.
+1. Redistributions of source code must retain the above copyright notice, this
+list of conditions and the following disclaimer.
+2. Redistributions in binary form must reproduce the above copyright notice,
+this list of conditions and the following disclaimer in the documentation
+and/or other materials provided with the distribution.
 
 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
 ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
@@ -29,16 +29,9 @@ SET CURRENT SCHEMA TESTS @
 
 SET PATH = "SYSIBM","SYSFUN","SYSPROC","SYSIBMADM", LOGGER_1A @
 
-CREATE SCHEMA TESTS @
+UPDATE DB CFG USING CONNECT_PROC NULL@
 
-CREATE OR REPLACE PROCEDURE TESTS.CONNECTION_SETUP()
-BEGIN
- -- Do nothing if there is a problem.
- CALL LOGGER.FATAL(0, 'Connection established by ' || CURRENT USER);
-END @
+DROP PROCEDURE TESTS.CONNECTION_SETUP@
 
---#SET TERMINATOR ;
-GRANT EXECUTE ON PROCEDURE CONNECT_PROC TO PUBLIC;
-UPDATE DB CFG USING CONNECT_PROC TESTS.CONNECTION_SETUP;
-
+DROP SCHEMA TESTS RESTRICT@
 
