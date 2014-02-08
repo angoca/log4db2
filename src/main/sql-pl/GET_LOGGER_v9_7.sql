@@ -61,11 +61,14 @@ SET CURRENT SCHEMA LOGGER_1A @
  *   Enters as the parent Id of this string, and goes out as the new id.
  * INOUT PARENT_LEVEL
  *   Logger level (parent -> son).
+ * IN PARENT_HIERARCHY
+ *   Hierarchy's path - a comma separated logger IDs.
  */
 ALTER MODULE LOGGER ADD PROCEDURE ANALYZE_NAME (
   IN STRING ANCHOR COMPLETE_LOGGER_NAME,
   INOUT PARENT ANCHOR LOGDATA.CONF_LOGGERS.LOGGER_ID,
-  INOUT PARENT_LEVEL ANCHOR LOGDATA.LEVELS.LEVEL_ID
+  INOUT PARENT_LEVEL ANCHOR LOGDATA.LEVELS.LEVEL_ID,
+  IN PARENT_HIERARCHY ANCHOR LOGDATA.CONF_LOGGERS_EFFECTIVE.HIERARCHY
   )
   SPECIFIC P_ANALYZE_NAME
  P_ANALYZE_NAME: BEGIN
@@ -89,9 +92,13 @@ ALTER MODULE LOGGER ADD PROCEDURE ANALYZE_NAME (
    -- Logger is NOT registered in none of the tables.
    IF (SON IS NULL) THEN
     -- Registers the new logger and retrieves the id. Switches the parent id.
-    INSERT INTO LOGDATA.CONF_LOGGERS_EFFECTIVE (NAME, PARENT_ID, LEVEL_ID)
-      VALUES (STRING, PARENT, PARENT_LEVEL);
+    INSERT INTO LOGDATA.CONF_LOGGERS_EFFECTIVE (NAME, PARENT_ID, LEVEL_ID, HIERARCHY)
+      VALUES (STRING, PARENT, PARENT_LEVEL, PARENT_HIERARCHY);
     SET PARENT = PREVIOUS VALUE FOR LOGDATA.LOGGER_ID_SEQ;
+    -- Updates the hierarchy path.
+    UPDATE LOGDATA.CONF_LOGGERS_EFFECTIVE
+     SET HIERARCHY = PARENT_HIERARCHY || ',' || CHAR(PREVIOUS VALUE FOR LOGDATA.LOGGER_ID_SEQ)
+     WHERE LOGGER_ID = PARENT;
    ELSE
     -- It is already register in the effective table, thus take the id of that
     -- logger as parent.
@@ -156,6 +163,7 @@ ALTER MODULE LOGGER ADD
 
     DECLARE PARENT ANCHOR LOGDATA.CONF_LOGGERS.LOGGER_ID; -- Parent Id of the current logger.
     DECLARE PARENT_LEVEL ANCHOR LOGDATA.LEVELS.LEVEL_ID; -- Id of the parent level.
+    DECLARE PARENT_HIERARCHY ANCHOR LOGDATA.CONF_LOGGERS_EFFECTIVE.HIERARCHY; -- Hierarchy path.
 
     ------------------------------------------------------------------------------
 
@@ -168,6 +176,7 @@ ALTER MODULE LOGGER ADD
     SET SUBS_POS = NAME;
     SET POS = 0;
     SET PARENT = 0; -- Root logger is always 0.
+    SET PARENT_HIERARCHY = '0'; -- Hierarchy path for root.
     -- Retrieves the logger level for the root logger.
     -- This query waits for the data to be commited (CS Cursor stability)
     SELECT C.LEVEL_ID INTO PARENT_LEVEL
@@ -191,9 +200,10 @@ ALTER MODULE LOGGER ADD
       -- Rest of the logger name.
       SET SUBS_POS = SUBSTR(SUBS_POS, POS + 1);
 
-      CALL ANALYZE_NAME(SUBS_PRE, PARENT, PARENT_LEVEL);
+      CALL ANALYZE_NAME(SUBS_PRE, PARENT, PARENT_LEVEL, PARENT_HIERARCHY);
+      SET PARENT_HIERARCHY = PARENT_HIERARCHY || ',' || PARENT;
      ELSE -- No dot was found (in the remainding string).
-      CALL ANALYZE_NAME(SUBS_POS, PARENT, PARENT_LEVEL);
+      CALL ANALYZE_NAME(SUBS_POS, PARENT, PARENT_LEVEL, PARENT_HIERARCHY);
       -- Ends the while.
       SET POS = LENGTH;
      END IF;
