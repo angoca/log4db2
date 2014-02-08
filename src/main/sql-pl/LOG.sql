@@ -161,7 +161,7 @@ ALTER MODULE LOGGER PUBLISH
 /**
  * Retrieves the complete logger name for a given logged id.
  *
- * IN LOGGER_ID
+ * IN LOG_ID
  *  Identification of the logger in the effective table.
  * RETURNS the complete name of the logger (recursive.)
  */
@@ -208,6 +208,50 @@ ALTER MODULE LOGGER ADD
   RETURN COMPLETE_NAME;
  END F_GET_NAME @
 
+/**
+ * Verifies if the given logger hierarchy path includes the given logger id.
+ * This allows to register or not the given logger according to the
+ * configuration.
+ *
+ * IN HIERARCHY
+ *  Comma separated IDs that represents the ascendency of a logger.
+ * IN LOGGER_ID
+ *  Logger ID to check if that is part of the hierarchy.
+ * RETURNS TRUE if the logger is part of the hierarchy. Otherwise false.
+ */
+ALTER MODULE LOGGER ADD
+ FUNCTION IS_LOGGER_ACTIVE (
+  IN HIERARCHY ANCHOR LOGDATA.CONF_LOGGERS_EFFECTIVE.HIERARCHY,
+  IN LOGGER_ID_FETCHED ANCHOR LOGDATA.REFERENCES.LOGGER_ID
+  ) RETURNS BOOLEAN
+  LANGUAGE SQL
+  PARAMETER CCSID UNICODE
+  SPECIFIC F_IS_LOGGER_ACTIVE
+  NOT DETERMINISTIC
+  NO EXTERNAL ACTION
+  READS SQL DATA
+ F_IS_LOGGER_ACTIVE: BEGIN
+  DECLARE POS SMALLINT;
+  DECLARE RET BOOLEAN DEFAULT FALSE;
+  DECLARE CURRENT ANCHOR LOGDATA.CONF_LOGGERS_EFFECTIVE.HIERARCHY;
+
+  SET POS = POSSTR (HIERARCHY, ',');
+  REPEAT
+   IF (POS <> 0) THEN
+    SET CURRENT = SUBSTR(HIERARCHY, 1, POS - 1);
+   ELSE
+    SET CURRENT = HIERARCHY;
+   END IF;
+   IF (LOGGER_ID_FETCHED = SMALLINT(CURRENT)) THEN
+    SET RET = TRUE;
+   END IF;
+   SET HIERARCHY = SUBSTR(HIERARCHY, POS + 1);
+   SET POS = POSSTR (HIERARCHY, ',');
+  UNTIL (RET = TRUE)
+  END REPEAT;
+  RETURN RET;
+ END F_IS_LOGGER_ACTIVE @
+ 
 /**
  * Sends a message into the logger system. Before to log this message in an
  * appender, this method verifies the logger level given if it is superior or
@@ -268,13 +312,16 @@ ALTER MODULE LOGGER ADD
  P_LOG: BEGIN
  DECLARE NEW_MESSAGE ANCHOR LOGDATA.LOGS.MESSAGE;
   DECLARE CURRENT_LEVEL_ID ANCHOR LOGDATA.LEVELS.LEVEL_ID; -- Level in the configuration.
+  DECLARE HIERARCHY ANCHOR LOGDATA.CONF_LOGGERS_EFFECTIVE.HIERARCHY; -- Logger's hierarchy.
   DECLARE APPENDER_ID ANCHOR LOGDATA.CONF_APPENDERS.APPENDER_ID; -- Appender's ID.
   DECLARE CONFIGURATION ANCHOR LOGDATA.CONF_APPENDERS.CONFIGURATION; -- Appender's configuration.
-  DECLARE PATTERN ANCHOR LOGDATA.CONF_APPENDERS.PATTERN; -- Appender's pattern. 
+  DECLARE PATTERN ANCHOR LOGDATA.CONF_APPENDERS.PATTERN; -- Appender's pattern.
+  DECLARE LOGGER_ID_FETCHED ANCHOR LOGDATA.REFERENCES.LOGGER_ID; -- Logger id to be analyzed.
   DECLARE AT_END BOOLEAN; -- End of the cursor.
-  DECLARE APPENDERS CURSOR FOR
-    SELECT APPENDER_ID, CONFIGURATION, PATTERN
-    FROM LOGDATA.CONF_APPENDERS
+  DECLARE REFERENCES CURSOR FOR
+    SELECT LOGGER_ID, APPENDER_ID, CONFIGURATION, PATTERN
+    FROM LOGDATA.REFERENCES R JOIN LOGDATA.CONF_APPENDERS C
+    ON R.APPENDER_REF_ID = C.REF_ID
     WITH UR;
   DECLARE CONTINUE HANDLER FOR SQLSTATE '55019'
     INSERT INTO LOGDATA.LOGS (LEVEL_ID, LOGGER_ID, MESSAGE) VALUES 
@@ -290,7 +337,7 @@ ALTER MODULE LOGGER ADD
    END;
 
   -- Retrieves the current level in the configuration for the given logger.
-  SELECT C.LEVEL_ID INTO CURRENT_LEVEL_ID 
+  SELECT C.LEVEL_ID, C.HIERARCHY INTO CURRENT_LEVEL_ID, HIERARCHY
     FROM LOGDATA.CONF_LOGGERS_EFFECTIVE C
     WHERE C.LOGGER_ID = LOG_ID
     WITH UR;
@@ -305,73 +352,76 @@ ALTER MODULE LOGGER ADD
       (4, -1, 'Logging enable for level ' || LEV_ID || ' logger ' || LOG_ID);
    END IF;
 
-   -- Retrieves all the configurations for the appenders.
-   OPEN APPENDERS;
+   -- Retrieves all the configurations for the appenders in references table.
+   OPEN REFERENCES;
    SET AT_END = FALSE;
-   FETCH APPENDERS INTO APPENDER_ID, CONFIGURATION, PATTERN;
+   FETCH REFERENCES INTO LOGGER_ID_FETCHED, APPENDER_ID, CONFIGURATION, PATTERN;
+
    -- Iterates over the results.
    WHILE (AT_END = FALSE) DO
-    -- Internal logging.
-    IF (GET_VALUE(LOGGER.LOG_INTERNALS) = LOGGER.VAL_TRUE) THEN
-     INSERT INTO LOGDATA.LOGS (LEVEL_ID, LOGGER_ID, MESSAGE) VALUES 
-       (4, -1, 'Processing pattern ' || PATTERN);
-    END IF;
-   
-    -- Format the message according to the pattern.
-    SET NEW_MESSAGE = PATTERN;
-    -- Inserts the message.
-    SET NEW_MESSAGE = REPLACE(NEW_MESSAGE, '%m', 
-      COALESCE(MESSAGE, 'No message'));
-    -- Inserts the level.
-    SET NEW_MESSAGE = REPLACE(NEW_MESSAGE, '%p', (
-      SELECT UCASE(COALESCE(L.NAME,'UNK')) 
-      FROM LOGDATA.LEVELS L
-      WHERE L.LEVEL_ID = LEV_ID
-      WITH UR));
-    -- Inserts the logger name.
-    SET NEW_MESSAGE = REPLACE(NEW_MESSAGE, '%c', 
-      COALESCE(GET_LOGGER_NAME(LOG_ID), 'No name'));
-    -- Inserts the application handle.
-    SET NEW_MESSAGE = REPLACE(NEW_MESSAGE, '%H', 
-      SYSPROC.MON_GET_APPLICATION_HANDLE());
-    -- Inserts the application name.
-    SET NEW_MESSAGE = REPLACE(NEW_MESSAGE, '%N',
-      (SELECT APPLICATION_NAME
-      FROM TABLE(MON_GET_CONNECTION(SYSPROC.MON_GET_APPLICATION_HANDLE(),-1))));
-   -- Inserts the application id.
-    SET NEW_MESSAGE = REPLACE(NEW_MESSAGE, '%I', 
-      SYSPROC.MON_GET_APPLICATION_ID());
-    -- Inserts the session authorisation.
-    SET NEW_MESSAGE = REPLACE(NEW_MESSAGE, '%S', TRIM(SESSION_USER));
-    -- Inserts the client hostname.
-    SET NEW_MESSAGE = REPLACE(NEW_MESSAGE, '%C', CLIENT WRKSTNNAME);
+    IF (IS_LOGGER_ACTIVE(HIERARCHY, LOGGER_ID_FETCHED) = TRUE) THEN
+     -- Internal logging.
+     IF (GET_VALUE(LOGGER.LOG_INTERNALS) = LOGGER.VAL_TRUE) THEN
+      INSERT INTO LOGDATA.LOGS (LEVEL_ID, LOGGER_ID, MESSAGE) VALUES 
+        (4, -1, 'Processing pattern ' || PATTERN);
+     END IF;
 
-    -- Checks the values
-    CASE APPENDER_ID
-      WHEN 1 THEN -- Pure SQL PL, writes in table.
-       -- Internal logging.
-       IF (GET_VALUE(LOGGER.LOG_INTERNALS) = LOGGER.VAL_TRUE) THEN
-        INSERT INTO LOGDATA.LOGS (LEVEL_ID, LOGGER_ID, MESSAGE) VALUES 
-          (4, -1, 'Logging in tables');
-       END IF;
-        CALL LOG_SQL(LOG_ID, LEV_ID, NEW_MESSAGE);
-      WHEN 2 THEN -- Writes in the db2diag.log file via a function.
-        CALL LOG_DB2DIAG(LOG_ID, LEV_ID, NEW_MESSAGE, CONFIGURATION);
-      WHEN 3 THEN -- Writes in a file (Not available in express-c edition.)
-        CALL LOG_UTL_FILE(LOG_ID, LEV_ID, NEW_MESSAGE, CONFIGURATION);
-      WHEN 4 THEN -- Sends the log to the DB2LOGGER in C.
-        CALL LOG_DB2LOGGER(LOG_ID, LEV_ID, NEW_MESSAGE, CONFIGURATION);
-      WHEN 5 THEN -- Sends the log to Java, and takes the configuration there.
-        CALL LOG_JAVA(LOG_ID, LEV_ID, NEW_MESSAGE, CONFIGURATION);
-      -- >>>
-      -- Put here any other appender.
-      -- <<<
-      ELSE -- By default writes in the table.
-        CALL LOG_SQL(LOG_ID, LEV_ID, NEW_MESSAGE);
-    END CASE;
-    FETCH APPENDERS INTO APPENDER_ID, CONFIGURATION, PATTERN;
+     -- Format the message according to the pattern.
+     SET NEW_MESSAGE = PATTERN;
+     -- Inserts the message.
+     SET NEW_MESSAGE = REPLACE(NEW_MESSAGE, '%m', 
+       COALESCE(MESSAGE, 'No message'));
+     -- Inserts the level.
+     SET NEW_MESSAGE = REPLACE(NEW_MESSAGE, '%p', (
+       SELECT UCASE(COALESCE(L.NAME,'UNK')) 
+       FROM LOGDATA.LEVELS L
+       WHERE L.LEVEL_ID = LEV_ID
+       WITH UR));
+     -- Inserts the logger name.
+     SET NEW_MESSAGE = REPLACE(NEW_MESSAGE, '%c', 
+       COALESCE(GET_LOGGER_NAME(LOG_ID), 'No name'));
+     -- Inserts the application handle.
+     SET NEW_MESSAGE = REPLACE(NEW_MESSAGE, '%H', 
+       SYSPROC.MON_GET_APPLICATION_HANDLE());
+     -- Inserts the application name.
+     SET NEW_MESSAGE = REPLACE(NEW_MESSAGE, '%N',
+       (SELECT APPLICATION_NAME
+       FROM TABLE(MON_GET_CONNECTION(SYSPROC.MON_GET_APPLICATION_HANDLE(),-1))));
+     -- Inserts the application id.
+     SET NEW_MESSAGE = REPLACE(NEW_MESSAGE, '%I', 
+       SYSPROC.MON_GET_APPLICATION_ID());
+     -- Inserts the session authorisation.
+     SET NEW_MESSAGE = REPLACE(NEW_MESSAGE, '%S', TRIM(SESSION_USER));
+     -- Inserts the client hostname.
+     SET NEW_MESSAGE = REPLACE(NEW_MESSAGE, '%C', CLIENT WRKSTNNAME);
+
+     -- Checks the values
+     CASE APPENDER_ID
+       WHEN 1 THEN -- Pure SQL PL, writes in table.
+        -- Internal logging.
+        IF (GET_VALUE(LOGGER.LOG_INTERNALS) = LOGGER.VAL_TRUE) THEN
+         INSERT INTO LOGDATA.LOGS (LEVEL_ID, LOGGER_ID, MESSAGE) VALUES 
+           (4, -1, 'Logging in tables');
+        END IF;
+         CALL LOG_SQL(LOG_ID, LEV_ID, NEW_MESSAGE);
+       WHEN 2 THEN -- Writes in the db2diag.log file via a function.
+         CALL LOG_DB2DIAG(LOG_ID, LEV_ID, NEW_MESSAGE, CONFIGURATION);
+       WHEN 3 THEN -- Writes in a file (Not available in express-c edition.)
+         CALL LOG_UTL_FILE(LOG_ID, LEV_ID, NEW_MESSAGE, CONFIGURATION);
+       WHEN 4 THEN -- Sends the log to the DB2LOGGER in C.
+         CALL LOG_DB2LOGGER(LOG_ID, LEV_ID, NEW_MESSAGE, CONFIGURATION);
+       WHEN 5 THEN -- Sends the log to Java, and takes the configuration there.
+         CALL LOG_JAVA(LOG_ID, LEV_ID, NEW_MESSAGE, CONFIGURATION);
+       -- >>>
+       -- Put here any other appender.
+       -- <<<
+       ELSE -- By default writes in the table.
+         CALL LOG_SQL(LOG_ID, LEV_ID, NEW_MESSAGE);
+     END CASE;
+    END IF;
+    FETCH REFERENCES INTO LOGGER_ID_FETCHED, APPENDER_ID, CONFIGURATION, PATTERN;
    END WHILE;
-   CLOSE APPENDERS;
+   CLOSE REFERENCES;
   ELSEIF (LOG_ID = -1) THEN
    -- When the logger id is -1, this is for internal logging.
    CALL LOG_SQL(LOG_ID, LEV_ID, MESSAGE);
