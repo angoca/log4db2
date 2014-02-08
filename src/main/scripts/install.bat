@@ -53,14 +53,14 @@ if /I "%1" EQU "-v9.7" (
 :: DB2 v10.1.
 :v10.1
 echo Installing application for v10.1
-db2 -tf %SRC_MAIN_CODE_PATH%\Tables.sql
-db2 -tf %SRC_MAIN_CODE_PATH%\Objects.sql
-db2 -td@ -f %SRC_MAIN_CODE_PATH%\Tools.sql
-db2 -td@ -f %SRC_MAIN_CODE_PATH%\AdminHeader.sql
-db2 -td@ -f %SRC_MAIN_CODE_PATH%\AdminBody.sql
-db2 -td@ -f %SRC_MAIN_CODE_PATH%\LOG.sql
-db2 -td@ -f %SRC_MAIN_CODE_PATH%\GET_LOGGER.sql
-db2 -td@ -f %SRC_MAIN_CODE_PATH%\Trigger.sql
+db2 -tsC_MAIN_CODE_PATH%\Tables.sql
+db2 -tsf %SRC_MAIN_CODE_PATH%\Objects.sql
+db2 -td@ -sf %SRC_MAIN_CODE_PATH%\Tools.sql
+db2 -td@ -sf %SRC_MAIN_CODE_PATH%\AdminHeader.sql
+db2 -td@ -sf %SRC_MAIN_CODE_PATH%\AdminBody.sql
+db2 -td@ -sf %SRC_MAIN_CODE_PATH%\LOG.sql
+db2 -td@ -sf %SRC_MAIN_CODE_PATH%\GET_LOGGER.sql
+db2 -td@ -sf %SRC_MAIN_CODE_PATH%\Trigger.sql
 
 :: Temporal capabilities for tables.
 if "%2" EQU "t" (
@@ -77,14 +77,14 @@ goto exit
 :: DB2 v9.7
 :v9.7
 echo Installing application for DB2 v9.7
-db2 -tf %SRC_MAIN_CODE_PATH%\Tables_v9_7.sql
-db2 -tf %SRC_MAIN_CODE_PATH%\Objects.sql
-db2 -td@ -f %SRC_MAIN_CODE_PATH%\Tools.sql
-db2 -td@ -f %SRC_MAIN_CODE_PATH%\AdminHeader.sql
-db2 -td@ -f %SRC_MAIN_CODE_PATH%\AdminBody.sql
-db2 -td@ -f %SRC_MAIN_CODE_PATH%\LOG.sql
-db2 -td@ -f %SRC_MAIN_CODE_PATH%\GET_LOGGER_v9_7.sql
-db2 -td@ -f %SRC_MAIN_CODE_PATH%\Trigger.sql
+db2 -tsf %SRC_MAIN_CODE_PATH%\Tables_v9_7.sql
+db2 -tsf %SRC_MAIN_CODE_PATH%\Objects.sql
+db2 -td@ -sf %SRC_MAIN_CODE_PATH%\Tools.sql
+db2 -td@ -sf %SRC_MAIN_CODE_PATH%\AdminHeader.sql
+db2 -td@ -sf %SRC_MAIN_CODE_PATH%\AdminBody.sql
+db2 -td@ -sf %SRC_MAIN_CODE_PATH%\LOG.sql
+db2 -td@ -sf %SRC_MAIN_CODE_PATH%\GET_LOGGER_v9_7.sql
+db2 -td@ -sf %SRC_MAIN_CODE_PATH%\Trigger.sql
 
 goto exit
 
