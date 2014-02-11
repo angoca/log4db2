@@ -37,14 +37,14 @@ function installScript() {
 # DB2 v10.1.
 function v10.1() {
  echo "Installing application for v10.1"
- [ ${continue} == true ] && installScript ${SRC_MAIN_CODE_PATH}/Tables.sql
- [ ${continue} == true ] && installScript ${SRC_MAIN_CODE_PATH}/Objects.sql
- [ ${continue} == true ] && installScript ${SRC_MAIN_CODE_PATH}/Tools.sql
- [ ${continue} == true ] && installScript ${SRC_MAIN_CODE_PATH}/AdminHeader.sql
- [ ${continue} == true ] && installScript ${SRC_MAIN_CODE_PATH}/AdminBody.sql
- [ ${continue} == true ] && installScript ${SRC_MAIN_CODE_PATH}/LOG.sql
- [ ${continue} == true ] && installScript ${SRC_MAIN_CODE_PATH}/GET_LOGGER.sql
- [ ${continue} == true ] && installScript ${SRC_MAIN_CODE_PATH}/Trigger.sql
+ [ ${continue} == true ] && echo "Tables" && installScript ${SRC_MAIN_CODE_PATH}/Tables.sql
+ [ ${continue} == true ] && echo "Objects" && installScript ${SRC_MAIN_CODE_PATH}/Objects.sql
+ [ ${continue} == true ] && echo "Tools" && installScript ${SRC_MAIN_CODE_PATH}/Tools.sql
+ [ ${continue} == true ] && echo "AdminHeader" && installScript ${SRC_MAIN_CODE_PATH}/AdminHeader.sql
+ [ ${continue} == true ] && echo "AdminBody" && installScript ${SRC_MAIN_CODE_PATH}/AdminBody.sql
+ [ ${continue} == true ] && echo "Log" && installScript ${SRC_MAIN_CODE_PATH}/LOG.sql
+ [ ${continue} == true ] && echo "Get_Logger" && installScript ${SRC_MAIN_CODE_PATH}/GET_LOGGER.sql
+ [ ${continue} == true ] && echo "Trigger" && installScript ${SRC_MAIN_CODE_PATH}/Trigger.sql
 
  # Temporal capabilities for tables.
  if [[ ${1} == "t" && ${continue} == true ]] ; then
