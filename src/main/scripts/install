@@ -23,68 +23,47 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
+declare global continue=true
+
 # Installs a given script.
 function installScript() {
- script=${1}
- ret=0;
+ local script=${1}
  db2 -tsf ${script}
  if [[ ${?} -ne 0 ]] ; then
-  exit -1
+  continue=false
  fi
 }
 
 # DB2 v10.1.
 function v10.1() {
- ret=0;
  echo "Installing application for v10.1"
- db2 -tsf ${SRC_MAIN_CODE_PATH}/Tables.sql
- ret=$((${ret} + ${?}))
- if [[ ${ret} -eq 0 ]] ; then
-  db2 -tsf ${SRC_MAIN_CODE_PATH}/Objects.sql
- fi
- ret=$((${ret} + ${?}))
- if [[ ${ret} -eq 0 ]] ; then
-  db2 -td@ -sf ${SRC_MAIN_CODE_PATH}/Tools.sql
- fi
- ret=$((${ret} + ${?}))
- if [[ ${ret} -eq 0 ]] ; then
-  db2 -td@ -sf ${SRC_MAIN_CODE_PATH}/AdminHeader.sql
- fi
- ret=$((${ret} + ${?}))
- if [[ ${ret} -eq 0 ]] ; then
-  db2 -td@ -sf ${SRC_MAIN_CODE_PATH}/AdminBody.sql
- fi
- ret=$((${ret} + ${?}))
- if [[ ${ret} -eq 0 ]] ; then
-  db2 -td@ -sf ${SRC_MAIN_CODE_PATH}/LOG.sql
- fi
- ret=$((${ret} + ${?}))
- if [[ ${ret} -eq 0 ]] ; then
-  db2 -td@ -sf ${SRC_MAIN_CODE_PATH}/GET_LOGGER.sql
- fi
- ret=$((${ret} + ${?}))
- if [[ ${ret} -eq 0 ]] ; then
-  db2 -td@ -sf ${SRC_MAIN_CODE_PATH}/Trigger.sql
- fi
+ [ ${continue} == true ] && installScript ${SRC_MAIN_CODE_PATH}/Tables.sql
+ [ ${continue} == true ] && installScript ${SRC_MAIN_CODE_PATH}/Objects.sql
+ [ ${continue} == true ] && installScript ${SRC_MAIN_CODE_PATH}/Tools.sql
+ [ ${continue} == true ] && installScript ${SRC_MAIN_CODE_PATH}/AdminHeader.sql
+ [ ${continue} == true ] && installScript ${SRC_MAIN_CODE_PATH}/AdminBody.sql
+ [ ${continue} == true ] && installScript ${SRC_MAIN_CODE_PATH}/LOG.sql
+ [ ${continue} == true ] && installScript ${SRC_MAIN_CODE_PATH}/GET_LOGGER.sql
+ [ ${continue} == true ] && installScript ${SRC_MAIN_CODE_PATH}/Trigger.sql
 
  # Temporal capabilities for tables.
- if [[ ${1} == "t" ]] ; then
+ if [[ ${1} == "t" && ${continue} == true ]] ; then
   echo "Create table for Time Travel"
-  db2 -tf ${SRC_MAIN_CODE_PATH}/Create_Tables_Time_Travel.sql
+  installScript ${SRC_MAIN_CODE_PATH}/Create_Tables_Time_Travel.sql
  fi
 }
 
 # DB2 v9.7
 function v9.7() {
  echo "Installing application for DB2 v9.7"
- db2 -tsf ${SRC_MAIN_CODE_PATH}/Tables_v9_7.sql
- db2 -tsf ${SRC_MAIN_CODE_PATH}/Objects.sql
- db2 -td@ -sf ${SRC_MAIN_CODE_PATH}/Tools.sql
- db2 -td@ -sf ${SRC_MAIN_CODE_PATH}/AdminHeader.sql
- db2 -td@ -sf ${SRC_MAIN_CODE_PATH}/AdminBody.sql
- db2 -td@ -sf ${SRC_MAIN_CODE_PATH}/LOG.sql
- db2 -td@ -sf ${SRC_MAIN_CODE_PATH}/GET_LOGGER_v9_7.sql
- db2 -td@ -sf ${SRC_MAIN_CODE_PATH}/Trigger.sql
+ [ ${continue} == true ] && installScript ${SRC_MAIN_CODE_PATH}/Tables_v9_7.sql
+ [ ${continue} == true ] && installScript ${SRC_MAIN_CODE_PATH}/Objects.sql
+ [ ${continue} == true ] && installScript ${SRC_MAIN_CODE_PATH}/Tools.sql
+ [ ${continue} == true ] && installScript ${SRC_MAIN_CODE_PATH}/AdminHeader.sql
+ [ ${continue} == true ] && installScript ${SRC_MAIN_CODE_PATH}/AdminBody.sql
+ [ ${continue} == true ] && installScript ${SRC_MAIN_CODE_PATH}/LOG.sql
+ [ ${continue} == true ] && installScript ${SRC_MAIN_CODE_PATH}/GET_LOGGER_v9_7.sql
+ [ ${continue} == true ] && installScript ${SRC_MAIN_CODE_PATH}/Trigger.sql
 }
 
 function version() {
