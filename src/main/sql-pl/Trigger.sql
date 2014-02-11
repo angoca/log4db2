@@ -150,6 +150,17 @@ CREATE OR REPLACE TRIGGER T3_LEVELS_DELETE
 -- Table LOGDATA.CONF_LOGGERS.
 
 /**
+ * Refreshes the loggers cache after any modification.
+ */
+CREATE OR REPLACE TRIGGER T0_CONF_LOGGER_CLEAN_CACHE
+  BEFORE INSERT OR UPDATE OR DELETE 
+  ON LOGDATA.CONF_LOGGERS
+  FOR EACH ROW
+ T_SYNC_CONF_CLN_CACHE: BEGIN
+  CALL LOGGER.DELETE_ALL_LOGGER_CACHE();
+ END T_SYNC_CONF_CLN_CACHE @
+
+/**
  * This trigger checks the insertion in the conf_logger table to see
  * if the logger_id already exists in the conf_logger_effective table. If not,
  * it retrieves the value from the sequence.
@@ -267,6 +278,17 @@ CREATE OR REPLACE TRIGGER T4_CONF_LOGGER_SYNC_DELETE
  END T_SYNC_CONF_DEL @
 
 -- Table LOGDATA.CONF_LOGGERS_EFFECTIVE.
+
+/**
+ * Refreshes the loggers cache after any modification.
+ */
+CREATE OR REPLACE TRIGGER T0_CONF_LOGGER_CLEAN_CACHE_EFFECTIVE
+  BEFORE INSERT OR UPDATE OR DELETE 
+  ON LOGDATA.CONF_LOGGERS_EFFECTIVE
+  FOR EACH ROW
+ T_SYNC_CONF_CLN_CACHE: BEGIN
+  CALL LOGGER.DELETE_ALL_LOGGER_CACHE();
+ END T_SYNC_CONF_CLN_CACHE @
 
 /**
  * Verifies that the parent is not null. The only logger with null parent is
