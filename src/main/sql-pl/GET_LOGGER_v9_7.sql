@@ -137,7 +137,9 @@ ALTER MODULE LOGGER ADD
   SPECIFIC P_GET_LOGGER
   DYNAMIC RESULT SETS 0
   MODIFIES SQL DATA
-  DETERMINISTIC -- Returns the same ID for the same logger name.
+  NOT DETERMINISTIC -- It was deterministic because it could return the same ID
+                    -- for the same logger name. However, if the configuration
+                    -- is deleted, a new logger_id should be retrieved.
   NO EXTERNAL ACTION
   PARAMETER CCSID UNICODE
  P_GET_LOGGER: BEGIN
