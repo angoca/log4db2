@@ -1,0 +1,25 @@
+This is the procedure to do for each release.
+
+There are three sections:
+
+* BEFORE: To prepare the release.
+* PERFORM: Tasks that conform the release.
+* AFTER: Once the release has been done, some extra tasks to prepare the env.
+
+BEFORE
+
+* To change the version variable in the code (AdminHeader):
+https://github.com/angoca/log4db2/blob/master/src/main/sql-pl/AdminHeader.sql
+* Make sure the schema reflects the version number to release (all files.)
+
+PERFORM
+
+* To create a directory in SourceForge with the version to release as name.
+* To execute mvn.
+* To publish the generated files in the target directory, into the just created directory in SourceForge.
+
+AFTER
+
+* To change the schema name to the new version is all files.
+* Test that there are not references to the previous release.
+
