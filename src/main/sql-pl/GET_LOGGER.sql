@@ -29,8 +29,8 @@ SET CURRENT SCHEMA LOGGER_1A @
 
 /**
  * Contains the complete implementation of the GET_LOGGER procedure. This is one
- * of the most important and longest routines in the utility; for this reason is
- * is a dedicated file.
+ * of the most important and longest routines in the utility; for this reason it
+ * is in a dedicated file.
  *
  * Version: 2014-02-14 1-Alpha
  * Author: Andres Gomez Casanova (AngocA)
