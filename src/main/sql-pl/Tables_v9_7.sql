@@ -194,7 +194,6 @@ COMMENT ON CONF_APPENDERS (
   );
 
 -- Table for the loggers and appenders association.
--- TODO this table is not necessary
 CREATE TABLE REFERENCES (
   LOGGER_ID SMALLINT NOT NULL,
   APPENDER_REF_ID SMALLINT NOT NULL
