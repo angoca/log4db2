@@ -49,6 +49,8 @@ CREATE BUFFERPOOL LOG_BP PAGESIZE 8K;
 CREATE TABLESPACE LOGGER_SPACE
   PAGESIZE 4 K;
 
+COMMENT ON TABLESPACE LOGGER_SPACE IS 'All configuration tables for the logger utility';
+
 -- Tablespace for logs (data).
 -- Try to change the configuration to improve the performance:
 -- LARGE tablespace (more rows per page)
@@ -60,7 +62,7 @@ CREATE TABLESPACE LOG_DATA_SPACE
   PREFETCHSIZE AUTOMATIC
   BUFFERPOOL LOG_BP;
 
-COMMENT ON TABLESPACE LOGGER_SPACE IS 'All objects for the logger utility';
+COMMENT ON TABLESPACE LOGGER_SPACE IS 'Logs in an independent tablespace';
 
 -- Schema for logger tables.
 CREATE SCHEMA LOGDATA;
@@ -239,6 +241,8 @@ COMMENT ON LOGS (
 
 CREATE OR REPLACE PUBLIC ALIAS LOGS FOR TABLE LOGS;
 
+COMMENT ON PUBLIC ALIAS LOGS IS 'log4db2 logs';
+
 /**
  * Sequence for the logger names in the tables CONF_LOGGERS and
  * CONF_LOGGERS_EFFECTIVE.
@@ -246,6 +250,8 @@ CREATE OR REPLACE PUBLIC ALIAS LOGS FOR TABLE LOGS;
 CREATE OR REPLACE SEQUENCE LOGGER_ID_SEQ
   AS SMALLINT
   START WITH 0;
+
+COMMENT ON SEQUENCE LOGGER_ID_SEQ IS 'Consecutive IDs for each logger';
 
 -- Global configuration.
 -- checkHierarchy: Checks the logger hierarchy.
