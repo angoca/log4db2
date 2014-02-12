@@ -28,6 +28,14 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 SET CURRENT SCHEMA LOGGER_1A @
 
 /**
+ * Implementation of the administrative routines of log4db2.
+ *
+ * Version: 2014-02-14 1-Alpha
+ * Author: Andres Gomez Casanova (AngocA)
+ * Made in COLOMBIA.
+ */
+
+/**
  * Constant for the defaultRootLevelId value.
  */
 ALTER MODULE LOGADMIN ADD
