@@ -28,8 +28,11 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 SET CURRENT SCHEMA LOGGER_1A @
 
 /**
- * TODO DESCRIPTION
+ * Implementation of the included appenders. Here you can find how log4db2
+ * interacts with different components to log messages.
  *
+ * Version: 2012-10-15 1-Alpha
+ * Author: Andres Gomez Casanova (AngocA)
  * Made in COLOMBIA.
  */
 
@@ -67,7 +70,7 @@ ALTER MODULE LOGGER ADD
 
 /**
  * TODO Writes the provided message in the db2diag.log file (DIAGPATH) via
- * db2AdminMsgWrite.
+ * db2AdminMsgWrite. PUBLISH to ADD.
  *
  * IN LOGGER_ID
  *   Identification of the associated logger.
@@ -89,7 +92,7 @@ ALTER MODULE LOGGER PUBLISH
 /**
  * TODO Writes the provided message in a file via UTL_FILE built-in functions.
  * This appender cannot be used in Express-C edition due to restrictions of
- * the built-in modules in this edition.
+ * the built-in modules in this edition. PUBLISH to ADD.
  * The implementation could retrieve the filename from a global variable, and
  * keep the handler there, in order to reduce the overhead by opening and
  * closing the file for each call.
@@ -113,7 +116,7 @@ ALTER MODULE LOGGER PUBLISH
 
 /**
  * TODO Writes the provided message in the DB2LOGGER. This is an external logging
- * facility implemented in C, and that has only two levels for loggers.
+ * facility implemented in C, and that has only two levels for loggers. PUBLISH to ADD.
  * 
  * For more information: 
  * - http://www.ibm.com/developerworks/data/library/techarticle/dm-0601khatri/
@@ -139,7 +142,7 @@ ALTER MODULE LOGGER PUBLISH
 /**
  * TODO Writes the provided message in the Java configured facility. This
  * logger could use log4j or slf4j/logback as back-end, it depends on the Java
- * implementation.
+ * implementation. PUBLISH to ADD.
  *
  * IN LOGGER_ID
  *   Identification of the associated logger.
