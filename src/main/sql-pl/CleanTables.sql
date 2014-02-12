@@ -28,12 +28,12 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 SET CURRENT SCHEMA LOGDATA;
 
 /**
-* Drops all seauences, alias, tables, schemas, tablespaces and bufferpools.
-*
-* Version: 2014-02-14 1-Alpha
-* Author: Andres Gomez Casanova (AngocA)
-* Made in COLOMBIA.
-*/
+ * Drops all seauences, alias, tables, schemas, tablespaces and bufferpools.
+ *
+ * Version: 2014-02-14 1-Alpha
+ * Author: Andres Gomez Casanova (AngocA)
+ * Made in COLOMBIA.
+ */
 
 DROP PUBLIC ALIAS LOGS;
 
