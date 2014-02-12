@@ -27,6 +27,16 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 SET CURRENT SCHEMA LOGGER_1A @
 
+/**
+ * Contains the complete implementation of the GET_LOGGER procedure. This is one
+ * of the most important and longest routines in the utility; for this reason is
+ * is a dedicated file.
+ *
+ * Version: 2014-02-14 1-Alpha
+ * Author: Andres Gomez Casanova (AngocA)
+ * Made in COLOMBIA.
+ */
+
 -- TODO Check the logger structure, in order to have different names for the
 -- sons of a given father. root>toto root>tata root>tata is an error, and should
 -- remove this duplicate. Probably implement with a check constraint.
