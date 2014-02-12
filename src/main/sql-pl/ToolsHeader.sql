@@ -30,10 +30,9 @@ SET CURRENT SCHEMA LOGGER_1A;
 /**
  * Defines the headers of the public procedures and functions.
  *
+ * Version: 2014-02-14 1-Alpha
+ * Author: Andres Gomez Casanova (AngocA)
  * Made in COLOMBIA.
- * Andres Gomez Casanova (AngocA)
- * My nickname at y a h o o dot com
- * 2012-12-26
  */
 
 -- Schema for logger utility's objects.
