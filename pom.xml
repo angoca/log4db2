@@ -84,10 +84,8 @@
  <!-- More Project Information -->
  <name>log4db2</name>
  <description>
-  log4db2 is a framework that allows to write logs from
-  SQL-PL, with a configuration external to the application. This is an
-  approach or implementation of the log4j / logback but for DB2
-  procedure language SQL-PL.
+  Log4db2 is a logging utility for DB2 for LUW that uses SQL
+  instructions with SQL PL code.
   </description>
  <url>https://github.com/angoca/log4db2</url>
  <inceptionYear>2012, 2013</inceptionYear>
