@@ -256,7 +256,7 @@ ALTER MODULE LOGGER ADD
   END REPEAT;
   RETURN RET;
  END F_IS_LOGGER_ACTIVE @
- 
+
 /**
  * Sends a message into the logger system. Before to log this message in an
  * appender, this method verifies the logger level given if it is superior or
