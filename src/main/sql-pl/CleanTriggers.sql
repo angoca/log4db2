@@ -27,6 +27,14 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 SET CURRENT SCHEMA LOGGER_1A;
 
+/**
+* Drops the trigger in the opposite order as they were created.
+*
+* Version: 2014-02-14 1-Alpha
+* Author: Andres Gomez Casanova (AngocA)
+* Made in COLOMBIA.
+*/
+
 DROP TRIGGER T1_LOGS_UNIQUE_DATE;
 
 DROP TRIGGER T1_CONF_APPENDERS_PATTERN;
