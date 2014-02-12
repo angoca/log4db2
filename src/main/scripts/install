@@ -50,7 +50,7 @@ function v10.1() {
  # Temporal capabilities for tables.
  if [[ ${1} == "t" && ${continue} == true ]] ; then
   echo "Create table for Time Travel"
-  installScript ${SRC_MAIN_CODE_PATH}/Create_Tables_Time_Travel.sql
+  installScript ${SRC_MAIN_CODE_PATH}/TablesTimeTravel.sql
  fi
 }
 
