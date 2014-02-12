@@ -25,6 +25,14 @@ OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
+/**
+ * DDL to activate the TimeTravel features in some tables.
+ *
+ * Version: 2014-02-14 1-Alpha
+ * Author: Andres Gomez Casanova (AngocA)
+ * Made in COLOMBIA.
+ */
+
 -- Logs (Pure SQL appender)
 -- Logs can be modified to show a different behaviour, and this
 -- table is create to detect that.
