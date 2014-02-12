@@ -34,12 +34,13 @@ SET CURRENT SCHEMA LOGDATA;
  * - Tables
  * - Sequences
  * - Referential integrity
- * And also som DML for thhe basic content for the application to run.
+ * And also some DML for thhe basic content for the application to run.
+ * Some features are not supported in DB2 version 9.7 like implicit hidded.
+ * For this reason, there is a dedicated file for 9.7.
  *
+ * Version: 2014-02-14 1-Alpha
+ * Author: Andres Gomez Casanova (AngocA)
  * Made in COLOMBIA.
- * Andres Gomez Casanova (AngocA)
- * My nickname at y a h o o dot com
- * 2012-12-26
  */
 
 -- Buffer pool for log data.
