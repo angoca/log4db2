@@ -60,8 +60,8 @@ if /I "%1" EQU "-v9.7" (
 :v10.1
 echo Installing utility for v10.1
 db2 -tsC_MAIN_CODE_PATH%\Tables.sql
-db2 -tsf %SRC_MAIN_CODE_PATH%\ToolsHeader.sql
-db2 -td@ -sf %SRC_MAIN_CODE_PATH%\ToolsBody.sql
+db2 -tsf %SRC_MAIN_CODE_PATH%\UtilityHeader.sql
+db2 -td@ -sf %SRC_MAIN_CODE_PATH%\UtilityBody.sql
 db2 -td@ -sf %SRC_MAIN_CODE_PATH%\AdminHeader.sql
 db2 -td@ -sf %SRC_MAIN_CODE_PATH%\AdminBody.sql
 db2 -td@ -sf %SRC_MAIN_CODE_PATH%\Appenders.sql
@@ -85,8 +85,8 @@ goto exit
 :v9.7
 echo Installing utility for DB2 v9.7
 db2 -tsf %SRC_MAIN_CODE_PATH%\Tables_v9_7.sql
-db2 -tsf %SRC_MAIN_CODE_PATH%\ToolsHeader.sql
-db2 -td@ -sf %SRC_MAIN_CODE_PATH%\ToolsBody.sql
+db2 -tsf %SRC_MAIN_CODE_PATH%\UtilityHeader.sql
+db2 -td@ -sf %SRC_MAIN_CODE_PATH%\UtilityBody.sql
 db2 -td@ -sf %SRC_MAIN_CODE_PATH%\AdminHeader.sql
 db2 -td@ -sf %SRC_MAIN_CODE_PATH%\AdminBody.sql
 db2 -td@ -sf %SRC_MAIN_CODE_PATH%\Appenders.sql
