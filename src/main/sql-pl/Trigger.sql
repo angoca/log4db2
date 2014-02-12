@@ -27,6 +27,15 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 SET CURRENT SCHEMA LOGGER_1A @
 
+/**
+ * Defines the triggers for the different tables. The creation order is important
+ * to validate something before other thing.
+ *
+ * Version: 2014-02-14 1-Alpha
+ * Author: Andres Gomez Casanova (AngocA)
+ * Made in COLOMBIA.
+ */
+
 -- Table LOGDATA.CONFIGURATION
 
 /**
