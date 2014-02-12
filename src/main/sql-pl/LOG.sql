@@ -28,8 +28,12 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 SET CURRENT SCHEMA LOGGER_1A @
 
 /**
- * TODO DESCRIPTION
+ * Implementation of the LOG procedure. This is one of the most important and
+ * longest stored procedure in the utility; for this reason it is in a
+ * dedicated file.
  *
+ * Version: 2014-02-14 1-Alpha
+ * Author: Andres Gomez Casanova (AngocA)
  * Made in COLOMBIA.
  */
 
