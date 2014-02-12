@@ -28,12 +28,12 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 SET CURRENT SCHEMA LOGGER_1A;
 
 /**
-* Drops the routines associated with the utility.
-*
-* Version: 2014-02-14 1-Alpha
-* Author: Andres Gomez Casanova (AngocA)
-* Made in COLOMBIA.
-*/
+ * Drops the routines associated with the utility.
+ *
+ * Version: 2014-02-14 1-Alpha
+ * Author: Andres Gomez Casanova (AngocA)
+ * Made in COLOMBIA.
+ */
 
 -- Drops all objects.
 DROP VIEW LOG_MESSAGES;
