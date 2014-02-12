@@ -34,7 +34,7 @@ SET CURRENT SCHEMA LOGDATA;
  * - Tables
  * - Sequences
  * - Referential integrity
- * And also some DML for thhe basic content for the application to run.
+ * And also some DML for the basic content for the utility to run.
  * Some features are not supported in DB2 version 9.7 like implicit hidded.
  * For this reason, there is a dedicated file for 9.7.
  *
