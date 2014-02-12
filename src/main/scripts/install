@@ -40,7 +40,7 @@ function v10.1() {
  echo "Installing application for v10.1"
  [ ${continue} == true ] && installScript ${SRC_MAIN_CODE_PATH}/Tables.sql
  [ ${continue} == true ] && installScript ${SRC_MAIN_CODE_PATH}/ToolsHeader.sql
- [ ${continue} == true ] && installScript ${SRC_MAIN_CODE_PATH}/Tools.sql
+ [ ${continue} == true ] && installScript ${SRC_MAIN_CODE_PATH}/ToolsBody.sql
  [ ${continue} == true ] && installScript ${SRC_MAIN_CODE_PATH}/AdminHeader.sql
  [ ${continue} == true ] && installScript ${SRC_MAIN_CODE_PATH}/AdminBody.sql
  [ ${continue} == true ] && installScript ${SRC_MAIN_CODE_PATH}/LOG.sql
@@ -59,7 +59,7 @@ function v9.7() {
  echo "Installing application for DB2 v9.7"
  [ ${continue} == true ] && installScript ${SRC_MAIN_CODE_PATH}/Tables_v9_7.sql
  [ ${continue} == true ] && installScript ${SRC_MAIN_CODE_PATH}/ToolsHeader.sql
- [ ${continue} == true ] && installScript ${SRC_MAIN_CODE_PATH}/Tools.sql
+ [ ${continue} == true ] && installScript ${SRC_MAIN_CODE_PATH}/ToolsBody.sql
  [ ${continue} == true ] && installScript ${SRC_MAIN_CODE_PATH}/AdminHeader.sql
  [ ${continue} == true ] && installScript ${SRC_MAIN_CODE_PATH}/AdminBody.sql
  [ ${continue} == true ] && installScript ${SRC_MAIN_CODE_PATH}/LOG.sql
