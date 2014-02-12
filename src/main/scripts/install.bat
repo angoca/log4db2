@@ -23,6 +23,12 @@
 :: ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 :: POSSIBILITY OF SUCH DAMAGE.
 
+:: Installs all scripts of the utility.
+::
+:: Version: 2014-02-14 1-Alpha
+:: Author: Andres Gomez Casanova (AngocA)
+:: Made in COLOMBIA.
+
 :: Checks if there is already a connection established
 db2 connect > NUL
 if %ERRORLEVEL% EQU 0 (
