@@ -43,6 +43,7 @@ function v10.1() {
  [ ${continue} == true ] && installScript ${SRC_MAIN_CODE_PATH}/ToolsBody.sql
  [ ${continue} == true ] && installScript ${SRC_MAIN_CODE_PATH}/AdminHeader.sql
  [ ${continue} == true ] && installScript ${SRC_MAIN_CODE_PATH}/AdminBody.sql
+ [ ${continue} == true ] && installScript ${SRC_MAIN_CODE_PATH}/Appenders.sql
  [ ${continue} == true ] && installScript ${SRC_MAIN_CODE_PATH}/LOG.sql
  [ ${continue} == true ] && installScript ${SRC_MAIN_CODE_PATH}/GET_LOGGER.sql
  [ ${continue} == true ] && installScript ${SRC_MAIN_CODE_PATH}/Trigger.sql
@@ -62,6 +63,7 @@ function v9.7() {
  [ ${continue} == true ] && installScript ${SRC_MAIN_CODE_PATH}/ToolsBody.sql
  [ ${continue} == true ] && installScript ${SRC_MAIN_CODE_PATH}/AdminHeader.sql
  [ ${continue} == true ] && installScript ${SRC_MAIN_CODE_PATH}/AdminBody.sql
+ [ ${continue} == true ] && installScript ${SRC_MAIN_CODE_PATH}/Appenders.sql
  [ ${continue} == true ] && installScript ${SRC_MAIN_CODE_PATH}/LOG.sql
  [ ${continue} == true ] && installScript ${SRC_MAIN_CODE_PATH}/GET_LOGGER_v9_7.sql
  [ ${continue} == true ] && installScript ${SRC_MAIN_CODE_PATH}/Trigger.sql

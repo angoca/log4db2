@@ -1,0 +1,160 @@
+--#SET TERMINATOR @
+
+/*
+Copyright (c) 2012 - 2014, Andres Gomez Casanova (AngocA)
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are met:
+
+ 1. Redistributions of source code must retain the above copyright notice, this
+    list of conditions and the following disclaimer.
+ 2. Redistributions in binary form must reproduce the above copyright notice,
+    this list of conditions and the following disclaimer in the documentation
+    and/or other materials provided with the distribution.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
+FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+*/
+
+SET CURRENT SCHEMA LOGGER_1A @
+
+/**
+ * TODO DESCRIPTION
+ *
+ * Made in COLOMBIA.
+ */
+
+SET PATH = SYSPROC, LOGGER_1A @
+
+/**
+ * Writes the given message in the log table. This is a pure SQL implementation,
+ * without any external call.
+ *
+ * IN LOGGER_ID
+ *   Identification of the associated logger.
+ * IN LEVEL_ID
+ *   Identification of the associates level.
+ * IN MESSAGE
+ *   Descriptive message to write in the log table.
+ */
+ALTER MODULE LOGGER ADD 
+  PROCEDURE LOG_SQL (
+  IN LOGGER_ID ANCHOR LOGDATA.CONF_LOGGERS.LOGGER_ID,
+  IN LEVEL_ID ANCHOR LOGDATA.LEVELS.LEVEL_ID,
+  IN MESSAGE ANCHOR LOGDATA.LOGS.MESSAGE
+  )
+  LANGUAGE SQL
+  SPECIFIC P_LOG_SQL
+  DYNAMIC RESULT SETS 0
+  MODIFIES SQL DATA
+  NOT DETERMINISTIC
+  AUTONOMOUS
+  NO EXTERNAL ACTION
+  PARAMETER CCSID UNICODE
+ P_LOG_SQL: BEGIN
+  INSERT INTO LOGDATA.LOGS (LEVEL_ID, LOGGER_ID, MESSAGE) VALUES
+    (LEVEL_ID, LOGGER_ID, MESSAGE);
+ END P_LOG_SQL @
+
+/**
+ * TODO Writes the provided message in the db2diag.log file (DIAGPATH) via
+ * db2AdminMsgWrite.
+ *
+ * IN LOGGER_ID
+ *   Identification of the associated logger.
+ * IN LEVEL_ID
+ *   Identification of the associates level.
+ * IN MESSAGE
+ *   Descriptive message to write in the log table.
+ * IN CONFIGURATION
+ *   TODO Any particular configuration for the logger. 
+ */
+ALTER MODULE LOGGER PUBLISH 
+  PROCEDURE LOG_DB2DIAG (
+  IN LOGGER_ID ANCHOR LOGDATA.CONF_LOGGERS.LOGGER_ID,
+  IN LEVEL_ID ANCHOR LOGDATA.LEVELS.LEVEL_ID,
+  IN MESSAGE ANCHOR LOGDATA.LOGS.MESSAGE,
+  IN CONFIGURATION ANCHOR LOGDATA.CONF_APPENDERS.CONFIGURATION
+  ) @
+
+/**
+ * TODO Writes the provided message in a file via UTL_FILE built-in functions.
+ * This appender cannot be used in Express-C edition due to restrictions of
+ * the built-in modules in this edition.
+ * The implementation could retrieve the filename from a global variable, and
+ * keep the handler there, in order to reduce the overhead by opening and
+ * closing the file for each call.
+ *
+ * IN LOGGER_ID
+ *   Identification of the associated logger.
+ * IN LEVEL_ID
+ *   Identification of the associates level.
+ * IN MESSAGE
+ *   Descriptive message to write in the log table.
+ * IN CONFIGURATION
+ *   TODO Any particular configuration for the logger. 
+ */
+ALTER MODULE LOGGER PUBLISH 
+  PROCEDURE LOG_UTL_FILE (
+  IN LOGGER_ID ANCHOR LOGDATA.CONF_LOGGERS.LOGGER_ID,
+  IN LEVEL_ID ANCHOR LOGDATA.LEVELS.LEVEL_ID,
+  IN MESSAGE ANCHOR LOGDATA.LOGS.MESSAGE,
+  IN CONFIGURATION ANCHOR LOGDATA.CONF_APPENDERS.CONFIGURATION
+  ) @
+
+/**
+ * TODO Writes the provided message in the DB2LOGGER. This is an external logging
+ * facility implemented in C, and that has only two levels for loggers.
+ * 
+ * For more information: 
+ * - http://www.ibm.com/developerworks/data/library/techarticle/dm-0601khatri/
+ * - http://www.zinox.com/node/89
+ *
+ * IN LOGGER_ID
+ *   Identification of the associated logger.
+ * IN LEVEL_ID
+ *   Identification of the associates level.
+ * IN MESSAGE
+ *   Descriptive message to write in the log table.
+ * IN CONFIGURATION
+ *   TODO Any particular configuration for the logger. 
+ */
+ALTER MODULE LOGGER PUBLISH 
+  PROCEDURE LOG_DB2LOGGER (
+  IN LOGGER_ID ANCHOR LOGDATA.CONF_LOGGERS.LOGGER_ID,
+  IN LEVEL_ID ANCHOR LOGDATA.LEVELS.LEVEL_ID,
+  IN MESSAGE ANCHOR LOGDATA.LOGS.MESSAGE,
+  IN CONFIGURATION ANCHOR LOGDATA.CONF_APPENDERS.CONFIGURATION
+  ) @
+
+/**
+ * TODO Writes the provided message in the Java configured facility. This
+ * logger could use log4j or slf4j/logback as back-end, it depends on the Java
+ * implementation.
+ *
+ * IN LOGGER_ID
+ *   Identification of the associated logger.
+ * IN LEVEL_ID
+ *   Identification of the associates level.
+ * IN MESSAGE
+ *   Descriptive message to write in the log table.
+ * IN CONFIGURATION
+ *   TODO Any particular configuration for the logger. 
+ */
+ALTER MODULE LOGGER PUBLISH 
+  PROCEDURE LOG_JAVA (
+  IN LOGGER_ID ANCHOR LOGDATA.CONF_LOGGERS.LOGGER_ID,
+  IN LEVEL_ID ANCHOR LOGDATA.LEVELS.LEVEL_ID,
+  IN MESSAGE ANCHOR LOGDATA.LOGS.MESSAGE,
+  IN CONFIGURATION ANCHOR LOGDATA.CONF_APPENDERS.CONFIGURATION
+  ) @
+

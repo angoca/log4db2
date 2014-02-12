@@ -88,6 +88,56 @@ ALTER MODULE LOGGER ADD
   VARIABLE LOGGERS_CACHE LOGGERS_TYPE @
 
 /**
+ * Retrieves the complete logger name for a given logged id.
+ *
+ * IN LOG_ID
+ *  Identification of the logger in the effective table.
+ * RETURNS the complete name of the logger (recursive.)
+ */
+ALTER MODULE LOGGER ADD
+ FUNCTION GET_LOGGER_NAME (
+  IN LOG_ID ANCHOR LOGDATA.CONF_LOGGERS.LOGGER_ID
+  ) RETURNS VARCHAR(256)
+  -- XXX: DB2 error when temporal capabilities are activated.
+  -- ) RETURNS ANCHOR COMPLETE_LOGGER_NAME
+  LANGUAGE SQL
+  PARAMETER CCSID UNICODE
+  SPECIFIC F_GET_NAME
+  NOT DETERMINISTIC
+  NO EXTERNAL ACTION
+  READS SQL DATA
+ F_GET_NAME: BEGIN
+  DECLARE COMPLETE_NAME ANCHOR COMPLETE_LOGGER_NAME;
+  DECLARE PARENT ANCHOR LOGDATA.CONF_LOGGERS.LOGGER_ID;
+  DECLARE NAME ANCHOR LOGDATA.CONF_LOGGERS.NAME;
+  DECLARE RETURNED ANCHOR COMPLETE_LOGGER_NAME;
+  
+  -- The logger is ROOT.
+  IF (LOG_ID = 0) THEN
+   SET COMPLETE_NAME = 'ROOT';
+  ELSEIF (LOG_ID = -1 OR LOG_ID IS NULL) THEN
+   -- The logger is internal
+   SET COMPLETE_NAME = '-internal-';
+  ELSE
+   -- Retrieves the id of the parent logger.
+   SELECT E.PARENT_ID, E.NAME INTO PARENT, NAME
+     FROM LOGDATA.CONF_LOGGERS_EFFECTIVE E
+     WHERE E.LOGGER_ID = LOG_ID
+     WITH UR;
+
+   SET RETURNED = GET_LOGGER_NAME (PARENT) ;
+   -- The parent is ROOT, thus do not concatenate.
+   IF (RETURNED <> 'ROOT') THEN
+    SET COMPLETE_NAME = RETURNED || '.' || NAME;
+   ELSE
+      SET COMPLETE_NAME = NAME;
+   END IF;
+  END IF;
+  
+  RETURN COMPLETE_NAME;
+ END F_GET_NAME @
+
+/**
  * Unload configuration. This is useful for tests, but it should not called
  * used in production.
  */

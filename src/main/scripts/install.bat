@@ -58,6 +58,7 @@ db2 -tsf %SRC_MAIN_CODE_PATH%\ToolsHeader.sql
 db2 -td@ -sf %SRC_MAIN_CODE_PATH%\ToolsBody.sql
 db2 -td@ -sf %SRC_MAIN_CODE_PATH%\AdminHeader.sql
 db2 -td@ -sf %SRC_MAIN_CODE_PATH%\AdminBody.sql
+db2 -td@ -sf %SRC_MAIN_CODE_PATH%\Appenders.sql
 db2 -td@ -sf %SRC_MAIN_CODE_PATH%\LOG.sql
 db2 -td@ -sf %SRC_MAIN_CODE_PATH%\GET_LOGGER.sql
 db2 -td@ -sf %SRC_MAIN_CODE_PATH%\Trigger.sql
@@ -82,6 +83,7 @@ db2 -tsf %SRC_MAIN_CODE_PATH%\ToolsHeader.sql
 db2 -td@ -sf %SRC_MAIN_CODE_PATH%\ToolsBody.sql
 db2 -td@ -sf %SRC_MAIN_CODE_PATH%\AdminHeader.sql
 db2 -td@ -sf %SRC_MAIN_CODE_PATH%\AdminBody.sql
+db2 -td@ -sf %SRC_MAIN_CODE_PATH%\Appenders.sql
 db2 -td@ -sf %SRC_MAIN_CODE_PATH%\LOG.sql
 db2 -td@ -sf %SRC_MAIN_CODE_PATH%\GET_LOGGER_v9_7.sql
 db2 -td@ -sf %SRC_MAIN_CODE_PATH%\Trigger.sql
