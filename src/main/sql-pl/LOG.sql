@@ -179,8 +179,6 @@ ALTER MODULE LOGGER ADD
     WITH UR;
 
   -- Checks if the current level is at least equal to the provided level.
-  -- TODO Verificar esto, ya que aqui se puede usar la tabla references, si root
-  -- no esta activo, ya que diferentes loggers pueden tener diferente conf.
   IF (CURRENT_LEVEL_ID >= LEV_ID) THEN
    -- Internal logging.
    IF (GET_VALUE(LOGGER.LOG_INTERNALS) = LOGGER.VAL_TRUE) THEN
