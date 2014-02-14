@@ -42,11 +42,17 @@ SET CURRENT SCHEMA LOGDATA;
  */
 
 -- Buffer pool for log data.
-CREATE BUFFERPOOL LOG_BP PAGESIZE 8K;
+CREATE BUFFERPOOL LOG_CONF_BP
+  PAGESIZE 4K;
+
+-- Buffer pool for log data.
+CREATE BUFFERPOOL LOG_BP
+  PAGESIZE 8K;
 
 -- Tablespace for logger utility.
 CREATE TABLESPACE LOGGER_SPACE
-  PAGESIZE 4 K;
+  PAGESIZE 4 K
+  BUFFERPOOL LOG_CONF_BP;
 
 COMMENT ON TABLESPACE LOGGER_SPACE IS 'All configuration tables for the logger utility';
 
