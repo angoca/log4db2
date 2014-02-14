@@ -338,5 +338,10 @@ DELETE FROM LOGDATA.LOGS
   AND DATE = (SELECT MAX(DATE) FROM LOGDATA.LOGS);
 COMMIT;
 
+-- Cleans the environment.
+INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES (3, 'TestsReferences: Cleaning environment');
+INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES (3, 'TestsReferences: Finished succesfully');
+COMMIT;
+
 END @
 

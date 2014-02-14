@@ -46,7 +46,7 @@ DECLARE LOGGER_NAME ANCHOR LOGDATA.CONF_LOGGERS.NAME;
 DECLARE LEVEL_ID ANCHOR LOGDATA.LEVELS.LEVEL_ID;
 
 -- Prepares the environment.
-INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES (4, 'TestsReferences: Preparing environment');
+INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES (4, 'TestsLayout: Preparing environment');
 DELETE FROM LOGDATA.REFERENCES;
 DELETE FROM LOGDATA.CONF_APPENDERS;
 COMMIT;
@@ -606,5 +606,9 @@ INSERT INTO LOGDATA.CONF_APPENDERS (NAME, APPENDER_ID, CONFIGURATION, PATTERN)
   VALUES ('DB2 Tables', 1, NULL, '[%p] %c - %m');
 COMMIT;
 
--- Root logger esta fallando: call logger.fatal(0,'fdsfadf')
+-- Cleans the environment.
+INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES (3, 'TestsLayout: Cleaning environment');
+INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES (3, 'TestsLayout: Finished succesfully');
+COMMIT;
+
 END@
