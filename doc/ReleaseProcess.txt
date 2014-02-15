@@ -10,8 +10,9 @@ BEFORE
 
 * To change the version variable in the code (AdminHeader):
 https://github.com/angoca/log4db2/blob/master/src/main/sql-pl/AdminHeader.sql
-* Change the version in the documentation of all files.
+* Change the version in the documentation (@version) of all source files.
 * Make sure the schema reflects the version number to release (all files.)
+* Perform last commit and push.
 
 PERFORM
 
