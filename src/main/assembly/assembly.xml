@@ -64,7 +64,9 @@
   <fileSet>
    <directory>doc</directory>
    <includes>
-    <include>**/*</include>
+    <include>**/COPYING.txt</include>
+    <include>**/ER-diagram.png</include>
+    <include>**/ErrorCodes.txt</include>
    </includes>
    <outputDirectory>doc</outputDirectory>
   </fileSet>
