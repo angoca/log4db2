@@ -29,7 +29,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * Tests different names for loggers.
  */
 
-SET CURRENT SCHEMA LOGGER_1A @
+SET CURRENT SCHEMA LOGGER_1B @
 
 !ECHO NOTE: Make sure triggers are deleted @
 

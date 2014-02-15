@@ -29,7 +29,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * Tests for the logger cache functionality.
  */
 
-SET CURRENT SCHEMA LOGGER_1A @
+SET CURRENT SCHEMA LOGGER_1B @
 
 BEGIN
 -- Reserved names for errors.

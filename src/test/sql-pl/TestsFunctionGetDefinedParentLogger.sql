@@ -29,7 +29,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * Tests for the Get Defined Parent Logger function.
  */
 
-SET CURRENT SCHEMA LOGGER_1A @
+SET CURRENT SCHEMA LOGGER_1B @
 
 !echo NOTE: Make sure triggers are deleted @
 
