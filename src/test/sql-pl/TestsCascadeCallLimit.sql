@@ -129,6 +129,7 @@ ELSE
  INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES (5, 'Exception raised LG001');
 END IF;
 SET RAISED_LG001 = FALSE;
+-- FIXME Sometimes this test generates an error 0811
 SELECT 'TRUE' INTO ACTUAL
   FROM LOGS
   WHERE MESSAGE LIKE 'LG001. Cascade call limit achieve, for LOG: Cascade call for "LOGGING" enters w%';
@@ -153,6 +154,8 @@ SELECT 'TRUE' INTO ACTUAL
 IF (EXPECTED <> ACTUAL) THEN
  INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES (2, 'Different MESSAGE ' || EXPECTED || ' - ' || ACTUAL);
 END IF;
+DELETE FROM LOGS L
+  WHERE MESSAGE LIKE 'LG001. Cascade call limit achieve, for %';
 COMMIT;
 
 -- Test4: Cascade call limit with fatal.
@@ -215,6 +218,8 @@ SELECT 'TRUE' INTO ACTUAL
 IF (EXPECTED <> ACTUAL) THEN
  INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES (2, 'Different MESSAGE ' || EXPECTED || ' - ' || ACTUAL);
 END IF;
+DELETE FROM LOGS L
+  WHERE MESSAGE LIKE 'LG001. Cascade call limit achieve, for %';
 COMMIT;
 
 -- Test8: Cascade call limit with error.
@@ -277,6 +282,8 @@ SELECT 'TRUE' INTO ACTUAL
 IF (EXPECTED <> ACTUAL) THEN
  INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES (2, 'Different MESSAGE ' || EXPECTED || ' - ' || ACTUAL);
 END IF;
+DELETE FROM LOGS L
+  WHERE MESSAGE LIKE 'LG001. Cascade call limit achieve, for %';
 COMMIT;
 
 -- Test12: Cascade call limit with warn.
@@ -339,6 +346,8 @@ SELECT 'TRUE' INTO ACTUAL
 IF (EXPECTED <> ACTUAL) THEN
  INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES (2, 'Different MESSAGE ' || EXPECTED || ' - ' || ACTUAL);
 END IF;
+DELETE FROM LOGS L
+  WHERE MESSAGE LIKE 'LG001. Cascade call limit achieve, for %';
 COMMIT;
 
 -- Test16: Cascade call limit with info.
@@ -401,6 +410,8 @@ SELECT 'TRUE' INTO ACTUAL
 IF (EXPECTED <> ACTUAL) THEN
  INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES (2, 'Different MESSAGE ' || EXPECTED || ' - ' || ACTUAL);
 END IF;
+DELETE FROM LOGS L
+  WHERE MESSAGE LIKE 'LG001. Cascade call limit achieve, for %';
 COMMIT;
 
 -- Test20: Cascade call limit with debug.
@@ -445,6 +456,8 @@ SELECT 'TRUE' INTO ACTUAL
 IF (EXPECTED <> ACTUAL) THEN
  INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES (2, 'Different MESSAGE ' || EXPECTED || ' - ' || ACTUAL);
 END IF;
+DELETE FROM LOGS L
+  WHERE MESSAGE LIKE 'LG001. Cascade call limit achieve, for %';
 COMMIT;
 
 -- Test23: Cascade call limit with default.
