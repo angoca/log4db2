@@ -16,6 +16,7 @@ https://github.com/angoca/log4db2/blob/master/src/main/sql-pl/AdminHeader.sql
 
 PERFORM
 
+* To performa a code release in GitHub (https://github.com/angoca/log4db2/releases)
 * To create a directory in SourceForge with the version to release as name.
 * To execute mvn.
 * To publish the generated files in the target directory, into the just created directory in SourceForge.
