@@ -28,6 +28,6 @@ AFTER
 
 * Change the current development status in source forge 
 * To change the schema name to the new version is all files.
-* Test that there are not references to the previous release.
+* Check that there are not references to the previous release.
 * Commit these changes and publish.
 
