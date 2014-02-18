@@ -218,7 +218,7 @@ ALTER MODULE LOGADMIN ADD
   -- Analyzes all sons for the given parent.
   FOR F AS C CURSOR FOR
     SELECT LOGGER_ID AS LOG_ID
-    FROM LOGDATA.CONF_LOGGERS_EFFECTIVE
+    FROM LOGDATA.CONF_LOGGERS
     WHERE PARENT_ID = PARENT
     FOR UPDATE
     DO
@@ -230,7 +230,7 @@ ALTER MODULE LOGADMIN ADD
     -- Updates the current logger_id (son.)
     UPDATE LOGDATA.CONF_LOGGERS_EFFECTIVE
       SET LEVEL_ID = LEVEL
-      WHERE CURRENT OF C;
+      WHERE LOGGER_ID = LOG_ID;
     -- Modifies the descendant level (recursion).
     BEGIN
      DECLARE STMT STATEMENT;
@@ -278,69 +278,25 @@ ALTER MODULE LOGADMIN ADD
     SET RET = GET_DEFAULT_LEVEL();
    END IF;
   ELSE
-   -- Checks if the level is defined in Conf_loggers
-   SELECT 1 INTO EXISTS
+   -- Asking for a value different to ROOT.
+   -- Retrieving the configured level for the parent of the given son.
+   SELECT LEVEL_ID INTO RET
      FROM LOGDATA.CONF_LOGGERS
-     WHERE LOGGER_ID = SON_ID
+     WHERE LOGGER_ID = (SELECT PARENT_ID INTO PARENT
+     FROM LOGDATA.CONF_LOGGERS
+     WHERE LOGGER_ID = SON_ID)
      WITH UR;
-
-   -- Debug
-   -- INSERT INTO LOGS (DATE, LEVEL_ID, LOGGER_ID, MESSAGE) VALUES (GENERATE_UNIQUE(), 5, -1, 'aFLAG 2 - ' || coalesce (EXISTS, -1));
-
-   IF (EXISTS = 1) THEN
-    -- Asking for a value different to ROOT.
-    -- Retrieving the parent for the current logger.
-    SELECT PARENT_ID INTO PARENT
-      FROM LOGDATA.CONF_LOGGERS
-      WHERE LOGGER_ID = SON_ID
-      WITH UR;
-    -- Retrieving the configured level for the parent.
-    SELECT LEVEL_ID INTO RET
-      FROM LOGDATA.CONF_LOGGERS
-      WHERE LOGGER_ID = PARENT
-      WITH UR;
-    IF (RET IS NULL) THEN
-
-     -- Debug
-     -- INSERT INTO LOGS (DATE, LEVEL_ID, LOGGER_ID, MESSAGE) VALUES (GENERATE_UNIQUE(), 5, -1, 'aFLAG 3 - ' || coalesce (PARENT, -1));
-
-     -- The parent has not a configured level, doing a recursion.
-     BEGIN
-      DECLARE STMT STATEMENT;
-      PREPARE STMT FROM 'SET ? = GET_DEFINED_PARENT_LOGGER(?)';
-      EXECUTE STMT INTO RET USING PARENT;
-     END;
-    END IF;
-   ELSE
-    -- The given son is not configured in the Conf_loggers table.
-    SELECT PARENT_ID INTO PARENT
-      FROM LOGDATA.CONF_LOGGERS_EFFECTIVE
-      WHERE LOGGER_ID = SON_ID
-      WITH UR;
+   IF (RET IS NULL) THEN
 
     -- Debug
-    -- INSERT INTO LOGS (DATE, LEVEL_ID, LOGGER_ID, MESSAGE) VALUES (GENERATE_UNIQUE(), 5, -1, 'aFLAG 4 - ' || coalesce (PARENT, -1));
+    -- INSERT INTO LOGS (DATE, LEVEL_ID, LOGGER_ID, MESSAGE) VALUES (GENERATE_UNIQUE(), 5, -1, 'aFLAG 3 - ' || coalesce (PARENT, -1));
 
-    IF (PARENT IS NULL) THEN
-     -- The logger has not been defined in effective.
-     SET RET = GET_ROOT_OR_DEFAULT_LEVEL();
-    ELSE
-     -- Retrieving the configured level for the parent.
-     SELECT LEVEL_ID INTO RET
-       FROM LOGDATA.CONF_LOGGERS
-       WHERE LOGGER_ID = PARENT
-       WITH UR;
-
-     IF (RET IS NULL) THEN
-
-      -- The parent could be defined, doing a recursion.
-      BEGIN
-       DECLARE STMT STATEMENT;
-       PREPARE STMT FROM 'SET ? = GET_DEFINED_PARENT_LOGGER(?)';
-       EXECUTE STMT INTO RET USING PARENT;
-      END;
-     END IF;
-    END IF;
+    -- The parent has not a configured level, doing a recursion.
+    BEGIN
+     DECLARE STMT STATEMENT;
+     PREPARE STMT FROM 'SET ? = GET_DEFINED_PARENT_LOGGER(?)';
+     EXECUTE STMT INTO RET USING PARENT;
+    END;
    END IF;
   END IF;
 
