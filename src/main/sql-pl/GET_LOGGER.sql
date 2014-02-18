@@ -161,7 +161,7 @@ ALTER MODULE LOGGER ADD
       IF (SON IS NULL) THEN
        -- Registers the new logger and retrieves the id. Switches the parent id.
        INSERT INTO LOGDATA.CONF_LOGGERS (NAME, PARENT_ID, LEVEL_ID)
-          VALUES(STRING, PARENT, NULL);
+         VALUES(STRING, PARENT, NULL);
        SET PARENT = PREVIOUS VALUE FOR LOGDATA.LOGGER_ID_SEQ;
        -- Updates the hierarchy path.
        SET PARENT_HIERARCHY = PARENT_HIERARCHY || ','
