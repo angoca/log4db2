@@ -262,7 +262,8 @@ ALTER MODULE LOGADMIN ADD
   DECLARE EXISTS SMALLINT DEFAULT 0;
 
   -- Debug
-  -- INSERT INTO LOGS (DATE, LEVEL_ID, LOGGER_ID, MESSAGE) VALUES (GENERATE_UNIQUE(), 5, -1, 'aFLAG 1 - ' || coalesce (SON_ID, -1));
+  -- INSERT INTO LOGS (DATE, LEVEL_ID, LOGGER_ID, MESSAGE) VALUES
+  --   (GENERATE_UNIQUE(), 5, -1, '>GDP - son ' || coalesce (SON_ID, -1));
 
   IF (SON_ID IS NULL OR SON_ID < 0) THEN
    SIGNAL SQLSTATE VALUE 'LG0F1'
@@ -276,11 +277,16 @@ ALTER MODULE LOGADMIN ADD
    IF (RET IS NULL) THEN
     -- ROOT is not configured, getting the default value.
     SET RET = GET_DEFAULT_LEVEL();
+
+    -- Debug
+    -- INSERT INTO LOGS (DATE, LEVEL_ID, LOGGER_ID, MESSAGE) VALUES
+    --   (GENERATE_UNIQUE(), 5, -1, ' GDP - default ' || coalesce (RET, -1));
+
    END IF;
   ELSE
    -- Asking for a value different to ROOT.
    -- Retrieving the configured level for the parent of the given son.
-   SELECT LEVEL_ID INTO RET
+   SELECT LEVEL_ID, LOGGER_ID INTO RET, PARENT
      FROM LOGDATA.CONF_LOGGERS
      WHERE LOGGER_ID = (SELECT PARENT_ID
      FROM LOGDATA.CONF_LOGGERS
@@ -289,7 +295,8 @@ ALTER MODULE LOGADMIN ADD
    IF (RET IS NULL) THEN
 
     -- Debug
-    -- INSERT INTO LOGS (DATE, LEVEL_ID, LOGGER_ID, MESSAGE) VALUES (GENERATE_UNIQUE(), 5, -1, 'aFLAG 3 - ' || coalesce (PARENT, -1));
+    -- INSERT INTO LOGS (DATE, LEVEL_ID, LOGGER_ID, MESSAGE) VALUES
+    --  (GENERATE_UNIQUE(), 5, -1, ' GDP - parent ' || coalesce (PARENT, -1));
 
     -- The parent has not a configured level, doing a recursion.
     BEGIN
@@ -301,7 +308,8 @@ ALTER MODULE LOGADMIN ADD
   END IF;
 
   -- Debug
-  -- INSERT INTO LOGS (DATE, LEVEL_ID, LOGGER_ID, MESSAGE) VALUES (GENERATE_UNIQUE(), 5, -1, 'aRET - ' || coalesce (RET, -1));
+  -- INSERT INTO LOGS (DATE, LEVEL_ID, LOGGER_ID, MESSAGE) VALUES
+  --   (GENERATE_UNIQUE(), 5, -1, '<GDP - ret ' || coalesce (RET, -1));
 
   RETURN RET;
  END F_GET_DEFINED_PARENT_LOGGER @
