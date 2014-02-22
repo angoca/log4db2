@@ -97,7 +97,7 @@ ALTER MODULE LOGGER ADD
   DECLARE EXIT HANDLER FOR SQLSTATE '54038'
    BEGIN
     INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES 
-      (2, 'LG001. Cascade call limit achieve, for GET_LOGGER: ' || COALESCE(NAME, 'null'));
+      (2, 'LG001. Cascade call limit achieved, for GET_LOGGER: ' || COALESCE(NAME, 'null'));
     RESIGNAL SQLSTATE 'LG001';
    END;
 
