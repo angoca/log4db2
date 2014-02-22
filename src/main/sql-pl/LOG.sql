@@ -216,6 +216,7 @@ ALTER MODULE LOGGER ADD
        WHERE L.LEVEL_ID = LEV_ID
        WITH UR));
      -- Inserts the logger name.
+     -- PERF: Coalesce could be deleted, get_logger_name always return something.
      SET NEW_MESSAGE = REPLACE(NEW_MESSAGE, '%c', 
        COALESCE(GET_LOGGER_NAME(LOG_ID), 'No name'));
      -- Inserts the application handle.
