@@ -246,7 +246,7 @@ CREATE OR REPLACE TRIGGER T3_CONF_LOGGER_SYNC
 
    IF (QTY > 0) THEN
     UPDATE LOGDATA.CONF_LOGGERS_EFFECTIVE
-    -- LEVEL_ID could be null, thus we update with a always existant level.
+    -- LEVEL_ID could be null, thus we update with an always existant level.
       SET LEVEL_ID = 0
       WHERE LOGGER_ID = N.LOGGER_ID;
    END IF;
@@ -254,7 +254,7 @@ CREATE OR REPLACE TRIGGER T3_CONF_LOGGER_SYNC
 
   -- Debug
   -- INSERT INTO LOGS (LEVEL_ID, LOGGER_ID, MESSAGE) 
-  --   VALUES (5, -1, '<T3_CNF_SYN ');
+  --   VALUES (5, -1, '<T3_CNF_SYN');
  END T_SYNC_CONF @
 
 COMMENT ON TRIGGER T3_CONF_LOGGER_SYNC IS 'Inserts or updates in the effective table to synchronize the new configuration'@
@@ -286,8 +286,8 @@ CREATE OR REPLACE TRIGGER T1_EFFECTIVE_LEVEL_ID
 
   -- Debug
   -- INSERT INTO LOGS (LEVEL_ID, LOGGER_ID, MESSAGE)
-  --   VALUES (5, -1, '>T1_EFF_LI =: ' || coalesce (N.LOGGER_ID, -1) || ':'
-  -- || coalesce (N.LEVEL_ID, -1));
+  --   VALUES (5, -1, '>T1_EFF_LI =: ' || COALESCE (N.LOGGER_ID, -1) || ':'
+  --   || COALESCE (N.LEVEL_ID, -1));
 
   SELECT LEVEL_ID INTO N.LEVEL_ID
     FROM LOGDATA.CONF_LOGGERS
@@ -304,8 +304,8 @@ CREATE OR REPLACE TRIGGER T1_EFFECTIVE_LEVEL_ID
 
   -- Debug
   -- INSERT INTO LOGS (LEVEL_ID, LOGGER_ID, MESSAGE)
-  --   VALUES (5, -1, '<T1_EFF_LI =: ' || coalesce (N.LOGGER_ID, -1) || ':'
-  -- || coalesce (N.LEVEL_ID, -1));
+  --   VALUES (5, -1, '<T1_EFF_LI =: ' || COALESCE (N.LOGGER_ID, -1) || ':'
+  -- || COALESCE (N.LEVEL_ID, -1));
 
  END T_EFFECT_LEVEL_ID @
  
@@ -335,8 +335,8 @@ CREATE OR REPLACE TRIGGER T3_EFFECTIVE_LEVEL_UPDATE
 
   -- Debug
   -- INSERT INTO LOGS (LEVEL_ID, LOGGER_ID, MESSAGE)
-  --   VALUES (5, -1, '> T3_EFF_LVL_UPT = ' || coalesce (N.LOGGER_ID, -1) || '='
-  --   || coalesce (N.LEVEL_ID, -1));
+  --   VALUES (5, -1, '> T3_EFF_LVL_UPT = ' || COALESCE (N.LOGGER_ID, -1) || '='
+  --   || COALESCE (N.LEVEL_ID, -1));
 
   -- The provided level was verified in the previous trigger, thus
   -- update the descendency.
