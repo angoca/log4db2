@@ -59,6 +59,11 @@ function v10.1() {
   echo "Create table for Time Travel"
   installScript ${SRC_MAIN_CODE_PATH}/TablesTimeTravel.sql
  fi
+ if [[ ${continue} == true ]] ; then
+  echo "log4db2 was installed successfully"
+ else
+  echo "Check the error(s) and reinstall the utility"
+ fi
 }
 
 # DB2 v9.7

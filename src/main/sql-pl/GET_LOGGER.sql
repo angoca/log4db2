@@ -97,7 +97,7 @@ ALTER MODULE LOGGER ADD
   DECLARE EXIT HANDLER FOR SQLSTATE '54038'
    BEGIN
     INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES 
-      (2, 'LG001. Cascade call limit achieve, for GET_LOGGER: ' || COALESCE(NAME, 'null'));
+      (2, 'LG001. Cascade call limit achieved, for GET_LOGGER: ' || COALESCE(NAME, 'null'));
     RESIGNAL SQLSTATE 'LG001';
    END;
 
@@ -157,28 +157,14 @@ ALTER MODULE LOGGER ADD
         AND C.PARENT_ID = PARENT;
       -- If the logger is NOT already registered.
       IF (SON IS NULL) THEN
-       -- Searches in the effective configuration if this is already registered.
-       SELECT C.LOGGER_ID, C.LEVEL_ID INTO SON, LEVEL
-         FROM LOGDATA.CONF_LOGGERS_EFFECTIVE C
-         WHERE C.NAME = STRING
-         AND C.PARENT_ID = PARENT
-         WITH UR;
-       -- Logger is NOT registered in none of the tables.
-       IF (SON IS NULL) THEN
-        -- Registers the new logger and retrieves the id. Switches the parent id.
-        INSERT INTO LOGDATA.CONF_LOGGERS_EFFECTIVE (NAME, PARENT_ID, LEVEL_ID, HIERARCHY)
-          VALUES (STRING, PARENT, PARENT_LEVEL, PARENT_HIERARCHY);
-        SET PARENT = PREVIOUS VALUE FOR LOGDATA.LOGGER_ID_SEQ;
-        -- Updates the hierarchy path.
-        UPDATE LOGDATA.CONF_LOGGERS_EFFECTIVE
-          SET HIERARCHY = PARENT_HIERARCHY || ',' || CHAR(PREVIOUS VALUE FOR LOGDATA.LOGGER_ID_SEQ)
-          WHERE LOGGER_ID = PARENT;
-       ELSE
-        -- It is already register in the effective table, thus take the id of that
-        -- logger as parent.
-        SET PARENT = SON;
-        SET PARENT_LEVEL = LEVEL;
-       END IF;
+       -- Registers the new logger and retrieves the id. Switches the parent id.
+       INSERT INTO LOGDATA.CONF_LOGGERS (NAME, PARENT_ID, LEVEL_ID)
+          VALUES(STRING, PARENT, NULL);
+       SET PARENT = IDENTITY_VAL_LOCAL();
+       -- Updates the hierarchy path.
+       SET PARENT_HIERARCHY = PARENT_HIERARCHY || ',' || CHAR(PARENT);
+       INSERT INTO LOGDATA.CONF_LOGGERS_EFFECTIVE (LOGGER_ID, LEVEL_ID, HIERARCHY)
+         VALUES (PARENT, PARENT_LEVEL, PARENT_HIERARCHY);
       ELSE
        -- It is registered in the configuration table, thus take the id of that
        -- logger.
