@@ -179,8 +179,9 @@ ALTER MODULE LOGGER ADD
    END;
 
   -- Internal logging.
-  SET INTERNAL = GET_VALUE(LOGGER.LOG_INTERNALS);
-
+  IF (GET_VALUE(LOGGER.LOG_INTERNALS) = LOGGER.VAL_TRUE) THEN
+   SET INTERNAL = TRUE;
+  END IF;
   -- Retrieves the current level in the configuration for the given logger.
   SELECT C.LEVEL_ID, C.HIERARCHY INTO CURRENT_LEVEL_ID, HIERARCHY
     FROM LOGDATA.CONF_LOGGERS_EFFECTIVE C
@@ -190,7 +191,7 @@ ALTER MODULE LOGGER ADD
   -- Checks if the current level is at least equal to the provided level.
   IF (CURRENT_LEVEL_ID >= LEV_ID) THEN
    -- Internal logging.
-   IF (INTERNAL = LOGGER.VAL_TRUE) THEN
+   IF (INTERNAL = TRUE) THEN
     INSERT INTO LOGDATA.LOGS (LEVEL_ID, LOGGER_ID, MESSAGE) VALUES 
       (4, -1, 'Logging enable for level ' || LEV_ID || ' logger ' || LOG_ID);
    END IF;
@@ -204,14 +205,14 @@ ALTER MODULE LOGGER ADD
    WHILE (AT_END = FALSE) DO
     SET ACTIVE = IS_LOGGER_ACTIVE(HIERARCHY, LOGGER_ID_FETCHED);
    -- Internal logging.
-    IF (INTERNAL = LOGGER.VAL_TRUE) THEN
+    IF (INTERNAL = TRUE) THEN
      INSERT INTO LOGDATA.LOGS (LEVEL_ID, LOGGER_ID, MESSAGE) VALUES 
        (4, -1, 'Active logger ' || LOGGER_ID_FETCHED || ' value '
        || BOOL_TO_CHAR(ACTIVE));
     END IF;
     IF (ACTIVE = TRUE) THEN
      -- Internal logging.
-     IF (INTERNAL = LOGGER.VAL_TRUE) THEN
+     IF (INTERNAL = TRUE) THEN
       INSERT INTO LOGDATA.LOGS (LEVEL_ID, LOGGER_ID, MESSAGE) VALUES 
         (4, -1, 'Processing pattern ' || PATTERN);
      END IF;
@@ -252,7 +253,7 @@ ALTER MODULE LOGGER ADD
      CASE APPENDER_ID
        WHEN 1 THEN -- Pure SQL PL, writes in table.
         -- Internal logging.
-        IF (INTERNAL = LOGGER.VAL_TRUE) THEN
+        IF (INTERNAL = TRUE) THEN
          INSERT INTO LOGDATA.LOGS (LEVEL_ID, LOGGER_ID, MESSAGE) VALUES 
            (4, -1, 'Logging in tables');
         END IF;
@@ -273,7 +274,7 @@ ALTER MODULE LOGGER ADD
      END CASE;
     ELSE
        -- Internal logging.
-     IF (INTERNAL = LOGGER.VAL_TRUE) THEN
+     IF (INTERNAL = TRUE) THEN
       INSERT INTO LOGDATA.LOGS (LEVEL_ID, LOGGER_ID, MESSAGE) VALUES 
         (4, -1, 'Non active logger' );
      END IF;
