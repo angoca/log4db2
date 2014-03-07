@@ -188,7 +188,7 @@ CREATE OR REPLACE TRIGGER T1_CONF_LOGGERS_ID
   -- Checks that the only logger without parent is ROOT.
   ELSEIF (N.LOGGER_ID > 0 AND N.PARENT_ID IS NULL) THEN
    -- Raises an error.
-   SIGNAL SQLSTATE VALUE 'LG0C1'
+   SIGNAL SQLSTATE VALUE 'LG0C2'
      SET MESSAGE_TEXT = 'The only logger without parent is ROOT';
   -- LOGGER_ID cannot be negative.
   ELSEIF (N.LOGGER_ID < 0) THEN
@@ -205,8 +205,8 @@ COMMENT ON TRIGGER T1_CONF_LOGGERS_ID IS 'This trigger checks the insertion or u
 CREATE OR REPLACE TRIGGER T2_CONF_LOGGERS_NO_UPDATE
   BEFORE UPDATE OF LOGGER_ID, NAME, PARENT_ID ON LOGDATA.CONF_LOGGERS
   FOR EACH ROW
- SIGNAL SQLSTATE VALUE 'LG0C2'
-   SET MESSAGE_TEXT = 'It is not possible to update any value in this table (only LEVEL_ID is possible)' @
+ SIGNAL SQLSTATE VALUE 'LG0C4'
+   SET MESSAGE_TEXT = 'The LEVEL_ID is the only column that can be updated' @
 
 COMMENT ON TRIGGER T2_CONF_LOGGERS_NO_UPDATE IS 'It restricts to update any value in CONF_LOGGERS different to LEVEL_ID'@
 
@@ -317,8 +317,8 @@ COMMENT ON TRIGGER T1_EFFECTIVE_LEVEL_ID IS 'Assigns the LEVEL_ID' @
 CREATE OR REPLACE TRIGGER T2_EFFECTIVE_NO_UPDATE
   BEFORE UPDATE OF LOGGER_ID, HIERARCHY ON LOGDATA.CONF_LOGGERS_EFFECTIVE
   FOR EACH ROW
- SIGNAL SQLSTATE VALUE 'LG0E2'
-   SET MESSAGE_TEXT = 'It is not possible to update any value in this table (only LEVEL_ID is possible)' @
+ SIGNAL SQLSTATE VALUE 'LG0E1'
+   SET MESSAGE_TEXT = 'The LEVEL_ID is the only column that can be updated' @
 
 COMMENT ON TRIGGER T2_EFFECTIVE_NO_UPDATE IS 'It restricts the update of any value in this table different to LEVEL_ID'@
 
@@ -366,7 +366,7 @@ CREATE OR REPLACE TRIGGER T4_EFFECTIVE_ROOT_LOGGER_UNDELETABLE
    -- Debug
    -- INSERT INTO LOGS (LEVEL_ID, LOGGER_ID, MESSAGE) VALUES (5, -1, '>< T4_EFF_RT_UNDLT');
 
-   SIGNAL SQLSTATE VALUE 'LG0E4'
+   SIGNAL SQLSTATE VALUE 'LG0E2'
      SET MESSAGE_TEXT = 'ROOT logger cannot be deleted';
   END T_UNDELETABLE @
 

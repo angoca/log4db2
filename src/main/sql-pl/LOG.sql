@@ -175,7 +175,8 @@ ALTER MODULE LOGGER ADD
     INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES 
     (2, 'LG001. Cascade call limit achieved, for LOG: '
       || COALESCE(MESSAGE, 'null'));
-    RESIGNAL SQLSTATE 'LG001';
+    RESIGNAL SQLSTATE 'LG001'
+      SET MESSAGE_TEXT = 'Cascade call limit achieved. Log message was written';
    END;
 
   -- Internal logging.
@@ -317,7 +318,8 @@ ALTER MODULE LOGGER ADD
     INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES 
     (2, 'LG001. Cascade call limit achieved, for DEBUG: ('
       || COALESCE(LOGGER_ID, -1) || ') ' || COALESCE(MESSAGE, 'null'));
-    RESIGNAL SQLSTATE 'LG001';
+    RESIGNAL SQLSTATE 'LG001'
+      SET MESSAGE_TEXT = 'Cascade call limit achieved. Log message was written';
    END;
 
   CALL LOG (LOGGER_ID, 5, MESSAGE);
@@ -351,7 +353,8 @@ ALTER MODULE LOGGER ADD
     INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES 
     (2, 'LG001. Cascade call limit achieved, for INFO: ('
       || COALESCE(LOGGER_ID, -1) || ') ' || COALESCE(MESSAGE, 'null'));
-    RESIGNAL SQLSTATE 'LG001';
+    RESIGNAL SQLSTATE 'LG001'
+      SET MESSAGE_TEXT = 'Cascade call limit achieved. Log message was written';
    END;
 
   CALL LOG (LOGGER_ID, 4, MESSAGE);
@@ -385,7 +388,8 @@ ALTER MODULE LOGGER ADD
     INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES 
     (2, 'LG001. Cascade call limit achieved, for WARN: ('
       || COALESCE(LOGGER_ID, -1) || ') ' || COALESCE(MESSAGE, 'null'));
-    RESIGNAL SQLSTATE 'LG001';
+    RESIGNAL SQLSTATE 'LG001'
+      SET MESSAGE_TEXT = 'Cascade call limit achieved. Log message was written';
    END;
 
   CALL LOG (LOGGER_ID, 3, MESSAGE);
@@ -419,7 +423,8 @@ ALTER MODULE LOGGER ADD
     INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES 
     (2, 'LG001. Cascade call limit achieved, for ERROR: ('
       || COALESCE(LOGGER_ID, -1) || ') ' || COALESCE(MESSAGE, 'null'));
-    RESIGNAL SQLSTATE 'LG001';
+    RESIGNAL SQLSTATE 'LG001'
+      SET MESSAGE_TEXT = 'Cascade call limit achieved. Log message was written';
    END;
 
   CALL LOG (LOGGER_ID, 2, MESSAGE);
@@ -453,7 +458,8 @@ ALTER MODULE LOGGER ADD
     INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES 
     (2, 'LG001. Cascade call limit achieved, for FATAL: ('
       || COALESCE(LOGGER_ID, -1) || ') ' || COALESCE(MESSAGE, 'null'));
-    RESIGNAL SQLSTATE 'LG001';
+    RESIGNAL SQLSTATE 'LG001'
+      SET MESSAGE_TEXT = 'Cascade call limit achieved. Log message was written';
    END;
 
   CALL LOG (LOGGER_ID, 1, MESSAGE);

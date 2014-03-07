@@ -212,8 +212,8 @@ ALTER MODULE LOGADMIN ADD
   -- INSERT INTO LOGS (DATE, LEVEL_ID, LOGGER_ID, MESSAGE) VALUES (GENERATE_UNIQUE(), 5, -1, 'aFLAG 5 = ' || coalesce (PARENT, -1) || '=' || coalesce (LEVEL, -1));
 
   IF (PARENT IS NULL OR PARENT < 0 OR LEVEL IS NULL OR LEVEL < 0) THEN
-   SIGNAL SQLSTATE VALUE 'LG002'
-     SET MESSAGE_TEXT = 'Invalid parameter';
+   SIGNAL SQLSTATE VALUE 'LG0P1'
+     SET MESSAGE_TEXT = 'Invalid given parameter: PARENT or LEVEL ';
   END IF;
   -- Analyzes all sons for the given parent.
   FOR F AS C CURSOR FOR
@@ -267,7 +267,7 @@ ALTER MODULE LOGADMIN ADD
 
   IF (SON_ID IS NULL OR SON_ID < 0) THEN
    SIGNAL SQLSTATE VALUE 'LG0F1'
-     SET MESSAGE_TEXT = 'Invalid parameter';
+     SET MESSAGE_TEXT = 'Invalid given parameter: SON_ID';
   ELSEIF (SON_ID = 0) THEN
    -- Asking for the level for ROOT.
    SELECT LEVEL_ID INTO RET

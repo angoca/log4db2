@@ -99,7 +99,8 @@ ALTER MODULE LOGGER ADD
    BEGIN
     INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES 
       (2, 'LG001. Cascade call limit achieved, for GET_LOGGER: ' || COALESCE(NAME, 'null'));
-    RESIGNAL SQLSTATE 'LG001';
+    RESIGNAL SQLSTATE 'LG001'
+      SET MESSAGE_TEXT = 'Cascade call limit achieved. Log message was written';
    END;
 
   -- Internal logging.
