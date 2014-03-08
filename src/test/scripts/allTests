@@ -57,5 +57,7 @@ read -p "Press enter to continue (next TestsLayout)"
 read -p "Press enter to continue (next TestsLevels)"
 . ./${SRC_TEST_SCRIPT_PATH}/test ${SRC_TEST_CODE_PATH}/TestsLevels.sql
 read -p "Press enter to continue (next TestsReferences)"
+. ./${SRC_TEST_SCRIPT_PATH}/test ${SRC_TEST_CODE_PATH}/TestsMessages.sql
+read -p "Press enter to continue (next TestsReferences)"
 . ./${SRC_TEST_SCRIPT_PATH}/test ${SRC_TEST_CODE_PATH}/TestsReferences.sql
 

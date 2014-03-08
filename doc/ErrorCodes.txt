@@ -60,7 +60,7 @@ ROOT.
 * Assign a parent to the provided logger. Probably, its parent will be ROOT (0).
 
 LG0C3
-LOGGER_ID cannot be negative
+LOGGER_ID cannot be negative.
 * The provided LOGGER_ID is invalid. LOGGER_ID valid values are positive
 integers.
 * Reissue the command with a valid LOGGER_ID.
@@ -111,7 +111,7 @@ a null value or a negative one.
 * Reissue the command calling the function with a positive or zero value.
 
 
-==== MODIFY_DESCENDATS PROCEDURE ====
+==== MODIFY_DESCENDANTS PROCEDURE ====
 
 LG0P1
 Invalid given parameter: PARENT or LEVEL.
@@ -131,15 +131,4 @@ the application.
 This message wraps the SQL Code SQL0724, SQLState 54038.
 * Control this error in the application, in order to continue the execution:
   DECLARE CONITNUE HANDLER FOR SQLSTATE 'LG001' DO_SOMETHING;
-
-LG002
-Invalid configuration state
-* The loggers cache is trying to be activated or deactivated, but the
-configuration is the opposite of the requested function.
-This behavior should never be an issue for the user, because the
-procedures used (ACTIVATE_CACHE and DEACTIVATE_CACHE) are called by triggers.
-* Reissue the command with the appropriated function according to the 
-configuration:
-  ACTIVATE_CACHE -> internalCache = true
-  DEACTIVATE_CACHE -> internalCache = false
 

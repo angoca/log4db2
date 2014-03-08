@@ -57,5 +57,7 @@ call %SRC_TEST_SCRIPT_PATH%\test.bat %SRC_TEST_CODE_PATH%\TestsLayout.sql
 pause
 call %SRC_TEST_SCRIPT_PATH%\test.bat %SRC_TEST_CODE_PATH%\TestsLevels.sql
 pause
+call %SRC_TEST_SCRIPT_PATH%\test.bat %SRC_TEST_CODE_PATH%\TestsMessages.sql
+pause
 call %SRC_TEST_SCRIPT_PATH%\test.bat %SRC_TEST_CODE_PATH%\TestsReferences.sql
 
