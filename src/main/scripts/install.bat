@@ -29,72 +29,89 @@
 :: Author: Andres Gomez Casanova (AngocA)
 :: Made in COLOMBIA.
 
+set continue=1
+
 :: Checks if there is already a connection established
 db2 connect > NUL
 if %ERRORLEVEL% EQU 0 (
- goto version
+ call:version
 ) else (
  echo Please connect to a database before the execution of the installation.
- goto exit
 )
+goto:eof
 
-:version
-:: Sets the path.
-if EXIST init.bat (
- call init.bat
-)
+:: Installs a given script.
+:installScript
+ set script=%~1
+ echo %script%
+ db2 -tsf %script%
+ if %ERRORLEVEL% NEQ 0 (
+  set continue=0
+ )
+goto:eof
 
-:: Checks in which DB2 version the utility will be installed.
-:: DB2 v10.1 is the default version.
-if "%1" EQU "" (
- goto v10.1
-)
-if /I "%1" EQU "-v10.1" (
- goto v10.1
-)
-if /I "%1" EQU "-v9.7" (
- goto v9.7
-)
-
-:: DB2 v10.1.
+:: DB2 v10.1
 :v10.1
-echo Installing utility for v10.1
-db2 -tsf %SRC_MAIN_CODE_PATH%\Tables.sql
-db2 -tsf %SRC_MAIN_CODE_PATH%\UtilityHeader.sql
-db2 -tsf %SRC_MAIN_CODE_PATH%\UtilityBody.sql
-db2 -tsf %SRC_MAIN_CODE_PATH%\AdminHeader.sql
-db2 -tsf %SRC_MAIN_CODE_PATH%\AdminBody.sql
-db2 -tsf %SRC_MAIN_CODE_PATH%\Appenders.sql
-db2 -tsf %SRC_MAIN_CODE_PATH%\LOG.sql
-db2 -tsf %SRC_MAIN_CODE_PATH%\GET_LOGGER.sql
-db2 -tsf %SRC_MAIN_CODE_PATH%\Trigger.sql
+ echo "Installing utility for v10.1"
+ if %continue% EQU 1 call:installScript %SRC_MAIN_CODE_PATH%\Tables.sql
+ if %continue% EQU 1 call:installScript %SRC_MAIN_CODE_PATH%\UtilityHeader.sql
+ if %continue% EQU 1 call:installScript %SRC_MAIN_CODE_PATH%\UtilityBody.sql
+ if %continue% EQU 1 call:installScript %SRC_MAIN_CODE_PATH%\AdminHeader.sql
+ if %continue% EQU 1 call:installScript %SRC_MAIN_CODE_PATH%\AdminBody.sql
+ if %continue% EQU 1 call:installScript %SRC_MAIN_CODE_PATH%\Appenders.sql
+ if %continue% EQU 1 call:installScript %SRC_MAIN_CODE_PATH%\LOG.sql
+ if %continue% EQU 1 call:installScript %SRC_MAIN_CODE_PATH%\GET_LOGGER.sql
+ if %continue% EQU 1 call:installScript %SRC_MAIN_CODE_PATH%\Trigger.sql
 
-:: Temporal capabilities for tables.
-if "%2" EQU "t" (
- echo Create table for Time Travel
- db2 -tf %SRC_MAIN_CODE_PATH%\TablesTimeTravel.sql
-)
-if "%1" EQU "t" (
- echo Create table for Time Travel
- db2 -tf %SRC_MAIN_CODE_PATH%\TablesTimeTravel.sql
-)
-
-goto exit
+ :: Temporal capabilities for tables.
+ if "%1" EQU "t" if %continue% EQU 1 (
+  echo "Create table for Time Travel"
+  call:installScript %SRC_MAIN_CODE_PATH%\TablesTimeTravel.sql
+ )
+ if %continue% EQU 1 (
+  echo "log4db2 was installed successfully"
+ ) else (
+  echo "Check the error(s) and reinstall the utility"
+ )
+goto:eof
 
 :: DB2 v9.7
 :v9.7
-echo Installing utility for DB2 v9.7
-db2 -tsf %SRC_MAIN_CODE_PATH%\Tables_v9_7.sql
-db2 -tsf %SRC_MAIN_CODE_PATH%\UtilityHeader.sql
-db2 -tsf %SRC_MAIN_CODE_PATH%\UtilityBody.sql
-db2 -tsf %SRC_MAIN_CODE_PATH%\AdminHeader.sql
-db2 -tsf %SRC_MAIN_CODE_PATH%\AdminBody.sql
-db2 -tsf %SRC_MAIN_CODE_PATH%\Appenders.sql
-db2 -tsf %SRC_MAIN_CODE_PATH%\LOG.sql
-db2 -tsf %SRC_MAIN_CODE_PATH%\GET_LOGGER_v9_7.sql
-db2 -tsf %SRC_MAIN_CODE_PATH%\Trigger.sql
+ echo "Installing utility for v9.7"
+ if %continue% EQU 1 call:installScript %SRC_MAIN_CODE_PATH%\Tables_v9_7.sql
+ if %continue% EQU 1 call:installScript %SRC_MAIN_CODE_PATH%\UtilityHeader.sql
+ if %continue% EQU 1 call:installScript %SRC_MAIN_CODE_PATH%\UtilityBody.sql
+ if %continue% EQU 1 call:installScript %SRC_MAIN_CODE_PATH%\AdminHeader.sql
+ if %continue% EQU 1 call:installScript %SRC_MAIN_CODE_PATH%\AdminBody.sql
+ if %continue% EQU 1 call:installScript %SRC_MAIN_CODE_PATH%\Appenders.sql
+ if %continue% EQU 1 call:installScript %SRC_MAIN_CODE_PATH%\LOG.sql
+ if %continue% EQU 1 call:installScript %SRC_MAIN_CODE_PATH%\GET_LOGGER.sql
+ if %continue% EQU 1 call:installScript %SRC_MAIN_CODE_PATH%\Trigger.sql
+goto:eof
 
-goto exit
+:version
+ if EXIST init.bat (
+  call init.bat
+ )
 
-:exit
+ :: Checks in which DB2 version the utility will be installed.
+ :: DB2 v10.1 is the default version.
+ if "%1" EQU "" (
+  call:v10.1
+ ) else if /I "%1" EQU "t" (
+  call:v10.1 t
+ ) else if /I "%1" EQU "-v10.1" (
+  if /I "%2" EQU "" (
+   call:v10.1
+  ) else if /I "%2" EQU "t" (
+   call:v10.1 t
+  ) else (
+   echo ERROR
+  )
+ ) else if /I "%1" EQU "-v9.7" (
+  call:v9.7
+ ) else (
+  echo ERROR
+ )
+goto:eof
 
