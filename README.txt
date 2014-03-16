@@ -68,7 +68,7 @@ use the current connection.
 
 After the install, all statements should have been successful.
 
-A more detailled guide to install the utility can be found in the wiki:
+A more detailed guide to install the utility can be found in the wiki:
 https://github.com/angoca/log4db2/wiki/Install
 
 You can also install the utility from the sources and run the examples an

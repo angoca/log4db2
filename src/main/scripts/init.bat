@@ -1,3 +1,4 @@
+@echo off
 :: Copyright (c) 2012 - 2014, Andres Gomez Casanova (AngocA)
 :: All rights reserved.
 ::
