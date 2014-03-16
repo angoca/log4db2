@@ -23,15 +23,12 @@
 :: ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 :: POSSIBILITY OF SUCH DAMAGE.
 
-:: Reinstall the utility. Calls the uninstall and then the inttall.
+:: Reinstall the utility. Calls the uninstall and then the install.
 ::
 :: Version: 2014-02-14 1-Alpha
 :: Author: Andres Gomez Casanova (AngocA)
 :: Made in COLOMBIA.
 
-if EXIST init.bat (
- call init.bat
-)
-call %SRC_MAIN_SCRIPT_PATH%\uninstall.bat
-call %SRC_MAIN_SCRIPT_PATH%\install.bat %1 %2
+call uninstall.bat
+call install.bat %1 %2
 
