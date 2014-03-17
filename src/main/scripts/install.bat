@@ -34,7 +34,7 @@ set continue=1
 :: Checks if there is already a connection established
 db2 connect > NUL
 if %ERRORLEVEL% EQU 0 (
- call:version
+ call:version %1 %2
 ) else (
  echo Please connect to a database before the execution of the installation.
 )
