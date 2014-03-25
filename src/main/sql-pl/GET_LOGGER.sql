@@ -108,6 +108,7 @@ ALTER MODULE LOGGER ADD
    SET INTERNAL = TRUE;
   END IF;
 
+  -- Internal logging.
   IF (INTERNAL = TRUE) THEN
    INSERT INTO LOGDATA.LOGS (DATE, LEVEL_ID, LOGGER_ID, MESSAGE) VALUES 
      (GENERATE_UNIQUE(), 4, -1, 'Getting logger name for ' || COALESCE(NAME, 'null'));
@@ -154,7 +155,10 @@ ALTER MODULE LOGGER ADD
       )
      P_ANALYZE_NAME: BEGIN
       DECLARE SON ANCHOR LOGDATA.CONF_LOGGERS.LOGGER_ID; -- Id of the current logger.
-      DECLARE LEVEL ANCHOR LOGDATA.LEVELS.LEVEL_ID; -- Id of the associated logger level.
+      DECLARE LEVEL ANCHOR LOGDATA.LEVELS.LEVEL_ID DEFAULT 0; -- Id of the associated logger level.
+
+      -- Function call to force a inner level - Prevents the limit.
+      SET LEVEL = ABS (LEVEL);
 
       -- Looks for the logger with the given name in the configuration table.
       -- This query waits for the data to be commited (CS Cursor stability)
@@ -181,6 +185,22 @@ ALTER MODULE LOGGER ADD
      END P_ANALYZE_NAME ;
     ------------------------------------------------------------------------------
 
+--    DECLARE EXIT HANDLER FOR SQLSTATE '54038'
+--     BEGIN
+--      SET POS = LENGTH + 1;
+--      INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES (5, 'Aqui vamos ');
+--     END;
+--    DECLARE EXIT HANDLER FOR SQLSTATE 'LIMIT'
+--      BEGIN
+--       SET LOGGER_ID = 0;
+--      END;
+--    DECLARE EXIT HANDLER FOR SQLSTATE '09000'
+--      BEGIN
+--       INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES (1, 'Aqui vamos 2');
+--       RESIGNAL SQLSTATE 'LIMIT';
+--      END;
+
+
     -- Remove spaces at the beginning and at the end.
     SET NAME = TRIM(BOTH FROM NAME);
     -- Remove dots at the beginning and at the end.
@@ -203,6 +223,13 @@ ALTER MODULE LOGGER ADD
      SET PARENT_LEVEL = 3;
     END IF;
 
+     BEGIN
+      DECLARE PREV_PARENT ANCHOR LOGDATA.CONF_LOGGERS.LOGGER_ID;
+      DECLARE CONTINUE HANDLER FOR SQLSTATE '09000'
+       BEGIN
+        SET PARENT = 0;
+       END;
+
     -- Takes each level of the logger name (dots), and retrieves or creates the
     -- hierarchy in the configutation.
     WHILE (POS < LENGTH) DO
@@ -214,6 +241,7 @@ ALTER MODULE LOGGER ADD
       -- Rest of the logger name.
       SET SUBS_POS = SUBSTR(SUBS_POS, POS + 1);
 
+      -- Recursive call
       CALL ANALYZE_NAME(SUBS_PRE, PARENT, PARENT_LEVEL, PARENT_HIERARCHY);
       SET PARENT_HIERARCHY = PARENT_HIERARCHY || ',' || PARENT;
      ELSE -- No dot was found (in the remainding string).
@@ -222,6 +250,8 @@ ALTER MODULE LOGGER ADD
       SET POS = LENGTH;
      END IF;
     END WHILE;
+    END;
+
     SET LOGGER_ID = PARENT;
     -- Adds this logger name in the cache.
     IF (CACHE = TRUE) THEN
