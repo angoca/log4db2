@@ -16,9 +16,11 @@ utilities, such as Log4j and slf4j/logback.
  * Log4j [http://logging.apache.org/log4j]
  * Logback/SLF4J [http://logback.qos.ch/] [http://www.slf4j.org/]
 
-The license of the source code is "BSD 2-Clause license", and for the
+The license for the source code is "BSD 2-Clause license", and for the
 documentation is "FreeBSD Documentation license." With these two licences you
 are free to use, modify and distribute any part of this utility.
+
+These are some useful links:
 
  * The source code is hosted at:
     https://github.com/angoca/log4db2
@@ -26,42 +28,45 @@ are free to use, modify and distribute any part of this utility.
     https://github.com/angoca/log4db2/wiki
  * The last released version is published at:
     https://sourceforge.net/projects/log4db2/files/
- * The issue tracker is:
+ * The issue tracker is at:
     https://github.com/angoca/log4db2/issues
  * A blog that explain things about this utility:
     http://angocadb2.blogspot.fr/
 
 
 
-Andres Gomez Casanova (AngocA)
-@angoca
+Andres Gomez Casanova (@angoca)
 
 
-## Installation ##
 ------------------
+## Installation ##
 
-2 variables need to the specified in order to run the install and example
+One variable needs to the specified in order to run the install and example
 scripts.
- * SRC_MAIN_CODE_PATH
- * SRC_MAIN_SCRIPT_PATH
-These variables are initialized via the 'init' script.
+
+ * LOG4DB2_PATH
+
+This variable is initialized via the 'init' script.
 
 Before installing the scripts in a database, a connection to it has to be
 established. If not, an error will be raised.
 
->> Windows:
+**Windows**:
 
-* unzip the file log4db2.zip
-cd log4db2
-init.bat
-install.bat
+First, unzip the file log4db2.zip, and then:
 
->> Linux/UNIX:
+    cd log4db2
+    init.bat
+    install.bat
 
-tar -zxvf log4db2.tar.gz
-cd log4db2
-. ./init
-. ./install
+**Linux/UNIX**:
+
+Just follow these steps:
+
+    tar -zxvf log4db2.tar.gz
+    cd log4db2
+    . ./init
+    . ./install
 
 Make sure to put the dot before the command. This will source the values and
 use the current connection.
@@ -80,14 +85,15 @@ information, please visit this link:
 https://github.com/angoca/log4db2/wiki/Configuration
 
 
-## Usage ##
 -----------
+## Usage ##
 
 ### 1. Write the code ###
 
 This could be the structure of your code.
 
     CREATE ... HELLO_WORLD ()
+     MODIFIES SQL
      BEGIN
       DECLARE LOGGER_ID SMALLINT;
       ... Your declarations
@@ -100,7 +106,7 @@ This could be the structure of your code.
 
 ### 2. Invoke the code ###
 
-You invoke your code (if it a stores procedure or a function.)
+You invoke your code (if it is a stored procedure or a function.)
 
     CALL HELLO_WORLD();
     VALUES HELLO_WORLD();
@@ -109,9 +115,9 @@ You invoke your code (if it a stores procedure or a function.)
 
 This is the easiest way to check the log messages.
 
-    call logadmin.logs();
+    CALL LOGADMIN.LOGS();
 
-    db2 "call logadmin.logs()"
+    db2 "CALL LOGADMIN.LOGS()"
 
 Check the Usage section for more information about the levels, how to access
 the messages and configure the utility.
