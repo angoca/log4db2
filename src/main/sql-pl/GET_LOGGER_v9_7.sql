@@ -58,9 +58,6 @@ SET CURRENT SCHEMA LOGGER_1B @
 
 -- TODO Add the isolation level.
 
--- TODO Create a SP that register a logger with a given level. This will create
--- all the levels in the conf_loggers, and the relations.
-
 /**
  * Internal method that analyzes a string against the tables to see if the
  * level name is already registered there, and finally retrieves the logging
