@@ -102,23 +102,25 @@ ALTER MODULE LOGGER ADD
  * +-----------------+---------------------------------------------------------+
  * | Conversion Word | Effect                                                  |
  * +-----------------+---------------------------------------------------------+
- * | p               | Inserts the level of the logging event.                 |
- * +-----------------+---------------------------------------------------------+
  * | c               | Inserts the name of the logger at the origin of the     |
  * |                 | logging event.                                          |
  * +-----------------+---------------------------------------------------------+
  * | m               | Inserts the application-supplied message associated     |
  * |                 | with the logging event.                                 |
  * +-----------------+---------------------------------------------------------+
- * | H               | Inserts the application handle.                         |
+ * | p               | Inserts the level of the logging event.                 |
  * +-----------------+---------------------------------------------------------+
- * | N               | Inserts the application name.                           |
+ * | C               | Inserts the client hostname.                            |
+ * +-----------------+---------------------------------------------------------+
+ * | H               | Inserts the application handle.                         |
  * +-----------------+---------------------------------------------------------+
  * | I               | Inserts the application id.                             |
  * +-----------------+---------------------------------------------------------+
- * | S               | Inserts the session authorisation.                      |
+ * | L               | Inserts the nesting level.                              |
  * +-----------------+---------------------------------------------------------+
- * | C               | Inserts the client hostname.                            |
+ * | N               | Inserts the application name.                           |
+ * +-----------------+---------------------------------------------------------+
+ * | S               | Inserts the session authorisation.                      |
  * +-----------------+---------------------------------------------------------+
  * 
  * All this conversion words should be preceded by the % (percentage) sign.
@@ -159,6 +161,7 @@ ALTER MODULE LOGGER ADD
   DECLARE LOGGER_ID_FETCHED ANCHOR LOGDATA.REFERENCES.LOGGER_ID; -- Logger id to be analyzed.
   DECLARE AT_END BOOLEAN; -- End of the cursor.
   DECLARE ACTIVE BOOLEAN;
+  DECLARE NESTING_LEVEL INTEGER;
   DECLARE REFERENCES CURSOR FOR
     SELECT LOGGER_ID, APPENDER_ID, CONFIGURATION, PATTERN
     FROM LOGDATA.REFERENCES R JOIN LOGDATA.CONF_APPENDERS C
@@ -249,6 +252,9 @@ ALTER MODULE LOGGER ADD
      SET NEW_MESSAGE = REPLACE(NEW_MESSAGE, '%S', TRIM(SESSION_USER));
      -- Inserts the client hostname.
      SET NEW_MESSAGE = REPLACE(NEW_MESSAGE, '%C', CLIENT WRKSTNNAME);
+     -- Insert the nesting level.
+     GET DIAGNOSTICS NESTING_LEVEL = DB2_SQL_NESTING_LEVEL;
+     SET NEW_MESSAGE = REPLACE(NEW_MESSAGE, '%L', NESTING_LEVEL);
 
      -- Checks the values
      CASE APPENDER_ID
