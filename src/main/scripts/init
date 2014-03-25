@@ -36,5 +36,4 @@ if [[ -z ${LOG4DB2_PATH} ]] ; then
 fi
 
 SRC_MAIN_CODE_PATH=${LOG4DB2_PATH}/sql-pl
-SRC_MAIN_SCRIPT_PATH=${LOG4DB2_PATH}/
 
