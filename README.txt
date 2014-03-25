@@ -49,19 +49,22 @@ These variables are initialized via the 'init' script.
 Before installing the scripts in a database, a connection to it has to be
 established. If not, an error will be raised.
 
->> Windows:
+- Windows:
 
-* unzip the file log4db2.zip
-cd log4db2
-init.bat
-install.bat
+First, unzip the file log4db2.zip, and then:
 
->> Linux/UNIX:
+    cd log4db2
+    init.bat
+    install.bat
 
-tar -zxvf log4db2.tar.gz
-cd log4db2
-. ./init
-. ./install
+- Linux/UNIX:
+
+Just follow these steps:
+
+    tar -zxvf log4db2.tar.gz
+    cd log4db2
+    . ./init
+    . ./install
 
 Make sure to put the dot before the command. This will source the values and
 use the current connection.
