@@ -248,7 +248,6 @@ ALTER MODULE LOGADMIN ADD
  *   Logger id that will be analyzed to find a ascendency with a defined log
  *   level.
  * RETURNS The log level configured to a ascendancy or the default value.
- *   
  */
 ALTER MODULE LOGADMIN ADD
   FUNCTION GET_DEFINED_PARENT_LOGGER (
@@ -313,5 +312,37 @@ ALTER MODULE LOGADMIN ADD
 
   RETURN RET;
  END F_GET_DEFINED_PARENT_LOGGER @
- 
- 
+
+/**.
+ * Register a logger with a given level.
+ *
+ * IN NAME
+ *   Name of the logger. This string has to be separated by dots to
+ *   differenciate the levels. e.g.: foo.bar.toto, where foo is the first level,
+ *   bar is the second and toto is the last one.
+ *   The name could have a maximum of 256 characters, representing just one
+ *   level, or several levels with short names.
+ * IN LEVEL
+ *   Log level to be assigned.
+ */
+ALTER MODULE LOGADMIN ADD
+  PROCEDURE REGISTER_LOGGER (
+  IN NAME VARCHAR(256),
+  IN LEVEL ANCHOR LOGDATA.LEVELS.LEVEL_ID
+  )
+  LANGUAGE SQL
+  SPECIFIC P_REGISTER_LOGGER
+  DYNAMIC RESULT SETS 0
+  MODIFIES SQL DATA
+  NOT DETERMINISTIC
+  NO EXTERNAL ACTION
+  PARAMETER CCSID UNICODE
+ P_REGISTER_LOGGER: BEGIN
+  DECLARE LOGGER ANCHOR LOGDATA.CONF_LOGGERS.LOGGER_ID;
+
+  CALL LOGGER.GET_LOGGER(NAME, LOGGER);
+  UPDATE LOGDATA.CONF_LOGGERS
+    SET LEVEL_ID = LEVEL
+    WHERE LOGGER_ID = LOGGER;
+END P_REGISTER_LOGGER @
+
