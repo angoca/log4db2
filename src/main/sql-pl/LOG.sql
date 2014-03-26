@@ -223,20 +223,12 @@ ALTER MODULE LOGGER ADD
 
      -- Format the message according to the pattern.
      SET NEW_MESSAGE = PATTERN;
-     -- Inserts the message.
-     SET NEW_MESSAGE = REPLACE(NEW_MESSAGE, '%m', 
-       COALESCE(MESSAGE, 'No message'));
      -- Inserts the level.
      SET NEW_MESSAGE = REPLACE(NEW_MESSAGE, '%p', (
        SELECT UCASE(COALESCE(L.NAME,'UNK')) 
        FROM LOGDATA.LEVELS L
        WHERE L.LEVEL_ID = LEV_ID
        WITH UR));
-     -- Inserts the logger name.
-     -- PERF: Coalesce could be deleted, get_logger_name always return
-     -- something.
-     SET NEW_MESSAGE = REPLACE(NEW_MESSAGE, '%c', 
-       COALESCE(GET_LOGGER_NAME(LOG_ID), 'No name'));
      -- Inserts the application handle.
      SET NEW_MESSAGE = REPLACE(NEW_MESSAGE, '%H', 
        SYSPROC.MON_GET_APPLICATION_HANDLE());
@@ -255,6 +247,14 @@ ALTER MODULE LOGGER ADD
      -- Insert the nesting level.
      GET DIAGNOSTICS NESTING_LEVEL = DB2_SQL_NESTING_LEVEL;
      SET NEW_MESSAGE = REPLACE(NEW_MESSAGE, '%L', NESTING_LEVEL);
+     -- Inserts the logger name.
+     -- PERF: Coalesce could be deleted, get_logger_name always return
+     -- something.
+     SET NEW_MESSAGE = REPLACE(NEW_MESSAGE, '%c', 
+       COALESCE(GET_LOGGER_NAME(LOG_ID), 'No name'));
+     -- Inserts the message.
+     SET NEW_MESSAGE = REPLACE(NEW_MESSAGE, '%m', 
+       COALESCE(MESSAGE, 'No message'));
 
      -- Checks the values
      CASE APPENDER_ID
