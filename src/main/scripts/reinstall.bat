@@ -25,7 +25,7 @@
 
 :: Reinstall the utility. Calls the uninstall and then the install.
 ::
-:: Version: 2014-02-14 1-Alpha
+:: Version: 2014-02-14 1-Beta
 :: Author: Andres Gomez Casanova (AngocA)
 :: Made in COLOMBIA.
 
