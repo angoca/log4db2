@@ -17,7 +17,7 @@ utilities, such as Log4j and slf4j/logback.
  * Logback/SLF4J [http://logback.qos.ch/] [http://www.slf4j.org/]
 
 The license for the source code is "BSD 2-Clause license", and for the
-documentation is "FreeBSD Documentation license." With these two licences you
+documentation is "FreeBSD Documentation license." With these two licenses you
 are free to use, modify and distribute any part of this utility.
 
 These are some useful links:
@@ -51,15 +51,7 @@ This variable is initialized via the 'init' script.
 Before installing the scripts in a database, a connection to it has to be
 established. If not, an error will be raised.
 
-**Windows**:
-
-First, unzip the file log4db2.zip, and then:
-
-    cd log4db2
-    init.bat
-    install.bat
-
-**Linux/UNIX**:
+**Linux/UNIX/MAC OS**:
 
 Just follow these steps:
 
@@ -67,6 +59,22 @@ Just follow these steps:
     cd log4db2
     . ./init
     . ./install
+
+**Windows Terminal (CMD - db2clp)**:
+
+First, unzip the file log4db2.zip, and then:
+
+    cd log4db2
+    init.bat
+    install.bat
+
+**Windows PowerShell**:
+
+First, unzip the file log4db2.zip, and then:
+
+    cd log4db2
+    .\init.ps1
+    .\install.ps1
 
 Make sure to put the dot before the command. This will source the values and
 use the current connection.
