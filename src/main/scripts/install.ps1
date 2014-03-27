@@ -24,14 +24,14 @@
 
 # Installs all scripts of the utility.
 #
-# Version: 2014-02-14 1-Alpha
+# Version: 2014-02-14 1-Beta
 # Author: Andres Gomez Casanova (AngocA)
 # Made in COLOMBIA.
 
-$script:continue=1
+${Script:continue}=1
 
 # Installs a given script.
-function installScript([String]$script) {
+function installScript($script) {
  echo $script
  db2 -tsf ${script}
  if ( $LastExitCode -ne 0 ) {
@@ -40,7 +40,7 @@ function installScript([String]$script) {
 }
 
 # DB2 v10.1.
-function v10.1([String]$p1) {
+function v10.1($p1) {
  echo "Installing utility for v10.1"
  if ( ${continue} ) { installScript ${SRC_MAIN_CODE_PATH}\Tables.sql }
  if ( ${continue} ) { installScript ${SRC_MAIN_CODE_PATH}\UtilityHeader.sql }
@@ -85,9 +85,9 @@ function v9.7() {
  }
 }
 
-function version([String]$p1, [String]$p2) {
- if ( Test-Path -Path init -PathType Leaf ) {
-  .\init
+function version($p1, $p2) {
+ if ( Test-Path -Path init.ps1 -PathType Leaf ) {
+  .\init.ps1
  }
 
  # Checks in which DB2 version the utility will be installed.
@@ -102,12 +102,12 @@ function version([String]$p1, [String]$p2) {
   } elseif ( ${p2} -eq "t" ) {
    v10.1 t
   } else {
-   echo ERROR1
+   echo ERROR
   }
  } elseif ( ${p1} -eq "-v9_7" ) {
   v9.7
  } else {
-  echo ERROR2
+  echo ERROR
  }
 }
 

@@ -24,7 +24,7 @@
 
 # Uninstalls all the components of this utility.
 #
-# Version: 2014-02-14 1-Alpha
+# Version: 2014-02-14 1-Beta
 # Author: Andres Gomez Casanova (AngocA)
 # Made in COLOMBIA.
 
@@ -34,8 +34,8 @@ if ( ${LastExitCode} -ne 0 ) {
  echo "Please connect to a database before the execution of the uninstallation."
  echo "Load the DB2 profile with: set-item -path env:DB2CLP -value `"**`$$**`""
 } else {
- if ( Test-Path -Path init -PathType Leaf ) {
-  .\init
+ if ( Test-Path -Path init.ps1 -PathType Leaf ) {
+  .\init.ps1
  }
  echo Uninstalling log4db2...
  db2 -tf ${SRC_MAIN_CODE_PATH}\CleanTriggers.sql

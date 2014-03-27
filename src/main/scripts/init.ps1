@@ -24,13 +24,13 @@
 
 # Initialize the environment values to run the scripts.
 #
-# Version: 2014-02-14 1-Alpha
+# Version: 2014-02-14 1-Beta
 # Author: Andres Gomez Casanova (AngocA)
 # Made in COLOMBIA.
 
 # This variable indicates the location of the sources, if it has not
 # defined before.
-if ( !( Test-Path Variable:\LOG4DB2_PATH ) ) {
+if ( ! ( Test-Path Variable:\LOG4DB2_PATH ) ) {
   ${LOG4DB2_PATH}="."
 }
 

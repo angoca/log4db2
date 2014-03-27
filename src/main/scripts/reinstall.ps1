@@ -24,10 +24,10 @@
 
 # Reinstall the utility. Calls the uninstall and then the install.
 #
-# Version: 2014-02-14 1-Alpha
+# Version: 2014-02-14 1-Beta
 # Author: Andres Gomez Casanova (AngocA)
 # Made in COLOMBIA.
 
-.\uninstall
-.\install ${1} ${2}
+.\uninstall.ps1
+.\install.ps1 $Args[0] $Args[1]
 
