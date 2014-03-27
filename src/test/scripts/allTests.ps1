@@ -28,49 +28,49 @@ if ( Test-Path -Path init-dev.ps1 -PathType Leaf ) {
 
 echo "Executing all tests with pauses in between."
 
-.\${SRC_TEST_SCRIPT_PATH}\test.ps1 ${SRC_TEST_CODE_PATH}\TestsAppenders.sql
+& .\${SRC_TEST_SCRIPT_PATH}\test.ps1 ${SRC_TEST_CODE_PATH}\TestsAppenders.sql
 Write-Host "Press enter to continue (next TestsCache)"
-$x = $host.UI.RasUI.ReadKey("NoEcho,IncludeKeyDown")
-.\${SRC_TEST_SCRIPT_PATH}\test.ps1 ${SRC_TEST_CODE_PATH}\TestsCache.sql
+$x = $host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
+& .\${SRC_TEST_SCRIPT_PATH}\test.ps1 ${SRC_TEST_CODE_PATH}\TestsCache.sql
 Write-Host "Press enter to continue (next TestsCascadeCallLimit)"
-$x = $host.UI.RasUI.ReadKey("NoEcho,IncludeKeyDown")
-.\${SRC_TEST_SCRIPT_PATH}\test.ps1 ${SRC_TEST_CODE_PATH}\TestsCascadeCallLimit.sql
+$x = $host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
+& .\${SRC_TEST_SCRIPT_PATH}\test.ps1 ${SRC_TEST_CODE_PATH}\TestsCascadeCallLimit.sql
 Write-Host "Press enter to continue (next TestsConfAppenders)"
-$x = $host.UI.RasUI.ReadKey("NoEcho,IncludeKeyDown")
-.\${SRC_TEST_SCRIPT_PATH}\test.ps1 ${SRC_TEST_CODE_PATH}\TestsConfAppenders.sql
+$x = $host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
+& .\${SRC_TEST_SCRIPT_PATH}\test.ps1 ${SRC_TEST_CODE_PATH}\TestsConfAppenders.sql
 Write-Host "Press enter to continue (next TestConfiguration)"
-$x = $host.UI.RasUI.ReadKey("NoEcho,IncludeKeyDown")
-.\${SRC_TEST_SCRIPT_PATH}\test.ps1 ${SRC_TEST_CODE_PATH}\TestsConfiguration.sql
+$x = $host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
+& .\${SRC_TEST_SCRIPT_PATH}\test.ps1 ${SRC_TEST_CODE_PATH}\TestsConfiguration.sql
 Write-Host "Press enter to continue (next TestsConfLoggers)"
-$x = $host.UI.RasUI.ReadKey("NoEcho,IncludeKeyDown")
-.\${SRC_TEST_SCRIPT_PATH}\test.ps1 ${SRC_TEST_CODE_PATH}\TestsConfLoggers.sql
+$x = $host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
+& .\${SRC_TEST_SCRIPT_PATH}\test.ps1 ${SRC_TEST_CODE_PATH}\TestsConfLoggers.sql
 Write-Host "Press enter to continue (next TestsConfLoggersDelete)"
-$x = $host.UI.RasUI.ReadKey("NoEcho,IncludeKeyDown")
-.\${SRC_TEST_SCRIPT_PATH}\test.ps1 ${SRC_TEST_CODE_PATH}\TestsConfLoggersDelete.sql
+$x = $host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
+& .\${SRC_TEST_SCRIPT_PATH}\test.ps1 ${SRC_TEST_CODE_PATH}\TestsConfLoggersDelete.sql
 Write-Host "Press enter to continue (next TestsConfLoggersEffective)"
-$x = $host.UI.RasUI.ReadKey("NoEcho,IncludeKeyDown")
-.\${SRC_TEST_SCRIPT_PATH}\test.ps1 ${SRC_TEST_CODE_PATH}\TestsConfLoggersEffective.sql
+$x = $host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
+& .\${SRC_TEST_SCRIPT_PATH}\test.ps1 ${SRC_TEST_CODE_PATH}\TestsConfLoggersEffective.sql
 Write-Host "Press enter to continue (next TestsFunctionsGetDefinedParentLogger)"
-$x = $host.UI.RasUI.ReadKey("NoEcho,IncludeKeyDown")
-.\${SRC_TEST_SCRIPT_PATH}\cleanTriggers.ps1
-.\${SRC_TEST_SCRIPT_PATH}\test.ps1 ${SRC_TEST_CODE_PATH}\TestsFunctionGetDefinedParentLogger.sql
-.\${SRC_TEST_SCRIPT_PATH}\createTriggers.ps1
+$x = $host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
+& .\${SRC_TEST_SCRIPT_PATH}\cleanTriggers.ps1
+& .\${SRC_TEST_SCRIPT_PATH}\test.ps1 ${SRC_TEST_CODE_PATH}\TestsFunctionGetDefinedParentLogger.sql
+& .\${SRC_TEST_SCRIPT_PATH}\createTriggers.ps1
 Write-Host "Press enter to continue (next TestsGetLogger)"
-$x = $host.UI.RasUI.ReadKey("NoEcho,IncludeKeyDown")
-.\${SRC_TEST_SCRIPT_PATH}\test.ps1 ${SRC_TEST_CODE_PATH}\TestsGetLogger.sql
+$x = $host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
+& .\${SRC_TEST_SCRIPT_PATH}\test.ps1 ${SRC_TEST_CODE_PATH}\TestsGetLogger.sql
 Write-Host "Press enter to continue (next TestsHierarchy)"
-$x = $host.UI.RasUI.ReadKey("NoEcho,IncludeKeyDown")
-.\${SRC_TEST_SCRIPT_PATH}\test.ps1 ${SRC_TEST_CODE_PATH}\TestsHierarchy.sql
+$x = $host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
+& .\${SRC_TEST_SCRIPT_PATH}\test.ps1 ${SRC_TEST_CODE_PATH}\TestsHierarchy.sql
 Write-Host "Press enter to continue (next TestsLayout)"
-$x = $host.UI.RasUI.ReadKey("NoEcho,IncludeKeyDown")
-.\${SRC_TEST_SCRIPT_PATH}\test.ps1 ${SRC_TEST_CODE_PATH}\TestsLayout.sql
+$x = $host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
+& .\${SRC_TEST_SCRIPT_PATH}\test.ps1 ${SRC_TEST_CODE_PATH}\TestsLayout.sql
 Write-Host "Press enter to continue (next TestsLevels)"
-$x = $host.UI.RasUI.ReadKey("NoEcho,IncludeKeyDown")
-.\${SRC_TEST_SCRIPT_PATH}\test.ps1 ${SRC_TEST_CODE_PATH}\TestsLevels.sql
+$x = $host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
+& .\${SRC_TEST_SCRIPT_PATH}\test.ps1 ${SRC_TEST_CODE_PATH}\TestsLevels.sql
 Write-Host "Press enter to continue (next TestsReferences)"
-$x = $host.UI.RasUI.ReadKey("NoEcho,IncludeKeyDown")
-.\${SRC_TEST_SCRIPT_PATH}\test.ps1 ${SRC_TEST_CODE_PATH}\TestsMessages.sql
+$x = $host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
+& .\${SRC_TEST_SCRIPT_PATH}\test.ps1 ${SRC_TEST_CODE_PATH}\TestsMessages.sql
 Write-Host "Press enter to continue (next TestsReferences)"
-$x = $host.UI.RasUI.ReadKey("NoEcho,IncludeKeyDown")
-.\${SRC_TEST_SCRIPT_PATH}\test.ps1 ${SRC_TEST_CODE_PATH}\TestsReferences.sql
+$x = $host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
+&.\${SRC_TEST_SCRIPT_PATH}\test.ps1 ${SRC_TEST_CODE_PATH}\TestsReferences.sql
 
