@@ -35,30 +35,30 @@ function installScript($script) {
  echo $script
  db2 -tsf ${script}
  if ( $LastExitCode -ne 0 ) {
-  $continue=0
+  ${Script:continue}=0
  }
 }
 
 # DB2 v10.1.
 function v10.1($p1) {
  echo "Installing utility for v10.1"
- if ( ${continue} ) { installScript ${SRC_MAIN_CODE_PATH}\Tables.sql }
- if ( ${continue} ) { installScript ${SRC_MAIN_CODE_PATH}\UtilityHeader.sql }
- if ( ${continue} ) { installScript ${SRC_MAIN_CODE_PATH}\UtilityBody.sql }
- if ( ${continue} ) { installScript ${SRC_MAIN_CODE_PATH}\AdminHeader.sql }
- if ( ${continue} ) { installScript ${SRC_MAIN_CODE_PATH}\AdminBody.sql }
- if ( ${continue} ) { installScript ${SRC_MAIN_CODE_PATH}\Appenders.sql }
- if ( ${continue} ) { installScript ${SRC_MAIN_CODE_PATH}\LOG.sql }
- if ( ${continue} ) { installScript ${SRC_MAIN_CODE_PATH}\GET_LOGGER.sql }
- if ( ${continue} ) { installScript ${SRC_MAIN_CODE_PATH}\Trigger.sql }
+ if ( ${Script:continue} ) { installScript ${SRC_MAIN_CODE_PATH}\Tables.sql }
+ if ( ${Script:continue} ) { installScript ${SRC_MAIN_CODE_PATH}\UtilityHeader.sql }
+ if ( ${Script:continue} ) { installScript ${SRC_MAIN_CODE_PATH}\UtilityBody.sql }
+ if ( ${Script:continue} ) { installScript ${SRC_MAIN_CODE_PATH}\AdminHeader.sql }
+ if ( ${Script:continue} ) { installScript ${SRC_MAIN_CODE_PATH}\AdminBody.sql }
+ if ( ${Script:continue} ) { installScript ${SRC_MAIN_CODE_PATH}\Appenders.sql }
+ if ( ${Script:continue} ) { installScript ${SRC_MAIN_CODE_PATH}\LOG.sql }
+ if ( ${Script:continue} ) { installScript ${SRC_MAIN_CODE_PATH}\GET_LOGGER.sql }
+ if ( ${Script:continue} ) { installScript ${SRC_MAIN_CODE_PATH}\Trigger.sql }
 
  # Temporal capabilities for tables.
- if ( ( ${p1} -eq "t") -and ( ${continue} ) ) {
+ if ( ( ${p1} -eq "t" ) -and ( ${Script:continue} ) ) {
   echo "Create table for Time Travel"
   installScript ${SRC_MAIN_CODE_PATH}/TablesTimeTravel.sql
  }
 
- if ( ${continue} ) {
+ if ( ${Script:continue} ) {
   echo "log4db2 was installed successfully"
  } else {
   echo "Check the error(s) and reinstall the utility"
@@ -68,17 +68,17 @@ function v10.1($p1) {
 # DB2 v9.7
 function v9.7() {
  echo "Installing utility for DB2 v9.7"
- if ( ${continue} ) { installScript ${SRC_MAIN_CODE_PATH}\Tables_v9_7.sql }
- if ( ${continue} ) { installScript ${SRC_MAIN_CODE_PATH}\UtilityHeader.sql }
- if ( ${continue} ) { installScript ${SRC_MAIN_CODE_PATH}\UtilityBody.sql }
- if ( ${continue} ) { installScript ${SRC_MAIN_CODE_PATH}\AdminHeader.sql }
- if ( ${continue} ) { installScript ${SRC_MAIN_CODE_PATH}\AdminBody.sql }
- if ( ${continue} ) { installScript ${SRC_MAIN_CODE_PATH}\Appenders.sql }
- if ( ${continue} ) { installScript ${SRC_MAIN_CODE_PATH}\LOG.sql }
- if ( ${continue} ) { installScript ${SRC_MAIN_CODE_PATH}\GET_LOGGER_v9_7.sql }
- if ( ${continue} ) { installScript ${SRC_MAIN_CODE_PATH}\Trigger.sql }
+ if ( ${Script:continue} ) { installScript ${SRC_MAIN_CODE_PATH}\Tables_v9_7.sql }
+ if ( ${Script:continue} ) { installScript ${SRC_MAIN_CODE_PATH}\UtilityHeader.sql }
+ if ( ${Script:continue} ) { installScript ${SRC_MAIN_CODE_PATH}\UtilityBody.sql }
+ if ( ${Script:continue} ) { installScript ${SRC_MAIN_CODE_PATH}\AdminHeader.sql }
+ if ( ${Script:continue} ) { installScript ${SRC_MAIN_CODE_PATH}\AdminBody.sql }
+ if ( ${Script:continue} ) { installScript ${SRC_MAIN_CODE_PATH}\Appenders.sql }
+ if ( ${Script:continue} ) { installScript ${SRC_MAIN_CODE_PATH}\LOG.sql }
+ if ( ${Script:continue} ) { installScript ${SRC_MAIN_CODE_PATH}\GET_LOGGER_v9_7.sql }
+ if ( ${Script:continue} ) { installScript ${SRC_MAIN_CODE_PATH}\Trigger.sql }
 
-  if ( ${continue} ) {
+  if ( ${Script:continue} ) {
   echo "log4db2 was installed successfully"
  } else {
   echo "Check the error(s) and reinstall the utility"
@@ -92,12 +92,12 @@ function version($p1, $p2) {
 
  # Checks in which DB2 version the utility will be installed.
  # DB2 v10.1 is the default version.
- if ( ${p1} -eq "" ) {
+ if ( ! ( ${p1} ) ) {
   v10.1
  } elseif ( ${p1} -eq "t" ) {
   v10.1 t
  } elseif ( ${p1} -eq "-v10_1" ) {
-  if ( ${p2} -eq "" ) {
+  if ( ! ( ${p2} ) ) {
    v10.1
   } elseif ( ${p2} -eq "t" ) {
    v10.1 t
