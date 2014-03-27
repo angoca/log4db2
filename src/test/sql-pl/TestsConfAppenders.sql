@@ -233,6 +233,18 @@ SELECT REF_ID INTO ID FROM FINAL TABLE (
 DELETE FROM LOGDATA.CONF_APPENDERS;
 COMMIT;
 
+-- Test14: Inserts a normal appender_ref configuration with a level.
+INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES (3, 'Test14: Inserts a normal appender_ref configuration with a level');
+INSERT INTO LOGDATA.CONF_APPENDERS (NAME, APPENDER_ID, PATTERN, LEVEL_ID) VALUES
+  ('test1', 1, '%m', 2);
+COMMIT;
+
+-- Test15: Inserts a normal appender_ref configuration with a null level.
+INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES (3, 'Test15: Inserts a normal appender_ref configuration with a null level');
+INSERT INTO LOGDATA.CONF_APPENDERS (NAME, APPENDER_ID, PATTERN, LEVEL_ID) VALUES
+  ('test1', 1, '%m', null);
+COMMIT;
+
 -- Cleans the environment.
 INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES (3, 'TestsConfAppenders: Cleaning environment');
 DELETE FROM LOGDATA.CONF_APPENDERS;
