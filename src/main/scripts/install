@@ -59,6 +59,7 @@ function v10.1() {
   echo "Create table for Time Travel"
   installScript ${SRC_MAIN_CODE_PATH}/TablesTimeTravel.sql
  fi
+
  if [[ ${continue} == true ]] ; then
   echo "log4db2 was installed successfully"
  else
@@ -78,6 +79,12 @@ function v9.7() {
  [ ${continue} == true ] && installScript ${SRC_MAIN_CODE_PATH}/LOG.sql
  [ ${continue} == true ] && installScript ${SRC_MAIN_CODE_PATH}/GET_LOGGER_v9_7.sql
  [ ${continue} == true ] && installScript ${SRC_MAIN_CODE_PATH}/Trigger.sql
+
+ if [[ ${continue} == true ]] ; then
+  echo "log4db2 was installed successfully"
+ else
+  echo "Check the error(s) and reinstall the utility"
+ fi
 }
 
 function version() {

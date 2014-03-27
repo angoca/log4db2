@@ -68,6 +68,7 @@ goto:eof
   echo "Create table for Time Travel"
   call:installScript %SRC_MAIN_CODE_PATH%\TablesTimeTravel.sql
  )
+
  if %continue% EQU 1 (
   echo "log4db2 was installed successfully"
  ) else (
@@ -87,6 +88,12 @@ goto:eof
  if %continue% EQU 1 call:installScript %SRC_MAIN_CODE_PATH%\LOG.sql
  if %continue% EQU 1 call:installScript %SRC_MAIN_CODE_PATH%\GET_LOGGER.sql
  if %continue% EQU 1 call:installScript %SRC_MAIN_CODE_PATH%\Trigger.sql
+
+ if %continue% EQU 1 (
+  echo "log4db2 was installed successfully"
+ ) else (
+  echo "Check the error(s) and reinstall the utility"
+ )
 goto:eof
 
 :version
