@@ -42,6 +42,12 @@ ALTER MODULE LOGADMIN ADD
   VARIABLE DEFAULT_ROOT_LEVEL_ID ANCHOR LOGDATA.CONFIGURATION.KEY CONSTANT 'defaultRootLevelId' @
 
 /**
+ * Timestamp for the paging.
+ */
+ALTER MODULE LOGADMIN ADD
+  VARIABLE PAGE_DATE CHAR(13) @
+
+/**
  * Returns an opened cursor with the level names and complete logger names of
  * the used loggers that are registered in the conf_loggers_effective table.
  */
@@ -74,7 +80,7 @@ ALTER MODULE LOGADMIN ADD
  * by default, the date limited to the hour part with miliseconds, and just the
  * last 100 (by deafult) log messages registered. The concurrence is uncommited
  * read. This procedure is useful to be called with named parameter, for
- * example: CALL LOGS (QTY => 50)
+ * example: CALL LOGS (QTY => 50).
  *
  * IN LENGTH
  *   Message length. By default this value is 72 characters.
@@ -128,6 +134,76 @@ ALTER MODULE LOGADMIN ADD
   PREPARE RS FROM STMT;
   OPEN C;
  END P_LOGS @
+
+/**
+ * Returns an opened cursor showing the more recent log messages truncated to 72
+ * characters by default and the date limited to the hour part with miliseconds.
+ * The concurrence is uncommited read. This procedure is useful to see the
+ * progress of the generated logs.
+ *
+ * IN LENGTH
+ *   Message length. By default this value is 72 characters.
+ * IN MIN_LEVEL
+ *   Minimum level presented. If -1, only internal logging is presented.
+ */
+ALTER MODULE LOGADMIN ADD
+  PROCEDURE NEXT_LOGS (
+  IN LENGTH SMALLINT DEFAULT 72,
+  IN MIN_LEVEL ANCHOR LOGDATA.LEVELS.LEVEL_ID DEFAULT NULL
+  )
+  LANGUAGE SQL
+  SPECIFIC P_NEXT_LOGS
+  DYNAMIC RESULT SETS 1
+  MODIFIES SQL DATA
+  NOT DETERMINISTIC
+  NO EXTERNAL ACTION
+  PARAMETER CCSID UNICODE
+ P_NEXT_LOGS: BEGIN
+  DECLARE NEXT_DATE CHAR(13);
+  DECLARE STMT ANCHOR LOGDATA.LOGS.MESSAGE;
+  DECLARE C CURSOR
+    WITH RETURN TO CALLER
+    FOR RS;
+
+  SELECT MAX(DATE) INTO NEXT_DATE
+    FROM LOGDATA.LOGS;
+  SET STMT = 'SELECT TIME, MESSAGE FROM ('
+    || 'SELECT SUBSTR(TIMESTAMP(L.DATE), 12, 15) AS TIME, '
+    || 'SUBSTR(L.MESSAGE, 1, ' || LENGTH || ') AS MESSAGE '
+    || 'FROM LOGDATA.LOGS AS L ';
+  IF (MIN_LEVEL = -1) THEN
+   SET STMT = STMT
+     || 'WHERE L.LEVEL_ID = -1 OR L.LEVEL_ID IS NULL ';
+  ELSEIF (MIN_LEVEL IS NOT NULL) THEN
+   SET STMT = STMT
+     || 'WHERE L.LEVEL_ID <= ' || MIN_LEVEL || ' '
+     || 'AND L.LEVEL_ID >= 0 ';
+  END IF;
+  IF (LOGADMIN.PAGE_DATE IS NOT NULL) THEN
+   IF (MIN_LEVEL IS NULL) THEN
+    SET STMT = STMT
+      || 'WHERE ';
+   ELSE
+    SET STMT = STMT
+      || 'AND ';
+   END IF;
+   SET STMT = STMT
+     || 'L.DATE > CAST(''' || LOGADMIN.PAGE_DATE || ''' AS CHAR(13) FOR BIT DATA) ';
+  END IF;
+  SET STMT = STMT
+    || 'ORDER BY L.DATE DESC '
+    || 'WITH UR '
+    || ') ORDER BY TIME'
+    ;
+  IF (LOGGER.GET_VALUE(LOGGER.LOG_INTERNALS) = LOGGER.VAL_TRUE) THEN
+   INSERT INTO LOGDATA.LOGS (LEVEL_ID, LOGGER_ID, MESSAGE) VALUES 
+     (4, -1, 'Statement: ' || COALESCE(STMT,'NULL'));
+   COMMIT;
+  END IF;
+  PREPARE RS FROM STMT;
+  OPEN C;
+  SET LOGADMIN.PAGE_DATE = NEXT_DATE;
+ END P_NEXT_LOGS @
 
 /**
  * Function that returns the default logger level.
