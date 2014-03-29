@@ -36,7 +36,7 @@ SET CURRENT SCHEMA LOGGER_1B @
  */
 
 /**
- * Constanct internalCache
+ * Constanct internalCache (For debug purposes)
  */
 ALTER MODULE LOGGER ADD
   VARIABLE INTERNAL_CACHE ANCHOR LOGDATA.CONFIGURATION.KEY CONSTANT 'internalCache' @
@@ -278,23 +278,6 @@ ALTER MODULE LOGGER ADD
  * Deletes a value in the loggers cache.
  */
 ALTER MODULE LOGGER ADD
-  PROCEDURE DELETE_LOGGER_CACHE (
-  IN LOGGER ANCHOR LOGDATA.CONF_LOGGERS.LOGGER_ID
-  )
-  LANGUAGE SQL
-  SPECIFIC P_DELETE_CACHE
-  READS SQL DATA
-  NOT DETERMINISTIC
-  NO EXTERNAL ACTION
-  PARAMETER CCSID UNICODE
- P_DELETE_CACHE: BEGIN
-  SET LOGGERS_CACHE = ARRAY_DELETE(LOGGERS_CACHE, LOGGER);
- END P_DELETE_CACHE @
-
-/**
- * Deletes a value in the loggers cache.
- */
-ALTER MODULE LOGGER ADD
   PROCEDURE DELETE_ALL_LOGGER_CACHE (
   )
   LANGUAGE SQL
@@ -368,115 +351,12 @@ ALTER MODULE LOGGER ADD
  END P_DEACTIVATE_CACHE @
 
 /**
- * Procedure that dumps the configuration. It returns two result sets. The
- * first is a one-row result set providing the information when the
- * configuration was loaded, and when it will be reloaded (with its frequency).
- * In the other result set, it shows the key-values from the configuration, if
- * this was already loaded, otherwise a descriptive message appears.
- * This procedure shows the configuration, but it does not reload it, for this
- * reason, the next refresh time could be in the past. Please note that the
- * get_value procedure is the only one that refreshes the configuration.
- * If the cache is in false in the configuration, but the configuration has
- * not been read, it will show that the cache is active (by default).
- */
-ALTER MODULE LOGGER ADD
-  PROCEDURE SHOW_CONF (
-  )
-  LANGUAGE SQL
-  SPECIFIC P_SHOW_CONF
-  DYNAMIC RESULT SETS 2
-  MODIFIES SQL DATA
-  NOT DETERMINISTIC
-  NO EXTERNAL ACTION
-  PARAMETER CCSID UNICODE
- P_SHOW_CONF: BEGIN
-  -- Creates the cursor for the configuration refreshness.
-  BEGIN
-   DECLARE SECS SMALLINT;
-   DECLARE STMT VARCHAR(512);
-   DECLARE REF CURSOR
-     WITH RETURN TO CALLER
-     FOR RS;
-   -- Sets the value for the seconds.
-   BEGIN
-    DECLARE CONTINUE HANDLER FOR SQLSTATE '2202E'
-      SET SECS = -1;
-    SET SECS = INT(CONFIGURATION[REFRESH_CONS]);
-    IF (SECS IS NULL) THEN
-     SET SECS = -1;
-    END IF;
-   END;
-   -- Creates and prepares a dynamic query.
-   SET STMT = 'SELECT CASE WHEN LOADED = FALSE THEN ''Unknown'' '
-     || 'WHEN CACHE = TRUE THEN ''true'' '
-     || 'ELSE ''false'' END AS INTERNAL_CACHE_ACTIVATED, '
-     || 'LAST_REFRESH AS LAST_REFRESH, '
-     || SECS || ' AS FREQUENCY, '
-     || 'CASE WHEN ' || SECS || ' = -1 OR CACHE = FALSE THEN ''Not defined'' '
-     || 'ELSE CHAR(LAST_REFRESH + ' || SECS || ' SECONDS) '
-     || 'END AS NEXT_REFRESH, '
-     || '''' || CURRENT TIMESTAMP || ''' AS CURRENT_TIME '
-     || 'FROM SYSIBM.SYSDUMMY1';
-   PREPARE RS FROM STMT;
-   OPEN REF;
-  END;
-
-  -- Creates a cursor for configuration values.
-  BEGIN
-   DECLARE CARD SMALLINT;
-   DECLARE CONF CURSOR
-     WITH RETURN TO CLIENT 
-     FOR 
-     SELECT T.KEY AS KEY, T.VALUE AS VALUE
-     FROM UNNEST(CONFIGURATION) AS T(KEY, VALUE);
-   DECLARE NOTHING CURSOR
-     WITH RETURN TO CLIENT
-     FOR
-     SELECT 'Configuration not loaded' AS MESSAGE
-     FROM SYSIBM.SYSDUMMY1;
-
-   -- Checks if the configuration was already loaded.
-   SET CARD = CARDINALITY(CONFIGURATION);
-   IF (CARD > 0) THEN
-    OPEN CONF;
-   ELSE
-    OPEN NOTHING;
-   END IF;
-  END;
- END P_SHOW_CONF @
-
-/**
- * This is a helper procedure that shows the content of the logger cache if it
- * is currently used.
- */
-ALTER MODULE LOGGER ADD
-  PROCEDURE SHOW_CACHE (
-  )
-  LANGUAGE SQL
-  SPECIFIC P_SHOW_CACHE
-  DYNAMIC RESULT SETS 2
-  MODIFIES SQL DATA
-  NOT DETERMINISTIC
-  NO EXTERNAL ACTION
-  PARAMETER CCSID UNICODE
- P_SHOW_CACHE: BEGIN
-  DECLARE STMT VARCHAR(512);
-  DECLARE CACHE_CURSOR CURSOR
-    WITH RETURN TO CLIENT 
-    FOR
-    SELECT SUBSTR(T.LOGGER, 1, 64) AS LOGGER_NAME, T.ID AS LOGGER_ID
-    FROM UNNEST(LOGGERS_CACHE) AS T(LOGGER, ID);
-  DECLARE DESC_CURSOR CURSOR
-    WITH RETURN TO CALLER
-    FOR RS;
-  SET STMT = 'SELECT ''Cardinality: ' || COALESCE(CARDINALITY(LOGGERS_CACHE), -1) || ''' FROM SYSIBM.SYSDUMMY1';
-  PREPARE RS FROM STMT;
-  OPEN DESC_CURSOR;
-  OPEN CACHE_CURSOR;
- END P_SHOW_CACHE @
-
-/**
  * Returns a character representation of the given boolean.
+ *
+ * IN VALUE
+ *   Value to convert.
+ * RETURN
+ *   The corresponding represtation of the given boolean.
  */
 ALTER MODULE LOGGER ADD
   FUNCTION BOOL_TO_CHAR(
