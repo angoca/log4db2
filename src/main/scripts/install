@@ -47,12 +47,13 @@ function v10.1() {
  [ ${continue} == true ] && installScript ${SRC_MAIN_CODE_PATH}/Tables.sql
  [ ${continue} == true ] && installScript ${SRC_MAIN_CODE_PATH}/UtilityHeader.sql
  [ ${continue} == true ] && installScript ${SRC_MAIN_CODE_PATH}/UtilityBody.sql
- [ ${continue} == true ] && installScript ${SRC_MAIN_CODE_PATH}/AdminHeader.sql
- [ ${continue} == true ] && installScript ${SRC_MAIN_CODE_PATH}/AdminBody.sql
  [ ${continue} == true ] && installScript ${SRC_MAIN_CODE_PATH}/Appenders.sql
  [ ${continue} == true ] && installScript ${SRC_MAIN_CODE_PATH}/LOG.sql
  [ ${continue} == true ] && installScript ${SRC_MAIN_CODE_PATH}/GET_LOGGER.sql
  [ ${continue} == true ] && installScript ${SRC_MAIN_CODE_PATH}/Trigger.sql
+
+ [ ${continue} == true ] && installScript ${SRC_MAIN_CODE_PATH}/AdminHeader.sql
+ [ ${continue} == true ] && installScript ${SRC_MAIN_CODE_PATH}/AdminBody.sql
 
  # Temporal capabilities for tables.
  if [[ ${1} == "t" && ${continue} == true ]] ; then
