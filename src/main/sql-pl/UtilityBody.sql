@@ -54,6 +54,12 @@ ALTER MODULE LOGGER ADD
   VARIABLE DEFAULT_ROOT_LEVEL_ID ANCHOR LOGDATA.CONFIGURATION.KEY CONSTANT 'defaultRootLevelId' @
 
 /**
+ * Constant for the value of the default level.
+ */
+ALTER MODULE LOGGER ADD
+  VARIABLE DEFAULT_LEVEL ANCHOR LOGDATA.LEVELS.LEVEL_ID CONSTANT 3 @
+
+/**
  * Variable to indicate the use of internal cache.
  */
 ALTER MODULE LOGGER ADD

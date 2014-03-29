@@ -203,7 +203,7 @@ ALTER MODULE LOGGER ADD
     -- TODO To check the value defaultRootLevelId before assign Warn as default.
     -- If the root logger is not defined, then set the default level: WARN-3.
     IF (PARENT_LEVEL IS NULL) THEN
-     SET PARENT_LEVEL = 3;
+     SET PARENT_LEVEL = DEFAULT_LEVEL;
     END IF;
 
     -- Takes each level of the logger name (dots), and retrieves or creates the
