@@ -187,6 +187,23 @@ ALTER MODULE LOGGER ADD
   IF (GET_VALUE(LOGGER.LOG_INTERNALS) = LOGGER.VAL_TRUE) THEN
    SET INTERNAL = TRUE;
   END IF;
+
+  -- The given logger is invalid
+  IF (LOG_ID IS NULL OR LOG_ID < -1) THEN
+   SET LOG_ID = 0;
+  END IF;
+  -- The given level is null, then level 1.
+  IF (LEV_ID IS NULL OR LEV_ID < 0) THEN
+   SET LEV_ID = 3;
+  ELSE
+   SELECT LEVEL_ID INTO LEV_ID
+     FROM LOGDATA.LEVELS
+     WHERE LEVEL_ID = LEV_ID;
+   IF (LEV_ID IS NULL) THEN
+    SET LEV_ID = 3;
+   END IF;
+  END IF;
+
   -- Retrieves the current level in the configuration for the given logger.
   SELECT C.LEVEL_ID, C.HIERARCHY INTO CURRENT_LEVEL_ID, HIERARCHY
     FROM LOGDATA.CONF_LOGGERS_EFFECTIVE C
@@ -194,7 +211,7 @@ ALTER MODULE LOGGER ADD
     WITH UR;
 
   -- Checks if the current level is at least equal to the provided level.
-  IF (CURRENT_LEVEL_ID >= LEV_ID) THEN
+  IF (CURRENT_LEVEL_ID >= LEV_ID AND LEV_ID > 0) THEN
    -- Internal logging.
    IF (INTERNAL = TRUE) THEN
     INSERT INTO LOGDATA.LOGS (LEVEL_ID, LOGGER_ID, MESSAGE) VALUES 
