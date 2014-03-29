@@ -56,12 +56,13 @@ goto:eof
  if %continue% EQU 1 call:installScript %SRC_MAIN_CODE_PATH%\Tables.sql
  if %continue% EQU 1 call:installScript %SRC_MAIN_CODE_PATH%\UtilityHeader.sql
  if %continue% EQU 1 call:installScript %SRC_MAIN_CODE_PATH%\UtilityBody.sql
- if %continue% EQU 1 call:installScript %SRC_MAIN_CODE_PATH%\AdminHeader.sql
- if %continue% EQU 1 call:installScript %SRC_MAIN_CODE_PATH%\AdminBody.sql
  if %continue% EQU 1 call:installScript %SRC_MAIN_CODE_PATH%\Appenders.sql
  if %continue% EQU 1 call:installScript %SRC_MAIN_CODE_PATH%\LOG.sql
  if %continue% EQU 1 call:installScript %SRC_MAIN_CODE_PATH%\GET_LOGGER.sql
  if %continue% EQU 1 call:installScript %SRC_MAIN_CODE_PATH%\Trigger.sql
+
+ if %continue% EQU 1 call:installScript %SRC_MAIN_CODE_PATH%\AdminHeader.sql
+ if %continue% EQU 1 call:installScript %SRC_MAIN_CODE_PATH%\AdminBody.sql
 
  :: Temporal capabilities for tables.
  if "%1" EQU "t" if %continue% EQU 1 (
