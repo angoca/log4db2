@@ -156,6 +156,12 @@ ALTER MODULE LOGGER ADD
    INSERT INTO LOGDATA.LOGS (DATE, LEVEL_ID, LOGGER_ID, MESSAGE) VALUES 
      (GENERATE_UNIQUE(), 4, -1, 'Getting logger name for ' || COALESCE(NAME, 'null'));
   END IF;
+
+  -- Validate nullability
+  IF (NAME IS NULL) THEN
+   SET NAME ='';
+  END IF;
+
   -- Checks the value in the cache if active.
   BEGIN
    DECLARE CONTINUE HANDLER FOR SQLSTATE '2202E'
