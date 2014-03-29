@@ -109,7 +109,7 @@ SET RAISED_530 = FALSE;
 COMMIT;
 
 -- Test4: Inserts an appender_ref with id.
-INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES (3, 'Test4: Inserts an appender_ref with  id');
+INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES (3, 'Test4: Inserts an appender_ref with id');
 SET STMT = 'INSERT INTO LOGDATA.CONF_APPENDERS (REF_ID, NAME, APPENDER_ID, PATTERN) VALUES (1, ''test4'', 1, ''%m'')';
 PREPARE PREP FROM STMT;
 IF (RAISED_798 = FALSE) THEN
