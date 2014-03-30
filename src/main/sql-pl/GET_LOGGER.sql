@@ -60,9 +60,6 @@ SET CURRENT SCHEMA LOGGER_1B @
 
 -- TODO Add the isolation level.
 
--- TODO Create a SP that register a logger with a given level. This will create
--- all the levels in the conf_loggers, and the relations.
-
 /**
  * Registers the logger name in the system, and retrieves the corresponding ID
  * for that logger. This ID will allow to write messages into that logger if
@@ -93,18 +90,31 @@ ALTER MODULE LOGGER ADD
   NO EXTERNAL ACTION
   PARAMETER CCSID UNICODE
  P_GET_LOGGER: BEGIN
+  DECLARE INTERNAL BOOLEAN DEFAULT FALSE; -- Internal logging.
   -- Handles the limit cascade call.
   DECLARE EXIT HANDLER FOR SQLSTATE '54038'
    BEGIN
     INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES 
       (2, 'LG001. Cascade call limit achieved, for GET_LOGGER: ' || COALESCE(NAME, 'null'));
-    RESIGNAL SQLSTATE 'LG001';
+    RESIGNAL SQLSTATE 'LG001'
+      SET MESSAGE_TEXT = 'Cascade call limit achieved. Log message was written';
    END;
 
+  -- Internal logging.
   IF (GET_VALUE(LOGGER.LOG_INTERNALS) = LOGGER.VAL_TRUE) THEN
+   SET INTERNAL = TRUE;
+  END IF;
+
+  IF (INTERNAL = TRUE) THEN
    INSERT INTO LOGDATA.LOGS (DATE, LEVEL_ID, LOGGER_ID, MESSAGE) VALUES 
      (GENERATE_UNIQUE(), 4, -1, 'Getting logger name for ' || COALESCE(NAME, 'null'));
   END IF;
+
+  -- Validate nullability
+  IF (NAME IS NULL) THEN
+   SET NAME ='';
+  END IF;
+
   -- Checks the value in the cache if active.
   BEGIN
    DECLARE CONTINUE HANDLER FOR SQLSTATE '2202E'
@@ -193,7 +203,7 @@ ALTER MODULE LOGGER ADD
     -- TODO To check the value defaultRootLevelId before assign Warn as default.
     -- If the root logger is not defined, then set the default level: WARN-3.
     IF (PARENT_LEVEL IS NULL) THEN
-     SET PARENT_LEVEL = 3;
+     SET PARENT_LEVEL = DEFAULT_LEVEL;
     END IF;
 
     -- Takes each level of the logger name (dots), and retrieves or creates the
@@ -221,7 +231,7 @@ ALTER MODULE LOGGER ADD
      BEGIN
       SET LOGGERS_CACHE[NAME] = LOGGER_ID;
       -- Internal logging.
-      IF (GET_VALUE(LOGGER.LOG_INTERNALS) = LOGGER.VAL_TRUE) THEN
+      IF (INTERNAL = TRUE) THEN
        INSERT INTO LOGDATA.LOGS (DATE, LEVEL_ID, LOGGER_ID, MESSAGE) VALUES 
          (GENERATE_UNIQUE(), 4, -1, 'Logger not in cache ' || NAME || ' with ' || LOGGER_ID );
       END IF;
@@ -230,7 +240,7 @@ ALTER MODULE LOGGER ADD
    END;
   END IF;
   -- Internal logging.
-  IF (GET_VALUE(LOGGER.LOG_INTERNALS) = LOGGER.VAL_TRUE) THEN
+  IF (INTERNAL = TRUE) THEN
    INSERT INTO LOGDATA.LOGS (DATE, LEVEL_ID, LOGGER_ID, MESSAGE) VALUES 
      (GENERATE_UNIQUE(), 4, -1, 'Logger ID for ' || NAME || ' is ' || COALESCE(LOGGER_ID, -1));
   END IF;

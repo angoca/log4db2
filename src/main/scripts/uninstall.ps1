@@ -1,4 +1,3 @@
-#!/bin/bash
 # Copyright (c) 2012 - 2014, Andres Gomez Casanova (AngocA)
 # All rights reserved.
 #
@@ -30,17 +29,17 @@
 # Made in COLOMBIA.
 
 # Checks if there is already a connection established
-db2 connect > /dev/null
-if [[ ${?} -ne 0 ]] ; then
+db2 connect | Out-Null
+if ( ${LastExitCode} -ne 0 ) {
  echo "Please connect to a database before the execution of the uninstallation."
- echo "Remember that to call the script the command is '. ./uninstall'"
-else
- if [[ -x init ]] ; then
-  . ./init
- fi
+ echo "Load the DB2 profile with: set-item -path env:DB2CLP -value `"**`$$**`""
+} else {
+ if ( Test-Path -Path init.ps1 -PathType Leaf ) {
+  .\init.ps1
+ }
  echo Uninstalling log4db2...
- db2 -tf ${SRC_MAIN_CODE_PATH}/CleanTriggers.sql
- db2 -tf ${SRC_MAIN_CODE_PATH}/CleanObjects.sql
- db2 -tf ${SRC_MAIN_CODE_PATH}/CleanTables.sql
-fi
+ db2 -tf ${SRC_MAIN_CODE_PATH}\CleanTriggers.sql
+ db2 -tf ${SRC_MAIN_CODE_PATH}\CleanObjects.sql
+ db2 -tf ${SRC_MAIN_CODE_PATH}\CleanTables.sql
+}
 

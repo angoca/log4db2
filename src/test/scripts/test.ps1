@@ -1,4 +1,3 @@
-#!/bin/bash
 # Copyright (c) 2012 - 2014, Andres Gomez Casanova (AngocA)
 # All rights reserved.
 #
@@ -23,24 +22,11 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-# Uninstalls all the components of this utility.
-#
-# Version: 2014-02-14 1-Beta
-# Author: Andres Gomez Casanova (AngocA)
-# Made in COLOMBIA.
+db2 DELETE FROM LOGDATA.LOGS
 
-# Checks if there is already a connection established
-db2 connect > /dev/null
-if [[ ${?} -ne 0 ]] ; then
- echo "Please connect to a database before the execution of the uninstallation."
- echo "Remember that to call the script the command is '. ./uninstall'"
-else
- if [[ -x init ]] ; then
-  . ./init
- fi
- echo Uninstalling log4db2...
- db2 -tf ${SRC_MAIN_CODE_PATH}/CleanTriggers.sql
- db2 -tf ${SRC_MAIN_CODE_PATH}/CleanObjects.sql
- db2 -tf ${SRC_MAIN_CODE_PATH}/CleanTables.sql
-fi
+db2 -tf $Args[0]
+
+db2 COMMIT
+
+db2 "CALL LOGADMIN.LOGS(min_level=>4)"
 

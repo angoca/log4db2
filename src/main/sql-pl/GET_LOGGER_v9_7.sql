@@ -58,9 +58,6 @@ SET CURRENT SCHEMA LOGGER_1B @
 
 -- TODO Add the isolation level.
 
--- TODO Create a SP that register a logger with a given level. This will create
--- all the levels in the conf_loggers, and the relations.
-
 /**
  * Internal method that analyzes a string against the tables to see if the
  * level name is already registered there, and finally retrieves the logging
@@ -94,28 +91,14 @@ ALTER MODULE LOGGER ADD PROCEDURE ANALYZE_NAME (
     AND C.PARENT_ID = PARENT;
   -- If the logger is NOT already registered.
   IF (SON IS NULL) THEN
-   -- Searches in the effective configuration if this is already registered.
-   SELECT C.LOGGER_ID, C.LEVEL_ID INTO SON, LEVEL
-     FROM LOGDATA.CONF_LOGGERS_EFFECTIVE C
-     WHERE C.NAME = STRING
-     AND C.PARENT_ID = PARENT
-     WITH UR;
-   -- Logger is NOT registered in none of the tables.
-   IF (SON IS NULL) THEN
-    -- Registers the new logger and retrieves the id. Switches the parent id.
-    INSERT INTO LOGDATA.CONF_LOGGERS_EFFECTIVE (NAME, PARENT_ID, LEVEL_ID, HIERARCHY)
-      VALUES (STRING, PARENT, PARENT_LEVEL, PARENT_HIERARCHY);
-    SET PARENT = PREVIOUS VALUE FOR LOGDATA.LOGGER_ID_SEQ;
-    -- Updates the hierarchy path.
-    UPDATE LOGDATA.CONF_LOGGERS_EFFECTIVE
-     SET HIERARCHY = PARENT_HIERARCHY || ',' || CHAR(PREVIOUS VALUE FOR LOGDATA.LOGGER_ID_SEQ)
-     WHERE LOGGER_ID = PARENT;
-   ELSE
-    -- It is already register in the effective table, thus take the id of that
-    -- logger as parent.
-    SET PARENT = SON;
-    SET PARENT_LEVEL = LEVEL;
-   END IF;
+   -- Registers the new logger and retrieves the id. Switches the parent id.
+   INSERT INTO LOGDATA.CONF_LOGGERS (NAME, PARENT_ID, LEVEL_ID)
+      VALUES(STRING, PARENT, NULL);
+   SET PARENT = IDENTITY_VAL_LOCAL();
+   -- Updates the hierarchy path.
+   SET PARENT_HIERARCHY = PARENT_HIERARCHY || ',' || CHAR(PARENT);
+   INSERT INTO LOGDATA.CONF_LOGGERS_EFFECTIVE (LOGGER_ID, LEVEL_ID, HIERARCHY)
+     VALUES (PARENT, PARENT_LEVEL, PARENT_HIERARCHY);
   ELSE
    -- It is registered in the configuration table, thus take the id of that
    -- logger.
@@ -154,10 +137,31 @@ ALTER MODULE LOGGER ADD
   NO EXTERNAL ACTION
   PARAMETER CCSID UNICODE
  P_GET_LOGGER: BEGIN
+  DECLARE INTERNAL BOOLEAN DEFAULT FALSE; -- Internal logging.
+  -- Handles the limit cascade call.
+  DECLARE EXIT HANDLER FOR SQLSTATE '54038'
+   BEGIN
+    INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES 
+      (2, 'LG001. Cascade call limit achieved, for GET_LOGGER: ' || COALESCE(NAME, 'null'));
+    RESIGNAL SQLSTATE 'LG001'
+      SET MESSAGE_TEXT = 'Cascade call limit achieved. Log message was written';
+   END;
+
+  -- Internal logging.
   IF (GET_VALUE(LOGGER.LOG_INTERNALS) = LOGGER.VAL_TRUE) THEN
+   SET INTERNAL = TRUE;
+  END IF;
+
+  IF (INTERNAL = TRUE) THEN
    INSERT INTO LOGDATA.LOGS (DATE, LEVEL_ID, LOGGER_ID, MESSAGE) VALUES 
      (GENERATE_UNIQUE(), 4, -1, 'Getting logger name for ' || COALESCE(NAME, 'null'));
   END IF;
+
+  -- Validate nullability
+  IF (NAME IS NULL) THEN
+   SET NAME ='';
+  END IF;
+
   -- Checks the value in the cache if active.
   BEGIN
    DECLARE CONTINUE HANDLER FOR SQLSTATE '2202E'
@@ -199,7 +203,7 @@ ALTER MODULE LOGGER ADD
     -- TODO To check the value defaultRootLevelId before assign Warn as default.
     -- If the root logger is not defined, then set the default level: WARN-3.
     IF (PARENT_LEVEL IS NULL) THEN
-     SET PARENT_LEVEL = 3;
+     SET PARENT_LEVEL = DEFAULT_LEVEL;
     END IF;
 
     -- Takes each level of the logger name (dots), and retrieves or creates the
@@ -227,7 +231,7 @@ ALTER MODULE LOGGER ADD
      BEGIN
       SET LOGGERS_CACHE[NAME] = LOGGER_ID;
       -- Internal logging.
-      IF (GET_VALUE(LOGGER.LOG_INTERNALS) = LOGGER.VAL_TRUE) THEN
+      IF (INTERNAL = TRUE) THEN
        INSERT INTO LOGDATA.LOGS (DATE, LEVEL_ID, LOGGER_ID, MESSAGE) VALUES 
          (GENERATE_UNIQUE(), 4, -1, 'Logger not in cache ' || NAME || ' with ' || LOGGER_ID );
       END IF;
@@ -236,7 +240,7 @@ ALTER MODULE LOGGER ADD
    END;
   END IF;
   -- Internal logging.
-  IF (GET_VALUE(LOGGER.LOG_INTERNALS) = LOGGER.VAL_TRUE) THEN
+  IF (INTERNAL = TRUE) THEN
    INSERT INTO LOGDATA.LOGS (DATE, LEVEL_ID, LOGGER_ID, MESSAGE) VALUES 
      (GENERATE_UNIQUE(), 4, -1, 'Logger ID for ' || NAME || ' is ' || COALESCE(LOGGER_ID, -1));
   END IF;

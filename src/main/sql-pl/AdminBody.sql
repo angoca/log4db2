@@ -36,10 +36,135 @@ SET CURRENT SCHEMA LOGGER_1B @
  */
 
 /**
- * Constant for the defaultRootLevelId value.
+ * Timestamp for the paging.
  */
 ALTER MODULE LOGADMIN ADD
-  VARIABLE DEFAULT_ROOT_LEVEL_ID ANCHOR LOGDATA.CONFIGURATION.KEY CONSTANT 'defaultRootLevelId' @
+  VARIABLE PAGE_DATE CHAR(13) @
+
+/**
+ * Deletes a value in the loggers cache.
+ */
+ALTER MODULE LOGGER ADD
+  PROCEDURE DELETE_LOGGER_CACHE (
+  IN LOGGER ANCHOR LOGDATA.CONF_LOGGERS.LOGGER_ID
+  )
+  LANGUAGE SQL
+  SPECIFIC P_DELETE_CACHE
+  READS SQL DATA
+  NOT DETERMINISTIC
+  NO EXTERNAL ACTION
+  PARAMETER CCSID UNICODE
+ P_DELETE_CACHE: BEGIN
+  SET LOGGERS_CACHE = ARRAY_DELETE(LOGGERS_CACHE, LOGGER);
+ END P_DELETE_CACHE @
+
+/**
+ * Procedure that dumps the configuration. It returns two result sets. The
+ * first is a one-row result set providing the information when the
+ * configuration was loaded, and when it will be reloaded (with its frequency).
+ * In the other result set, it shows the key-values from the configuration, if
+ * this was already loaded, otherwise a descriptive message appears.
+ * This procedure shows the configuration, but it does not reload it, for this
+ * reason, the next refresh time could be in the past. Please note that the
+ * get_value procedure is the only one that refreshes the configuration.
+ * If the cache is in false in the configuration, but the configuration has
+ * not been read, it will show that the cache is active (by default).
+ */
+ALTER MODULE LOGGER ADD
+  PROCEDURE SHOW_CONF (
+  )
+  LANGUAGE SQL
+  SPECIFIC P_SHOW_CONF
+  DYNAMIC RESULT SETS 2
+  MODIFIES SQL DATA
+  NOT DETERMINISTIC
+  NO EXTERNAL ACTION
+  PARAMETER CCSID UNICODE
+ P_SHOW_CONF: BEGIN
+  -- Creates the cursor for the configuration refreshness.
+  BEGIN
+   DECLARE SECS SMALLINT;
+   DECLARE STMT VARCHAR(512);
+   DECLARE REF CURSOR
+     WITH RETURN TO CALLER
+     FOR RS;
+   -- Sets the value for the seconds.
+   BEGIN
+    DECLARE CONTINUE HANDLER FOR SQLSTATE '2202E'
+      SET SECS = -1;
+    SET SECS = INT(CONFIGURATION[REFRESH_CONS]);
+    IF (SECS IS NULL) THEN
+     SET SECS = -1;
+    END IF;
+   END;
+   -- Creates and prepares a dynamic query.
+   SET STMT = 'SELECT CASE WHEN LOADED = FALSE THEN ''Unknown'' '
+     || 'WHEN CACHE = TRUE THEN ''true'' '
+     || 'ELSE ''false'' END AS INTERNAL_CACHE_ACTIVATED, '
+     || 'LAST_REFRESH AS LAST_REFRESH, '
+     || SECS || ' AS FREQUENCY, '
+     || 'CASE WHEN ' || SECS || ' = -1 OR CACHE = FALSE THEN ''Not defined'' '
+     || 'ELSE CHAR(LAST_REFRESH + ' || SECS || ' SECONDS) '
+     || 'END AS NEXT_REFRESH, '
+     || '''' || CURRENT TIMESTAMP || ''' AS CURRENT_TIME '
+     || 'FROM SYSIBM.SYSDUMMY1';
+   PREPARE RS FROM STMT;
+   OPEN REF;
+  END;
+
+  -- Creates a cursor for configuration values.
+  BEGIN
+   DECLARE CARD SMALLINT;
+   DECLARE CONF CURSOR
+     WITH RETURN TO CLIENT 
+     FOR 
+     SELECT T.KEY AS KEY, T.VALUE AS VALUE
+     FROM UNNEST(CONFIGURATION) AS T(KEY, VALUE);
+   DECLARE NOTHING CURSOR
+     WITH RETURN TO CLIENT
+     FOR
+     SELECT 'Configuration not loaded' AS MESSAGE
+     FROM SYSIBM.SYSDUMMY1;
+
+   -- Checks if the configuration was already loaded.
+   SET CARD = CARDINALITY(CONFIGURATION);
+   IF (CARD > 0) THEN
+    OPEN CONF;
+   ELSE
+    OPEN NOTHING;
+   END IF;
+  END;
+ END P_SHOW_CONF @
+
+/**
+ * This is a helper procedure that shows the content of the logger cache if it
+ * is currently used.
+ */
+ALTER MODULE LOGGER ADD
+  PROCEDURE SHOW_CACHE (
+  )
+  LANGUAGE SQL
+  SPECIFIC P_SHOW_CACHE
+  DYNAMIC RESULT SETS 2
+  MODIFIES SQL DATA
+  NOT DETERMINISTIC
+  NO EXTERNAL ACTION
+  PARAMETER CCSID UNICODE
+ P_SHOW_CACHE: BEGIN
+  DECLARE STMT VARCHAR(512);
+  DECLARE CACHE_CURSOR CURSOR
+    WITH RETURN TO CLIENT 
+    FOR
+    SELECT SUBSTR(T.LOGGER, 1, 64) AS LOGGER_NAME, T.ID AS LOGGER_ID
+    FROM UNNEST(LOGGERS_CACHE) AS T(LOGGER, ID);
+  DECLARE DESC_CURSOR CURSOR
+    WITH RETURN TO CALLER
+    FOR RS;
+  SET STMT = 'SELECT ''Cardinality: ' || COALESCE(CARDINALITY(LOGGERS_CACHE), -1) || ''' FROM SYSIBM.SYSDUMMY1';
+  PREPARE RS FROM STMT;
+  OPEN DESC_CURSOR;
+  OPEN CACHE_CURSOR;
+ END P_SHOW_CACHE @
 
 /**
  * Returns an opened cursor with the level names and complete logger names of
@@ -74,7 +199,7 @@ ALTER MODULE LOGADMIN ADD
  * by default, the date limited to the hour part with miliseconds, and just the
  * last 100 (by deafult) log messages registered. The concurrence is uncommited
  * read. This procedure is useful to be called with named parameter, for
- * example: CALL LOGS (QTY => 50)
+ * example: CALL LOGS (QTY => 50).
  *
  * IN LENGTH
  *   Message length. By default this value is 72 characters.
@@ -130,32 +255,74 @@ ALTER MODULE LOGADMIN ADD
  END P_LOGS @
 
 /**
- * Function that returns the default logger level.
- * NOTE: If the levels are changed, this function should reflect those
- * modifications.
+ * Returns an opened cursor showing the more recent log messages truncated to 72
+ * characters by default and the date limited to the hour part with miliseconds.
+ * The concurrence is uncommited read. This procedure is useful to see the
+ * progress of the generated logs.
  *
- * RETURNS The configuration level for ROOT logger.
+ * IN LENGTH
+ *   Message length. By default this value is 72 characters.
+ * IN MIN_LEVEL
+ *   Minimum level presented. If -1, only internal logging is presented.
  */
 ALTER MODULE LOGADMIN ADD
-  FUNCTION GET_DEFAULT_LEVEL (
-  ) RETURNS ANCHOR LOGDATA.LEVELS.LEVEL_ID
+  PROCEDURE NEXT_LOGS (
+  IN LENGTH SMALLINT DEFAULT 72,
+  IN MIN_LEVEL ANCHOR LOGDATA.LEVELS.LEVEL_ID DEFAULT NULL
+  )
   LANGUAGE SQL
-  SPECIFIC F_GET_DEFAULT_LEVEL
+  SPECIFIC P_NEXT_LOGS
+  DYNAMIC RESULT SETS 1
   MODIFIES SQL DATA
   NOT DETERMINISTIC
   NO EXTERNAL ACTION
   PARAMETER CCSID UNICODE
- F_GET_DEFAULT_LEVEL: BEGIN
-  DECLARE RET ANCHOR LOGDATA.LEVELS.LEVEL_ID;
-  DECLARE VALUE ANCHOR LOGDATA.CONFIGURATION.VALUE;
+ P_NEXT_LOGS: BEGIN
+  DECLARE NEXT_DATE CHAR(13);
+  DECLARE STMT ANCHOR LOGDATA.LOGS.MESSAGE;
+  DECLARE C CURSOR
+    WITH RETURN TO CALLER
+    FOR RS;
 
-  -- Debug
-  -- INSERT INTO LOGS (DATE, LEVEL_ID, LOGGER_ID, MESSAGE) VALUES (GENERATE_UNIQUE(), 5, -1, 'aFLAG 6');
-
-  SET VALUE = LOGGER.GET_VALUE(DEFAULT_ROOT_LEVEL_ID);
-  SET RET = CAST(VALUE AS SMALLINT);
-  RETURN RET;
- END F_GET_DEFAULT_LEVEL @
+  SELECT MAX(DATE) INTO NEXT_DATE
+    FROM LOGDATA.LOGS;
+  SET STMT = 'SELECT TIME, MESSAGE FROM ('
+    || 'SELECT SUBSTR(TIMESTAMP(L.DATE), 12, 15) AS TIME, '
+    || 'SUBSTR(L.MESSAGE, 1, ' || LENGTH || ') AS MESSAGE '
+    || 'FROM LOGDATA.LOGS AS L ';
+  IF (MIN_LEVEL = -1) THEN
+   SET STMT = STMT
+     || 'WHERE L.LEVEL_ID = -1 OR L.LEVEL_ID IS NULL ';
+  ELSEIF (MIN_LEVEL IS NOT NULL) THEN
+   SET STMT = STMT
+     || 'WHERE L.LEVEL_ID <= ' || MIN_LEVEL || ' '
+     || 'AND L.LEVEL_ID >= 0 ';
+  END IF;
+  IF (LOGADMIN.PAGE_DATE IS NOT NULL) THEN
+   IF (MIN_LEVEL IS NULL) THEN
+    SET STMT = STMT
+      || 'WHERE ';
+   ELSE
+    SET STMT = STMT
+      || 'AND ';
+   END IF;
+   SET STMT = STMT
+     || 'L.DATE > CAST(''' || LOGADMIN.PAGE_DATE || ''' AS CHAR(13) FOR BIT DATA) ';
+  END IF;
+  SET STMT = STMT
+    || 'ORDER BY L.DATE DESC '
+    || 'WITH UR '
+    || ') ORDER BY TIME'
+    ;
+  IF (LOGGER.GET_VALUE(LOGGER.LOG_INTERNALS) = LOGGER.VAL_TRUE) THEN
+   INSERT INTO LOGDATA.LOGS (LEVEL_ID, LOGGER_ID, MESSAGE) VALUES 
+     (4, -1, 'Statement: ' || COALESCE(STMT,'NULL'));
+   COMMIT;
+  END IF;
+  PREPARE RS FROM STMT;
+  OPEN C;
+  SET LOGADMIN.PAGE_DATE = NEXT_DATE;
+ END P_NEXT_LOGS @
 
 /**
  * Function that returns the ROOT logger level or default level.
@@ -178,140 +345,41 @@ ALTER MODULE LOGADMIN ADD
     FROM LOGDATA.CONF_LOGGERS
     WHERE LOGGER_ID = 0;
   IF (RET IS NULL) THEN
-   SET RET = GET_DEFAULT_LEVEL();
+   SET RET = LOGGER.GET_DEFAULT_LEVEL();
   END IF;
   RETURN RET;
  END F_GET_ROOT_OR_DEFAULT_LEVEL @
 
-/**
- * Modifies the descendancy of the provided logger changing the level to the
- * given one.
+/**.
+ * Register a logger with a given level.
  *
- * IN PARENT
- *   Parent of the descendancy to be changed.
+ * IN NAME
+ *   Name of the logger. This string has to be separated by dots to
+ *   differenciate the levels. e.g.: foo.bar.toto, where foo is the first level,
+ *   bar is the second and toto is the last one.
+ *   The name could have a maximum of 256 characters, representing just one
+ *   level, or several levels with short names.
  * IN LEVEL
- *   Log level to be assigned to all descendancy.
+ *   Log level to be assigned.
  */
 ALTER MODULE LOGADMIN ADD
-  PROCEDURE MODIFY_DESCENDANTS (
-  IN PARENT ANCHOR LOGDATA.CONF_LOGGERS.LOGGER_ID,
+  PROCEDURE REGISTER_LOGGER (
+  IN NAME VARCHAR(256),
   IN LEVEL ANCHOR LOGDATA.LEVELS.LEVEL_ID
   )
   LANGUAGE SQL
-  SPECIFIC P_MODIFY_DESCENDANTS
+  SPECIFIC P_REGISTER_LOGGER
   DYNAMIC RESULT SETS 0
   MODIFIES SQL DATA
   NOT DETERMINISTIC
   NO EXTERNAL ACTION
   PARAMETER CCSID UNICODE
- P_MODIFY_DESCENDANTS: BEGIN
-  DECLARE LOG_ID ANCHOR LOGDATA.CONF_LOGGERS.LOGGER_ID;
-  DECLARE LVL_ID ANCHOR LOGDATA.LEVELS.LEVEL_ID;
+ P_REGISTER_LOGGER: BEGIN
+  DECLARE LOGGER ANCHOR LOGDATA.CONF_LOGGERS.LOGGER_ID;
 
-  -- Debug
-  -- INSERT INTO LOGS (DATE, LEVEL_ID, LOGGER_ID, MESSAGE) VALUES (GENERATE_UNIQUE(), 5, -1, 'aFLAG 5 = ' || coalesce (PARENT, -1) || '=' || coalesce (LEVEL, -1));
+  CALL LOGGER.GET_LOGGER(NAME, LOGGER);
+  UPDATE LOGDATA.CONF_LOGGERS
+    SET LEVEL_ID = LEVEL
+    WHERE LOGGER_ID = LOGGER;
+END P_REGISTER_LOGGER @
 
-  IF (PARENT IS NULL OR PARENT < 0 OR LEVEL IS NULL OR LEVEL < 0) THEN
-   SIGNAL SQLSTATE VALUE 'LG002'
-     SET MESSAGE_TEXT = 'Invalid parameter';
-  END IF;
-  -- Analyzes all sons for the given parent.
-  FOR F AS C CURSOR FOR
-    SELECT LOGGER_ID AS LOG_ID
-    FROM LOGDATA.CONF_LOGGERS
-    WHERE PARENT_ID = PARENT
-    FOR UPDATE
-    DO
-   -- Checks if the level has a configured level, or it is inherited.
-   SELECT LEVEL_ID INTO LVL_ID
-     FROM LOGDATA.CONF_LOGGERS
-     WHERE LOGGER_ID = LOG_ID;
-   IF (LVL_ID IS NULL) THEN
-    -- Updates the current logger_id (son.)
-    UPDATE LOGDATA.CONF_LOGGERS_EFFECTIVE
-      SET LEVEL_ID = LEVEL
-      WHERE LOGGER_ID = LOG_ID;
-    -- Modifies the descendant level (recursion).
-    BEGIN
-     DECLARE STMT STATEMENT;
-     PREPARE STMT FROM 'CALL MODIFY_DESCENDANTS (?, ?)';
-     EXECUTE STMT USING LOG_ID, LEVEL;
-    END;
-   END IF;
-  END FOR;
- END P_MODIFY_DESCENDANTS @
-
-/**
- * Function that retrieves the defined log level from the closer ascendency.
- *
- * IN SON_ID
- *   Logger id that will be analyzed to find a ascendency with a defined log
- *   level.
- * RETURNS The log level configured to a ascendancy or the default value.
- *   
- */
-ALTER MODULE LOGADMIN ADD
-  FUNCTION GET_DEFINED_PARENT_LOGGER (
-  IN SON_ID ANCHOR LOGDATA.CONF_LOGGERS.LOGGER_ID
-  ) RETURNS ANCHOR LOGDATA.LEVELS.LEVEL_ID
-  SPECIFIC F_GET_DEFINED_PARENT_LOGGER
-  MODIFIES SQL DATA
- F_GET_DEFINED_PARENT_LOGGER: BEGIN
-  DECLARE RET ANCHOR LOGDATA.LEVELS.LEVEL_ID;
-  DECLARE PARENT ANCHOR LOGDATA.CONF_LOGGERS.PARENT_ID;
-  DECLARE EXISTS SMALLINT DEFAULT 0;
-
-  -- Debug
-  -- INSERT INTO LOGS (DATE, LEVEL_ID, LOGGER_ID, MESSAGE) VALUES
-  --   (GENERATE_UNIQUE(), 5, -1, '>GDP - son ' || coalesce (SON_ID, -1));
-
-  IF (SON_ID IS NULL OR SON_ID < 0) THEN
-   SIGNAL SQLSTATE VALUE 'LG0F1'
-     SET MESSAGE_TEXT = 'Invalid parameter';
-  ELSEIF (SON_ID = 0) THEN
-   -- Asking for the level for ROOT.
-   SELECT LEVEL_ID INTO RET
-     FROM LOGDATA.CONF_LOGGERS
-     WHERE LOGGER_ID = 0
-     WITH UR;
-   IF (RET IS NULL) THEN
-    -- ROOT is not configured, getting the default value.
-    SET RET = GET_DEFAULT_LEVEL();
-
-    -- Debug
-    -- INSERT INTO LOGS (DATE, LEVEL_ID, LOGGER_ID, MESSAGE) VALUES
-    --   (GENERATE_UNIQUE(), 5, -1, ' GDP - default ' || coalesce (RET, -1));
-
-   END IF;
-  ELSE
-   -- Asking for a value different to ROOT.
-   -- Retrieving the configured level for the parent of the given son.
-   SELECT LEVEL_ID, LOGGER_ID INTO RET, PARENT
-     FROM LOGDATA.CONF_LOGGERS
-     WHERE LOGGER_ID = (SELECT PARENT_ID
-     FROM LOGDATA.CONF_LOGGERS
-     WHERE LOGGER_ID = SON_ID)
-     WITH UR;
-   IF (RET IS NULL) THEN
-
-    -- Debug
-    -- INSERT INTO LOGS (DATE, LEVEL_ID, LOGGER_ID, MESSAGE) VALUES
-    --  (GENERATE_UNIQUE(), 5, -1, ' GDP - parent ' || coalesce (PARENT, -1));
-
-    -- The parent has not a configured level, doing a recursion.
-    BEGIN
-     DECLARE STMT STATEMENT;
-     PREPARE STMT FROM 'SET ? = GET_DEFINED_PARENT_LOGGER(?)';
-     EXECUTE STMT INTO RET USING PARENT;
-    END;
-   END IF;
-  END IF;
-
-  -- Debug
-  -- INSERT INTO LOGS (DATE, LEVEL_ID, LOGGER_ID, MESSAGE) VALUES
-  --   (GENERATE_UNIQUE(), 5, -1, '<GDP - ret ' || coalesce (RET, -1));
-
-  RETURN RET;
- END F_GET_DEFINED_PARENT_LOGGER @
- 
- 

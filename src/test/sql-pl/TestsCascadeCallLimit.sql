@@ -134,7 +134,6 @@ ELSE
  INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES (5, 'Exception raised LG001');
 END IF;
 SET RAISED_LG001 = FALSE;
--- FIXME Sometimes this test generates an error 0811
 SELECT 'TRUE' INTO ACTUAL
   FROM LOGS
   WHERE MESSAGE LIKE 'LG001. Cascade call limit achieved, for LOG: Cascade call for "LOGGING" enters w%'

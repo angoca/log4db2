@@ -109,7 +109,7 @@ SET RAISED_530 = FALSE;
 COMMIT;
 
 -- Test4: Inserts an appender_ref with id.
-INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES (3, 'Test4: Inserts an appender_ref with  id');
+INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES (3, 'Test4: Inserts an appender_ref with id');
 SET STMT = 'INSERT INTO LOGDATA.CONF_APPENDERS (REF_ID, NAME, APPENDER_ID, PATTERN) VALUES (1, ''test4'', 1, ''%m'')';
 PREPARE PREP FROM STMT;
 IF (RAISED_798 = FALSE) THEN
@@ -231,6 +231,18 @@ SELECT REF_ID INTO ID FROM FINAL TABLE (
   INSERT INTO LOGDATA.CONF_APPENDERS (NAME, APPENDER_ID, PATTERN) VALUES
   ('test13', 1, '%m'));
 DELETE FROM LOGDATA.CONF_APPENDERS;
+COMMIT;
+
+-- Test14: Inserts a normal appender_ref configuration with a level.
+INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES (3, 'Test14: Inserts a normal appender_ref configuration with a level');
+INSERT INTO LOGDATA.CONF_APPENDERS (NAME, APPENDER_ID, PATTERN, LEVEL_ID) VALUES
+  ('test1', 1, '%m', 2);
+COMMIT;
+
+-- Test15: Inserts a normal appender_ref configuration with a null level.
+INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES (3, 'Test15: Inserts a normal appender_ref configuration with a null level');
+INSERT INTO LOGDATA.CONF_APPENDERS (NAME, APPENDER_ID, PATTERN, LEVEL_ID) VALUES
+  ('test1', 1, '%m', null);
 COMMIT;
 
 -- Cleans the environment.

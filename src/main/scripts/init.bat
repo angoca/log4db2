@@ -1,3 +1,4 @@
+@echo off
 :: Copyright (c) 2012 - 2014, Andres Gomez Casanova (AngocA)
 :: All rights reserved.
 ::
@@ -24,7 +25,7 @@
 
 :: Initialize the environment values to run the scripts.
 ::
-:: Version: 2014-02-14 1-Alpha
+:: Version: 2014-02-14 1-Beta
 :: Author: Andres Gomez Casanova (AngocA)
 :: Made in COLOMBIA.
 
@@ -35,5 +36,4 @@ if "%LOG4DB2_PATH%" EQU "" (
 )
 
 set SRC_MAIN_CODE_PATH=%LOG4DB2_PATH%\sql-pl
-set SRC_MAIN_SCRIPT_PATH=%LOG4DB2_PATH%\
 

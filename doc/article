@@ -1,0 +1,176 @@
+titulo
+Using log4db2, a message logging system for DB2 
+
+Abstract
+Breve descripcion del problema que se soluciona utilizando log4db2, el cual permite ver mensajes 
+generados por el codigo.
+DB2 for LUW es necesario especificar
+AQUI SE DEBE PROMOVER LA IDEA
+
+
+Incluir una tabla de contenido
+Summary
+Identify the problem
+Install the utility
+Include log4db2 in your code
+Review the generated messages
+
+-----
+La estructura seria primero mostrar el problema, y despues la manera de solucionarlo con sistemas de 
+logging. Finalmente, como ninguno se adapta, mostrar que log4db2 es la solucion. Despues describir como 
+se incluye en el codigo (get_logger y log) y despues como ver los mensajes generados y cambiar la 
+configuracion.
+-----
+
+
+Descriptcion del problema
+
+Cuantas veces se han visto enfrentados a rutinas en la base de datos y no sabemos por que, ni donde fallan.
+Explicar en el problema que cuando se usa una base de datos DB2 for LUW
+
+Dificil rastrear las operaciones que realizan objetos dentro de la base de datos
+Un stored procedure que dura varias horas el cual realiza varios pasos, no tiene una manera de ver 
+en que paso va, y si termina en error detectar el origen del problema puede ser demorado
+
+Que es un logging system
+Esto se llama instrumentacion de codigo
+
+Beneficios de utilizar un logging system, y beneficios adicionales de incorporarlo en la DB
+
+Por que es importante utilizar log4db2
+
+Que se obtendra cuando se implemente log4db2 en las rutinas
+- Facilidad de monitorear procesos
+- Configurar la granularidad de generacion de mensajes
+
+
+El enfoque del articulo es atraer a nuevos usuarios
+
+Explicar que hay otros sistemas de logging, pero no dentro de la base de datos, por lo que no pueden
+recibir logs de rutinas dentro de la base de datos. Decir que tambien hay otro sistema de logging para 
+DB2, pero no es escrito en SQL PL sino en C
+Hablar de log4j que es el estandar y basado en el han creado muchos logging systems
+
+Decir que log4db2 es basado en el estandar de la industria log4j usando las mas recientes caracteristicas 
+de DB2. Igualmente decir que esta en GitHub, y que es OpenSource.
+
+Indicar bajo que version de DB2 funciona: LUW, minimo 9.7, bien desde 10.1
+
+---
+Guidelines
+
+log4db2 es un conjunto de objetos en la DB. El articulo tendria varios pedazos de script a ejectuar en 
+la db.
+Para ver los mensajes generados, se podria tomar un screenshot de datastudio, y otro de una consola db2clp. con eso se muestra que funciona desde varios lados.
+
+No poner seccion introduccion, ni conclusion.
+Poner un summary y que sea diferente al abstract.
+Keywords en el primer parrafo
+
+Tener las tablas de niveles de mensajes
+
+Explicar porque es importante tener varios logger, cada nuo con una configuracion igual o
+diferente. Ademas, que cada mensaje puede ser enviado a un appender diferente.
+
+Se podria incluir un diagrama de secuencia, en donde se muestre que se pide el loggerID a getLogger y despues se usa eso para escribir los logs.
+
+Explicar por que varios niveles es importante.
+ERROR para mensajes de alto nivel, como un error que aparecio
+WARN para mensajes de inicio y fin
+INFO para informacion de que parte del codigo esta
+DEBUG para detalle de la operacion
+Aqui la parte dificil es buscar el codigo de ejemplo.
+
+Explicar que la configuracion se puede cambiar de una rutina ya en produccion y ver el detalle de las operaciones. Ademas, no es necesario conocer la conexion/aplicacion para poder ver las operaciones sobre la DB
+
+
+Se podria poner una conclusion donde se explique que hay dos metodos importantes GET_LOGGER y LOG y que hay varios metodos para ver los mensajes generados.
+
+
+Como no se puede incluir codigo Open Source, se podria incluir la funcion y/o procedimiento que se escriba en el articulo.
+Indicar que el codigo esta en una forja y que esta en continua evolucion.
+
+
+Links
+
+GitHub log4db2 io
+gitHub log4db2 wiki
+DB2 PIC 10.5
+log4j
+logback
+SQLtips4DB2
+
+
+Proposal
+Article about
+The log4db2 logging utility that ....
+
+Author's qualifications
+DB2 DBA with multiple certifications and designer and developer of log4db2
+Ms Sc Master 2 Genie Informatique, Joseph Fourier
+Computer Engineer Colombian School of Engineering (Escuela Colombiana de Ingenieria Julio Garabito)
+Love to travel and visit the UNESCO sites.
+
+Target audience
+DB2 DBAs and developers
+Newcomers, porque el sistema nadie lo conoce.
+
+Describe WHO your article is intended for
+WHAT is its objective or purpose
+WHY should the article be read
+HOW will the reader benefit
+What sets YOUR article apart from others on the same subject?
+
+
+
+
+Avanzado
+
+el diagrama ER y las relaciones de las tablas
+La manera de configurar el layout de los mensajes
+Los diferentes appenders
+Registrar un logger con un level dado
+
+Este seria otro articulo, ya para personas que conocen como funciona la aplicacion y la quieren configurar
+o extender.
+
+
+Links
+http://www.takipiblog.com/2013/12/18/the-logging-olympics-a-race-between-todays-top-5-logging-frameworks/
+Buena descripcion de lo que son los logging
+
+http://en.wikipedia.org/wiki/Java_logging_frameworks
+Palabras tecnicas que ayudan a describir mejor
+
+http://logging.apache.org/log4j/1.2/
+Buena introduccion a logging
+
+http://java-source.net/open-source/logging
+Terminos y punto de inicio para documentacion de muchas utilidades
+
+http://blogg.kantega.no/logging-in-java-with-users-in-mind/
+Varios conceptos aceerca de logging
+
+
+
+Terminos
+:Usados de la misma manera
+framework - wikipedia
+library - apache
+utility - wikipedia
+engine
+
+
+: Puede variar el significado, pero son validos
+facility - When talking about not included
+system
+software
+tool
+
+
+: Son otra cosa que no es log4db2
+toolkit
+package
+handler
+program
+application

@@ -66,10 +66,12 @@ ALTER MODULE LOGGER ADD
   DECLARE RET BOOLEAN DEFAULT FALSE;
   DECLARE CURRENT ANCHOR LOGDATA.CONF_LOGGERS_EFFECTIVE.HIERARCHY;
 
-  SET POS = POSSTR (HIERARCHY, ',');
   IF (HIERARCHY = '0') THEN
-   SET RET = TRUE;
+   IF (LOGGER_ID_FETCHED = 0) THEN
+    SET RET = TRUE;
+   END IF;
   ELSE
+   SET POS = POSSTR (HIERARCHY, ',');
    REPEAT
     IF (POS <> 0) THEN
      SET CURRENT = SUBSTR(HIERARCHY, 1, POS - 1);
@@ -79,11 +81,8 @@ ALTER MODULE LOGGER ADD
      SET CURRENT = HIERARCHY;
      SET POS = -1;
     END IF;
-    -- Testing root logger when hierarchy for non-root
-    IF (LOGGER_ID_FETCHED = 0 AND POS <> 0) THEN
-     SET RET = FALSE;
    -- Testing any other level.
-    ELSEIF (LOGGER_ID_FETCHED = SMALLINT(CURRENT)) THEN
+    IF (LOGGER_ID_FETCHED = SMALLINT(CURRENT)) THEN
      SET RET = TRUE;
     END IF;
    UNTIL (RET = TRUE OR POS < 0)
@@ -103,23 +102,25 @@ ALTER MODULE LOGGER ADD
  * +-----------------+---------------------------------------------------------+
  * | Conversion Word | Effect                                                  |
  * +-----------------+---------------------------------------------------------+
- * | p               | Inserts the level of the logging event.                 |
- * +-----------------+---------------------------------------------------------+
  * | c               | Inserts the name of the logger at the origin of the     |
  * |                 | logging event.                                          |
  * +-----------------+---------------------------------------------------------+
  * | m               | Inserts the application-supplied message associated     |
  * |                 | with the logging event.                                 |
  * +-----------------+---------------------------------------------------------+
- * | H               | Inserts the application handle.                         |
+ * | p               | Inserts the level of the logging event.                 |
  * +-----------------+---------------------------------------------------------+
- * | N               | Inserts the application name.                           |
+ * | C               | Inserts the client hostname.                            |
+ * +-----------------+---------------------------------------------------------+
+ * | H               | Inserts the application handle.                         |
  * +-----------------+---------------------------------------------------------+
  * | I               | Inserts the application id.                             |
  * +-----------------+---------------------------------------------------------+
- * | S               | Inserts the session authorisation.                      |
+ * | L               | Inserts the nesting level.                              |
  * +-----------------+---------------------------------------------------------+
- * | C               | Inserts the client hostname.                            |
+ * | N               | Inserts the application name.                           |
+ * +-----------------+---------------------------------------------------------+
+ * | S               | Inserts the session authorisation.                      |
  * +-----------------+---------------------------------------------------------+
  * 
  * All this conversion words should be preceded by the % (percentage) sign.
@@ -138,7 +139,7 @@ ALTER MODULE LOGGER ADD
 ALTER MODULE LOGGER ADD 
   PROCEDURE LOG (
   IN LOG_ID ANCHOR LOGDATA.CONF_LOGGERS.LOGGER_ID DEFAULT 0,
-  IN LEV_ID ANCHOR LOGDATA.LEVELS.LEVEL_ID DEFAULT 3,
+  IN LEV_ID ANCHOR LOGDATA.LEVELS.LEVEL_ID DEFAULT DEFAULT_LEVEL,
   IN MESSAGE ANCHOR LOGDATA.LOGS.MESSAGE
   )
   LANGUAGE SQL
@@ -151,15 +152,20 @@ ALTER MODULE LOGGER ADD
   PARAMETER CCSID UNICODE
  P_LOG: BEGIN
  DECLARE NEW_MESSAGE ANCHOR LOGDATA.LOGS.MESSAGE;
+  DECLARE INTERNAL BOOLEAN DEFAULT FALSE; -- Internal logging.
   DECLARE CURRENT_LEVEL_ID ANCHOR LOGDATA.LEVELS.LEVEL_ID; -- Level in the configuration.
+  DECLARE REAL_LVL ANCHOR LOGDATA.LEVELS.LEVEL_ID; -- Real level if exist.
   DECLARE HIERARCHY ANCHOR LOGDATA.CONF_LOGGERS_EFFECTIVE.HIERARCHY; -- Logger's hierarchy.
   DECLARE APPENDER_ID ANCHOR LOGDATA.CONF_APPENDERS.APPENDER_ID; -- Appender's ID.
   DECLARE CONFIGURATION ANCHOR LOGDATA.CONF_APPENDERS.CONFIGURATION; -- Appender's configuration.
   DECLARE PATTERN ANCHOR LOGDATA.CONF_APPENDERS.PATTERN; -- Appender's pattern.
+  DECLARE LVL_REF ANCHOR LOGDATA.CONF_APPENDERS.LEVEL_ID; -- Appender's level.
   DECLARE LOGGER_ID_FETCHED ANCHOR LOGDATA.REFERENCES.LOGGER_ID; -- Logger id to be analyzed.
   DECLARE AT_END BOOLEAN; -- End of the cursor.
+  DECLARE ACTIVE BOOLEAN;
+  DECLARE NESTING_LEVEL INTEGER;
   DECLARE REFERENCES CURSOR FOR
-    SELECT LOGGER_ID, APPENDER_ID, CONFIGURATION, PATTERN
+    SELECT LOGGER_ID, APPENDER_ID, CONFIGURATION, PATTERN, LEVEL_ID
     FROM LOGDATA.REFERENCES R JOIN LOGDATA.CONF_APPENDERS C
     ON R.APPENDER_REF_ID = C.REF_ID
     WITH UR;
@@ -172,9 +178,32 @@ ALTER MODULE LOGGER ADD
   DECLARE EXIT HANDLER FOR SQLSTATE '54038'
    BEGIN
     INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES 
-    (2, 'LG001. Cascade call limit achieved, for LOG: ' || COALESCE(MESSAGE, 'null'));
-    RESIGNAL SQLSTATE 'LG001';
+    (2, 'LG001. Cascade call limit achieved, for LOG: '
+      || COALESCE(MESSAGE, 'null'));
+    RESIGNAL SQLSTATE 'LG001'
+      SET MESSAGE_TEXT = 'Cascade call limit achieved. Log message was written';
    END;
+
+  -- Internal logging.
+  IF (GET_VALUE(LOGGER.LOG_INTERNALS) = LOGGER.VAL_TRUE) THEN
+   SET INTERNAL = TRUE;
+  END IF;
+
+  -- The given logger is invalid
+  IF (LOG_ID IS NULL OR LOG_ID < -1) THEN
+   SET LOG_ID = 0;
+  END IF;
+  -- The given level is null, then level 1.
+  IF (LEV_ID IS NULL OR LEV_ID < 0) THEN
+   SET LEV_ID = DEFAULT_LEVEL;
+  ELSE
+   SELECT LEVEL_ID INTO REAL_LVL
+     FROM LOGDATA.LEVELS
+     WHERE LEVEL_ID = LEV_ID;
+   IF (REAL_LVL IS NULL) THEN
+    SET LEV_ID = DEFAULT_LEVEL;
+   END IF;
+  END IF;
 
   -- Retrieves the current level in the configuration for the given logger.
   SELECT C.LEVEL_ID, C.HIERARCHY INTO CURRENT_LEVEL_ID, HIERARCHY
@@ -182,10 +211,15 @@ ALTER MODULE LOGGER ADD
     WHERE C.LOGGER_ID = LOG_ID
     WITH UR;
 
+  -- LOG_ID could not exist
+  IF (CURRENT_LEVEL_ID IS NULL) THEN
+   SET CURRENT_LEVEL_ID = DEFAULT_LEVEL;
+   SET HIERARCHY = '0';
+  END IF;
   -- Checks if the current level is at least equal to the provided level.
-  IF (CURRENT_LEVEL_ID >= LEV_ID) THEN
+  IF (CURRENT_LEVEL_ID >= LEV_ID AND LEV_ID > 0) THEN
    -- Internal logging.
-   IF (GET_VALUE(LOGGER.LOG_INTERNALS) = LOGGER.VAL_TRUE) THEN
+   IF (INTERNAL = TRUE) THEN
     INSERT INTO LOGDATA.LOGS (LEVEL_ID, LOGGER_ID, MESSAGE) VALUES 
       (4, -1, 'Logging enable for level ' || LEV_ID || ' logger ' || LOG_ID);
    END IF;
@@ -193,39 +227,47 @@ ALTER MODULE LOGGER ADD
    -- Retrieves all the configurations for the appenders in references table.
    OPEN REFERENCES;
    SET AT_END = FALSE;
-   FETCH REFERENCES INTO LOGGER_ID_FETCHED, APPENDER_ID, CONFIGURATION, PATTERN;
+   FETCH REFERENCES INTO LOGGER_ID_FETCHED, APPENDER_ID, CONFIGURATION, PATTERN,
+     LVL_REF;
 
    -- Iterates over the results.
    WHILE (AT_END = FALSE) DO
-    IF (IS_LOGGER_ACTIVE(HIERARCHY, LOGGER_ID_FETCHED) = TRUE) THEN
+    SET ACTIVE = IS_LOGGER_ACTIVE(HIERARCHY, LOGGER_ID_FETCHED);
+   -- Internal logging.
+    IF (INTERNAL = TRUE) THEN
+     INSERT INTO LOGDATA.LOGS (LEVEL_ID, LOGGER_ID, MESSAGE) VALUES 
+       (4, -1, 'Active logger ' || LOGGER_ID_FETCHED || ' value '
+       || BOOL_TO_CHAR(ACTIVE));
+    END IF;
+    -- Checks if the appender should receive this log.
+    IF (ACTIVE = TRUE) THEN
+     IF (LVL_REF IS NOT NULL AND LEV_ID > LVL_REF) THEN
+      SET ACTIVE = FALSE;
+     END IF;
+    END IF;
+    IF (ACTIVE = TRUE) THEN
      -- Internal logging.
-     IF (GET_VALUE(LOGGER.LOG_INTERNALS) = LOGGER.VAL_TRUE) THEN
+     IF (INTERNAL = TRUE) THEN
       INSERT INTO LOGDATA.LOGS (LEVEL_ID, LOGGER_ID, MESSAGE) VALUES 
         (4, -1, 'Processing pattern ' || PATTERN);
      END IF;
 
      -- Format the message according to the pattern.
      SET NEW_MESSAGE = PATTERN;
-     -- Inserts the message.
-     SET NEW_MESSAGE = REPLACE(NEW_MESSAGE, '%m', 
-       COALESCE(MESSAGE, 'No message'));
      -- Inserts the level.
      SET NEW_MESSAGE = REPLACE(NEW_MESSAGE, '%p', (
        SELECT UCASE(COALESCE(L.NAME,'UNK')) 
        FROM LOGDATA.LEVELS L
        WHERE L.LEVEL_ID = LEV_ID
        WITH UR));
-     -- Inserts the logger name.
-     -- PERF: Coalesce could be deleted, get_logger_name always return something.
-     SET NEW_MESSAGE = REPLACE(NEW_MESSAGE, '%c', 
-       COALESCE(GET_LOGGER_NAME(LOG_ID), 'No name'));
      -- Inserts the application handle.
      SET NEW_MESSAGE = REPLACE(NEW_MESSAGE, '%H', 
        SYSPROC.MON_GET_APPLICATION_HANDLE());
      -- Inserts the application name.
      SET NEW_MESSAGE = REPLACE(NEW_MESSAGE, '%N',
        (SELECT APPLICATION_NAME
-       FROM TABLE(MON_GET_CONNECTION(SYSPROC.MON_GET_APPLICATION_HANDLE(),-1))));
+       FROM TABLE(MON_GET_CONNECTION(SYSPROC.MON_GET_APPLICATION_HANDLE(),
+       -1))));
      -- Inserts the application id.
      SET NEW_MESSAGE = REPLACE(NEW_MESSAGE, '%I', 
        SYSPROC.MON_GET_APPLICATION_ID());
@@ -233,12 +275,21 @@ ALTER MODULE LOGGER ADD
      SET NEW_MESSAGE = REPLACE(NEW_MESSAGE, '%S', TRIM(SESSION_USER));
      -- Inserts the client hostname.
      SET NEW_MESSAGE = REPLACE(NEW_MESSAGE, '%C', CLIENT WRKSTNNAME);
+     -- Insert the nesting level.
+     GET DIAGNOSTICS NESTING_LEVEL = DB2_SQL_NESTING_LEVEL;
+     SET NEW_MESSAGE = REPLACE(NEW_MESSAGE, '%L', NESTING_LEVEL);
+     -- Inserts the logger name.
+     SET NEW_MESSAGE = REPLACE(NEW_MESSAGE, '%c', 
+       COALESCE(GET_LOGGER_NAME(LOG_ID), 'No name'));
+     -- Inserts the message.
+     SET NEW_MESSAGE = REPLACE(NEW_MESSAGE, '%m', 
+       COALESCE(MESSAGE, 'No message'));
 
      -- Checks the values
      CASE APPENDER_ID
        WHEN 1 THEN -- Pure SQL PL, writes in table.
         -- Internal logging.
-        IF (GET_VALUE(LOGGER.LOG_INTERNALS) = LOGGER.VAL_TRUE) THEN
+        IF (INTERNAL = TRUE) THEN
          INSERT INTO LOGDATA.LOGS (LEVEL_ID, LOGGER_ID, MESSAGE) VALUES 
            (4, -1, 'Logging in tables');
         END IF;
@@ -257,8 +308,15 @@ ALTER MODULE LOGGER ADD
        ELSE -- By default writes in the table.
          CALL LOG_SQL(LOG_ID, LEV_ID, NEW_MESSAGE);
      END CASE;
+    ELSE
+       -- Internal logging.
+     IF (INTERNAL = TRUE) THEN
+      INSERT INTO LOGDATA.LOGS (LEVEL_ID, LOGGER_ID, MESSAGE) VALUES 
+        (4, -1, 'Non active logger' );
+     END IF;
     END IF;
-    FETCH REFERENCES INTO LOGGER_ID_FETCHED, APPENDER_ID, CONFIGURATION, PATTERN;
+    FETCH REFERENCES INTO LOGGER_ID_FETCHED, APPENDER_ID, CONFIGURATION,
+      PATTERN, LVL_REF;
    END WHILE;
    CLOSE REFERENCES;
   ELSEIF (LOG_ID = -1) THEN
@@ -293,8 +351,10 @@ ALTER MODULE LOGGER ADD
   DECLARE EXIT HANDLER FOR SQLSTATE '54038'
    BEGIN
     INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES 
-    (2, 'LG001. Cascade call limit achieved, for DEBUG: (' || COALESCE(LOGGER_ID, -1) || ') ' || COALESCE(MESSAGE, 'null'));
-    RESIGNAL SQLSTATE 'LG001';
+    (2, 'LG001. Cascade call limit achieved, for DEBUG: ('
+      || COALESCE(LOGGER_ID, -1) || ') ' || COALESCE(MESSAGE, 'null'));
+    RESIGNAL SQLSTATE 'LG001'
+      SET MESSAGE_TEXT = 'Cascade call limit achieved. Log message was written';
    END;
 
   CALL LOG (LOGGER_ID, 5, MESSAGE);
@@ -326,8 +386,10 @@ ALTER MODULE LOGGER ADD
   DECLARE EXIT HANDLER FOR SQLSTATE '54038'
    BEGIN
     INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES 
-    (2, 'LG001. Cascade call limit achieved, for INFO: (' || COALESCE(LOGGER_ID, -1) || ') ' || COALESCE(MESSAGE, 'null'));
-    RESIGNAL SQLSTATE 'LG001';
+    (2, 'LG001. Cascade call limit achieved, for INFO: ('
+      || COALESCE(LOGGER_ID, -1) || ') ' || COALESCE(MESSAGE, 'null'));
+    RESIGNAL SQLSTATE 'LG001'
+      SET MESSAGE_TEXT = 'Cascade call limit achieved. Log message was written';
    END;
 
   CALL LOG (LOGGER_ID, 4, MESSAGE);
@@ -359,8 +421,10 @@ ALTER MODULE LOGGER ADD
   DECLARE EXIT HANDLER FOR SQLSTATE '54038'
    BEGIN
     INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES 
-    (2, 'LG001. Cascade call limit achieved, for WARN: (' || COALESCE(LOGGER_ID, -1) || ') ' || COALESCE(MESSAGE, 'null'));
-    RESIGNAL SQLSTATE 'LG001';
+    (2, 'LG001. Cascade call limit achieved, for WARN: ('
+      || COALESCE(LOGGER_ID, -1) || ') ' || COALESCE(MESSAGE, 'null'));
+    RESIGNAL SQLSTATE 'LG001'
+      SET MESSAGE_TEXT = 'Cascade call limit achieved. Log message was written';
    END;
 
   CALL LOG (LOGGER_ID, 3, MESSAGE);
@@ -392,8 +456,10 @@ ALTER MODULE LOGGER ADD
   DECLARE EXIT HANDLER FOR SQLSTATE '54038'
    BEGIN
     INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES 
-    (2, 'LG001. Cascade call limit achieved, for ERROR: (' || COALESCE(LOGGER_ID, -1) || ') ' || COALESCE(MESSAGE, 'null'));
-    RESIGNAL SQLSTATE 'LG001';
+    (2, 'LG001. Cascade call limit achieved, for ERROR: ('
+      || COALESCE(LOGGER_ID, -1) || ') ' || COALESCE(MESSAGE, 'null'));
+    RESIGNAL SQLSTATE 'LG001'
+      SET MESSAGE_TEXT = 'Cascade call limit achieved. Log message was written';
    END;
 
   CALL LOG (LOGGER_ID, 2, MESSAGE);
@@ -425,8 +491,10 @@ ALTER MODULE LOGGER ADD
   DECLARE EXIT HANDLER FOR SQLSTATE '54038'
    BEGIN
     INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES 
-    (2, 'LG001. Cascade call limit achieved, for FATAL: (' || COALESCE(LOGGER_ID, -1) || ') ' || COALESCE(MESSAGE, 'null'));
-    RESIGNAL SQLSTATE 'LG001';
+    (2, 'LG001. Cascade call limit achieved, for FATAL: ('
+      || COALESCE(LOGGER_ID, -1) || ') ' || COALESCE(MESSAGE, 'null'));
+    RESIGNAL SQLSTATE 'LG001'
+      SET MESSAGE_TEXT = 'Cascade call limit achieved. Log message was written';
    END;
 
   CALL LOG (LOGGER_ID, 1, MESSAGE);

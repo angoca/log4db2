@@ -48,39 +48,36 @@ the list of LEVELS.
 ==== CONF_LOGGERS TABLE
 
 LG0C1
+ROOT cannot be inserted
+* ROOT logger is always presents in the CONF_LOGGERS table. It cannot be deleted
+not inserted, and only some fields could be updated.
+* Verify the operation you are performing because it is currently invalid.
+
+LG0C2
 The only logger without parent is ROOT.
 * All loggers should have a parent. The only one that do not have ascendency is
 ROOT.
 * Assign a parent to the provided logger. Probably, its parent will be ROOT (0).
 
-LG0C2
-It is not possible to update any value in this table (only LEVEL_ID is 
-possible).
+LG0C3
+LOGGER_ID cannot be negative.
+* The provided LOGGER_ID is invalid. LOGGER_ID valid values are positive
+integers.
+* Reissue the command with a valid LOGGER_ID.
+
+LG0C4
+The LEVEL_ID is the only column that can be updated.
 * Once a logger has been created, most of its properties cannot be changed. The
 LOGGER_ID helps to uniquely identify it. NAME is a unique value in the
 hierarchy. PARENT_ID indicates its ancestry.
 * Do not try to modify the values of a logger. If a logger was mis-defined,
 create a new one (new LOGGER_ID, correct NAME, probably same PARENT_ID).
 
-LG0C3
-There could be only one ROOT logger
-* Trying to insert a second ROOT logger with values (ID = 0, PARENT = NULL),
-however it already exists in the table.
-* This operation is not permitted, insert other levels different to ROOT.
-
 
 ==== CONF_LOGGERS_EFFECTIVE TABLE
 
-LGxE1 (LGAE1, LGBE1)
-The only logger without parent is ROOT.
-* All loggers should have a parent. The only one that do not have ascendency is
-ROOT. Remember that this table is managed by the application, this means that
-the users do not have to modify it directly.
-* Assign a parent to the provided logger. Probably, its parent will be ROOT (0).
-
-LG0E2
-It is not possible to update any value in this table (only LEVEL_ID is 
-possible).
+LG0E1
+The LEVEL_ID is the only column that can be updated.
 * Once a logger has been created, most of its properties cannot be changed. The
 LOGGER_ID helps to uniquely identify it. NAME is a unique value in the
 hierarchy. PARENT_ID indicates its ancestry. Remember that this table is managed
@@ -88,27 +85,12 @@ by the application, this means that the users do not have to modify it directly.
 * Do not try to modify the values of a logger. If a logger was mis-defined,
 create a new one (new LOGGER_ID, correct NAME, probably same PARENT_ID).
 
-LG0E3 (LGAE3, LGBE3)
-It is not possible to update the LEVEL_ID manually.
-* The LEVEL_ID is updated when the associated configuration in the CONF_LOGGERS
-table is modified. However, this value cannot be modified manually, and it
-should match the established value in the configuration table.
-* Update the LEVEL_ID to the same level defined in the CONF_LOGGERS table.
-
-LG0E4
+LG0E2
 ROOT logger cannot be deleted.
 * There should always exist the ROOT logger in the CONF_LOGGERS_EFFECTIVE table.
 It cannot be deleted, because this is the origin of the ancestry for any level.
 * If you are deleting in bulk (DELETE FROM CONF_LOGGERS_EFEFCTIVE) put a
 condition to not delete ROOT logger.
-
-LG0E5
-Inserting a duplicate logger.
-* It already exists a logger with the same name in the same position of the
-hierarchy (same PARENT_ID).
-* Use the existing LOGGER_ID or change the name for the logger in the same
-level of the hierarchy. You can also change the PARENT_ID, but that changes the
-logger in the hierarchy with other ascendency/descendency.
 
 
 ==== CONF_APPENDERS TABLE
@@ -123,16 +105,26 @@ issuing a negative value.
 ==== GET_DEFINED_PARENT_LOGGER FUNCTION ====
 
 LG0F1
-Invalid parameter.
+Invalid given parameter: SON_ID.
 * The provided value to call the function in not a valid value. It is probably
 a null value or a negative one.
 * Reissue the command calling the function with a positive or zero value.
 
 
+==== MODIFY_DESCENDANTS PROCEDURE ====
+
+LG0P1
+Invalid given parameter: PARENT or LEVEL.
+* The given parameters are invalid. One or both of them could be negative or
+null.
+* Reissue the call with appropriated values. Parent not null and greater that 0
+and level not null and greater that 0.
+
+
 ==== FUNCTIONS ====
 
 LG001
-<No message>
+Cascade call limit achieved. Log message was written.
 * The call has arrive to the limit in cascade call and the log could had not
 be written correctly. It was written as ROOT logger and returned an error to
 the application.
@@ -140,13 +132,3 @@ This message wraps the SQL Code SQL0724, SQLState 54038.
 * Control this error in the application, in order to continue the execution:
   DECLARE CONITNUE HANDLER FOR SQLSTATE 'LG001' DO_SOMETHING;
 
-LG002
-Invalid configuration state
-* The loggers cache is trying to be activated or deactivated, but the
-configuration is the opposite of the requested function.
-This behaviour should never be an issue for the user, because the
-procedures used (ACTIVATE_CACHE and DEACTIVATE_CACHE) are called by triggers.
-* Reissue the command with the appropiated function according to the 
-configuration:
-  ACTIVATE_CACHE -> internalCache = true
-  DEACTIVATE_CACHE -> internalCache = false

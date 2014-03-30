@@ -1,4 +1,3 @@
-#!/bin/bash
 # Copyright (c) 2013 - 2014, Andres Gomez Casanova (AngocA)
 # All rights reserved.
 #
@@ -29,97 +28,96 @@
 # Author: Andres Gomez Casanova (AngocA)
 # Made in COLOMBIA.
 
-declare global continue=true
+${Script:continue}=1
 
 # Installs a given script.
-function installScript() {
- local script=${1}
+function installScript($script) {
  echo $script
  db2 -tsf ${script}
- if [[ ${?} -ne 0 ]] ; then
-  continue=false
- fi
+ if ( $LastExitCode -ne 0 ) {
+  ${Script:continue}=0
+ }
 }
 
 # DB2 v10.1.
-function v10.1() {
+function v10.1($p1) {
  echo "Installing utility for v10.1"
- [ ${continue} == true ] && installScript ${SRC_MAIN_CODE_PATH}/Tables.sql
- [ ${continue} == true ] && installScript ${SRC_MAIN_CODE_PATH}/UtilityHeader.sql
- [ ${continue} == true ] && installScript ${SRC_MAIN_CODE_PATH}/UtilityBody.sql
- [ ${continue} == true ] && installScript ${SRC_MAIN_CODE_PATH}/Appenders.sql
- [ ${continue} == true ] && installScript ${SRC_MAIN_CODE_PATH}/LOG.sql
- [ ${continue} == true ] && installScript ${SRC_MAIN_CODE_PATH}/GET_LOGGER.sql
- [ ${continue} == true ] && installScript ${SRC_MAIN_CODE_PATH}/Trigger.sql
+ if ( ${Script:continue} ) { installScript ${SRC_MAIN_CODE_PATH}\Tables.sql }
+ if ( ${Script:continue} ) { installScript ${SRC_MAIN_CODE_PATH}\UtilityHeader.sql }
+ if ( ${Script:continue} ) { installScript ${SRC_MAIN_CODE_PATH}\UtilityBody.sql }
+ if ( ${Script:continue} ) { installScript ${SRC_MAIN_CODE_PATH}\Appenders.sql }
+ if ( ${Script:continue} ) { installScript ${SRC_MAIN_CODE_PATH}\LOG.sql }
+ if ( ${Script:continue} ) { installScript ${SRC_MAIN_CODE_PATH}\GET_LOGGER.sql }
+ if ( ${Script:continue} ) { installScript ${SRC_MAIN_CODE_PATH}\Trigger.sql }
 
- [ ${continue} == true ] && installScript ${SRC_MAIN_CODE_PATH}/AdminHeader.sql
- [ ${continue} == true ] && installScript ${SRC_MAIN_CODE_PATH}/AdminBody.sql
+ if ( ${Script:continue} ) { installScript ${SRC_MAIN_CODE_PATH}\AdminHeader.sql }
+ if ( ${Script:continue} ) { installScript ${SRC_MAIN_CODE_PATH}\AdminBody.sql }
 
  # Temporal capabilities for tables.
- if [[ ${1} == "t" && ${continue} == true ]] ; then
+ if ( ( ${p1} -eq "t" ) -and ( ${Script:continue} ) ) {
   echo "Create table for Time Travel"
   installScript ${SRC_MAIN_CODE_PATH}/TablesTimeTravel.sql
- fi
+ }
 
- if [[ ${continue} == true ]] ; then
+ if ( ${Script:continue} ) {
   echo "log4db2 was installed successfully"
- else
+ } else {
   echo "Check the error(s) and reinstall the utility"
- fi
+ }
 }
 
 # DB2 v9.7
 function v9.7() {
  echo "Installing utility for DB2 v9.7"
- [ ${continue} == true ] && installScript ${SRC_MAIN_CODE_PATH}/Tables_v9_7.sql
- [ ${continue} == true ] && installScript ${SRC_MAIN_CODE_PATH}/UtilityHeader.sql
- [ ${continue} == true ] && installScript ${SRC_MAIN_CODE_PATH}/UtilityBody.sql
- [ ${continue} == true ] && installScript ${SRC_MAIN_CODE_PATH}/AdminHeader.sql
- [ ${continue} == true ] && installScript ${SRC_MAIN_CODE_PATH}/AdminBody.sql
- [ ${continue} == true ] && installScript ${SRC_MAIN_CODE_PATH}/Appenders.sql
- [ ${continue} == true ] && installScript ${SRC_MAIN_CODE_PATH}/LOG.sql
- [ ${continue} == true ] && installScript ${SRC_MAIN_CODE_PATH}/GET_LOGGER_v9_7.sql
- [ ${continue} == true ] && installScript ${SRC_MAIN_CODE_PATH}/Trigger.sql
+ if ( ${Script:continue} ) { installScript ${SRC_MAIN_CODE_PATH}\Tables_v9_7.sql }
+ if ( ${Script:continue} ) { installScript ${SRC_MAIN_CODE_PATH}\UtilityHeader.sql }
+ if ( ${Script:continue} ) { installScript ${SRC_MAIN_CODE_PATH}\UtilityBody.sql }
+ if ( ${Script:continue} ) { installScript ${SRC_MAIN_CODE_PATH}\AdminHeader.sql }
+ if ( ${Script:continue} ) { installScript ${SRC_MAIN_CODE_PATH}\AdminBody.sql }
+ if ( ${Script:continue} ) { installScript ${SRC_MAIN_CODE_PATH}\Appenders.sql }
+ if ( ${Script:continue} ) { installScript ${SRC_MAIN_CODE_PATH}\LOG.sql }
+ if ( ${Script:continue} ) { installScript ${SRC_MAIN_CODE_PATH}\GET_LOGGER_v9_7.sql }
+ if ( ${Script:continue} ) { installScript ${SRC_MAIN_CODE_PATH}\Trigger.sql }
 
- if [[ ${continue} == true ]] ; then
+  if ( ${Script:continue} ) {
   echo "log4db2 was installed successfully"
- else
+ } else {
   echo "Check the error(s) and reinstall the utility"
- fi
+ }
 }
 
-function version() {
- if [[ -x init ]] ; then
-  . ./init
- fi
+function version($p1, $p2) {
+ if ( Test-Path -Path init.ps1 -PathType Leaf ) {
+  .\init.ps1
+ }
 
  # Checks in which DB2 version the utility will be installed.
  # DB2 v10.1 is the default version.
- if [[ ${1} == "" ]] ; then
+ if ( ! ( ${p1} ) ) {
   v10.1
- elif [[ ${1} == "t" ]] ; then
+ } elseif ( ${p1} -eq "t" ) {
   v10.1 t
- elif [[ ${1} == "-v10.1" ]] ; then
-  if [[ ${2} == "" ]] ; then
+ } elseif ( ${p1} -eq "-v10_1" ) {
+  if ( ! ( ${p2} ) ) {
    v10.1
-  elif [[ ${2} == "t" ]] ; then
+  } elseif ( ${p2} -eq "t" ) {
    v10.1 t
-  else
+  } else {
    echo ERROR
-  fi
- elif [[ ${1} == "-v9.7" ]] ; then
+  }
+ } elseif ( ${p1} -eq "-v9_7" ) {
   v9.7
- else
+ } else {
   echo ERROR
- fi
+ }
 }
 
 # Checks if there is already a connection established
-db2 connect > /dev/null
-if [[ ${?} -eq 0 ]] ; then
- version ${1} ${2}
-else
+db2 connect | Out-Null
+if ( $LastExitCode -eq 0 ) {
+ version $Args[0] $Args[1]
+} else {
  echo "Please connect to a database before the execution of the installation."
- echo "Remember that to call the script the command is '. ./install'"
-fi
+ echo "Load the DB2 profile with: set-item -path env:DB2CLP -value `"**`$$**`""
+}
 
