@@ -211,6 +211,11 @@ ALTER MODULE LOGGER ADD
     WHERE C.LOGGER_ID = LOG_ID
     WITH UR;
 
+  -- LOG_ID could not exist
+  IF (CURRENT_LEVEL_ID IS NULL) THEN
+   SET CURRENT_LEVEL_ID = DEFAULT_LEVEL;
+   SET HIERARCHY = '0';
+  END IF;
   -- Checks if the current level is at least equal to the provided level.
   IF (CURRENT_LEVEL_ID >= LEV_ID AND LEV_ID > 0) THEN
    -- Internal logging.
@@ -274,8 +279,6 @@ ALTER MODULE LOGGER ADD
      GET DIAGNOSTICS NESTING_LEVEL = DB2_SQL_NESTING_LEVEL;
      SET NEW_MESSAGE = REPLACE(NEW_MESSAGE, '%L', NESTING_LEVEL);
      -- Inserts the logger name.
-     -- PERF: Coalesce could be deleted, get_logger_name always return
-     -- something.
      SET NEW_MESSAGE = REPLACE(NEW_MESSAGE, '%c', 
        COALESCE(GET_LOGGER_NAME(LOG_ID), 'No name'));
      -- Inserts the message.
