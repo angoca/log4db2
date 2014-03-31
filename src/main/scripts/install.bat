@@ -64,6 +64,8 @@ goto:eof
  if %continue% EQU 1 call:installScript %SRC_MAIN_CODE_PATH%\AdminHeader.sql
  if %continue% EQU 1 call:installScript %SRC_MAIN_CODE_PATH%\AdminBody.sql
 
+ if %continue% EQU 1 call:installScript %SRC_MAIN_CODE_PATH%\AppendersXML.sql
+
  :: Temporal capabilities for tables.
  if "%1" EQU "t" if %continue% EQU 1 (
   echo "Create table for Time Travel"
@@ -83,12 +85,15 @@ goto:eof
  if %continue% EQU 1 call:installScript %SRC_MAIN_CODE_PATH%\Tables_v9_7.sql
  if %continue% EQU 1 call:installScript %SRC_MAIN_CODE_PATH%\UtilityHeader.sql
  if %continue% EQU 1 call:installScript %SRC_MAIN_CODE_PATH%\UtilityBody.sql
- if %continue% EQU 1 call:installScript %SRC_MAIN_CODE_PATH%\AdminHeader.sql
- if %continue% EQU 1 call:installScript %SRC_MAIN_CODE_PATH%\AdminBody.sql
  if %continue% EQU 1 call:installScript %SRC_MAIN_CODE_PATH%\Appenders.sql
  if %continue% EQU 1 call:installScript %SRC_MAIN_CODE_PATH%\LOG.sql
  if %continue% EQU 1 call:installScript %SRC_MAIN_CODE_PATH%\GET_LOGGER.sql
  if %continue% EQU 1 call:installScript %SRC_MAIN_CODE_PATH%\Trigger.sql
+
+ if %continue% EQU 1 call:installScript %SRC_MAIN_CODE_PATH%\AdminHeader.sql
+ if %continue% EQU 1 call:installScript %SRC_MAIN_CODE_PATH%\AdminBody.sql
+
+ if %continue% EQU 1 call:installScript %SRC_MAIN_CODE_PATH%\AppendersXML.sql
 
  if %continue% EQU 1 (
   echo "log4db2 was installed successfully"

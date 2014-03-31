@@ -53,6 +53,8 @@ function v10.1($p1) {
  if ( ${Script:continue} ) { installScript ${SRC_MAIN_CODE_PATH}\AdminHeader.sql }
  if ( ${Script:continue} ) { installScript ${SRC_MAIN_CODE_PATH}\AdminBody.sql }
 
+ if ( ${Script:continue} ) { installScript ${SRC_MAIN_CODE_PATH}\Appenders.sql }
+
  # Temporal capabilities for tables.
  if ( ( ${p1} -eq "t" ) -and ( ${Script:continue} ) ) {
   echo "Create table for Time Travel"
@@ -73,11 +75,14 @@ function v9.7() {
  if ( ${Script:continue} ) { installScript ${SRC_MAIN_CODE_PATH}\UtilityHeader.sql }
  if ( ${Script:continue} ) { installScript ${SRC_MAIN_CODE_PATH}\UtilityBody.sql }
  if ( ${Script:continue} ) { installScript ${SRC_MAIN_CODE_PATH}\AdminHeader.sql }
- if ( ${Script:continue} ) { installScript ${SRC_MAIN_CODE_PATH}\AdminBody.sql }
- if ( ${Script:continue} ) { installScript ${SRC_MAIN_CODE_PATH}\Appenders.sql }
  if ( ${Script:continue} ) { installScript ${SRC_MAIN_CODE_PATH}\LOG.sql }
  if ( ${Script:continue} ) { installScript ${SRC_MAIN_CODE_PATH}\GET_LOGGER_v9_7.sql }
  if ( ${Script:continue} ) { installScript ${SRC_MAIN_CODE_PATH}\Trigger.sql }
+
+ if ( ${Script:continue} ) { installScript ${SRC_MAIN_CODE_PATH}\AdminBody.sql }
+ if ( ${Script:continue} ) { installScript ${SRC_MAIN_CODE_PATH}\Appenders.sql }
+
+ if ( ${Script:continue} ) { installScript ${SRC_MAIN_CODE_PATH}\Appenders.sql }
 
   if ( ${Script:continue} ) {
   echo "log4db2 was installed successfully"
