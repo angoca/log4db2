@@ -40,7 +40,7 @@ SET PATH = SYSPROC, LOGGER_1B @
 
 -- Configuration
 
-REGISTER XMLSCHEMA 'conf_appender.xsd' FROM '../xml/conf_appender.xsd' AS CONF_APPENDERS@
+REGISTER XMLSCHEMA 'conf_appender.xsd' FROM 'conf_appender.xsd' AS CONF_APPENDERS@
 
 COMPLETE XMLSCHEMA CONF_APPENDERS @
 
