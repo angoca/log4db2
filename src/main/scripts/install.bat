@@ -64,7 +64,12 @@ goto:eof
  if %continue% EQU 1 call:installScript %SRC_MAIN_CODE_PATH%\AdminHeader.sql
  if %continue% EQU 1 call:installScript %SRC_MAIN_CODE_PATH%\AdminBody.sql
 
+ cd %SRC_MAIN_CODE_PATH%
+ cd ..
+ cd xml
  if %continue% EQU 1 call:installScript %SRC_MAIN_CODE_PATH%\AppendersXML.sql
+ cd ..
+ cd scripts > NUL
 
  :: Temporal capabilities for tables.
  if "%1" EQU "t" if %continue% EQU 1 (
@@ -93,7 +98,12 @@ goto:eof
  if %continue% EQU 1 call:installScript %SRC_MAIN_CODE_PATH%\AdminHeader.sql
  if %continue% EQU 1 call:installScript %SRC_MAIN_CODE_PATH%\AdminBody.sql
 
+ cd %SRC_MAIN_CODE_PATH%
+ cd ..
+ cd xml
  if %continue% EQU 1 call:installScript %SRC_MAIN_CODE_PATH%\AppendersXML.sql
+ cd ..
+ cd scripts > NUL
 
  if %continue% EQU 1 (
   echo "log4db2 was installed successfully"

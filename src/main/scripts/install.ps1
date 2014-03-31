@@ -53,7 +53,12 @@ function v10.1($p1) {
  if ( ${Script:continue} ) { installScript ${SRC_MAIN_CODE_PATH}\AdminHeader.sql }
  if ( ${Script:continue} ) { installScript ${SRC_MAIN_CODE_PATH}\AdminBody.sql }
 
+ cd ${SRC_MAIN_CODE_PATH}
+ cd ..
+ cd xml
  if ( ${Script:continue} ) { installScript ${SRC_MAIN_CODE_PATH}\Appenders.sql }
+ cd ..
+ cd scripts | Out-Null
 
  # Temporal capabilities for tables.
  if ( ( ${p1} -eq "t" ) -and ( ${Script:continue} ) ) {
@@ -82,7 +87,12 @@ function v9.7() {
  if ( ${Script:continue} ) { installScript ${SRC_MAIN_CODE_PATH}\AdminBody.sql }
  if ( ${Script:continue} ) { installScript ${SRC_MAIN_CODE_PATH}\Appenders.sql }
 
+ cd ${SRC_MAIN_CODE_PATH}
+ cd ..
+ cd xml
  if ( ${Script:continue} ) { installScript ${SRC_MAIN_CODE_PATH}\Appenders.sql }
+ cd ..
+ cd scripts | Out-Null
 
   if ( ${Script:continue} ) {
   echo "log4db2 was installed successfully"
