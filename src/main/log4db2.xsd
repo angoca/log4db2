@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<xs:schema
+xmlns:xs="http://www.w3.org/2001/XMLSchema"
+targetNamespace="http://angoca.github.io/log4db2"
+xmlns="http://angoca.github.io/log4db2"
+elementFormDefault="qualified" >
+
+
+  <!-- definition of simple elements -->
+  <xs:simpleType name="AppenderNameType" >
+   <xs:restriction base="xs:string" >
+    <xs:enumeration value="File" />
+   </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="PathType" >
+   <xs:restriction base="xs:token" >
+    <xs:pattern value="[\w\d\\/]*" />
+   </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="FileNameType" >
+   <xs:restriction base="xs:token" >
+    <xs:pattern value="[\w\d\.]*\w" />
+   </xs:restriction>
+  </xs:simpleType>
+
+  <!-- definition of complex elements -->
+  <xs:complexType name="ConfigurationType" >
+   <xs:all>
+    <xs:element name="directory" type="PathType" />
+    <xs:element name="filename" type="FileNameType" />
+   </xs:all>
+  </xs:complexType>
+
+  <xs:element name="log4db2" >
+   <xs:complexType>
+    <xs:all>
+     <xs:element name="appender" >
+      <xs:complexType>
+        <xs:all>
+         <xs:element name="name" type="AppenderNameType" />
+         <xs:element name="configuration" type="ConfigurationType" />
+       </xs:all>
+      </xs:complexType>
+     </xs:element>
+	</xs:all>
+   </xs:complexType>
+  </xs:element>
+</xs:schema>
+
