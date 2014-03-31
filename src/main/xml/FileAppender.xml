@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
 <log4db2
-xmlns="http://angoca.github.io/log4db2"
+xmlns="http://angoca.github.io/log4db2/conf_appender"
 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-xsi:schemaLocation="http://angoca.github.io/log4db2 log4db2.xsd">
+xsi:schemaLocation="http://angoca.github.io/log4db2 conf_appender.xsd">
  <appender>
   <name>File</name>
   <configuration>

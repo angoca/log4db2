@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <xs:schema
 xmlns:xs="http://www.w3.org/2001/XMLSchema"
-targetNamespace="http://angoca.github.io/log4db2"
-xmlns="http://angoca.github.io/log4db2"
+targetNamespace="http://angoca.github.io/log4db2/conf_appender"
+xmlns="http://angoca.github.io/log4db2/conf_appender"
 elementFormDefault="qualified" >
 
 
-  <!-- definition of simple elements -->
+  <!-- Definition of simple elements -->
   <xs:simpleType name="AppenderNameType" >
    <xs:restriction base="xs:string" >
     <xs:enumeration value="File" />
@@ -25,7 +25,7 @@ elementFormDefault="qualified" >
    </xs:restriction>
   </xs:simpleType>
 
-  <!-- definition of complex elements -->
+  <!-- Definition of complex elements -->
   <xs:complexType name="ConfigurationType" >
    <xs:all>
     <xs:element name="directory" type="PathType" />
