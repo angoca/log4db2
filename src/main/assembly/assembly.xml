@@ -60,6 +60,15 @@
    <fileMode>0777</fileMode>
    <outputDirectory>/</outputDirectory>
   </fileSet>
+  <!-- XML files -->
+  <fileSet>
+   <directory>src/main/xml</directory>
+   <includes>
+    <include>**/*</include>
+   </includes>
+   <fileMode>0666</fileMode>
+   <outputDirectory>xml</outputDirectory>
+  </fileSet>
   <!-- Documentation directory (with its license)-->
   <fileSet>
    <directory>doc</directory>
