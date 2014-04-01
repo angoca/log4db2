@@ -306,7 +306,7 @@ ALTER MODULE LOGGER ADD
        -- Put here any other appender.
        -- <<<
        ELSE -- By default writes in the table.
-         CALL LOG_SQL(LOG_ID, LEV_ID, NEW_MESSAGE);
+         CALL LOG_TABLES(LOG_ID, LEV_ID, NEW_MESSAGE);
      END CASE;
     ELSE
        -- Internal logging.
@@ -321,7 +321,7 @@ ALTER MODULE LOGGER ADD
    CLOSE REFERENCES;
   ELSEIF (LOG_ID = -1) THEN
    -- When the logger id is -1, this is for internal logging.
-   CALL LOG_SQL(LOG_ID, LEV_ID, MESSAGE);
+   CALL LOG_TABLES(LOG_ID, LEV_ID, MESSAGE);
   END IF;
 END P_LOG @
 
