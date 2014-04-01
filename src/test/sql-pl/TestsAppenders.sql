@@ -162,10 +162,10 @@ COMMIT;
 INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES (3, 'TestsAppenders: Cleaning environment');
 DELETE FROM LOGDATA.APPENDERS;
 INSERT INTO LOGDATA.APPENDERS (APPENDER_ID, NAME)
-  VALUES (1, 'Pure SQL PL - Tables'),
+  VALUES (1, 'Tables'),
          (2, 'db2diag.log'),
          (3, 'UTL_FILE'),
-         (4, 'DB2 logger'),
+         (4, 'DB2LOGGER'),
          (5, 'Java logger');
 INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES (3, 'TestsAppenders: Finished succesfully');
 COMMIT;

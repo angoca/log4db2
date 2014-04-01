@@ -185,7 +185,8 @@ CREATE TABLE CONF_APPENDERS (
   NAME CHAR(32),
   APPENDER_ID SMALLINT NOT NULL,
   CONFIGURATION XML,
-  PATTERN VARCHAR(256) NOT NULL
+  PATTERN VARCHAR(256) NOT NULL,
+  LEVEL_ID SMALLINT
   ) IN LOGGER_SPACE;
 
 ALTER TABLE CONF_APPENDERS ADD CONSTRAINT LOG_CONF_APPEND_PK PRIMARY KEY (REF_ID);
@@ -194,6 +195,8 @@ ALTER TABLE CONF_APPENDERS ALTER COLUMN REF_ID SET GENERATED ALWAYS AS IDENTITY 
 
 ALTER TABLE CONF_APPENDERS ADD CONSTRAINT LOG_CONF_APPEND_FK_APPEND FOREIGN KEY (APPENDER_ID) REFERENCES APPENDERS (APPENDER_ID) ON DELETE CASCADE;
 
+ALTER TABLE CONF_APPENDERS ADD CONSTRAINT LOG_CONF_APPEND_FK_LEVELS FOREIGN KEY (LEVEL_ID) REFERENCES LEVELS (LEVEL_ID) ON DELETE CASCADE;
+
 COMMENT ON TABLE CONF_APPENDERS IS 'Configuration about how to write the logs';
 
 COMMENT ON CONF_APPENDERS (
@@ -201,7 +204,8 @@ COMMENT ON CONF_APPENDERS (
   NAME IS 'Alias of the configuration to write the logs',
   APPENDER_ID IS 'Id of the appender where the logs will be written',
   CONFIGURATION IS 'Configuration of the appender',
-  PATTERN IS 'Pattern to write the message in the log'
+  PATTERN IS 'Pattern to write the message in the log',
+  LEVEL_ID IS 'Minimum level to log'
   );
 
 -- Table for the loggers and appenders association.
@@ -223,7 +227,7 @@ COMMENT ON REFERENCES (
   APPENDER_REF_ID IS 'Appender used to write the log'
   );
 
--- Table for the pure SQL appender.
+-- Table for the pure SQL Tables appender.
 -- TODO make tests in order to check in a auto generated column for an id
 -- does not impact the performance, and provides a better way to sort messages.
 -- This ID column could be hidden to the user. The benefic is that the logs
@@ -288,16 +292,19 @@ INSERT INTO CONF_LOGGERS_EFFECTIVE (LOGGER_ID, LEVEL_ID, HIERARCHY)
 
 -- Basic appenders.
 INSERT INTO APPENDERS (APPENDER_ID, NAME)
-  VALUES (1, 'Pure SQL PL - Tables'),
+  VALUES (1, 'Tables'),
          (2, 'db2diag.log'),
          (3, 'UTL_FILE'),
-         (4, 'DB2 logger'),
+         (4, 'DB2LOGGER'),
          (5, 'Java logger');
 
 -- Configuration for included appender.
 INSERT INTO CONF_APPENDERS (NAME, APPENDER_ID, CONFIGURATION,
   PATTERN)
-  VALUES ('DB2 Tables', 1, NULL, '[%p] %c - %m');
+  VALUES ('Tables', 1, NULL, '[%p] %c - %m');
+INSERT INTO CONF_APPENDERS (NAME, APPENDER_ID, CONFIGURATION,
+  PATTERN)
+  VALUES ('DB2LOGGER', 2, NULL, '[%p] %c - %m');
 
 -- Configuration for appender - logger.
 INSERT INTO REFERENCES (LOGGER_ID, APPENDER_REF_ID)

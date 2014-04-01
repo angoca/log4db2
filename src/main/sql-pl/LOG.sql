@@ -293,7 +293,7 @@ ALTER MODULE LOGGER ADD
          INSERT INTO LOGDATA.LOGS (LEVEL_ID, LOGGER_ID, MESSAGE) VALUES 
            (4, -1, 'Logging in tables');
         END IF;
-         CALL LOG_SQL(LOG_ID, LEV_ID, NEW_MESSAGE);
+         CALL LOG_TABLES(LOG_ID, LEV_ID, NEW_MESSAGE);
        WHEN 2 THEN -- Writes in the db2diag.log file via a function.
          CALL LOG_DB2DIAG(LOG_ID, LEV_ID, NEW_MESSAGE, CONFIGURATION);
        WHEN 3 THEN -- Writes in a file (Not available in express-c edition.)

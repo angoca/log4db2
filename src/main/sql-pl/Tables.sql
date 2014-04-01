@@ -225,7 +225,7 @@ COMMENT ON REFERENCES (
   APPENDER_REF_ID IS 'Appender used to write the log'
   );
 
--- Table for the pure SQL appender.
+-- Table for the pure SQL Tables appender.
 -- TODO make tests in order to check in a auto generated column for an id
 -- does not impact the performance, and provides a better way to sort messages.
 -- This ID column could be hidden to the user. The benefic is that the logs
@@ -290,16 +290,19 @@ INSERT INTO CONF_LOGGERS_EFFECTIVE (LOGGER_ID, LEVEL_ID, HIERARCHY)
 
 -- Basic appenders.
 INSERT INTO APPENDERS (APPENDER_ID, NAME)
-  VALUES (1, 'Pure SQL PL - Tables'),
+  VALUES (1, 'Tables'),
          (2, 'db2diag.log'),
          (3, 'UTL_FILE'),
-         (4, 'DB2 logger'),
+         (4, 'DB2LOGGER'),
          (5, 'Java logger');
 
 -- Configuration for included appender.
 INSERT INTO CONF_APPENDERS (NAME, APPENDER_ID, CONFIGURATION,
   PATTERN)
-  VALUES ('DB2 Tables', 1, NULL, '[%p] %c - %m');
+  VALUES ('Tables', 1, NULL, '[%p] %c - %m');
+INSERT INTO CONF_APPENDERS (NAME, APPENDER_ID, CONFIGURATION,
+  PATTERN)
+  VALUES ('DB2LOGGER', 2, NULL, '[%p] %c - %m');
 
 -- Configuration for appender - logger.
 INSERT INTO REFERENCES (LOGGER_ID, APPENDER_REF_ID)
