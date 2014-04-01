@@ -115,8 +115,14 @@ ALTER MODULE LOGGER PUBLISH
   ) @
 
 /**
- * TODO Writes the provided message in the DB2LOGGER. This is an external logging
- * facility implemented in C, and that has only two levels for loggers. PUBLISH to ADD.
+ * Handle for DB2Logger.
+ */
+ALTER MODULE LOGGER PUBLISH
+  VARIABLE DB2LOGGER_HANDLER CHAR(160) FOR BIT DATA @
+
+/**
+ * Writes the provided message in the DB2LOGGER. This is an external logging
+ * facility implemented in C, and that has only two levels for loggers.
  * 
  * For more information: 
  * - http://www.ibm.com/developerworks/data/library/techarticle/dm-0601khatri/
@@ -129,15 +135,33 @@ ALTER MODULE LOGGER PUBLISH
  * IN MESSAGE
  *   Descriptive message to write in the log table.
  * IN CONFIGURATION
- *   TODO Any particular configuration for the logger. 
+ *   Any particular configuration for the logger. Not used for the moment.
  */
-ALTER MODULE LOGGER PUBLISH 
+ALTER MODULE LOGGER ADD 
   PROCEDURE LOG_DB2LOGGER (
   IN LOGGER_ID ANCHOR LOGDATA.CONF_LOGGERS.LOGGER_ID,
   IN LEVEL_ID ANCHOR LOGDATA.LEVELS.LEVEL_ID,
   IN MESSAGE ANCHOR LOGDATA.LOGS.MESSAGE,
   IN CONFIGURATION ANCHOR LOGDATA.CONF_APPENDERS.CONFIGURATION
-  ) @
+  ) 
+  LANGUAGE SQL
+  SPECIFIC P_LOGS_DB2LOGGER
+  DYNAMIC RESULT SETS 0
+  MODIFIES SQL DATA
+  NOT DETERMINISTIC
+  --AUTONOMOUS
+  NO EXTERNAL ACTION
+  PARAMETER CCSID UNICODE
+ P_LOG_DB2LOGGER: BEGIN
+  DECLARE STMT STATEMENT;
+
+  IF (LEVEL_ID <= 3) THEN
+   PREPARE STMT FROM 'CALL DB2.LOGINFO(?, ?)';
+  ELSE
+   PREPARE STMT FROM 'CALL DB2.LOGGER(?, ?)';
+  END IF;
+  EXECUTE STMT USING DB2LOGGER_HANDLER, MESSAGE;
+ END P_LOG_DB2LOGGER  @
 
 /**
  * TODO Writes the provided message in the Java configured facility. This
