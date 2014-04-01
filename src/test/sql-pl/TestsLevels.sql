@@ -118,8 +118,8 @@ DELETE FROM LOGDATA.LEVELS
    WHERE LEVEL_ID = 1;
 COMMIT;
 
--- Test1: Inserts a new level.
-INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES (3, 'Test1: Inserts a new level');
+-- Test01: Inserts a new level.
+INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES (3, 'Test01: Inserts a new level');
 SET EXPECTED_LEVEL_ID = 1;
 SET EXPECTED_NAME = 'ON';
 DELETE FROM LOGDATA.LEVELS
@@ -136,8 +136,8 @@ IF (EXPECTED_NAME <> ACTUAL_NAME) THEN
 END IF;
 COMMIT;
 
--- Test2: Inserts a new level with null name.
-INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES (3, 'Test2: Inserts a new level with null name');
+-- Test02: Inserts a new level with null name.
+INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES (3, 'Test02: Inserts a new level with null name');
 SET EXPECTED_LEVEL_ID = 1;
 SET EXPECTED_NAME = NULL;
 DELETE FROM LOGDATA.LEVELS
@@ -151,8 +151,8 @@ END IF;
 SET RAISED_407 = FALSE;
 COMMIT;
 
--- Test3: Inserts a new level with null id.
-INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES (3, 'Test3: Inserts a new level with null id');
+-- Test03: Inserts a new level with null id.
+INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES (3, 'Test03: Inserts a new level with null id');
 SET EXPECTED_LEVEL_ID = NULL;
 SET EXPECTED_NAME = 'ON';
 DELETE FROM LOGDATA.LEVELS
@@ -166,8 +166,8 @@ END IF;
 SET RAISED_407 = FALSE;
 COMMIT;
 
--- Test4: Inserts a new level with negative id.
-INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES (3, 'Test4: Inserts a new level with negative id');
+-- Test04: Inserts a new level with negative id.
+INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES (3, 'Test04: Inserts a new level with negative id');
 SET EXPECTED_LEVEL_ID = -1;
 SET EXPECTED_NAME = 'test4';
 DELETE FROM LOGDATA.LEVELS
@@ -181,8 +181,8 @@ END IF;
 SET RAISED_LG0L1 = FALSE;
 COMMIT;
 
--- Test5: Inserts a new level with duplicated 0.
-INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES (3, 'Test5: Inserts a new level with duplicated 0');
+-- Test05: Inserts a new level with duplicated 0.
+INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES (3, 'Test05: Inserts a new level with duplicated 0');
 SET EXPECTED_LEVEL_ID = 0;
 SET EXPECTED_NAME = 'test5';
 DELETE FROM LOGDATA.LEVELS
@@ -196,8 +196,8 @@ END IF;
 SET RAISED_LG0L2 = FALSE;
 COMMIT;
 
--- Test6: Inserts a new level with duplicated id.
-INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES (3, 'Test6: Inserts a new level with duplicated id');
+-- Test06: Inserts a new level with duplicated id.
+INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES (3, 'Test06: Inserts a new level with duplicated id');
 SET EXPECTED_LEVEL_ID = 1;
 SET EXPECTED_NAME = 'test6';
 DELETE FROM LOGDATA.LEVELS
@@ -212,8 +212,8 @@ END IF;
 SET RAISED_LG0L2 = FALSE;
 COMMIT;
 
--- Test7: Inserts three level.
-INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES (3, 'Test7: Inserts three level');
+-- Test07: Inserts three level.
+INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES (3, 'Test07: Inserts three level');
 SET EXPECTED_LEVEL_ID = 4;
 SET EXPECTED_NAME = 'C3';
 DELETE FROM LOGDATA.LEVELS
@@ -238,8 +238,8 @@ DELETE FROM LOGDATA.LEVELS
   WHERE LEVEL_ID = 1;
 COMMIT;
 
--- Test8: Updates a level name.
-INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES (3, 'Test8: Updates a level name');
+-- Test08: Updates a level name.
+INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES (3, 'Test08: Updates a level name');
 SET EXPECTED_LEVEL_ID = 1;
 SET EXPECTED_NAME = 'ON';
 DELETE FROM LOGDATA.LEVELS
@@ -259,8 +259,8 @@ IF (EXPECTED_NAME <> ACTUAL_NAME) THEN
 END IF;
 COMMIT;
 
--- Test9: Updates a level id to 0.
-INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES (3, 'Test9: Updates a id to 0');
+-- Test09: Updates a level id to 0.
+INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES (3, 'Test09: Updates a id to 0');
 SET EXPECTED_LEVEL_ID = 1;
 SET EXPECTED_NAME = 'ON';
 DELETE FROM LOGDATA.LEVELS

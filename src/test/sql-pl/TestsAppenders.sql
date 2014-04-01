@@ -66,15 +66,15 @@ SET RAISED_407 = FALSE;
 DELETE FROM LOGDATA.APPENDERS;
 COMMIT;
 
--- Test1: Inserts a normal appender configuration.
-INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES (3, 'Test1: Inserts a normal appender configuration');
+-- Test01: Inserts a normal appender configuration.
+INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES (3, 'Test01: Inserts a normal appender configuration');
 DELETE FROM LOGDATA.APPENDERS;
 INSERT INTO LOGDATA.APPENDERS (APPENDER_ID, NAME) VALUES
   (1, 'test1');
 COMMIT;
 
--- Test2: Inserts an appender with null appender_id.
-INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES (3, 'Test2: Inserts an appender with null appender_id');
+-- Test02: Inserts an appender with null appender_id.
+INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES (3, 'Test02: Inserts an appender with null appender_id');
 DELETE FROM LOGDATA.APPENDERS;
 INSERT INTO LOGDATA.APPENDERS (APPENDER_ID, NAME) VALUES
   (NULL, 'test2');
@@ -86,8 +86,8 @@ END IF;
 SET RAISED_407 = FALSE;
 COMMIT;
 
--- Test3: Inserts an appender with negative appender_id.
-INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES (3, 'Test3: Inserts an appender with negative appender_id');
+-- Test03: Inserts an appender with negative appender_id.
+INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES (3, 'Test03: Inserts an appender with negative appender_id');
 DELETE FROM LOGDATA.APPENDERS;
 INSERT INTO LOGDATA.APPENDERS (APPENDER_ID, NAME) VALUES
   (-1, 'test3');
@@ -99,8 +99,8 @@ END IF;
 SET RAISED_LG0A1 = FALSE;
 COMMIT;
 
--- Test4: Updates an appender with null appender_id.
-INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES (3, 'Test4: Updates an appender with null appender_id');
+-- Test04: Updates an appender with null appender_id.
+INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES (3, 'Test04: Updates an appender with null appender_id');
 DELETE FROM LOGDATA.APPENDERS;
 INSERT INTO LOGDATA.APPENDERS (APPENDER_ID, NAME) VALUES
   (4, 'test4');
@@ -115,8 +115,8 @@ END IF;
 SET RAISED_407 = FALSE;
 COMMIT;
 
--- Test5: Updates an appender with negative appender_id.
-INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES (3, 'Test5: Updates an appender with negative appender_id');
+-- Test05: Updates an appender with negative appender_id.
+INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES (3, 'Test05: Updates an appender with negative appender_id');
 DELETE FROM LOGDATA.APPENDERS;
 INSERT INTO LOGDATA.APPENDERS (APPENDER_ID, NAME) VALUES
   (5, 'test5');
@@ -131,8 +131,8 @@ END IF;
 SET RAISED_LG0A1 = FALSE;
 COMMIT;
 
--- Test6: Updates an appender normally.
-INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES (3, 'Test6: Updates an appender normally');
+-- Test06: Updates an appender normally.
+INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES (3, 'Test06: Updates an appender normally');
 DELETE FROM LOGDATA.APPENDERS;
 INSERT INTO LOGDATA.APPENDERS (APPENDER_ID, NAME) VALUES
   (6, 'test6');
@@ -141,8 +141,8 @@ UPDATE LOGDATA.APPENDERS
   WHERE APPENDER_ID = 6;
 COMMIT;
 
--- Test7: Deletes an appender normally.
-INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES (3, 'Test7: Deletes an appender normally');
+-- Test07: Deletes an appender normally.
+INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES (3, 'Test07: Deletes an appender normally');
 DELETE FROM LOGDATA.APPENDERS;
 INSERT INTO LOGDATA.APPENDERS (APPENDER_ID, NAME) VALUES
   (7, 'test7');
@@ -150,8 +150,8 @@ DELETE FROM LOGDATA.APPENDERS
   WHERE APPENDER_ID = 7;
 COMMIT;
 
--- Test8: Deletes all appenders.
-INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES (3, 'Test8: Deletes all appenders');
+-- Test08: Deletes all appenders.
+INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES (3, 'Test08: Deletes all appenders');
 DELETE FROM LOGDATA.APPENDERS;
 INSERT INTO LOGDATA.APPENDERS (APPENDER_ID, NAME) VALUES
   (8, 'test8');

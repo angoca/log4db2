@@ -70,8 +70,8 @@ SET RAISED_803 = FALSE;
 DELETE FROM LOGDATA.CONFIGURATION;
 COMMIT;
 
--- Test1: Inserts a normal key/value.
-INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES (3, 'Test1: Inserts a normal key/value');
+-- Test01: Inserts a normal key/value.
+INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES (3, 'Test01: Inserts a normal key/value');
 SET EXPECTED_KEY = 'test1';
 SET EXPECTED_VALUE = 'val1';
 DELETE FROM LOGDATA.CONFIGURATION;
@@ -86,8 +86,8 @@ IF (EXPECTED_VALUE <> ACTUAL_VALUE) THEN
 END IF;
 COMMIT;
 
--- Test2: Inserts a key/value with null key.
-INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES (3, 'Test2: Inserts a key/value with null key');
+-- Test02: Inserts a key/value with null key.
+INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES (3, 'Test02: Inserts a key/value with null key');
 SET EXPECTED_KEY = NULL;
 SET EXPECTED_VALUE = 'val2';
 DELETE FROM LOGDATA.CONFIGURATION;
@@ -100,8 +100,8 @@ END IF;
 SET RAISED_407 = FALSE;
 COMMIT;
 
--- Test3: Inserts a key/value with null value.
-INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES (3, 'Test3: Inserts a key/value with null value');
+-- Test03: Inserts a key/value with null value.
+INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES (3, 'Test03: Inserts a key/value with null value');
 SET EXPECTED_KEY = 'test3';
 SET EXPECTED_VALUE = NULL;
 DELETE FROM LOGDATA.CONFIGURATION;
@@ -116,8 +116,8 @@ IF (EXPECTED_VALUE <> ACTUAL_VALUE) THEN
 END IF;
 COMMIT;
 
--- Test4: Inserts a key/value with all null.
-INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES (3, 'Test4: Inserts a key/value with all null');
+-- Test04: Inserts a key/value with all null.
+INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES (3, 'Test04: Inserts a key/value with all null');
 SET EXPECTED_KEY = NULL;
 SET EXPECTED_VALUE = NULL;
 DELETE FROM LOGDATA.CONFIGURATION;
@@ -130,8 +130,8 @@ END IF;
 SET RAISED_407 = FALSE;
 COMMIT;
 
--- Test5: Inserts a duplicated key/value.
-INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES (3, 'Test5: Inserts a duplicated key/value');
+-- Test05: Inserts a duplicated key/value.
+INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES (3, 'Test05: Inserts a duplicated key/value');
 SET EXPECTED_KEY = 'test5';
 SET EXPECTED_VALUE = 'val5';
 DELETE FROM LOGDATA.CONFIGURATION;
@@ -145,8 +145,8 @@ END IF;
 SET RAISED_803= FALSE;
 COMMIT;
 
--- Test6: Updates to a normal key/value.
-INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES (3, 'Test6: Updates to a normal key/value');
+-- Test06: Updates to a normal key/value.
+INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES (3, 'Test06: Updates to a normal key/value');
 SET EXPECTED_KEY = 'test6';
 SET EXPECTED_VALUE = 'val6u';
 DELETE FROM LOGDATA.CONFIGURATION;
@@ -164,8 +164,8 @@ IF (EXPECTED_VALUE <> ACTUAL_VALUE) THEN
 END IF;
 COMMIT;
 
--- Test7: Updates to a normal key/value to null value.
-INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES (3, 'Test7: Updates to a normal key/value to null value');
+-- Test07: Updates to a normal key/value to null value.
+INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES (3, 'Test07: Updates to a normal key/value to null value');
 SET EXPECTED_KEY = 'test7';
 SET EXPECTED_VALUE = NULL;
 DELETE FROM LOGDATA.CONFIGURATION;
@@ -183,8 +183,8 @@ IF (EXPECTED_VALUE <> ACTUAL_VALUE) THEN
 END IF;
 COMMIT;
 
--- Test8: Updates to a normal key/value to null key.
-INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES (3, 'Test8: Updates to a normal key/value to null key');
+-- Test08: Updates to a normal key/value to null key.
+INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES (3, 'Test08: Updates to a normal key/value to null key');
 SET EXPECTED_KEY = NULL;
 SET EXPECTED_VALUE = 'val8';
 DELETE FROM LOGDATA.CONFIGURATION;
@@ -200,8 +200,8 @@ END IF;
 SET RAISED_407 = FALSE;
 COMMIT;
 
--- Test9: Updates to a duplicated key/value.
-INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES (3, 'Test9: Updates to a duplicated key/value');
+-- Test09: Updates to a duplicated key/value.
+INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES (3, 'Test09: Updates to a duplicated key/value');
 SET EXPECTED_KEY = 'test9b';
 SET EXPECTED_VALUE = 'val9';
 DELETE FROM LOGDATA.CONFIGURATION;

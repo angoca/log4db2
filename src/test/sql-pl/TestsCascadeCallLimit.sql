@@ -109,8 +109,8 @@ UPDATE LOGDATA.CONF_LOGGERS
   WHERE LOGGER_ID = 0;
 COMMIT;
 
--- Test1: Limit logging to ROOT with fatal.
-INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES (3, 'Test1: Limit logging to ROOT with fatal');
+-- Test01: Limit logging to ROOT with fatal.
+INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES (3, 'Test01: Limit logging to ROOT with fatal');
 SET EXPECTED = 'TRUE';
 SET CASCADE = VAL_62;
 CALL LOGGING(1, 1, CASCADE);
@@ -123,8 +123,8 @@ IF (ACTUAL IS NULL OR EXPECTED <> ACTUAL) THEN
 END IF;
 COMMIT;
 
--- Test2: Limit achieved logging to ROOT with fatal.
-INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES (3, 'Test2: Limit achieved logging to ROOT with fatal');
+-- Test02: Limit achieved logging to ROOT with fatal.
+INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES (3, 'Test02: Limit achieved logging to ROOT with fatal');
 SET EXPECTED = 'TRUE';
 SET CASCADE = MIN_61A;
 CALL LOGGING(1, 1, CASCADE);
@@ -144,8 +144,8 @@ IF (EXPECTED <> ACTUAL) THEN
 END IF;
 COMMIT;
 
--- Test3: Limit passed logging to ROOT with fatal.
-INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES (3, 'Test3: Limit passed logging to ROOT with fatal');
+-- Test03: Limit passed logging to ROOT with fatal.
+INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES (3, 'Test03: Limit passed logging to ROOT with fatal');
 SET EXPECTED = 'TRUE';
 SET CASCADE = MIN_61;
 CALL LOGGING(1, 1, CASCADE);
@@ -166,8 +166,8 @@ DELETE FROM LOGS L
   WHERE MESSAGE LIKE 'LG001. Cascade call limit achieve, for %';
 COMMIT;
 
--- Test4: Cascade call limit with fatal.
-INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES (3, 'Test4: Cascade call limit with fatal');
+-- Test04: Cascade call limit with fatal.
+INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES (3, 'Test04: Cascade call limit with fatal');
 SET EXPECTED = 'TRUE';
 SET CASCADE = MIN_63;
 CALL LOGGING(1, 1, CASCADE);
@@ -179,8 +179,8 @@ END IF;
 SET RAISED_724 = FALSE;
 COMMIT;
 
--- Test5: Limit logging to ROOT with error.
-INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES (3, 'Test5: Limit logging to ROOT with error');
+-- Test05: Limit logging to ROOT with error.
+INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES (3, 'Test05: Limit logging to ROOT with error');
 SET EXPECTED = 'TRUE';
 SET CASCADE = VAL_62;
 CALL LOGGING(1, 2, CASCADE);
@@ -193,8 +193,8 @@ IF (ACTUAL IS NULL OR EXPECTED <> ACTUAL) THEN
 END IF;
 COMMIT;
 
--- Test6: Limit achieved logging to ROOT with error.
-INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES (3, 'Test6: Limit achieved logging to ROOT with error');
+-- Test06: Limit achieved logging to ROOT with error.
+INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES (3, 'Test06: Limit achieved logging to ROOT with error');
 SET EXPECTED = 'TRUE';
 SET CASCADE = MIN_61A;
 CALL LOGGING(1, 2, CASCADE);
@@ -214,8 +214,8 @@ IF (EXPECTED <> ACTUAL) THEN
 END IF;
 COMMIT;
 
--- Test7: Limit passed logging to ROOT with error.
-INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES (3, 'Test7: Limit passed logging to ROOT with error');
+-- Test07: Limit passed logging to ROOT with error.
+INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES (3, 'Test07: Limit passed logging to ROOT with error');
 SET EXPECTED = 'TRUE';
 SET CASCADE = MIN_61;
 CALL LOGGING(1, 2, CASCADE);
@@ -236,8 +236,8 @@ DELETE FROM LOGS L
   WHERE MESSAGE LIKE 'LG001. Cascade call limit achieve, for %';
 COMMIT;
 
--- Test8: Cascade call limit with error.
-INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES (3, 'Test8: Cascade call limit with error');
+-- Test08: Cascade call limit with error.
+INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES (3, 'Test08: Cascade call limit with error');
 SET EXPECTED = 'TRUE';
 SET CASCADE = MIN_63;
 CALL LOGGING(1, 2, CASCADE);
@@ -249,8 +249,8 @@ END IF;
 SET RAISED_724 = FALSE;
 COMMIT;
 
--- Test9: Limit logging to ROOT with warn.
-INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES (3, 'Test9: Limit logging to ROOT with warn');
+-- Test09: Limit logging to ROOT with warn.
+INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES (3, 'Test09: Limit logging to ROOT with warn');
 SET EXPECTED = 'TRUE';
 SET CASCADE = VAL_62;
 CALL LOGGING(1, 3, CASCADE);

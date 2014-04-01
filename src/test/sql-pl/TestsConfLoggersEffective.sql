@@ -153,8 +153,8 @@ UPDATE LOGDATA.CONF_LOGGERS
   WHERE LOGGER_ID = 0;
 COMMIT;
 
--- Test1: Inserts a normal logger.
-INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES (3, 'Test1: Inserts a normal logger');
+-- Test01: Inserts a normal logger.
+INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES (3, 'Test01: Inserts a normal logger');
 DELETE FROM LOGDATA.CONF_LOGGERS WHERE LOGGER_ID <> 0;
 INSERT INTO LOGDATA.CONF_LOGGERS (NAME, PARENT_ID, LEVEL_ID)
   VALUES ('T1', 0, 0);
@@ -182,8 +182,8 @@ IF (EXPECTED_HIERARCHY <> ACTUAL_HIERARCHY) THEN
 END IF;
 COMMIT;
 
--- Test2: Tries to insert a logger with a null id.
-INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES (3, 'Test2: Tries to insert a logger with a null id');
+-- Test02: Tries to insert a logger with a null id.
+INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES (3, 'Test02: Tries to insert a logger with a null id');
 SET EXPECTED_LEVEL = 2;
 SET EXPECTED_HIERARCHY = '0' ;
 INSERT INTO LOGDATA.CONF_LOGGERS_EFFECTIVE (LOGGER_ID, LEVEL_ID, HIERARCHY) VALUES
@@ -196,8 +196,8 @@ END IF;
 SET RAISED_407 = FALSE;
 COMMIT;
 
--- Test3: Tries to insert a logger with a negative id.
-INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES (3, 'Test3: Tries to insert a logger with a negative id');
+-- Test03: Tries to insert a logger with a negative id.
+INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES (3, 'Test03: Tries to insert a logger with a negative id');
 SET EXPECTED_LEVEL = 4;
 SET EXPECTED_HIERARCHY = '0' ;
 INSERT INTO LOGDATA.CONF_LOGGERS_EFFECTIVE (LOGGER_ID, LEVEL_ID, HIERARCHY) VALUES
@@ -210,8 +210,8 @@ END IF;
 SET RAISED_530 = FALSE;
 COMMIT;
 
--- Test4: Tries to insert a logger with a inexistant id.
-INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES (3, 'Test4: Tries to insert a logger with a inexistant id');
+-- Test04: Tries to insert a logger with a inexistant id.
+INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES (3, 'Test04: Tries to insert a logger with a inexistant id');
 SET EXPECTED_LEVEL = 5;
 SET EXPECTED_HIERARCHY = '0,500' ;
 INSERT INTO LOGDATA.CONF_LOGGERS_EFFECTIVE (LOGGER_ID, LEVEL_ID, HIERARCHY) VALUES
@@ -224,8 +224,8 @@ END IF;
 SET RAISED_530 = FALSE;
 COMMIT;
 
--- Test5: Tries to insert a logger with a null level.
-INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES (3, 'Test5: Tries to insert a logger with a null level');
+-- Test05: Tries to insert a logger with a null level.
+INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES (3, 'Test05: Tries to insert a logger with a null level');
 DELETE FROM LOGDATA.CONF_LOGGERS WHERE LOGGER_ID <> 0;
 INSERT INTO LOGDATA.CONF_LOGGERS (NAME, PARENT_ID, LEVEL_ID)
   VALUES ('T5', 0, 0);
@@ -254,8 +254,8 @@ IF (EXPECTED_HIERARCHY <> ACTUAL_HIERARCHY) THEN
 END IF;
 COMMIT;
 
--- Test6: Tries to insert a logger with a negative level.
-INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES (3, 'Test6: Tries to insert a logger with a negative level');
+-- Test06: Tries to insert a logger with a negative level.
+INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES (3, 'Test06: Tries to insert a logger with a negative level');
 DELETE FROM LOGDATA.CONF_LOGGERS WHERE LOGGER_ID <> 0;
 INSERT INTO LOGDATA.CONF_LOGGERS (NAME, PARENT_ID, LEVEL_ID)
   VALUES ('T6', 0, 0);
@@ -284,8 +284,8 @@ IF (EXPECTED_HIERARCHY <> ACTUAL_HIERARCHY) THEN
 END IF;
 COMMIT;
 
--- Test7: Tries to insert a logger with an inexistant level.
-INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES (3, 'Test7: Tries to insert a logger with an inexistant level');
+-- Test07: Tries to insert a logger with an inexistant level.
+INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES (3, 'Test07: Tries to insert a logger with an inexistant level');
 DELETE FROM LOGDATA.CONF_LOGGERS WHERE LOGGER_ID <> 0;
 INSERT INTO LOGDATA.CONF_LOGGERS (NAME, PARENT_ID, LEVEL_ID)
   VALUES ('T7', 0, 0);
@@ -314,8 +314,8 @@ IF (EXPECTED_HIERARCHY <> ACTUAL_HIERARCHY) THEN
 END IF;
 COMMIT;
 
--- Test8: Tries to insert a logger with a null hierarchy.
-INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES (3, 'Test8: Tries to insert a logger with a null hierarchy');
+-- Test08: Tries to insert a logger with a null hierarchy.
+INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES (3, 'Test08: Tries to insert a logger with a null hierarchy');
 DELETE FROM LOGDATA.CONF_LOGGERS WHERE LOGGER_ID <> 0;
 INSERT INTO LOGDATA.CONF_LOGGERS (NAME, PARENT_ID, LEVEL_ID)
   VALUES ('T8', 0, 0);
@@ -335,8 +335,8 @@ END IF;
 SET RAISED_407 = FALSE;
 COMMIT;
 
--- Test9: Tries to insert a logger with an empty hierarchy.
-INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES (3, 'Test9: Tries to insert a logger with an empty hierarchy');
+-- Test09: Tries to insert a logger with an empty hierarchy.
+INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES (3, 'Test09: Tries to insert a logger with an empty hierarchy');
 DELETE FROM LOGDATA.CONF_LOGGERS WHERE LOGGER_ID <> 0;
 INSERT INTO LOGDATA.CONF_LOGGERS (NAME, PARENT_ID, LEVEL_ID)
   VALUES ('T9', 0, 0);

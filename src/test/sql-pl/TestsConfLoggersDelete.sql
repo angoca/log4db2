@@ -116,8 +116,8 @@ UPDATE LOGDATA.CONFIGURATION
 SET TEMP = GET_MAX_ID();
 COMMIT;
 
--- Test1: Tests to delete ROOT logger with a given level.
-INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES (4, 'Test1: Tests to delete ROOT logger with a given level');
+-- Test01: Tests to delete ROOT logger with a given level.
+INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES (4, 'Test01: Tests to delete ROOT logger with a given level');
 SET EXPECTED_LEVEL = NULL;
 DELETE FROM LOGDATA.CONF_LOGGERS WHERE LOGGER_ID <> 0;
 UPDATE LOGDATA.CONF_LOGGERS
@@ -138,8 +138,8 @@ IF (EXPECTED_LEVEL <> ACTUAL_LEVEL) THEN
 END IF;
 COMMIT;
 
--- Test2: Tests to delete ROOT logger with null level.
-INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES (3, 'Test2: Tests to delete ROOT logger with null level');
+-- Test02: Tests to delete ROOT logger with null level.
+INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES (3, 'Test02: Tests to delete ROOT logger with null level');
 SET EXPECTED_LEVEL = NULL;
 DELETE FROM LOGDATA.CONF_LOGGERS WHERE LOGGER_ID <> 0;
 UPDATE LOGDATA.CONF_LOGGERS
@@ -160,8 +160,8 @@ IF (EXPECTED_LEVEL <> ACTUAL_LEVEL) THEN
 END IF;
 COMMIT;
 
--- Test3: Tests to delete all inserted loggers.
-INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES (4, 'Test3: Tests to delete all inserted loggers');
+-- Test03: Tests to delete all inserted loggers.
+INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES (4, 'Test03: Tests to delete all inserted loggers');
 DELETE FROM LOGDATA.CONF_LOGGERS WHERE LOGGER_ID <> 0;
 INSERT INTO LOGDATA.CONF_LOGGERS (NAME, PARENT_ID, LEVEL_ID)
   VALUES ('T3', 0, 0);
@@ -205,8 +205,8 @@ IF (EXPECTED_LEVEL <> ACTUAL_LEVEL) THEN
 END IF;
 COMMIT;
 
--- Test4: Tests to delete all null inserted logger.
-INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES (4, 'Test4: Tests to delete all null inserted logger');
+-- Test04: Tests to delete all null inserted logger.
+INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES (4, 'Test04: Tests to delete all null inserted logger');
 DELETE FROM LOGDATA.CONF_LOGGERS WHERE LOGGER_ID <> 0;
 INSERT INTO LOGDATA.CONF_LOGGERS (NAME, PARENT_ID, LEVEL_ID)
   VALUES ('T4', 0, 0);
@@ -246,8 +246,8 @@ IF (EXPECTED_LEVEL <> ACTUAL_LEVEL) THEN
 END IF;
 COMMIT;
 
--- Test5: Tests to delete inserted logger.
-INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES (4, 'Test5: Tests to delete inserted logger');
+-- Test05: Tests to delete inserted logger.
+INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES (4, 'Test05: Tests to delete inserted logger');
 DELETE FROM LOGDATA.CONF_LOGGERS WHERE LOGGER_ID <> 0;
 INSERT INTO LOGDATA.CONF_LOGGERS (NAME, PARENT_ID, LEVEL_ID)
   VALUES ('T5', 0, 0);
@@ -277,8 +277,8 @@ IF (EXPECTED_LEVEL <> ACTUAL_LEVEL) THEN
 END IF;
 COMMIT;
 
--- Test6: Tests to delete null inserted logger.
-INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES (4, 'Test6: Tests to delete null inserted logger');
+-- Test06: Tests to delete null inserted logger.
+INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES (4, 'Test06: Tests to delete null inserted logger');
 DELETE FROM LOGDATA.CONF_LOGGERS WHERE LOGGER_ID <> 0;
 INSERT INTO LOGDATA.CONF_LOGGERS (NAME, PARENT_ID, LEVEL_ID)
   VALUES ('T6', 0, 0);
@@ -315,8 +315,8 @@ IF (EXPECTED_LEVEL <> ACTUAL_LEVEL) THEN
 END IF;
 COMMIT;
 
--- Test7: Tests to delete ROOT logger cascade.
-INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES (4, 'Test7: Tests to delete ROOT logger cascade');
+-- Test07: Tests to delete ROOT logger cascade.
+INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES (4, 'Test07: Tests to delete ROOT logger cascade');
 DELETE FROM LOGDATA.CONF_LOGGERS WHERE LOGGER_ID <> 0;
 INSERT INTO LOGDATA.CONF_LOGGERS (NAME, PARENT_ID, LEVEL_ID)
   VALUES ('T7', 0, 0);
@@ -340,8 +340,8 @@ END IF;
 SET RAISED_LG0E2 = FALSE;
 COMMIT;
 
--- Test8: Tests to delete a logger cascade.
-INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES (4, 'Test8: Tests to delete a logger cascade');
+-- Test08: Tests to delete a logger cascade.
+INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES (4, 'Test08: Tests to delete a logger cascade');
 DELETE FROM LOGDATA.CONF_LOGGERS WHERE LOGGER_ID <> 0;
 SET EXPECTED_QTY = 1;
 UPDATE LOGDATA.CONF_LOGGERS

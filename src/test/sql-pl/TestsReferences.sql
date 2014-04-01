@@ -56,8 +56,8 @@ INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES (4, 'TestsReferences: Prepar
 DELETE FROM LOGDATA.REFERENCES;
 COMMIT;
 
--- Test1: Tries to log when references is empty.
-INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES (3, 'Test1: Tries to log when references is empty');
+-- Test01: Tries to log when references is empty.
+INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES (3, 'Test01: Tries to log when references is empty');
 DELETE FROM LOGDATA.REFERENCES;
 DELETE FROM LOGDATA.CONF_LOGGERS WHERE LOGGER_ID <> 0;
 UPDATE LOGDATA.CONF_LOGGERS
@@ -73,8 +73,8 @@ IF (EXPECTED_QTY <> ACTUAL_QTY) THEN
 END IF;
 COMMIT;
 
--- Test2: Writes one log.
-INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES (3, 'Test2: Writes one log');
+-- Test02: Writes one log.
+INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES (3, 'Test02: Writes one log');
 DELETE FROM LOGDATA.REFERENCES;
 DELETE FROM LOGDATA.CONF_LOGGERS WHERE LOGGER_ID <> 0;
 UPDATE LOGDATA.CONF_LOGGERS
@@ -99,8 +99,8 @@ DELETE FROM LOGDATA.LOGS
   AND DATE = (SELECT MAX(DATE) FROM LOGDATA.LOGS);
 COMMIT;
 
--- Test3: Writes the same log twice (Root and another).
-INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES (3, 'Test3: Writes the same log twice');
+-- Test03: Writes the same log twice (Root and another).
+INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES (3, 'Test03: Writes the same log twice');
 DELETE FROM LOGDATA.REFERENCES;
 DELETE FROM LOGDATA.CONF_LOGGERS WHERE LOGGER_ID <> 0;
 UPDATE LOGDATA.CONF_LOGGERS
@@ -134,8 +134,8 @@ DELETE FROM LOGDATA.LOGS
   AND DATE = (SELECT MAX(DATE) FROM LOGDATA.LOGS);
 COMMIT;
 
--- Test4: Non-root logger as only logger in references.
-INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES (3, 'Test4: Non-root logger as only logger in references');
+-- Test04: Non-root logger as only logger in references.
+INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES (3, 'Test04: Non-root logger as only logger in references');
 DELETE FROM LOGDATA.REFERENCES;
 DELETE FROM LOGDATA.CONF_LOGGERS WHERE LOGGER_ID <> 0;
 DELETE FROM LOGDATA.CONF_APPENDERS;
@@ -168,8 +168,8 @@ INSERT INTO LOGDATA.REFERENCES (LOGGER_ID, APPENDER_REF_ID)
   VALUES (0, (SELECT MAX(REF_ID) FROM LOGDATA.CONF_APPENDERS));
 COMMIT;
 
--- Test5: Non-root logger as only logger in references - logs.
-INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES (3, 'Test5: Non-root logger as only logger in references - logs');
+-- Test05: Non-root logger as only logger in references - logs.
+INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES (3, 'Test05: Non-root logger as only logger in references - logs');
 DELETE FROM LOGDATA.REFERENCES;
 DELETE FROM LOGDATA.CONF_LOGGERS WHERE LOGGER_ID <> 0;
 DELETE FROM LOGDATA.CONF_APPENDERS;
@@ -205,8 +205,8 @@ DELETE FROM LOGDATA.LOGS
   AND DATE = (SELECT MAX(DATE) FROM LOGDATA.LOGS);
 COMMIT;
 
--- Test6: Root logger configured but not logs. Other logger does.
-INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES (3, 'Test6: Root logger configured but not logs. Other logger does.');
+-- Test06: Root logger configured but not logs. Other logger does.
+INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES (3, 'Test06: Root logger configured but not logs. Other logger does.');
 DELETE FROM LOGDATA.REFERENCES;
 DELETE FROM LOGDATA.CONF_LOGGERS WHERE LOGGER_ID <> 0;
 DELETE FROM LOGDATA.CONF_APPENDERS;
@@ -250,8 +250,8 @@ DELETE FROM LOGDATA.LOGS
   AND DATE = (SELECT MAX(DATE) FROM LOGDATA.LOGS);
 COMMIT;
 
--- Test7: Root off. Other off, and another on.
-INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES (3, 'Test7: Root off. Other off, and another on');
+-- Test07: Root off. Other off, and another on.
+INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES (3, 'Test07: Root off. Other off, and another on');
 DELETE FROM LOGDATA.REFERENCES;
 DELETE FROM LOGDATA.CONF_LOGGERS WHERE LOGGER_ID <> 0;
 DELETE FROM LOGDATA.CONF_APPENDERS;
@@ -292,8 +292,8 @@ DELETE FROM LOGDATA.LOGS
   AND DATE = (SELECT MAX(DATE) FROM LOGDATA.LOGS);
 COMMIT;
 
--- Test8: Root off and other on, but son of the other is on.
-INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES (3, 'Test8: Root off and other on, but son of the other is on');
+-- Test08: Root off and other on, but son of the other is on.
+INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES (3, 'Test08: Root off and other on, but son of the other is on');
 DELETE FROM LOGDATA.REFERENCES;
 DELETE FROM LOGDATA.CONF_LOGGERS WHERE LOGGER_ID <> 0;
 DELETE FROM LOGDATA.CONF_APPENDERS;
@@ -330,8 +330,8 @@ DELETE FROM LOGDATA.LOGS
   AND DATE = (SELECT MAX(DATE) FROM LOGDATA.LOGS);
 COMMIT;
 
--- Test9: ConfAppender logging in the same level.
-INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES (3, 'Test9: ConfAppender logging in the same level');
+-- Test09: ConfAppender logging in the same level.
+INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES (3, 'Test09: ConfAppender logging in the same level');
 DELETE FROM LOGDATA.REFERENCES;
 DELETE FROM LOGDATA.CONF_LOGGERS WHERE LOGGER_ID <> 0;
 DELETE FROM LOGDATA.CONF_APPENDERS;

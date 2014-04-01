@@ -105,8 +105,8 @@ UPDATE LOGDATA.CONFIGURATION
 CALL LOGGER.UNLOAD_CONF();
 COMMIT;
 
--- Test1: Get default ROOT level.
-INSERT INTO LOGDATA.LOGS (DATE, LEVEL_ID, MESSAGE) VALUES (GENERATE_UNIQUE(), 3, 'Test1: Get Defined parent logger');
+-- Test01: Get default ROOT level.
+INSERT INTO LOGDATA.LOGS (DATE, LEVEL_ID, MESSAGE) VALUES (GENERATE_UNIQUE(), 3, 'Test01: Get Defined parent logger');
 SET EXPECTED = 1;
 UPDATE LOGDATA.CONFIGURATION
   SET VALUE = CHAR(EXPECTED)
@@ -123,8 +123,8 @@ IF (EXPECTED <> ACTUAL) THEN
 END IF;
 COMMIT;
 
--- Test2: Get defined ROOT level.
-INSERT INTO LOGDATA.LOGS (DATE, LEVEL_ID, MESSAGE) VALUES (GENERATE_UNIQUE(), 3, 'Test2: Get defined ROOT level');
+-- Test02: Get defined ROOT level.
+INSERT INTO LOGDATA.LOGS (DATE, LEVEL_ID, MESSAGE) VALUES (GENERATE_UNIQUE(), 3, 'Test02: Get defined ROOT level');
 SET EXPECTED = 2;
 DELETE FROM LOGDATA.CONF_LOGGERS
   WHERE LOGGER_ID <> 0;
@@ -137,8 +137,8 @@ IF (EXPECTED <> ACTUAL) THEN
 END IF;
 COMMIT;
 
--- Test3: Get default ROOT level from one logger.
-INSERT INTO LOGDATA.LOGS (DATE, LEVEL_ID, MESSAGE) VALUES (GENERATE_UNIQUE(), 3, 'Test3: Get default ROOT level from one logger');
+-- Test03: Get default ROOT level from one logger.
+INSERT INTO LOGDATA.LOGS (DATE, LEVEL_ID, MESSAGE) VALUES (GENERATE_UNIQUE(), 3, 'Test03: Get default ROOT level from one logger');
 SET EXPECTED = 3;
 UPDATE LOGDATA.CONFIGURATION
   SET VALUE = CHAR(EXPECTED)
@@ -157,8 +157,8 @@ IF (EXPECTED <> ACTUAL) THEN
 END IF;
 COMMIT;
 
--- Test4: Get defined ROOT level from one logger.
-INSERT INTO LOGDATA.LOGS (DATE, LEVEL_ID, MESSAGE) VALUES (GENERATE_UNIQUE(), 3, 'Test4: Get defined ROOT level from one logger');
+-- Test04: Get defined ROOT level from one logger.
+INSERT INTO LOGDATA.LOGS (DATE, LEVEL_ID, MESSAGE) VALUES (GENERATE_UNIQUE(), 3, 'Test04: Get defined ROOT level from one logger');
 SET EXPECTED = 4;
 DELETE FROM LOGDATA.CONF_LOGGERS
   WHERE LOGGER_ID <> 0;
@@ -173,8 +173,8 @@ IF (EXPECTED <> ACTUAL) THEN
 END IF;
 COMMIT;
 
--- Test5: Get level from one logger.
-INSERT INTO LOGDATA.LOGS (DATE, LEVEL_ID, MESSAGE) VALUES (GENERATE_UNIQUE(), 3, 'Test5: Get level from one logger');
+-- Test05: Get level from one logger.
+INSERT INTO LOGDATA.LOGS (DATE, LEVEL_ID, MESSAGE) VALUES (GENERATE_UNIQUE(), 3, 'Test05: Get level from one logger');
 SET EXPECTED = 5;
 UPDATE LOGDATA.CONFIGURATION
   SET VALUE = CHAR(EXPECTED)
@@ -193,8 +193,8 @@ IF (EXPECTED <> ACTUAL) THEN
 END IF;
 COMMIT;
 
--- Test6: Get level from one logger all defined.
-INSERT INTO LOGDATA.LOGS (DATE, LEVEL_ID, MESSAGE) VALUES (GENERATE_UNIQUE(), 3, 'Test6: Get from one logger all defined');
+-- Test06: Get level from one logger all defined.
+INSERT INTO LOGDATA.LOGS (DATE, LEVEL_ID, MESSAGE) VALUES (GENERATE_UNIQUE(), 3, 'Test06: Get from one logger all defined');
 SET EXPECTED = 0;
 DELETE FROM LOGDATA.CONF_LOGGERS
   WHERE LOGGER_ID <> 0;
@@ -209,8 +209,8 @@ IF (EXPECTED <> ACTUAL) THEN
 END IF;
 COMMIT;
 
--- Test7: From three levels get default.
-INSERT INTO LOGDATA.LOGS (DATE, LEVEL_ID, MESSAGE) VALUES (GENERATE_UNIQUE(), 3, 'Test7: From three levels get default');
+-- Test07: From three levels get default.
+INSERT INTO LOGDATA.LOGS (DATE, LEVEL_ID, MESSAGE) VALUES (GENERATE_UNIQUE(), 3, 'Test07: From three levels get default');
 SET EXPECTED = 1;
 UPDATE LOGDATA.CONFIGURATION
   SET VALUE = CHAR(EXPECTED)
@@ -232,8 +232,8 @@ IF (EXPECTED <> ACTUAL) THEN
 END IF;
 COMMIT;
 
--- Test8: From three levels get default from defined.
-INSERT INTO LOGDATA.LOGS (DATE, LEVEL_ID, MESSAGE) VALUES (GENERATE_UNIQUE(), 3, 'Test8: From three levels get default form defined');
+-- Test08: From three levels get default from defined.
+INSERT INTO LOGDATA.LOGS (DATE, LEVEL_ID, MESSAGE) VALUES (GENERATE_UNIQUE(), 3, 'Test08: From three levels get default form defined');
 SET EXPECTED = 2;
 UPDATE LOGDATA.CONFIGURATION
   SET VALUE = CHAR(EXPECTED)
@@ -255,8 +255,8 @@ IF (EXPECTED <> ACTUAL) THEN
 END IF;
 COMMIT;
 
--- Test9: From three levels get root.
-INSERT INTO LOGDATA.LOGS (DATE, LEVEL_ID, MESSAGE) VALUES (GENERATE_UNIQUE(), 3, 'Test9: From three levels get root');
+-- Test09: From three levels get root.
+INSERT INTO LOGDATA.LOGS (DATE, LEVEL_ID, MESSAGE) VALUES (GENERATE_UNIQUE(), 3, 'Test09: From three levels get root');
 SET EXPECTED = 3;
 DELETE FROM LOGDATA.CONF_LOGGERS
   WHERE LOGGER_ID <> 0;
