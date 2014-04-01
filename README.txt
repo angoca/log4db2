@@ -131,3 +131,27 @@ Check the Usage section for more information about the levels, how to access
 the messages and configure the utility.
 https://github.com/angoca/log4db2/wiki/Usage
 
+---------------------------
+## FILES AND DIRECTORIES ##
+
+These are the files included in the released version:
+
+    COPYING.txt	-- License for the code (BSD license - OpenSource).
+    README.txt -- This file.
+    init* -- Environment configuration. 
+    install* -- Installation files.
+    reinstall* -- Reinstallation files.
+    uninstall* -- Uninstallation files.
+    doc -- Documentation directory (ErrorCode, ER diagram).
+    sql-pl -- Directory for all objects: DDL, DML, routines definition.
+    xml -- Directory for XML Schemas, XML files and related scripts for
+      appenders configuration.
+
+The * in the install-related files means that several files for each one of
+them can be found:
+
+    .bat -- Windows Batch file for CMD.exe
+    .ps1 -- Windows PowerShell
+    .sql -- For DB2 CLPPlus.
+    No extension -- For Linux in bash.
+
