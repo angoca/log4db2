@@ -1,0 +1,31 @@
+In order to configure the DB2LOGGER you should
+
+ * Install the utility following the steps in DeveloperWorks.
+ * Verify that the utility works by calling the stored procedures of that tool.
+
+    db2 "CALL DB2.OPEN_LOG('TESTSP',?)"
+
+    db2 "CALL DB2.LOGINFO(h,'Info test')"
+    db2 "CALL DB2.LOGGER(h,'Logger test')"
+    db2 "CALL DB2.CLOSE_LOG(h)"
+
+ * (Optional) Add your own configuration or update the existing one.
+
+    INSERT INTO LOGDATA.CONF_APPENDERS (NAME, APPENDER_ID, CONFIGURATION,
+      PATTERN) VALUES ('DB2LOGGER', 4, NULL, '[%p] %c - %m');
+
+ * Associate the conf_appender to a logger via the references table.
+
+    INSERT INTO LOGDATA.REFERENCES (LOGGER_ID, APPENDER_REF_ID)
+      VALUES (0, 2);
+
+ * Set the variable each time it will be used (drawback :( )
+
+    db2 "CALL DB2.OPEN_LOG('TESTSP',LOGGER.DB2LOGGER_HANDLER)"
+
+ * Once used, do not forget to close the files.
+
+    db2 "CALL DB2.CLOSE_LOG(LOGGER.DB2LOGGER_HANDLER)"
+
+Ready to log!
+

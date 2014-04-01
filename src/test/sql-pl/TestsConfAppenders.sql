@@ -78,14 +78,14 @@ SELECT REF_ID INTO ID FROM FINAL TABLE (
   ('test1', 1, '%m'));
 DELETE FROM LOGDATA.CONF_APPENDERS;
 
--- Test1: Inserts a normal appender_ref configuration.
-INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES (3, 'Test1: Inserts a normal appender_ref configuration');
+-- Test01: Inserts a normal appender_ref configuration.
+INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES (3, 'Test01: Inserts a normal appender_ref configuration');
 INSERT INTO LOGDATA.CONF_APPENDERS (NAME, APPENDER_ID, PATTERN) VALUES
   ('test1', 1, '%m');
 COMMIT;
 
--- Test2: Inserts an appender_ref with null appender_id.
-INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES (3, 'Test2: Inserts an appender_ref with null appender_id');
+-- Test02: Inserts an appender_ref with null appender_id.
+INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES (3, 'Test02: Inserts an appender_ref with null appender_id');
 INSERT INTO LOGDATA.CONF_APPENDERS (NAME, APPENDER_ID, PATTERN) VALUES
   ('test2', NULL, '%m');
 IF (RAISED_407 = FALSE) THEN
@@ -96,8 +96,8 @@ END IF;
 SET RAISED_407 = FALSE;
 COMMIT;
 
--- Test3: Inserts an appender_ref with inexistent appender_id.
-INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES (3, 'Test3: Inserts an appender_ref with inexistent appender_id');
+-- Test03: Inserts an appender_ref with inexistent appender_id.
+INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES (3, 'Test03: Inserts an appender_ref with inexistent appender_id');
 INSERT INTO LOGDATA.CONF_APPENDERS (NAME, APPENDER_ID, PATTERN) VALUES
   ('test3', 0, '%m');
 IF (RAISED_530 = FALSE) THEN
@@ -108,8 +108,8 @@ END IF;
 SET RAISED_530 = FALSE;
 COMMIT;
 
--- Test4: Inserts an appender_ref with id.
-INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES (3, 'Test4: Inserts an appender_ref with id');
+-- Test04: Inserts an appender_ref with id.
+INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES (3, 'Test04: Inserts an appender_ref with id');
 SET STMT = 'INSERT INTO LOGDATA.CONF_APPENDERS (REF_ID, NAME, APPENDER_ID, PATTERN) VALUES (1, ''test4'', 1, ''%m'')';
 PREPARE PREP FROM STMT;
 IF (RAISED_798 = FALSE) THEN
@@ -120,8 +120,8 @@ END IF;
 SET RAISED_798 = FALSE;
 COMMIT;
 
--- Test5: Inserts an appender_ref with negative id.
-INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES (3, 'Test5: Inserts an appender_ref with negative id');
+-- Test05: Inserts an appender_ref with negative id.
+INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES (3, 'Test05: Inserts an appender_ref with negative id');
 SET STMT = 'INSERT INTO LOGDATA.CONF_APPENDERS (REF_ID, NAME, APPENDER_ID, PATTERN) VALUES (-1, ''test4'', 1, ''%m'')';
 PREPARE PREP FROM STMT;
 IF (RAISED_798 = FALSE) THEN
@@ -132,8 +132,8 @@ END IF;
 SET RAISED_798 = FALSE;
 COMMIT;
 
--- Test6: Inserts an appender_ref with null id.
-INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES (3, 'Test6: Inserts an appender_ref with null id');
+-- Test06: Inserts an appender_ref with null id.
+INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES (3, 'Test06: Inserts an appender_ref with null id');
 SET STMT = 'INSERT INTO LOGDATA.CONF_APPENDERS (REF_ID, NAME, APPENDER_ID, PATTERN) VALUES (NULL, ''test6'', 1, ''%m'')';
 PREPARE PREP FROM STMT;
 IF (RAISED_798 = FALSE) THEN
@@ -144,8 +144,8 @@ END IF;
 SET RAISED_798 = FALSE;
 COMMIT;
 
--- Test7: Updates an appender_ref with null appender_id.
-INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES (3, 'Test7: Updates an appender_ref with null appender_id');
+-- Test07: Updates an appender_ref with null appender_id.
+INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES (3, 'Test07: Updates an appender_ref with null appender_id');
 SELECT REF_ID INTO ID FROM FINAL TABLE (
   INSERT INTO LOGDATA.CONF_APPENDERS (NAME, APPENDER_ID, PATTERN) VALUES
   ('test7', 1, '%m'));
@@ -160,8 +160,8 @@ END IF;
 SET RAISED_407 = FALSE;
 COMMIT;
 
--- Test8: Updates an appender with inexistant appender_id.
-INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES (3, 'Test8: Updates an appender_ref with inexistant appender_id');
+-- Test08: Updates an appender with inexistant appender_id.
+INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES (3, 'Test08: Updates an appender_ref with inexistant appender_id');
 SELECT REF_ID INTO ID FROM FINAL TABLE (
   INSERT INTO LOGDATA.CONF_APPENDERS (NAME, APPENDER_ID, PATTERN) VALUES
   ('test8', 1, '%m'));
@@ -176,8 +176,8 @@ END IF;
 SET RAISED_530 = FALSE;
 COMMIT;
 
--- Test9: Updates an appender_ref with negative id.
-INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES (3, 'Test9: Updates an appender_ref with negative id');
+-- Test09: Updates an appender_ref with negative id.
+INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES (3, 'Test09: Updates an appender_ref with negative id');
 SELECT REF_ID INTO ID FROM FINAL TABLE (
   INSERT INTO LOGDATA.CONF_APPENDERS (NAME, APPENDER_ID, PATTERN) VALUES
   ('test9', 1, '%m'));

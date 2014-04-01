@@ -73,6 +73,7 @@
   <fileSet>
    <directory>doc</directory>
    <includes>
+    <include>**/Appender_DB2LOGGER.txt</include>
     <include>**/COPYING.txt</include>
     <include>**/ER-diagram.png</include>
     <include>**/ErrorCodes.txt</include>

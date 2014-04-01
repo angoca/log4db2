@@ -63,48 +63,48 @@ DECLARE CONTINUE HANDLER FOR NOT FOUND
 INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES (4, 'TestsCache: Preparing environment');
 COMMIT;
 
--- Test1: Activate cache, refresh and get.
-INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES (3, 'Test1: Activate cache, refresh and get');
+-- Test01: Activate cache, refresh and get.
+INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES (3, 'Test01: Activate cache, refresh and get');
 
 COMMIT;
 
--- Test2: Deactivate cache, refresh and get.
-INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES (3, 'Test2: Deactivate cache, refresh and get');
+-- Test02: Deactivate cache, refresh and get.
+INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES (3, 'Test02: Deactivate cache, refresh and get');
 
 COMMIT;
 
--- Test3: Reactivate cache, refresh and get.
-INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES (3, 'Test3: Reactivate cache, refresh and get');
+-- Test03: Reactivate cache, refresh and get.
+INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES (3, 'Test03: Reactivate cache, refresh and get');
 
 COMMIT;
 
--- Test4: Reactivate cache, refresh and get.
-INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES (3, 'Test4: Reactivate cache, refresh and get');
+-- Test04: Reactivate cache, refresh and get.
+INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES (3, 'Test04: Reactivate cache, refresh and get');
 
 COMMIT;
 
--- Test5: Get, deactivate, delete different.
-INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES (3, 'Test5: Get, deactivate, delete different');
+-- Test05: Get, deactivate, delete different.
+INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES (3, 'Test05: Get, deactivate, delete different');
 --pedir id, desactivar, borrar effective, y volver a pedir, y ver que es el nuevo id (no quedo en el cache)
 COMMIT;
 
--- Test6: Null.
-INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES (3, 'Test6: Null');
+-- Test06: Null.
+INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES (3, 'Test06: Null');
 
 COMMIT;
 
--- Test7: Empty.
-INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES (3, 'Test7: Empty');
+-- Test07: Empty.
+INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES (3, 'Test07: Empty');
 
 COMMIT;
 
--- Test8: Space.
-INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES (3, 'Test8: Space');
+-- Test08: Space.
+INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES (3, 'Test08: Space');
 
 COMMIT;
 
--- Test9: Dot.
-INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES (3, 'Test9: Dot');
+-- Test09: Dot.
+INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES (3, 'Test09: Dot');
 
 COMMIT;
 
