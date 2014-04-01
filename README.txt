@@ -137,11 +137,12 @@ https://github.com/angoca/log4db2/wiki/Usage
 These are the files included in the released version:
 
     COPYING.txt	-- License for the code (BSD license - OpenSource).
-    README.txt -- This file.
     init* -- Environment configuration. 
     install* -- Installation files.
+    README.txt -- This file.
     reinstall* -- Reinstallation files.
     uninstall* -- Uninstallation files.
+
     doc -- Documentation directory (ErrorCode, ER diagram).
     sql-pl -- Directory for all objects: DDL, DML, routines definition.
     xml -- Directory for XML Schemas, XML files and related scripts for
