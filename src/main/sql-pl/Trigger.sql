@@ -50,7 +50,8 @@ CREATE OR REPLACE TRIGGER T1_CNF_CCHE
   DECLARE TMP ANCHOR LOGDATA.CONFIGURATION.VALUE;
 
   -- Debug
-  -- INSERT INTO LOGS (LEVEL_ID, LOGGER_ID, MESSAGE) VALUES (5, -1, 'tFLAG 0');
+  -- INSERT INTO LOGS (LEVEL_ID, LOGGER_ID, MESSAGE) VALUES (5, -1,
+  --  '> T1_CNF_CCHE - ' || COALESCE(N.KEY, 'null'));
 
   CASE N.KEY
    WHEN 'internalCache' THEN
@@ -61,38 +62,42 @@ CREATE OR REPLACE TRIGGER T1_CNF_CCHE
     END IF;
    WHEN 'defaultRootLevelId' THEN
     BEGIN
-     DECLARE EXIST SMALLINT DEFAULT 0;
-     DECLARE VALUE ANCHOR LOGDATA.LEVELS.LEVEL_ID;
-
-     -- FIXME it does not work correctly when it should not update.
-     SELECT 1 INTO EXIST
+     DECLARE LVL ANCHOR LOGDATA.CONF_LOGGERS.LEVEL_ID;
+     SELECT LEVEL_ID INTO LVL
        FROM LOGDATA.CONF_LOGGERS
        WHERE LOGGER_ID = 0;
      -- Checks if root logger is defined.
-     IF (EXIST <> 1) THEN
+     IF (LVL IS NULL) THEN
+      SET LVL = SMALLINT(N.VALUE);
+
+      -- Debug
+      -- INSERT INTO LOGS (LEVEL_ID, LOGGER_ID, MESSAGE) VALUES (5, -1,
+      --  'T1_CNF_CCHE - Update to ' || COALESCE(N.VALUE, 'null'));
 
       -- Writes a message to indicate that is necessary to update the table
       -- manually. If this is automatic, there is an error, because this
-      -- trigger is active when the configuration is modified, and the trigger
-      -- actives another one (T5) when update the table; this last does not
-      -- take into account the given value, but looks for the it in the
+      -- trigger is actived when the configuration is modified, and the trigger
+      -- actives another one (T1_EFF_LVL_ID) when update the table; this last
+      -- does not take into account the given value, but looks for the it in the
       -- configuration (GET_DEFINED_PARENT_LOGGER > GET_DEFAULT_LEVEL >
       -- GET_VALUE > REFRESH_CONF), and this creates a SQL0746, because the
       -- table is being modified and queried at the same time.
       INSERT INTO LOGS (LEVEL_ID, LOGGER_ID, MESSAGE)
         VALUES (5, -1, 'A manual CONF_LOGGERS_EFFECTIVE update should be realized.');
 
-      -- There is nothing in conf_loggers, thus update conf_loggers_effective.
-      -- FIXME when uncommented, there is an error when trying to change the
-      -- configuration value
+      -- Conf_loggers is not defined, thus update conf_loggers_effective.
+      -- FIXME
       -- UPDATE LOGDATA.CONF_LOGGERS_EFFECTIVE
-      --   SET LEVEL_ID = SMALLINT(N.VALUE)
-      --   WHERE LOGGER_ID = 0;
+      --  SET LEVEL_ID = LVL
+      --  WHERE LOGGER_ID = 0;
      END IF;
     END;
    ELSE
     -- NOTHING.
   END CASE;
+
+  -- Debug
+  -- INSERT INTO LOGS (LEVEL_ID, LOGGER_ID, MESSAGE) VALUES (5, -1, '< T1_CNF_CCHE');
  END T1_CNF_CCHE @
 
 COMMENT ON TRIGGER T1_CNF_CCHE IS
@@ -111,7 +116,7 @@ CREATE OR REPLACE TRIGGER T1_LVL_CON
   DECLARE MAX ANCHOR LOGDATA.LEVELS.LEVEL_ID;
 
   -- Debug
-  -- INSERT INTO LOGS (LEVEL_ID, LOGGER_ID, MESSAGE) VALUES (5, -1, 'tFLAG 1');
+  -- INSERT INTO LOGS (LEVEL_ID, LOGGER_ID, MESSAGE) VALUES (5, -1, 'FLAG 1 - T1_LVL_CON');
 
   SELECT MAX(LEVEL_ID) INTO MAX
     FROM LOGDATA.LEVELS
@@ -149,7 +154,7 @@ CREATE OR REPLACE TRIGGER T3_LVL_DEL
   DECLARE MAX ANCHOR LOGDATA.LEVELS.LEVEL_ID;
 
   -- Debug
-  -- INSERT INTO LOGS (LEVEL_ID, LOGGER_ID, MESSAGE) VALUES (5, -1, 'tFLAG 2');
+  -- INSERT INTO LOGS (LEVEL_ID, LOGGER_ID, MESSAGE) VALUES (5, -1, 'FLAG 2 - T3_LVL_DEL');
 
   SELECT MAX(LEVEL_ID) INTO MAX
     FROM LOGDATA.LEVELS
@@ -179,7 +184,7 @@ CREATE OR REPLACE TRIGGER T1_CNFLGR_ID
   DECLARE LOGGER ANCHOR LOGDATA.CONF_LOGGERS.LOGGER_ID;
 
   -- Debug
-  -- INSERT INTO LOGS (LEVEL_ID, LOGGER_ID, MESSAGE) VALUES (5, -1, '><T1_CNF_LGGR');
+  -- INSERT INTO LOGS (LEVEL_ID, LOGGER_ID, MESSAGE) VALUES (5, -1, '><T1_CNFLGR_ID');
 
   -- Checks that ROOT is not being inserted.
   IF (INSERTING AND N.LOGGER_ID = 0) THEN
@@ -225,7 +230,7 @@ CREATE OR REPLACE TRIGGER T3_CNFLGR_SYN
 
   -- Debug
   -- INSERT INTO LOGS (LEVEL_ID, LOGGER_ID, MESSAGE) 
-  --   VALUES (5, -1, '>T3_CNF_SYN ' || COALESCE(N.LOGGER_ID, -1) || '='
+  --   VALUES (5, -1, '>T3_CNFLGR_SYN ' || COALESCE(N.LOGGER_ID, -1) || '='
   --   || COALESCE(N.LEVEL_ID, -1) || '<>' || COALESCE(O.LEVEL_ID, -1)
   --   || ',' || COALESCE(N.NAME, 'null'));
 
@@ -242,7 +247,7 @@ CREATE OR REPLACE TRIGGER T3_CNFLGR_SYN
 
   -- Debug
   -- INSERT INTO LOGS (LEVEL_ID, LOGGER_ID, MESSAGE) 
-  --   VALUES (5, -1, ' T3_CNF_SYN ' || QTY);
+  --   VALUES (5, -1, ' T3_CNFLGR_SYN ' || QTY);
 
    IF (QTY > 0) THEN
     UPDATE LOGDATA.CONF_LOGGERS_EFFECTIVE
@@ -254,7 +259,7 @@ CREATE OR REPLACE TRIGGER T3_CNFLGR_SYN
 
   -- Debug
   -- INSERT INTO LOGS (LEVEL_ID, LOGGER_ID, MESSAGE) 
-  --   VALUES (5, -1, '<T3_CNF_SYN');
+  --   VALUES (5, -1, '<T3_CNFLGR_SYN');
  END T3_CNFLGR_SYN @
 
 COMMENT ON TRIGGER T3_CNFLGR_SYN IS 'Inserts or updates in the effective table to synchronize the new configuration'@
@@ -286,7 +291,7 @@ CREATE OR REPLACE TRIGGER T1_EFF_LVL_ID
 
   -- Debug
   -- INSERT INTO LOGS (LEVEL_ID, LOGGER_ID, MESSAGE)
-  --   VALUES (5, -1, '>T1_EFF_LI =: ' || COALESCE (N.LOGGER_ID, -1) || ':'
+  --   VALUES (5, -1, '>T1_EFF_LVL_ID =: ' || COALESCE (N.LOGGER_ID, -1) || ':'
   --   || COALESCE (N.LEVEL_ID, -1));
 
   SELECT LEVEL_ID INTO N.LEVEL_ID
@@ -297,14 +302,14 @@ CREATE OR REPLACE TRIGGER T1_EFF_LVL_ID
 
    -- Debug
    -- INSERT INTO LOGS (LEVEL_ID, LOGGER_ID, MESSAGE)
-   --   VALUES (5, -1, ' T1_EFF_LI null value');
+   --   VALUES (5, -1, ' T1_EFF_LVL_ID null value');
 
    SET N.LEVEL_ID = LOGGER.GET_DEFINED_PARENT_LOGGER(N.LOGGER_ID);
   END IF;
 
   -- Debug
   -- INSERT INTO LOGS (LEVEL_ID, LOGGER_ID, MESSAGE)
-  --   VALUES (5, -1, '<T1_EFF_LI =: ' || COALESCE (N.LOGGER_ID, -1) || ':'
+  --   VALUES (5, -1, '<T1_EFF_LVL_ID =: ' || COALESCE (N.LOGGER_ID, -1) || ':'
   -- || COALESCE (N.LEVEL_ID, -1));
 
  END T1_EFF_LVL_ID @
@@ -335,7 +340,7 @@ CREATE OR REPLACE TRIGGER T3_EFF_LVL_UPD
 
   -- Debug
   -- INSERT INTO LOGS (LEVEL_ID, LOGGER_ID, MESSAGE)
-  --   VALUES (5, -1, '> T3_EFF_LVL_UPT = ' || COALESCE (N.LOGGER_ID, -1) || '='
+  --   VALUES (5, -1, '> T3_EFF_LVL_UPD = ' || COALESCE (N.LOGGER_ID, -1) || '='
   --   || COALESCE (N.LEVEL_ID, -1));
 
   -- The provided level was verified in the previous trigger, thus
@@ -344,7 +349,7 @@ CREATE OR REPLACE TRIGGER T3_EFF_LVL_UPD
 
   -- Debug
   -- INSERT INTO LOGS (LEVEL_ID, LOGGER_ID, MESSAGE)
-  --   VALUES (5, -1, '< T3_EFF_LVL_UPT');
+  --   VALUES (5, -1, '< T3_EFF_LVL_UPD');
  END T3_EFF_LVL_UPD @
 
 COMMENT ON TRIGGER T3_EFF_LVL_UPD IS
@@ -364,7 +369,7 @@ CREATE OR REPLACE TRIGGER T4_EFF_ROOT_UNDEL
   T4_EFF_ROOT_UNDEL: BEGIN
 
    -- Debug
-   -- INSERT INTO LOGS (LEVEL_ID, LOGGER_ID, MESSAGE) VALUES (5, -1, '>< T4_EFF_RT_UNDLT');
+   -- INSERT INTO LOGS (LEVEL_ID, LOGGER_ID, MESSAGE) VALUES (5, -1, '>< T4_EFF_ROOT_UNDEL');
 
    SIGNAL SQLSTATE VALUE 'LG0E2'
      SET MESSAGE_TEXT = 'ROOT logger cannot be deleted';
