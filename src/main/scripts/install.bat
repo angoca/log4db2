@@ -67,7 +67,7 @@ goto:eof
  cd %SRC_MAIN_CODE_PATH%
  cd ..
  cd xml
- if %continue% EQU 1 call:installScript %SRC_MAIN_CODE_PATH%\AppendersXML.sql
+ if %continue% EQU 1 call:installScript AppendersXML.sql
  cd ..
  cd scripts > NUL
 
@@ -101,7 +101,7 @@ goto:eof
  cd %SRC_MAIN_CODE_PATH%
  cd ..
  cd xml
- if %continue% EQU 1 call:installScript %SRC_MAIN_CODE_PATH%\AppendersXML.sql
+ if %continue% EQU 1 call:installScript AppendersXML.sql
  cd ..
  cd scripts > NUL
 

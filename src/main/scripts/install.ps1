@@ -56,7 +56,7 @@ function v10.1($p1) {
  cd ${SRC_MAIN_CODE_PATH}
  cd ..
  cd xml
- if ( ${Script:continue} ) { installScript ${SRC_MAIN_CODE_PATH}\Appenders.sql }
+ if ( ${Script:continue} ) { installScript AppendersXML.sql }
  cd ..
  cd scripts | Out-Null
 
@@ -90,7 +90,7 @@ function v9.7() {
  cd ${SRC_MAIN_CODE_PATH}
  cd ..
  cd xml
- if ( ${Script:continue} ) { installScript ${SRC_MAIN_CODE_PATH}\Appenders.sql }
+ if ( ${Script:continue} ) { installScript AppendersXML.sql }
  cd ..
  cd scripts | Out-Null
 
