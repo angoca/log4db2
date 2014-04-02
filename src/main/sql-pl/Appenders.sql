@@ -79,35 +79,10 @@ ALTER MODULE LOGGER ADD
  * IN MESSAGE
  *   Descriptive message to write in the log table.
  * IN CONFIGURATION
- *   TODO Any particular configuration for the logger. 
+ *   TODO Any particular configuration for the appender. 
  */
 ALTER MODULE LOGGER PUBLISH 
   PROCEDURE LOG_DB2DIAG (
-  IN LOGGER_ID ANCHOR LOGDATA.CONF_LOGGERS.LOGGER_ID,
-  IN LEVEL_ID ANCHOR LOGDATA.LEVELS.LEVEL_ID,
-  IN MESSAGE ANCHOR LOGDATA.LOGS.MESSAGE,
-  IN CONFIGURATION ANCHOR LOGDATA.CONF_APPENDERS.CONFIGURATION
-  ) @
-
-/**
- * TODO Writes the provided message in a file via UTL_FILE built-in functions.
- * This appender cannot be used in Express-C edition due to restrictions of
- * the built-in modules in this edition. PUBLISH to ADD.
- * The implementation could retrieve the filename from a global variable, and
- * keep the handler there, in order to reduce the overhead by opening and
- * closing the file for each call.
- *
- * IN LOGGER_ID
- *   Identification of the associated logger.
- * IN LEVEL_ID
- *   Identification of the associates level.
- * IN MESSAGE
- *   Descriptive message to write in the log table.
- * IN CONFIGURATION
- *   TODO Any particular configuration for the logger. 
- */
-ALTER MODULE LOGGER PUBLISH 
-  PROCEDURE LOG_UTL_FILE (
   IN LOGGER_ID ANCHOR LOGDATA.CONF_LOGGERS.LOGGER_ID,
   IN LEVEL_ID ANCHOR LOGDATA.LEVELS.LEVEL_ID,
   IN MESSAGE ANCHOR LOGDATA.LOGS.MESSAGE,
@@ -135,7 +110,7 @@ ALTER MODULE LOGGER PUBLISH
  * IN MESSAGE
  *   Descriptive message to write in the log table.
  * IN CONFIGURATION
- *   Any particular configuration for the logger. Not used for the moment.
+ *   Any particular configuration for the appender. Not used for the moment.
  */
 ALTER MODULE LOGGER ADD
   PROCEDURE LOG_DB2LOGGER (
@@ -145,7 +120,7 @@ ALTER MODULE LOGGER ADD
   IN CONFIGURATION ANCHOR LOGDATA.CONF_APPENDERS.CONFIGURATION
   ) 
   LANGUAGE SQL
-  SPECIFIC P_LOGS_DB2LOGGER
+  SPECIFIC P_LOG_DB2LOGGER
   DYNAMIC RESULT SETS 0
   MODIFIES SQL DATA
   NOT DETERMINISTIC
@@ -174,7 +149,7 @@ ALTER MODULE LOGGER ADD
  * IN MESSAGE
  *   Descriptive message to write in the log table.
  * IN CONFIGURATION
- *   TODO Any particular configuration for the logger. 
+ *   TODO Any particular configuration for the appender. 
  */
 ALTER MODULE LOGGER PUBLISH 
   PROCEDURE LOG_JAVA (
@@ -194,7 +169,7 @@ ALTER MODULE LOGGER PUBLISH
  * IN MESSAGE
  *   Descriptive message to write in the log table.
  * IN CONFIGURATION
- *   TODO Any particular configuration for the logger. 
+ *   TODO Any particular configuration for the appender. 
  */
 ALTER MODULE LOGGER ADD 
   PROCEDURE LOG_NULL (
