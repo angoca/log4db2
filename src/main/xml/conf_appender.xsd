@@ -9,7 +9,7 @@ elementFormDefault="qualified" >
   <!-- Definition of simple elements -->
   <xs:simpleType name="AppenderNameType" >
    <xs:restriction base="xs:string" >
-    <xs:enumeration value="File" />
+    <xs:enumeration value="UTL_FILE" />
    </xs:restriction>
   </xs:simpleType>
 
