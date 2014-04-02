@@ -1,0 +1,139 @@
+# Copyright (c) 2013 - 2014, Andres Gomez Casanova (AngocA)
+# All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions are met:
+#
+# 1. Redistributions of source code must retain the above copyright notice,
+#    this list of conditions and the following disclaimer.
+# 2. Redistributions in binary form must reproduce the above copyright notice,
+#    this list of conditions and the following disclaimer in the documentation
+#    and/or other materials provided with the distribution.
+#
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+# ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
+# LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+# CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+# SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+# INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+# CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+# ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+# POSSIBILITY OF SUCH DAMAGE.
+
+# Installs all scripts of the utility.
+#
+# Version: 2014-02-14 1-Beta
+# Author: Andres Gomez Casanova (AngocA)
+# Made in COLOMBIA.
+
+declare global continue=true
+
+# Installs a given script.
+function installScript() {
+ local script=${1}
+ echo $script
+ db2 -tsf ${script}
+ if [ ${?} -ne 0 ] ; then
+  continue=false
+ fi
+}
+
+# DB2 v10.1.
+function v10.1() {
+ echo "Installing utility for v10.1"
+ [ ${continue} == true ] && installScript ${SRC_MAIN_CODE_PATH}/Tables.sql
+ [ ${continue} == true ] && installScript ${SRC_MAIN_CODE_PATH}/UtilityHeader.sql
+ [ ${continue} == true ] && installScript ${SRC_MAIN_CODE_PATH}/UtilityBody.sql
+ [ ${continue} == true ] && installScript ${SRC_MAIN_CODE_PATH}/Appenders.sql
+ [ ${continue} == true ] && installScript ${SRC_MAIN_CODE_PATH}/LOG.sql
+ [ ${continue} == true ] && installScript ${SRC_MAIN_CODE_PATH}/GET_LOGGER.sql
+ [ ${continue} == true ] && installScript ${SRC_MAIN_CODE_PATH}/Trigger.sql
+
+ [ ${continue} == true ] && installScript ${SRC_MAIN_CODE_PATH}/AdminHeader.sql
+ [ ${continue} == true ] && installScript ${SRC_MAIN_CODE_PATH}/AdminBody.sql
+
+ cd ${SRC_MAIN_CODE_PATH}
+ cd ..
+ cd xml
+ [ ${continue} == true ] && installScript AppendersXML.sql
+ cd ..
+ cd scripts 2> /dev/null
+
+ # Temporal capabilities for tables.
+ if [ ${1} == "t" && ${continue} == true ] ; then
+  echo "Create table for Time Travel"
+  installScript ${SRC_MAIN_CODE_PATH}/TablesTimeTravel.sql
+ fi
+
+ if [ ${continue} == true ] ; then
+  echo "log4db2 was installed successfully"
+ else
+  echo "Check the error(s) and reinstall the utility"
+ fi
+}
+
+# DB2 v9.7
+function v9.7() {
+ echo "Installing utility for DB2 v9.7"
+ [ ${continue} == true ] && installScript ${SRC_MAIN_CODE_PATH}/Tables_v9_7.sql
+ [ ${continue} == true ] && installScript ${SRC_MAIN_CODE_PATH}/UtilityHeader.sql
+ [ ${continue} == true ] && installScript ${SRC_MAIN_CODE_PATH}/UtilityBody.sql
+ [ ${continue} == true ] && installScript ${SRC_MAIN_CODE_PATH}/Appenders.sql
+ [ ${continue} == true ] && installScript ${SRC_MAIN_CODE_PATH}/LOG.sql
+ [ ${continue} == true ] && installScript ${SRC_MAIN_CODE_PATH}/GET_LOGGER_v9_7.sql
+ [ ${continue} == true ] && installScript ${SRC_MAIN_CODE_PATH}/Trigger.sql
+
+ [ ${continue} == true ] && installScript ${SRC_MAIN_CODE_PATH}/AdminHeader.sql
+ [ ${continue} == true ] && installScript ${SRC_MAIN_CODE_PATH}/AdminBody.sql
+
+ cd ${SRC_MAIN_CODE_PATH}
+ cd ..
+ cd xml
+ [ ${continue} == true ] && installScript AppendersXML.sql
+ cd ..
+ cd scripts 2> /dev/null
+
+ if [ ${continue} == true ] ; then
+  echo "log4db2 was installed successfully"
+ else
+  echo "Check the error(s) and reinstall the utility"
+ fi
+}
+
+function version() {
+ if [ -x init ] ; then
+  . ./init
+ fi
+
+ # Checks in which DB2 version the utility will be installed.
+ # DB2 v10.1 is the default version.
+ if [ ${1} == "" ] ; then
+  v10.1
+ elif [ ${1} == "t" ] ; then
+  v10.1 t
+ elif [ ${1} == "-v10.1" ] ; then
+  if [ ${2} == "" ] ; then
+   v10.1
+  elif [ ${2} == "t" ] ; then
+   v10.1 t
+  else
+   echo ERROR
+  fi
+ elif [ ${1} == "-v9.7" ] ; then
+  v9.7
+ else
+  echo ERROR
+ fi
+}
+
+# Checks if there is already a connection established
+db2 connect > /dev/null
+if [ ${?} -eq 0 ] ; then
+ version ${1} ${2}
+else
+ echo "Please connect to a database before the execution of the installation."
+ echo "Remember that to call the script the command is '. ./install'"
+fi
+
