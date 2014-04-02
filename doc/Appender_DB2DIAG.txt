@@ -1,0 +1,26 @@
+In order to configure the DB2DIAG appender you should:
+
+ * Install the C stored procedure that will log into the DB2DIAG.
+ * Modify the LOGGER.LOG procedure to include the new appender. Look for the
+   >>> and <<< symbols.
+
+       WHEN 2 THEN -- Writes in the db2diag.log file via a function.
+         CALL LOG_DB2DIAG(LOG_ID, LEV_ID, NEW_MESSAGE, CONFIGURATION);
+
+ * Insert your appender in the list of appenders.
+
+    INSERT INTO APPENDERS (APPENDER_ID, NAME)
+      VALUES (2, 'DB2DIAG');
+
+ * Add your own configuration or update the existing one.
+
+    INSERT INTO LOGDATA.CONF_APPENDERS (REF_ID, NAME, APPENDER_ID, CONFIGURATION,
+      PATTERN) VALUES (2, 'DB2DIAG', 2, NULL, '[%p] %c - %m');
+
+ * Associate the conf_appender to a logger via the references table.
+
+    INSERT INTO LOGDATA.REFERENCES (LOGGER_ID, APPENDER_REF_ID)
+      VALUES (0, 2);
+
+Ready to log!
+

@@ -1,6 +1,8 @@
-In order to configure the DB2LOGGER you should
+In order to configure the DB2LOGGER appender you should:
 
  * Install the utility following the steps in DeveloperWorks.
+   * http://www.ibm.com/developerworks/data/library/techarticle/dm-0601khatri/
+   * http://www.zinox.com/node/89
  * Verify that the utility works by calling the stored procedures of that tool.
 
     db2 "CALL DB2.OPEN_LOG('TESTSP',?)"
@@ -9,15 +11,26 @@ In order to configure the DB2LOGGER you should
     db2 "CALL DB2.LOGGER(h,'Logger test')"
     db2 "CALL DB2.CLOSE_LOG(h)"
 
- * (Optional) Add your own configuration or update the existing one.
+ * Modify the LOGGER.LOG procedure to include the new appender. Look for the
+   >>> and <<< symbols.
 
-    INSERT INTO LOGDATA.CONF_APPENDERS (NAME, APPENDER_ID, CONFIGURATION,
-      PATTERN) VALUES ('DB2LOGGER', 4, NULL, '[%p] %c - %m');
+       WHEN 4 THEN -- Sends the log to the DB2LOGGER in C.
+         CALL LOG_DB2LOGGER(LOG_ID, LEV_ID, NEW_MESSAGE, CONFIGURATION);
+
+ * Insert your appender in the list of appenders.
+
+    INSERT INTO APPENDERS (APPENDER_ID, NAME)
+      VALUES (4, 'DB2LOGGER');
+  
+ * Add your own configuration or update the existing one.
+
+    INSERT INTO LOGDATA.CONF_APPENDERS (REF_ID, NAME, APPENDER_ID, CONFIGURATION,
+      PATTERN) VALUES (4, 'DB2LOGGER', 4, NULL, '[%p] %c - %m');
 
  * Associate the conf_appender to a logger via the references table.
 
     INSERT INTO LOGDATA.REFERENCES (LOGGER_ID, APPENDER_REF_ID)
-      VALUES (0, 2);
+      VALUES (0, 4);
 
  * Set the variable each time it will be used (drawback :( )
 
