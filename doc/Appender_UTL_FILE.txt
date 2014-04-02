@@ -1,0 +1,24 @@
+In order to configure the UTL_FILE you should
+
+ * Make sure you do not have an Express-C edition.
+
+    db2licm -l
+
+ * Install the appenders from file:
+
+    cd sql-pl
+TODO db2 -tf Appenders_No_ExpC.sql
+TODO Import the data
+
+ * (Optional) Add your own configuration or update the existing one.
+
+    INSERT INTO LOGDATA.CONF_APPENDERS (NAME, APPENDER_ID, CONFIGURATION,
+      PATTERN) VALUES ('UTL_FILE', 3, NULL, '[%p] %c - %m');
+
+ * Associate the conf_appender to a logger via the references table.
+
+    INSERT INTO LOGDATA.REFERENCES (LOGGER_ID, APPENDER_REF_ID)
+      VALUES (0, 2);
+
+Ready to log!
+
