@@ -323,6 +323,8 @@ ALTER MODULE LOGGER ADD
          CALL LOG_DB2LOGGER(LOG_ID, LEV_ID, NEW_MESSAGE, CONFIGURATION);
        WHEN 5 THEN -- Sends the log to Java, and takes the configuration there.
          CALL LOG_JAVA(LOG_ID, LEV_ID, NEW_MESSAGE, CONFIGURATION);
+       WHEN 0 THEN -- Drops the message.
+         CALL LOG_NULL(LOG_ID, LEV_ID, NEW_MESSAGE, CONFIGURATION);
        -- >>>
        -- Put here any other appender.
        -- <<<
