@@ -145,6 +145,23 @@ These are the files included in the released version:
 
     doc -- Documentation directory (ErrorCode, ER diagram).
     sql-pl -- Directory for all objects: DDL, DML, routines definition.
+      AdminBody.sql -- Body of the administration tools.
+      AdminHeader.sql -- Headers of the administration tools.
+      Appenders.sql -- Definition of the appenders.
+      CleanObjects.sql -- Remove all objects.
+      CleanTables.sql -- Remove all tables.
+      CleanTriggers.sql -- Remove all triggers.
+      GET_LOGGER.sql -- GetLogger procedure definition for v10.1 or upper.
+      GET_LOGGER_v9_7.sql -- GetLogger procedure definition for v9.7.
+      LOG.sql -- Log procedure definition with its macros.
+      Tables.sql -- Tables, tablespaces, bufferpools, schemas, and DML.
+      TablesTimeTravel.sql -- Modifications for Time Travel.
+      Tables_v9_7.sql - Tables, tablespaces, bufferpools, schemas, and DML for
+        v9.7.
+      Trigger.sql -- Trigger of the different tables.
+      UtilityBody.sql -- Body of the core tools.
+      UtilityHeader.sql -- Headers of the core tools.
+      
     xml -- Directory for XML Schemas, XML files and related scripts for
       appenders configuration.
 
