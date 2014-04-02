@@ -44,9 +44,6 @@ SET CURRENT SCHEMA LOGGER_1B @
 -- GET_LOGGER procedure. Probably, the conf table has to be checked in order
 -- to prevent this kind of problems.
 
--- TODO Check the IDs of the conf table and the effective table, in order to
--- see if the effective ids correspond to conf ids.
-
 -- TODO Check if the logger levels between the conf and effective table are the
 -- same. In conf could be INFO but in effective could be WARN.
 
