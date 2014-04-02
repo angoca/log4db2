@@ -39,6 +39,12 @@ SET CURRENT SCHEMA LOGGER_1B @
 SET PATH = SYSPROC, LOGGER_1B @
 
 /**
+ * Handle for DB2Logger.
+ */
+ALTER MODULE LOGGER PUBLISH
+  VARIABLE UTL_FILE_HANDLER UTL_FILE.FILE_TYPE @
+
+/**
  * Writes the provided message in a file via UTL_FILE built-in functions.
  * This appender cannot be used in Express-C edition due to restrictions of
  * the built-in modules in this edition.
