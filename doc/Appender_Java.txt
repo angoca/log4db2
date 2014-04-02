@@ -1,0 +1,26 @@
+In order to configure the Java appender you should:
+
+ * Install the Java stored procedure.
+ * Modify the LOGGER.LOG procedure to include the new appender. Look for the
+   >>> and <<< symbols.
+
+       WHEN 5 THEN -- Sends the log to Java, and takes the configuration there.
+         CALL LOG_JAVA(LOG_ID, LEV_ID, NEW_MESSAGE, CONFIGURATION);
+
+ * Insert your appender in the list of appenders.
+
+    INSERT INTO APPENDERS (APPENDER_ID, NAME)
+      VALUES (5, 'Java');
+
+ * Add your own configuration or update the existing one.
+
+    INSERT INTO LOGDATA.CONF_APPENDERS (REF_ID, NAME, APPENDER_ID, CONFIGURATION,
+      PATTERN) VALUES (5, 'Java', 5, NULL, '[%p] %c - %m');
+
+ * Associate the conf_appender to a logger via the references table.
+
+    INSERT INTO LOGDATA.REFERENCES (LOGGER_ID, APPENDER_REF_ID)
+      VALUES (0, 5);
+
+Ready to log!
+
