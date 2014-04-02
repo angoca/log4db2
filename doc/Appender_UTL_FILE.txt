@@ -15,10 +15,13 @@ In order to configure the UTL_FILE appender you should
     INSERT INTO APPENDERS (APPENDER_ID, NAME)
       VALUES (3, 'UTL_FILE');
 
- * Add your own configuration from file:
+ * Install the appenders from file:
 
     cd sql-pl
-TODO db2 -tf Appenders_No_ExpC.sql
+    db2 -tsf Appenders_No_ExpC.sql
+
+ * Add your own configuration or update the existing one.
+
 TODO Import the data
 
  * Associate the conf_appender to a logger via the references table.
