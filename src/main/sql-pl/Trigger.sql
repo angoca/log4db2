@@ -435,7 +435,7 @@ CREATE OR REPLACE TRIGGER T1_LGS_UNI_DATE
   BEFORE INSERT ON LOGDATA.LOGS
   REFERENCING NEW AS N
   FOR EACH ROW
-  -- TODO Test if this cqll is expensive.
+  -- TODO Test if this call is expensive.
   SET N.DATE = GENERATE_UNIQUE() @
 
 COMMENT ON TRIGGER T1_LGS_UNI_DATE IS 'Generates a unique date for the logs'@
