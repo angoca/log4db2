@@ -173,7 +173,7 @@ COMMENT ON TRIGGER T3_LVL_DEL IS 'Allows to delete just the maximal LEVEL_ID val
 -- Table LOGDATA.CONF_LOGGERS.
 
 /**
- * This trigger checks the insertion or updating in the conf_logger table to see
+ * This trigger checks the insertion or updating in the conf_loggers table to see
  * if the logger_id already exists or retrieve from the sequence.
  */
 CREATE OR REPLACE TRIGGER T1_CNFLGR_ID
@@ -182,6 +182,7 @@ CREATE OR REPLACE TRIGGER T1_CNFLGR_ID
   FOR EACH ROW
  T1_CNFLGR_ID: BEGIN
   DECLARE LOGGER ANCHOR LOGDATA.CONF_LOGGERS.LOGGER_ID;
+  DECLARE EXISTING ANCHOR LOGDATA.CONF_LOGGERS.LOGGER_ID;
 
   -- Debug
   -- INSERT INTO LOGS (LEVEL_ID, LOGGER_ID, MESSAGE) VALUES (5, -1, '><T1_CNFLGR_ID');
@@ -199,6 +200,17 @@ CREATE OR REPLACE TRIGGER T1_CNFLGR_ID
   ELSEIF (N.LOGGER_ID < 0) THEN
    SIGNAL SQLSTATE VALUE  'LG0C3'
      SET MESSAGE_TEXT = 'LOGGER_ID cannot be negative';
+  ELSEIF (N.LOGGER_ID = N.PARENT_ID) THEN
+   SIGNAL SQLSTATE VALUE  'LG0C5'
+     SET MESSAGE_TEXT = 'The parent cannot be itself';
+  END IF;
+  SELECT LOGGER_ID INTO EXISTING
+    FROM LOGDATA.CONF_LOGGERS
+    WHERE PARENT_ID = N.PARENT_ID
+    AND NAME = N.NAME;
+  IF (INSERTING AND EXISTING IS NOT NULL) THEN
+   SIGNAL SQLSTATE VALUE  'LG0C6'
+     SET MESSAGE_TEXT = 'The same son already exist in the database';
   END IF;
  END T1_CNFLGR_ID @
 
@@ -423,7 +435,7 @@ CREATE OR REPLACE TRIGGER T1_LGS_UNI_DATE
   BEFORE INSERT ON LOGDATA.LOGS
   REFERENCING NEW AS N
   FOR EACH ROW
-  -- TODO Test if this cqll is expensive.
+  -- TODO Test if this call is expensive.
   SET N.DATE = GENERATE_UNIQUE() @
 
 COMMENT ON TRIGGER T1_LGS_UNI_DATE IS 'Generates a unique date for the logs'@

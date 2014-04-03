@@ -169,7 +169,7 @@ ALTER MODULE LOGGER PUBLISH
  * IN MESSAGE
  *   Descriptive message to write in the log table.
  * IN CONFIGURATION
- *   TODO Any particular configuration for the appender. 
+ *   Any particular configuration for the appender. 
  */
 ALTER MODULE LOGGER ADD 
   PROCEDURE LOG_NULL (

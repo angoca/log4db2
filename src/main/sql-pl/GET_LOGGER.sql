@@ -37,13 +37,6 @@ SET CURRENT SCHEMA LOGGER_1B @
  * Made in COLOMBIA.
  */
 
--- TODO Check the logger structure, in order to have different names for the
--- sons of a given father. root>toto root>tata root>tata is an error, and should
--- remove this duplicate. Probably implement with a check constraint.
--- 20140106 - This is already checked if the values are introduced via the
--- GET_LOGGER procedure. Probably, the conf table has to be checked in order
--- to prevent this kind of problems.
-
 -- TODO Check if the logger levels between the conf and effective table are the
 -- same. In conf could be INFO but in effective could be WARN.
 

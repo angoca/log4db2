@@ -73,6 +73,17 @@ hierarchy. PARENT_ID indicates its ancestry.
 * Do not try to modify the values of a logger. If a logger was mis-defined,
 create a new one (new LOGGER_ID, correct NAME, probably same PARENT_ID).
 
+LG0C5
+The parent cannot be itself.
+* The given logger has himslef as a parent, and this cannot be possible because
+the relationship is a recursive one.
+* Corrent the parent ID and reissue the sentence.
+
+LG0C6
+The same son already exist in the database.
+* The provided sentence tries to insert a son that is already defined in the
+database.
+* Verify the name of the son, or the parent and reissue the query.
 
 ==== CONF_LOGGERS_EFFECTIVE TABLE
 
