@@ -58,7 +58,7 @@ COMMENT ON TABLESPACE LOGGER_SPACE IS
   'All configuration tables for the logger utility';
 
 -- Tablespace for logs (data).
--- Try to change the configuration to improve the performance:
+-- PERF: Try to change the configuration to improve the performance:
 -- LARGE tablespace (more rows per page)
 -- EXTENT SIZE (bigger=less preallocation)
 -- PREFETCHSIZE (faster analyzes, less sync IO)
@@ -262,6 +262,10 @@ ALTER TABLE LOGS
   PCTFREE 0
   APPEND ON
   VOLATILE CARDINALITY;
+
+-- PERF: Not Logged Initially could improve the performance.
+-- ALTER TABLE LOGS
+--   ACTIVATE NOT LOGGED INITIALLY;
 
 COMMENT ON TABLE LOGS IS 'Table where the logs are written';
 
