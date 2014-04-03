@@ -204,14 +204,14 @@ CREATE OR REPLACE TRIGGER T1_CNFLGR_ID
    SIGNAL SQLSTATE VALUE  'LG0C5'
      SET MESSAGE_TEXT = 'The parent cannot be itself';
   END IF;
---  SELECT LOGGER_ID INTO EXISTING
---    FROM LOGDATA.CONF_LOGGERS
---    WHERE PARENT_ID = N.PARENT_ID
---    AND NAME = N.NAME;
---  IF (EXISTING IS NOT NULL) THEN
---   SIGNAL SQLSTATE VALUE  'LG0C6'
---     SET MESSAGE_TEXT = 'The same son already exist in the database';
---  END IF;
+  SELECT LOGGER_ID INTO EXISTING
+    FROM LOGDATA.CONF_LOGGERS
+    WHERE PARENT_ID = N.PARENT_ID
+    AND NAME = N.NAME;
+  IF (INSERTING AND EXISTING IS NOT NULL) THEN
+   SIGNAL SQLSTATE VALUE  'LG0C6'
+     SET MESSAGE_TEXT = 'The same son already exist in the database';
+  END IF;
  END T1_CNFLGR_ID @
 
 COMMENT ON TRIGGER T1_CNFLGR_ID IS 'This trigger checks the insertion or updating in the conf_logger table'@
