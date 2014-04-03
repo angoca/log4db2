@@ -18,50 +18,19 @@
  CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, 
  OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE 
  USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. -->
-<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
- targetNamespace="http://angoca.github.io/log4db2/conf_appender" xmlns="http://angoca.github.io/log4db2/conf_appender"
- elementFormDefault="qualified">
-
- <!-- Definition of simple elements -->
- <xs:simpleType name="AppenderNameType">
-  <xs:restriction base="xs:string">
-   <xs:enumeration value="UTL_FILE" />
-  </xs:restriction>
- </xs:simpleType>
-
- <xs:simpleType name="PathType">
-  <xs:restriction base="xs:token">
-   <xs:pattern value="[\w\d\\/]*" />
-  </xs:restriction>
- </xs:simpleType>
-
- <xs:simpleType name="FileNameType">
-  <xs:restriction base="xs:token">
-   <xs:pattern value="[\w\d\.]*\w" />
-  </xs:restriction>
- </xs:simpleType>
-
- <!-- Definition of complex elements -->
- <xs:complexType name="ConfigurationType">
-  <xs:all>
-   <xs:element name="directory" type="PathType" />
-   <xs:element name="filename" type="FileNameType" />
-  </xs:all>
- </xs:complexType>
-
- <xs:element name="log4db2">
-  <xs:complexType>
-   <xs:all>
-    <xs:element name="appender">
-     <xs:complexType>
-      <xs:all>
-       <xs:element name="name" type="AppenderNameType" />
-       <xs:element name="configuration" type="ConfigurationType" />
-      </xs:all>
-     </xs:complexType>
-    </xs:element>
-   </xs:all>
-  </xs:complexType>
- </xs:element>
-</xs:schema>
+<log4db2 xmlns="http://angoca.github.io/log4db2/conf_appender"
+ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:schemaLocation="http://angoca.github.io/log4db2 conf_appender.xsd">
+ <appender>
+  <name>UTL_FILE</name>
+  <configuration>
+   <directory>
+    /home/db2inst1/log4db2
+   </directory>
+   <filename>
+    logs.log
+   </filename>
+  </configuration>
+ </appender>
+</log4db2>
 

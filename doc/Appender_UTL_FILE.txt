@@ -1,0 +1,33 @@
+In order to configure the UTL_FILE appender you should
+
+ * Make sure you do not have an Express-C edition.
+
+    db2licm -l
+
+  * Modify the LOGGER.LOG procedure to include the new appender. Look for the
+   >>> and <<< symbols.
+
+        WHEN 3 THEN -- Writes in a file (Not available in Express-C)
+         CALL LOG_JAVA(LOG_ID, LEV_ID, NEW_MESSAGE, CONFIGURATION);
+
+ * Insert your appender in the list of appenders.
+
+    INSERT INTO APPENDERS (APPENDER_ID, NAME)
+      VALUES (3, 'UTL_FILE');
+
+ * Install the appenders from file:
+
+    cd sql-pl
+    db2 -tsf Appenders_No_ExpC.sql
+
+ * Add your own configuration or update the existing one.
+
+TODO Import the data
+
+ * Associate the conf_appender to a logger via the references table.
+
+    INSERT INTO LOGDATA.REFERENCES (LOGGER_ID, APPENDER_REF_ID)
+      VALUES (0, 3);
+
+Ready to log!
+

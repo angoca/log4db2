@@ -315,14 +315,6 @@ ALTER MODULE LOGGER ADD
            (4, -1, 'Logging in tables');
         END IF;
          CALL LOG_TABLES(LOG_ID, LEV_ID, NEW_MESSAGE);
-       WHEN 2 THEN -- Writes in the db2diag.log file via a function.
-         CALL LOG_DB2DIAG(LOG_ID, LEV_ID, NEW_MESSAGE, CONFIGURATION);
-       WHEN 3 THEN -- Writes in a file (Not available in express-c edition.)
-         CALL LOG_UTL_FILE(LOG_ID, LEV_ID, NEW_MESSAGE, CONFIGURATION);
-       WHEN 4 THEN -- Sends the log to the DB2LOGGER in C.
-         CALL LOG_DB2LOGGER(LOG_ID, LEV_ID, NEW_MESSAGE, CONFIGURATION);
-       WHEN 5 THEN -- Sends the log to Java, and takes the configuration there.
-         CALL LOG_JAVA(LOG_ID, LEV_ID, NEW_MESSAGE, CONFIGURATION);
        WHEN 0 THEN -- Drops the message.
          CALL LOG_NULL(LOG_ID, LEV_ID, NEW_MESSAGE, CONFIGURATION);
        -- >>>

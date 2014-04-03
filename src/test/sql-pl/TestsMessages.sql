@@ -43,9 +43,6 @@ CREATE OR REPLACE PROCEDURE CASCADE (
   EXECUTE STMT USING VAL + 1;
  END @
 
--- TODO The same with a function.
-
-
 BEGIN
 -- Reserved names for errors.
 DECLARE SQLCODE INTEGER DEFAULT 0;
