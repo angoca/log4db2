@@ -28,7 +28,7 @@ INSERT INTO LOGDATA.CONF_APPENDERS (REF_ID, NAME, APPENDER_ID, CONFIGURATION,
 <log4db2
 
 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-xsi:noNamespaceSchemaLocation="customer3.xsd">
+xsi:noNamespaceSchemaLocation="conf_appender.xsd">
  <appender>
   <name>UTL_FILE</name>
   <configuration>
