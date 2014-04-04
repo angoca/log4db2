@@ -23,20 +23,12 @@ OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 /**
- * Uninstalls all the components of this utility.
+ * Reinstall the utility. Calls the uninstall and then the install.
  *
  * Version: 2014-04-03 1-Beta
  * Author: Andres Gomez Casanova (AngocA)
  * Made in COLOMBIA.
  */
 
-PROMPT Uninstalling log4db2...
-PROMPT CleanTriggers.sql
-@@ sql-pl/CleanTriggers.sql
-PROMPT CleanObjects.sql
-set sqlterminator @
-@@ sql-pl/CleanObjects.sql
-PROMPT CleanTables.sql
-set sqlterminator ;
-@@ sql-pl/CleanTables.sql
-
+@ uninstall.sql
+@ install.sql
