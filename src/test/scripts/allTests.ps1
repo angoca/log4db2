@@ -28,6 +28,7 @@ if ( Test-Path -Path init-dev.ps1 -PathType Leaf ) {
 
 echo "Executing all tests with pauses in between."
 
+Write-Host "(next TestsAppenders)"
 & .\${SRC_TEST_SCRIPT_PATH}\test.ps1 ${SRC_TEST_CODE_PATH}\TestsAppenders.sql
 Write-Host "Press enter to continue (next TestsCache)"
 $x = $host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
