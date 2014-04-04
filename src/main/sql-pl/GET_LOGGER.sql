@@ -62,13 +62,13 @@ SET CURRENT SCHEMA LOGGER_1B @
  *   bar is the second and toto is the last one.
  *   The name could have a maximum of 256 characters, representing just one
  *   level, or several levels with short names.
- * OUT LOGGER_ID
+ * OUT LOG_ID
  *   The ID of the logger.
  */
 ALTER MODULE LOGGER ADD
   PROCEDURE GET_LOGGER (
   IN NAME ANCHOR COMPLETE_LOGGER_NAME,
-  OUT LOGGER_ID ANCHOR LOGDATA.CONF_LOGGERS.LOGGER_ID
+  OUT LOG_ID ANCHOR LOGDATA.CONF_LOGGERS.LOGGER_ID
   )
   LANGUAGE SQL
   SPECIFIC P_GET_LOGGER
@@ -108,12 +108,12 @@ ALTER MODULE LOGGER ADD
   -- Checks the value in the cache if active.
   BEGIN
    DECLARE CONTINUE HANDLER FOR SQLSTATE '2202E'
-     SET LOGGER_ID = NULL;
+     SET LOG_ID = NULL;
    IF (CACHE = TRUE) THEN
-    SET LOGGER_ID = LOGGERS_CACHE[NAME];
+    SET LOG_ID = LOGGERS_CACHE[NAME];
    END IF;
   END;
-  IF (LOGGER_ID IS NULL) THEN
+  IF (LOG_ID IS NULL) THEN
    BEGIN
     -- Declare variables.
     DECLARE LENGTH SMALLINT; -- Length of the logger name. Limits the guard.
@@ -215,15 +215,15 @@ ALTER MODULE LOGGER ADD
       SET POS = LENGTH;
      END IF;
     END WHILE;
-    SET LOGGER_ID = PARENT;
+    SET LOG_ID = PARENT;
     -- Adds this logger name in the cache.
     IF (CACHE = TRUE) THEN
      BEGIN
-      SET LOGGERS_CACHE[NAME] = LOGGER_ID;
+      SET LOGGERS_CACHE[NAME] = LOG_ID;
       -- Internal logging.
       IF (INTERNAL = TRUE) THEN
        INSERT INTO LOGDATA.LOGS (DATE, LEVEL_ID, LOGGER_ID, MESSAGE) VALUES 
-         (GENERATE_UNIQUE(), 4, -1, 'Logger not in cache ' || NAME || ' with ' || LOGGER_ID );
+         (GENERATE_UNIQUE(), 4, -1, 'Logger not in cache ' || NAME || ' with ' || LOG_ID );
       END IF;
      END;
     END IF;
@@ -232,7 +232,7 @@ ALTER MODULE LOGGER ADD
   -- Internal logging.
   IF (INTERNAL = TRUE) THEN
    INSERT INTO LOGDATA.LOGS (DATE, LEVEL_ID, LOGGER_ID, MESSAGE) VALUES 
-     (GENERATE_UNIQUE(), 4, -1, 'Logger ID for ' || NAME || ' is ' || COALESCE(LOGGER_ID, -1));
+     (GENERATE_UNIQUE(), 4, -1, 'Logger ID for ' || NAME || ' is ' || COALESCE(LOG_ID, -1));
   END IF;
  END P_GET_LOGGER @
 
