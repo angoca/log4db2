@@ -391,8 +391,6 @@ COMMENT ON TRIGGER T4_EFF_ROOT_UNDEL IS
   'Verifies that the root logger is not deleted from the effective table.
 This is the basic logger and it should always exist in this table.'@
 
-  -- TODO Delete this method CALL LOGGER.DELETE_LOGGER_CACHE(O.LOGGER_ID);
-
 -- Table LOGDATA.APPENDERS.
 
 /**
