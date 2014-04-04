@@ -113,6 +113,14 @@ issuing a negative value.
 * Reissue the statement with a positive or zero value.
 
 
+==== CONFIGURATION TABLE
+
+LG0T1
+Invalid value for defaultRootLevelId
+* The given value for defaultRootLevelId cannot be casted to an integer.
+* Verify that the given value can be converted to a SMALLINT.
+
+
 ==== GET_DEFINED_PARENT_LOGGER FUNCTION ====
 
 LG0F1

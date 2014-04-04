@@ -63,6 +63,13 @@ CREATE OR REPLACE TRIGGER T1_CNF_CCHE
    WHEN 'defaultRootLevelId' THEN
     BEGIN
      DECLARE LVL ANCHOR LOGDATA.CONF_LOGGERS.LEVEL_ID;
+     DECLARE EXIT HANDLER FOR SQLSTATE '22018'
+       RESIGNAL SQLSTATE 'LG0T1'
+       SET MESSAGE_TEXT = 'Invalid value for defaultRootLevelId';
+
+     -- Tests if the given value can be converted to smallint.
+     SET LVL = SMALLINT(N.VALUE);
+
      SELECT LEVEL_ID INTO LVL
        FROM LOGDATA.CONF_LOGGERS
        WHERE LOGGER_ID = 0;
