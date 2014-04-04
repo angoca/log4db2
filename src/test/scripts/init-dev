@@ -23,14 +23,10 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-# This variable indicates the location of the sources, if it has not
-# defined before.
-if [[ -z ${LOG4DB2_PATH} ]] ; then
-  LOG4DB2_PATH=../../..
-fi
+# This variable indicates the location of the sources.
+LOG4DB2_PATH=$(readlink -e ../../..)
 
 SRC_MAIN_CODE_PATH=${LOG4DB2_PATH}/src/main/sql-pl
-SRC_MAIN_SCRIPT_PATH=${LOG4DB2_PATH}/src/main/scripts
 SRC_TEST_CODE_PATH=${LOG4DB2_PATH}/src/test/sql-pl
 SRC_TEST_SCRIPT_PATH=${LOG4DB2_PATH}/src/test/scripts
 

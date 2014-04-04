@@ -31,8 +31,10 @@
 # This variable indicates the location of the sources, if it has not
 # defined before.
 if [ -z ${LOG4DB2_PATH} ] ; then
-  LOG4DB2_PATH=.
+ LOG4DB2_PATH=$(readlink -e .)
 fi
 
-export SRC_MAIN_CODE_PATH=${LOG4DB2_PATH}/sql-pl
+if [ -z ${SRC_MAIN_CODE_PATH} ] ; then
+ export SRC_MAIN_CODE_PATH=${LOG4DB2_PATH}/sql-pl
+fi
 
