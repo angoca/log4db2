@@ -31,7 +31,7 @@
 # This variable indicates the location of the sources, if it has not
 # defined before.
 if ( ! ( Test-Path Variable:\LOG4DB2_PATH ) ) {
-  ${LOG4DB2_PATH}="."
+ ${LOG4DB2_PATH}="."
 }
 
 ${Global:SRC_MAIN_CODE_PATH}="${LOG4DB2_PATH}\sql-pl"

@@ -32,7 +32,7 @@
 :: This variable indicates the location of the sources, if it has not
 :: defined before.
 if "%LOG4DB2_PATH%" EQU "" (
-  set LOG4DB2_PATH=.
+ set LOG4DB2_PATH=.
 )
 
 set SRC_MAIN_CODE_PATH=%LOG4DB2_PATH%\sql-pl
