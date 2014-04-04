@@ -58,6 +58,9 @@ $x = $host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
 Write-Host "Press enter to continue (next TestsGetLogger)"
 $x = $host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
 & .\${SRC_TEST_SCRIPT_PATH}\test.ps1 ${SRC_TEST_CODE_PATH}\TestsGetLogger.sql
+Write-Host "Press enter to continue (next TestsGetLoggerName)"
+$x = $host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
+& .\${SRC_TEST_SCRIPT_PATH}\test.ps1 ${SRC_TEST_CODE_PATH}\TestsGetLoggerName.sql
 Write-Host "Press enter to continue (next TestsHierarchy)"
 $x = $host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
 & .\${SRC_TEST_SCRIPT_PATH}\test.ps1 ${SRC_TEST_CODE_PATH}\TestsHierarchy.sql

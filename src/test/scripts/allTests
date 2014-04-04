@@ -50,6 +50,8 @@ read -p "Press enter to continue (next TestsFunctionsGetDefinedParentLogger)"
 . ./${SRC_TEST_SCRIPT_PATH}/createTriggers
 read -p "Press enter to continue (next TestsGetLogger)"
 . ./${SRC_TEST_SCRIPT_PATH}/test ${SRC_TEST_CODE_PATH}/TestsGetLogger.sql
+read -p "Press enter to continue (next TestsGetLoggerNaem)"
+. ./${SRC_TEST_SCRIPT_PATH}/test ${SRC_TEST_CODE_PATH}/TestsGetLoggerName.sql
 read -p "Press enter to continue (next TestsHierarchy)"
 . ./${SRC_TEST_SCRIPT_PATH}/test ${SRC_TEST_CODE_PATH}/TestsHierarchy.sql
 read -p "Press enter to continue (next TestsLayout)"

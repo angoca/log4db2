@@ -127,23 +127,29 @@ ALTER MODULE LOGGER ADD
   -- The logger is ROOT.
   IF (LOG_ID = 0) THEN
    SET COMPLETE_NAME = 'ROOT';
-  ELSEIF (LOG_ID = -1 OR LOG_ID IS NULL) THEN
-   -- The logger is internal
-   SET COMPLETE_NAME = '-internal-';
-  ELSE
+  ELSEIF (LOG_ID > 0) THEN
    -- Retrieves the id of the parent logger.
    SELECT C.PARENT_ID, C.NAME INTO PARENT, NAME
      FROM LOGDATA.CONF_LOGGERS C
      WHERE C.LOGGER_ID = LOG_ID
      WITH UR;
 
-   SET RETURNED = GET_LOGGER_NAME (PARENT) ;
-   -- The parent is ROOT, thus do not concatenate.
-   IF (RETURNED <> 'ROOT') THEN
-    SET COMPLETE_NAME = RETURNED || '.' || NAME;
+   IF (PARENT IS NOT NULL) THEN
+    SET RETURNED = GET_LOGGER_NAME (PARENT) ;
+    -- The parent is ROOT, thus do not concatenate.
+    IF (RETURNED <> 'ROOT') THEN
+     SET COMPLETE_NAME = RETURNED || '.' || NAME;
+    ELSE
+       SET COMPLETE_NAME = NAME;
+    END IF;
    ELSE
-      SET COMPLETE_NAME = NAME;
+    SET COMPLETE_NAME = 'Unknown';
    END IF;
+  ELSEIF (LOG_ID = -1 OR LOG_ID IS NULL) THEN
+   -- The logger is internal
+   SET COMPLETE_NAME = '-internal-';
+  ELSE
+   SET COMPLETE_NAME = '-INVALID-';
   END IF;
   
   RETURN COMPLETE_NAME;
