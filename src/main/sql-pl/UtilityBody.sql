@@ -36,7 +36,7 @@ SET CURRENT SCHEMA LOGGER_1B @
  */
 
 /**
- * Constanct internalCache (For debug purposes)
+ * Constant internalCache (For debug purposes)
  */
 ALTER MODULE LOGGER ADD
   VARIABLE INTERNAL_CACHE ANCHOR LOGDATA.CONFIGURATION.KEY CONSTANT 'internalCache' @
