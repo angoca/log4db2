@@ -35,5 +35,6 @@ if "%LOG4DB2_PATH%" EQU "" (
  set LOG4DB2_PATH=.
 )
 
-set SRC_MAIN_CODE_PATH=%LOG4DB2_PATH%\sql-pl
-
+if "%SRC_MAIN_CODE_PATH%" EQU "" (
+ set SRC_MAIN_CODE_PATH=%LOG4DB2_PATH%\sql-pl
+)
