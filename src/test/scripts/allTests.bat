@@ -24,6 +24,7 @@
 :: POSSIBILITY OF SUCH DAMAGE.
 
 call init-dev.bat
+
 db2 connect > NUL
 if %ERRORLEVEL% NEQ 0 (
  echo Please connect to a database before the execution of the tests
@@ -53,7 +54,7 @@ if %ERRORLEVEL% NEQ 0 (
  echo (TestsConfLoggersEffective)
  pause
  call %SRC_TEST_SCRIPT_PATH%\test.bat %SRC_TEST_CODE_PATH%\TestsConfLoggersEffective.sql
- echo (TestsFunctionGetDefinedParentLogger)
+ echo (TestsFunctionsGetDefinedParentLogger)
  pause
  db2 -tf %SRC_MAIN_CODE_PATH%\CleanTriggers.sql +O
  call %SRC_TEST_SCRIPT_PATH%\test.bat %SRC_TEST_CODE_PATH%\TestsFunctionGetDefinedParentLogger.sql
