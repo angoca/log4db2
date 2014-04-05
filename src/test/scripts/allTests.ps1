@@ -53,9 +53,9 @@ $x = $host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
 & .\${SRC_TEST_SCRIPT_PATH}\test.ps1 ${SRC_TEST_CODE_PATH}\TestsConfLoggersEffective.sql
 Write-Host "Press enter to continue (next TestsFunctionsGetDefinedParentLogger)"
 $x = $host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
-& .\${SRC_TEST_SCRIPT_PATH}\cleanTriggers.ps1
+db2 -tf ${SRC_MAIN_CODE_PATH}/CleanTriggers.sql +O
 & .\${SRC_TEST_SCRIPT_PATH}\test.ps1 ${SRC_TEST_CODE_PATH}\TestsFunctionGetDefinedParentLogger.sql
-& .\${SRC_TEST_SCRIPT_PATH}\createTriggers.ps1
+db2 -tf ${SRC_MAIN_CODE_PATH}/Trigger.sql +O
 Write-Host "Press enter to continue (next TestsGetLogger)"
 $x = $host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
 & .\${SRC_TEST_SCRIPT_PATH}\test.ps1 ${SRC_TEST_CODE_PATH}\TestsGetLogger.sql
