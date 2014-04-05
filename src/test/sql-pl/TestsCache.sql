@@ -65,51 +65,53 @@ COMMIT;
 
 -- Test01: Activate cache, refresh and get.
 INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES (3, 'Test01: Activate cache, refresh and get');
-
+-- TODO
 COMMIT;
 
 -- Test02: Deactivate cache, refresh and get.
 INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES (3, 'Test02: Deactivate cache, refresh and get');
-
+-- TODO
 COMMIT;
 
 -- Test03: Reactivate cache, refresh and get.
 INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES (3, 'Test03: Reactivate cache, refresh and get');
-
+-- TODO
 COMMIT;
 
 -- Test04: Reactivate cache, refresh and get.
 INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES (3, 'Test04: Reactivate cache, refresh and get');
-
+-- TODO
 COMMIT;
 
 -- Test05: Get, deactivate, delete different.
 INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES (3, 'Test05: Get, deactivate, delete different');
+-- TODO
 --pedir id, desactivar, borrar effective, y volver a pedir, y ver que es el nuevo id (no quedo en el cache)
 COMMIT;
 
 -- Test06: Null.
 INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES (3, 'Test06: Null');
-
+-- TODO
 COMMIT;
 
 -- Test07: Empty.
 INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES (3, 'Test07: Empty');
-
+-- TODO
 COMMIT;
 
 -- Test08: Space.
 INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES (3, 'Test08: Space');
-
+-- TODO
 COMMIT;
 
 -- Test09: Dot.
 INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES (3, 'Test09: Dot');
-
+-- TODO
 COMMIT;
 
 -- Test10: Deactivate multiple times.
 INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES (3, 'Test10: Deactivate multiple times');
+-- TODO
 --Hacer un test desactivando 4 veces, y ver que cada ves es un ID diferente
 COMMIT;
 
