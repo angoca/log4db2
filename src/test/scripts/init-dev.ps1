@@ -26,6 +26,7 @@
 ${LOG4DB2_PATH}="..\..\.."
 
 ${Global:SRC_MAIN_CODE_PATH}="${LOG4DB2_PATH}\src\main\sql-pl"
+${Global:SRC_MAIN_SCRIPT_PATH}="${LOG4DB2_PATH}\src\main\scripts"
 ${Global:SRC_TEST_CODE_PATH}="${LOG4DB2_PATH}\src\test\sql-pl"
 ${Global:SRC_TEST_SCRIPT_PATH}="${LOG4DB2_PATH}\src\test\scripts"
 

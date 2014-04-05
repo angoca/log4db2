@@ -36,5 +36,6 @@ fi
 
 if [ -z ${SRC_MAIN_CODE_PATH} ] ; then
  export SRC_MAIN_CODE_PATH=${LOG4DB2_PATH}/sql-pl
+ export SRC_MAIN_SCRIPT_PATH=${LOG4DB2_PATH}
 fi
 
