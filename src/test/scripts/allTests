@@ -29,7 +29,7 @@ if [ ${?} -ne 0 ] ; then
  echo "Please connect to a database before the execution of the tests."
  echo "Remember that to call the script the command is '. ./allTests'"
 else
- echo Executing all tests with pauses in between.
+ echo "Executing all tests with pauses in between."
 
  echo "(next TestsAppenders)"
  . ${SRC_TEST_SCRIPT_PATH}/test ${SRC_TEST_CODE_PATH}/TestsAppenders.sql

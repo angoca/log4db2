@@ -25,7 +25,7 @@
 
 db2 connect > NUL
 if %ERRORLEVEL% NEQ 0 (
- echo Please connect to a database before the execution of the tests
+ echo Please connect to a database before the execution of the test
  echo Remember that to call the script the command is 'test <TestSuite>'"
 ) else (
  db2 DELETE FROM LOGDATA.LOGS

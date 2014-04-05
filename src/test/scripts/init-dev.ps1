@@ -22,11 +22,8 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-# This variable indicates the location of the sources, if it has not
-# defined before.
-if ( ! ( Test-Path Variable:\LOG4DB2_PATH ) ) {
-  ${LOG4DB2_PATH}="..\..\.."
-}
+# This variable indicates the location of the sources.
+${LOG4DB2_PATH}="..\..\.."
 
 ${Global:SRC_MAIN_CODE_PATH}="${LOG4DB2_PATH}\src\main\sql-pl"
 ${Global:SRC_TEST_CODE_PATH}="${LOG4DB2_PATH}\src\test\sql-pl"
