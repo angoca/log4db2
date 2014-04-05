@@ -28,6 +28,9 @@
 # Author: Andres Gomez Casanova (AngocA)
 # Made in COLOMBIA.
 
-.\uninstall.ps1
-.\install.ps1 $Args[0] $Args[1]
+ if ( Test-Path -Path init.ps1 -PathType Leaf ) {
+  .\init.ps1
+ }
+& ${SRC_MAIN_SCRIPT_PATH}\uninstall.ps1
+& ${SRC_MAIN_SCRIPT_PATH}\install.ps1 $Args[0] $Args[1]
 
