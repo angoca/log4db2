@@ -52,7 +52,7 @@ goto:eof
 
 :: DB2 v10.1
 :v10.1
- echo "Installing utility for v10.1"
+ echo Installing utility for v10.1
  if %continue% EQU 1 call:installScript %SRC_MAIN_CODE_PATH%\Tables.sql
  if %continue% EQU 1 call:installScript %SRC_MAIN_CODE_PATH%\UtilityHeader.sql
  if %continue% EQU 1 call:installScript %SRC_MAIN_CODE_PATH%\UtilityBody.sql
@@ -69,16 +69,16 @@ goto:eof
  cd xml
  if %continue% EQU 1 call:installScript AppendersXML.sql
  cd ..
- cd scripts > NUL
+ cd scripts 2> NUL
 
  :: Temporal capabilities for tables.
  if "%1" EQU "t" if %continue% EQU 1 (
-  echo "Create table for Time Travel"
+  echo Create table for Time Travel
   call:installScript %SRC_MAIN_CODE_PATH%\TablesTimeTravel.sql
  )
 
  if %continue% EQU 1 (
-  echo "log4db2 was installed successfully"
+  echo log4db2 was installed successfully
  ) else (
   echo "Check the error(s) and reinstall the utility"
  )
@@ -86,7 +86,7 @@ goto:eof
 
 :: DB2 v9.7
 :v9.7
- echo "Installing utility for v9.7"
+ echo Installing utility for v9.7
  if %continue% EQU 1 call:installScript %SRC_MAIN_CODE_PATH%\Tables_v9_7.sql
  if %continue% EQU 1 call:installScript %SRC_MAIN_CODE_PATH%\UtilityHeader.sql
  if %continue% EQU 1 call:installScript %SRC_MAIN_CODE_PATH%\UtilityBody.sql
@@ -106,7 +106,7 @@ goto:eof
  cd scripts > NUL
 
  if %continue% EQU 1 (
-  echo "log4db2 was installed successfully"
+  echo log4db2 was installed successfully
  ) else (
   echo "Check the error(s) and reinstall the utility"
  )
