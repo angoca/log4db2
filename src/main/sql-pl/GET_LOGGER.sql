@@ -64,6 +64,17 @@ SET CURRENT SCHEMA LOGGER_1B @
  *   level, or several levels with short names.
  * OUT LOG_ID
  *   The ID of the logger.
+ * PRE
+ *   Root logger exist.
+ * POS
+ *   If the given name is valid, a valid ID is returned that correspond to the
+ *   last son in the hierarchy.
+ * TESTS
+ *   TestsCascadeCallLimit: Allows to verify the quantity of levels, and to
+ *   register all messages.
+ *   TestsGetLogger: Verifies the inputs of this procedure, and checks the
+ *   outputs.
+ *   TestsMessages: Checks the output of the error.
  */
 ALTER MODULE LOGGER ADD
   PROCEDURE GET_LOGGER (

@@ -48,6 +48,8 @@ SET PATH = SYSPROC, LOGGER_1B @
  *   Identification of the associates level.
  * IN MESSAGE
  *   Descriptive message to write in the log table.
+ * TESTS
+ *   TestsLogs: Validates that the messages are well written.
  */
 ALTER MODULE LOGGER ADD 
   PROCEDURE LOG_TABLES (

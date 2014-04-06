@@ -45,10 +45,13 @@ SET PATH = SYSPROC, LOGGER_1B @
  * configuration.
  *
  * IN HIERARCHY
- *  Comma separated IDs that represents the ascendency of a logger.
+ *   Comma separated IDs that represents the ascendency of a logger.
  * IN LOGGER_ID
- *  Logger ID to check if that is part of the hierarchy.
+ *   Logger ID to check if that is part of the hierarchy.
  * RETURNS TRUE if the logger is part of the hierarchy. Otherwise false.
+ * TESTS
+ *   TestsHierarchy: Verifies different output to validate if the logger is
+ *   of the hierarchy.
  */
 ALTER MODULE LOGGER ADD
  FUNCTION IS_LOGGER_ACTIVE (
@@ -131,10 +134,26 @@ ALTER MODULE LOGGER ADD
  * IN LOG_ID
  *   This is the associated logger of the provided message. Default logger is
  *   ROOT, that is 0.
- * IN LEVEL_ID
+ * IN LEV_ID
  *   Level of the message. Default level is 3, which is WARN.
  * IN MESSAGE
  *   Message to log.
+ * PRE
+ *   The LOG_ID should exists in CONF_LOGGERS table in order to associate the
+ *   given message with the logger. If that does not exist or an invalid
+ *   LOG_ID is given, then it is associated to ROOT logger. Some exceptions
+ *   also exist.
+ * POS
+ *   According to the LEV_ID, the CONF_LOGGERS configuration, the
+ *   CONF_APPENDERS and REFERECES, the message could be or not written in an
+ *   appender.
+ * TESTS
+ *   TestsCascadeCallLimit: Allows to verify the quantity of levels, and to
+ *   register all messages.
+ *   TestsLayout: Validates the different options of the layout.
+ *   TestsLogs: Validates that the messages are well written.
+ *   TestsMessages: Checks the output of the error.
+ *   TestsReferences: Verifies when to write, and how.
  */
 ALTER MODULE LOGGER ADD 
   PROCEDURE LOG (
@@ -339,6 +358,8 @@ ALTER MODULE LOGGER ADD
    CALL LOG_TABLES(LOG_ID, LEV_ID, MESSAGE);
   END IF;
 END P_LOG @
+
+-- MACROS
 
 /**
  * Logs a message at debug (5) level. This method reduces the quantity of

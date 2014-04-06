@@ -41,6 +41,10 @@ SET CURRENT SCHEMA LOGGER_1B @
 /**
  * Cleans the cache or update it when the related configuration parameter is
  * modified.
+ *
+ * TESTS
+ *   TestConfiguration: Validates if this error is thrown.
+ *   TestsMessages: Checks the output of the error.
  */
 CREATE OR REPLACE TRIGGER T1_CNF_CCHE
   AFTER INSERT OR UPDATE ON LOGDATA.CONFIGURATION
@@ -114,6 +118,10 @@ COMMENT ON TRIGGER T1_CNF_CCHE IS
 
 /**
  * Checks that the level are consecutives.
+ *
+ * TESTS
+ *   TestsLevels: Validates if the errors are thrown.
+ *   TestsMessages: Checks the output of the error.
  */
 CREATE OR REPLACE TRIGGER T1_LVL_CON
   BEFORE INSERT ON LOGDATA.LEVELS
@@ -152,6 +160,8 @@ COMMENT ON TRIGGER T2_LVL_NO_UPD IS 'Prevents the change of level_id'@
 
 /**
  * Allows to delete just the maximal LEVEL_ID value.
+ * TESTS
+ *   TestsMessages: Checks the output of the error.
  */
 CREATE OR REPLACE TRIGGER T3_LVL_DEL
   BEFORE DELETE ON LOGDATA.LEVELS
@@ -182,6 +192,10 @@ COMMENT ON TRIGGER T3_LVL_DEL IS 'Allows to delete just the maximal LEVEL_ID val
 /**
  * This trigger checks the insertion or updating in the conf_loggers table to see
  * if the logger_id already exists or retrieve from the sequence.
+ *
+ * TESTS
+ *   TestConfLoggers: Verifies if the different errors are thrown.
+ *   TestsMessages: Checks the output of the error.
  */
 CREATE OR REPLACE TRIGGER T1_CNFLGR_ID
   BEFORE UPDATE OR INSERT ON LOGDATA.CONF_LOGGERS
@@ -225,6 +239,10 @@ COMMENT ON TRIGGER T1_CNFLGR_ID IS 'This trigger checks the insertion or updatin
 
 /**
  * It restricts to update any value in CONF_LOGGERS different to LEVEL_ID.
+ *
+ * TESTS
+ *   TestConfLoggers verifies if the different errors are thrown.
+ *   TestsMessages: Checks the output of the error.
  */
 CREATE OR REPLACE TRIGGER T2_CNFLGR_NO_UPD
   BEFORE UPDATE OF LOGGER_ID, NAME, PARENT_ID ON LOGDATA.CONF_LOGGERS
@@ -299,7 +317,7 @@ COMMENT ON TRIGGER T4_CNFLGER_CLN IS 'Refreshes the loggers cache after any modi
 -- Table LOGDATA.CONF_LOGGERS_EFFECTIVE.
 
 /**
- *  Assigns the LEVEL_ID.
+ * Assigns the LEVEL_ID.
  */
 CREATE OR REPLACE TRIGGER T1_EFF_LVL_ID
   BEFORE INSERT OR UPDATE OF LEVEL_ID
@@ -337,6 +355,10 @@ COMMENT ON TRIGGER T1_EFF_LVL_ID IS 'Assigns the LEVEL_ID' @
 
 /**
  * It restricts the update of any value in this table different to LEVEL_ID.
+ *
+ * TESTS
+ *   TestConfLoggersEffective: Verifies if the different errors are thrown.
+ *   TestsMessages: Checks the output of the error.
  */
 CREATE OR REPLACE TRIGGER T2_EFF_NO_UPD
   BEFORE UPDATE OF LOGGER_ID, HIERARCHY ON LOGDATA.CONF_LOGGERS_EFFECTIVE
@@ -379,6 +401,11 @@ ascendency or default value, in the BEFORE trigger for this table'@
 /**
  * Verifies that the root logger is not deleted from the effective table. This
  * is the basic logger and it should always exist in this table.
+ *
+ * TESTS
+ *   TestConfLoggersDelete and TestConfLoggersEffective verify if the different
+ *   errors are thrown.
+ *   TestsMessages: Checks the output of the error.
  */
 CREATE OR REPLACE TRIGGER T4_EFF_ROOT_UNDEL
   BEFORE DELETE ON LOGDATA.CONF_LOGGERS_EFFECTIVE
@@ -402,6 +429,10 @@ This is the basic logger and it should always exist in this table.'@
 
 /**
  * Checks that the appender_id for an appender is greater or equal to zero.
+ *
+ * TESTS
+ *   TestsAppenders: Verifies the modification of Appenders.
+ *   TestsMessages: Checks the output of the error.
  */
 CREATE OR REPLACE TRIGGER T1_APP_GE_0
   BEFORE INSERT OR UPDATE ON LOGDATA.APPENDERS

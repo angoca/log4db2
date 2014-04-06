@@ -105,8 +105,15 @@ ALTER MODULE LOGGER ADD
  * Retrieves the complete logger name for a given logged id.
  *
  * IN LOG_ID
- *  Identification of the logger in the effective table.
+ *   Identification of the logger in the effective table.
  * RETURNS the complete name of the logger (recursive.)
+ * TESTS
+ *   TestsGetLoggerName: Verifies different outputs for this function.
+ * PRE
+ *   ROOT is defined.
+ * POS
+ *   The returned name matches the hierarchy. If the inverse function of
+ *   GET_LOGGER.
  */
 ALTER MODULE LOGGER ADD
  FUNCTION GET_LOGGER_NAME (
@@ -158,6 +165,11 @@ ALTER MODULE LOGGER ADD
 /**
  * Unload configuration. This is useful for tests, but it should not called
  * used in production.
+ *
+ * PRE
+ *   No conditions.
+ * POS
+ *   The caches are emptied.
  */
 ALTER MODULE LOGGER ADD
   PROCEDURE UNLOAD_CONF (
@@ -177,6 +189,11 @@ ALTER MODULE LOGGER ADD
 
 /**
  * Refreshes the configuration cache immediately.
+ *
+ * PRE
+ *   No preconditions.
+ * POS
+ *   The caches holds the most recent information.
  */
 ALTER MODULE LOGGER ADD
   PROCEDURE REFRESH_CONF (
@@ -219,9 +236,13 @@ ALTER MODULE LOGGER ADD
  * table.
  *
  * IN KEY
- *  Identification of the key/value parameter of the configuration table.
+ *   Identification of the key/value parameter of the configuration table.
  * RETURNS The associated value of the given key. NULL if there is not a key
  * with that value.
+ * PRE
+ *   No preconditions.
+ * POS
+ *   The returned value correspond to the given value if exist.
  */
 ALTER MODULE LOGGER ADD
   FUNCTION GET_VALUE (
@@ -283,7 +304,12 @@ ALTER MODULE LOGGER ADD
  END F_GET_VALUE @
 
 /**
- * Deletes a value in the loggers cache.
+ * Deletes all values in the loggers cache.
+ *
+ * PRE
+ *   No preconditions.
+ * POS
+ *   The CONF_LOGGER cache is empty.
  */
 ALTER MODULE LOGGER ADD
   PROCEDURE DELETE_ALL_LOGGER_CACHE (
@@ -300,6 +326,11 @@ ALTER MODULE LOGGER ADD
 
 /**
  * Activates the cache. Cleans any previous value on the cache.
+ *
+ * PRE
+ *   No preconditions.
+ * POS
+ *   The cache holds the most recent information from the table.
  */
 ALTER MODULE LOGGER ADD
   PROCEDURE ACTIVATE_CACHE (
@@ -330,6 +361,11 @@ ALTER MODULE LOGGER ADD
 
 /**
  * Cleans the cache, and deactives it.
+ *
+ * PRE
+ *   No preconditions.
+ * POS
+ *   The cache is emptied.
  */
 ALTER MODULE LOGGER ADD
   PROCEDURE DEACTIVATE_CACHE (
@@ -394,6 +430,12 @@ ALTER MODULE LOGGER ADD
  *   Parent of the descendancy to be changed.
  * IN LEVEL
  *   Log level to be assigned to all descendancy.
+ * TESTS
+ *   TestsMessages: Checks the output of the error.
+ * PRE
+ *   ROOT exists and Levels are defined.
+ * POS
+ *   The Effective table reflects the new values.
  */
 ALTER MODULE LOGGER ADD
   PROCEDURE MODIFY_DESCENDANTS (
@@ -450,6 +492,10 @@ ALTER MODULE LOGGER ADD
  * modifications.
  *
  * RETURNS The configuration level for ROOT logger.
+ * PRE
+ *   No conditions.
+ * POS
+ *   The returned value corresponds to the value registered in the database.
  */
 ALTER MODULE LOGGER ADD
   FUNCTION GET_DEFAULT_LEVEL (
@@ -479,6 +525,13 @@ ALTER MODULE LOGGER ADD
  *   Logger id that will be analyzed to find a ascendency with a defined log
  *   level.
  * RETURNS The log level configured to a ascendancy or the default value.
+ * TESTS
+ *   TestsFunctionGetDefinedParent checks different inputs of this function.
+ *   TestsMessages: Checks the output of the error.
+ * PRE
+ *   ROOT is registered in the databas and levels are defined.
+ * POS
+ *   The returned level correspond to the closer ascendant in the hierarchy.
  */
 ALTER MODULE LOGGER ADD
   FUNCTION GET_DEFINED_PARENT_LOGGER (

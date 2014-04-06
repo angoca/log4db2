@@ -43,6 +43,11 @@ ALTER MODULE LOGADMIN ADD
 
 /**
  * Deletes a value in the loggers cache.
+ *
+ * PRE
+ *   No preconditions.
+ * POS
+ *   If the cache is active, it has been deleted after the execution.
  */
 ALTER MODULE LOGGER ADD
   PROCEDURE DELETE_LOGGER_CACHE (
@@ -361,6 +366,12 @@ ALTER MODULE LOGADMIN ADD
  *   level, or several levels with short names.
  * IN LEVEL
  *   Log level to be assigned.
+ * PRE
+ *   No preconditions.
+ * POS
+ *   If the given name is valid, and if the logger does not exist, a new logger
+ *   is created in the CONF_LOGGERS table; if the logges exist, its ID is
+*    returned. Finally, the given level is associated with the logger.
  */
 ALTER MODULE LOGADMIN ADD
   PROCEDURE REGISTER_LOGGER (
