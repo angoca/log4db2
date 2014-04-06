@@ -90,6 +90,9 @@ COMMENT ON CONFIGURATION (
   VALUE IS 'Value of the corresponding key'
   );
 
+COMMENT ON CONSTRAINT CONFIGURATION.LOG_CONF_PK IS
+  'Primary key of Configuration table';
+
 -- Table for the logger levels.
 CREATE TABLE LEVELS (
   LEVEL_ID SMALLINT NOT NULL,
@@ -104,6 +107,9 @@ COMMENT ON LEVELS (
   LEVEL_ID IS 'Level Id',
   NAME IS 'Level name'
   );
+
+COMMENT ON CONSTRAINT LEVELS.LOG_LEVELS_PK IS
+  'Primary key of Levels table';
 
 -- Table for loggers configuration.
 CREATE TABLE CONF_LOGGERS (
@@ -133,6 +139,15 @@ COMMENT ON CONF_LOGGERS (
   PARENT_ID IS 'Parent logger id',
   LEVEL_ID IS 'Log level to register (Optional)'
   );
+
+COMMENT ON CONSTRAINT CONF_LOGGERS.LOG_LOGGERS_PK IS
+  'Primary key of ConfLoggers table';
+
+COMMENT ON CONSTRAINT CONF_LOGGERS.LOG_LOGGERS_FK_LEVELS IS
+  'Relationship with Levels';
+
+COMMENT ON CONSTRAINT CONF_LOGGERS.LOG_LOGGERS_FK_PARENT IS
+  'Recursive relation - parent';
 
 -- Table for the effecetive loggers configuration.
 -- This table allows to keep an id related to a specific logger across database
@@ -172,6 +187,15 @@ COMMENT ON CONF_LOGGERS_EFFECTIVE (
   HIERARCHY IS 'Comma separated numbers that represents the hierarchy'
   );
 
+COMMENT ON CONSTRAINT CONF_LOGGERS_EFFECTIVE.LOG_LOGGERS_EFF_PK IS
+  'Primary key of ConfLoggersEffective table';
+
+COMMENT ON CONSTRAINT CONF_LOGGERS_EFFECTIVE.LOG_LOGGERS_EFF_FK_LEVELS IS
+  'Relationship with Levels';
+
+COMMENT ON CONSTRAINT CONF_LOGGERS_EFFECTIVE.LOG_LOGGERS_EFF_FK_CNF_LOG IS
+  'Relationship with ConfLoggers';
+
 -- Table for the appenders.
 CREATE TABLE APPENDERS (
   APPENDER_ID SMALLINT NOT NULL,
@@ -186,6 +210,9 @@ COMMENT ON APPENDERS (
   APPENDER_ID IS 'Id of the appender',
   NAME IS 'Name of the appender'
   );
+
+COMMENT ON CONSTRAINT APPENDERS.LOG_APPEND_PK IS
+  'Primary key of Appenders table';
 
 -- Table for the configuration about where to write the logs.
 CREATE TABLE CONF_APPENDERS (
@@ -221,6 +248,15 @@ COMMENT ON CONF_APPENDERS (
   LEVEL_ID IS 'Minimum level to log'
   );
 
+COMMENT ON CONSTRAINT CONF_APPENDERS.LOG_CONF_APPEND_PK IS
+  'Primary key of ConfAppenders table';
+
+COMMENT ON CONSTRAINT CONF_APPENDERS.LOG_CONF_APPEND_FK_APPEND IS
+  'Relationship with Appenders';
+
+COMMENT ON CONSTRAINT CONF_APPENDERS.LOG_CONF_APPEND_FK_LEVELS IS
+  'Relationship with Levels';
+
 -- Table for the loggers and appenders association.
 CREATE TABLE REFERENCES (
   LOGGER_ID SMALLINT NOT NULL,
@@ -244,6 +280,15 @@ COMMENT ON REFERENCES (
   LOGGER_ID IS 'Logger that will be written',
   APPENDER_REF_ID IS 'Appender used to write the log'
   );
+
+COMMENT ON CONSTRAINT REFERENCES.LOG_REF_PK IS
+  'Primary key of References table';
+
+COMMENT ON CONSTRAINT REFERENCES.LOG_REF_FK_CONF_LOGGERS IS
+  'Relationship with ConfLoggers';
+
+COMMENT ON CONSTRAINT REFERENCES.LOG_REF_FK_CONF_APPEND IS
+  'Relationship with ConfAppenders';
 
 -- Table for the pure SQL Tables appender.
 -- TODO make tests in order to check in a auto generated column for an id
