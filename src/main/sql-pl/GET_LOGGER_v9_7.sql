@@ -45,12 +45,6 @@ SET CURRENT SCHEMA LOGGER_1B @
 -- length of the concatenated inner levels, and this lenght should be less than
 -- 256 chars. foo.bar.toto
 
--- TODO Add the optimized for
-
--- TODO Add the fetch first N rows only
-
--- TODO Add the isolation level.
-
 /**
  * Internal method that analyzes a string against the tables to see if the
  * level name is already registered there, and finally retrieves the logging
@@ -81,7 +75,9 @@ ALTER MODULE LOGGER ADD PROCEDURE ANALYZE_NAME (
   SELECT C.LOGGER_ID, C.LEVEL_ID INTO SON, LEVEL
     FROM LOGDATA.CONF_LOGGERS C 
     WHERE C.NAME = STRING
-    AND C.PARENT_ID = PARENT;
+    AND C.PARENT_ID = PARENT
+    FETCH FIRST 1 ROW ONLY
+    WITH CS;
   -- If the logger is NOT already registered.
   IF (SON IS NULL) THEN
    -- Registers the new logger and retrieves the id. Switches the parent id.
@@ -199,10 +195,10 @@ ALTER MODULE LOGGER ADD
     SET PARENT = 0; -- Root logger is always 0.
     SET PARENT_HIERARCHY = '0'; -- Hierarchy path for root.
     -- Retrieves the logger level for the root logger.
-    -- This query waits for the data to be commited (CS Cursor stability)
     SELECT C.LEVEL_ID INTO PARENT_LEVEL
       FROM LOGDATA.CONF_LOGGERS C
       WHERE C.LOGGER_ID = 0
+      FETCH FIRST 1 ROW ONLY
       WITH UR;
     -- TODO To check the value defaultRootLevelId before assign Warn as default.
     -- If the root logger is not defined, then set the default level: WARN-3.
