@@ -286,13 +286,14 @@ DELETE FROM LOGDATA.CONFIGURATION
 COMMIT;
 -- Cleans the environment.
 INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES (3, 'TestsCache: Cleaning environment');
+DELETE FROM LOGDATA.CONFIGURATION;
 INSERT INTO LOGDATA.CONFIGURATION (KEY, VALUE)
-  VALUES ('defaultRootLevelId', '3'),
+  VALUES ('checkHierarchy', 'false'),
+         ('checkLevels', 'false'),
+         ('defaultRootLevelId', '3'),
          ('internalCache', 'true'),
          ('logInternals', 'false'),
-         ('secondsToRefresh', '30'),
-         ('checkHierarchy', 'false'),
-         ('checkLevels', 'false');
+         ('secondsToRefresh', '30');
 INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES (3, 'TestsCache: Finished succesfully');
 COMMIT;
 

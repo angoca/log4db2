@@ -354,15 +354,14 @@ END IF;
 
 -- Cleans the environment.
 INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES (3, 'TestsHierarchy: Cleaning environment');
-UPDATE LOGDATA.CONFIGURATION
-  SET VALUE = 'true'
-  WHERE KEY = 'internalCache';
-UPDATE LOGDATA.CONFIGURATION
-  SET VALUE = '3'
-  WHERE KEY = 'defaultRootLevelId';
-UPDATE LOGDATA.CONFIGURATION
-  SET VALUE = 'false'
-  WHERE KEY = 'logInternals';
+DELETE FROM LOGDATA.CONFIGURATION;
+INSERT INTO LOGDATA.CONFIGURATION (KEY, VALUE)
+  VALUES ('checkHierarchy', 'false'),
+         ('checkLevels', 'false'),
+         ('defaultRootLevelId', '3'),
+         ('internalCache', 'true'),
+         ('logInternals', 'false'),
+         ('secondsToRefresh', '30');
 DELETE FROM LOGDATA.CONF_LOGGERS
   WHERE LOGGER_ID <> 0;
 INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES (3, 'TestsHierarchy: Finished succesfully');

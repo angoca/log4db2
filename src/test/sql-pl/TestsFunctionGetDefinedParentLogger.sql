@@ -670,15 +670,14 @@ DELETE FROM LOGDATA.CONF_LOGGERS
 UPDATE LOGDATA.CONF_LOGGERS
   SET LEVEL_ID = 3
   WHERE LOGGER_ID = 0;
-UPDATE LOGDATA.CONFIGURATION
-  SET VALUE = 'true'
-  WHERE KEY = 'internalCache';
-UPDATE LOGDATA.CONFIGURATION
-  SET VALUE = '3'
-  WHERE KEY = 'defaultRootLevelId';
-UPDATE LOGDATA.CONFIGURATION
-  SET VALUE = 'false'
-  WHERE KEY = 'logInternals';
+DELETE FROM LOGDATA.CONFIGURATION;
+INSERT INTO LOGDATA.CONFIGURATION (KEY, VALUE)
+  VALUES ('checkHierarchy', 'false'),
+         ('checkLevels', 'false'),
+         ('defaultRootLevelId', '3'),
+         ('internalCache', 'true'),
+         ('logInternals', 'false'),
+         ('secondsToRefresh', '30');
 CALL LOGGER.UNLOAD_CONF();
 COMMIT;
 INSERT INTO LOGDATA.LOGS (DATE, LEVEL_ID, MESSAGE) VALUES (GENERATE_UNIQUE(), 3, 'TestsFunctionGetDefinedParentLoggeer: Finished succesfully');

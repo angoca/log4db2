@@ -333,12 +333,12 @@ COMMENT ON PUBLIC ALIAS LOGS IS 'log4db2 logs';
 -- logInternals: Logs internal messages.
 -- secondsToRefresh: Quantity of second before refresh the conf.
 INSERT INTO CONFIGURATION (KEY, VALUE)
-  VALUES ('defaultRootLevelId', '3'),
+  VALUES ('checkHierarchy', 'false'),
+         ('checkLevels', 'false'),
+         ('defaultRootLevelId', '3'),
          ('internalCache', 'true'),
          ('logInternals', 'false'),
-         ('secondsToRefresh', '30'),
-         ('checkHierarchy', 'false'),
-         ('checkLevels', 'false');
+         ('secondsToRefresh', '30');
 
 -- Levels of the logger utility.
 INSERT INTO LEVELS (LEVEL_ID, NAME)
