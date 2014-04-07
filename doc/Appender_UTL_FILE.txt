@@ -5,14 +5,14 @@ In order to configure the UTL_FILE appender you should
     db2licm -l
 
   * Modify the LOGGER.LOG procedure to include the new appender. Look for the
-   >>> and <<< symbols.
+   >>> and <<< symbols in the file LOG.sql.
 
         WHEN 3 THEN -- Writes in a file (Not available in Express-C)
-         CALL LOG_JAVA(LOG_ID, LEV_ID, NEW_MESSAGE, CONFIGURATION);
+         CALL LOG_UTL_FILE(LOG_ID, LEV_ID, NEW_MESSAGE, CONFIGURATION);
 
  * Insert your appender in the list of appenders.
 
-    INSERT INTO APPENDERS (APPENDER_ID, NAME)
+    INSERT INTO LOGDATA.APPENDERS (APPENDER_ID, NAME)
       VALUES (3, 'UTL_FILE');
 
  * Install the appenders from file:
