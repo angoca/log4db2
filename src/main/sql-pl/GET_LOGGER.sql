@@ -165,7 +165,9 @@ ALTER MODULE LOGGER ADD
       SELECT C.LOGGER_ID, C.LEVEL_ID INTO SON, LEVEL
         FROM LOGDATA.CONF_LOGGERS C 
         WHERE C.NAME = STRING
-        AND C.PARENT_ID = PARENT;
+        AND C.PARENT_ID = PARENT
+        FETCH FIRST 1 ROW ONLY
+        WITH CS;
       -- If the logger is NOT already registered.
       IF (SON IS NULL) THEN
        -- Registers the new logger and retrieves the id. Switches the parent id.
@@ -200,7 +202,8 @@ ALTER MODULE LOGGER ADD
     SELECT C.LEVEL_ID INTO PARENT_LEVEL
       FROM LOGDATA.CONF_LOGGERS C
       WHERE C.LOGGER_ID = 0
-      WITH UR;
+      FETCH FIRST 1 ROW ONLY
+      WITH CS;
     -- TODO To check the value defaultRootLevelId before assign Warn as default.
     -- If the root logger is not defined, then set the default level: WARN-3.
     IF (PARENT_LEVEL IS NULL) THEN
