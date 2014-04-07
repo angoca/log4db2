@@ -75,7 +75,7 @@ ALTER MODULE LOGGER ADD
  * Variable for the last time the configuration was loaded.
  */
 ALTER MODULE LOGGER ADD
-  VARIABLE LAST_REFRESH TIMESTAMP DEFAULT CURRENT TIMESTAMP @
+  VARIABLE LAST_REFRESH TIMESTAMP DEFAULT NULL @
 
 /**
  * Configuration values type.
@@ -100,6 +100,249 @@ ALTER MODULE LOGGER ADD
  */
 ALTER MODULE LOGGER ADD
   VARIABLE LOGGERS_CACHE LOGGERS_TYPE @
+
+/**
+ * Unload configuration. This is useful for debugging, but it should not called
+ * used in production.
+ *
+ * PRE
+ *   No conditions.
+ * POS
+ *   The caches are emptied.
+ */
+ALTER MODULE LOGGER ADD
+  PROCEDURE UNLOAD_CONF (
+  )
+  LANGUAGE SQL
+  SPECIFIC P_UNLOAD_CONF
+  READS SQL DATA
+  NOT DETERMINISTIC
+  NO EXTERNAL ACTION
+  PARAMETER CCSID UNICODE
+ P_UNLOAD_CONF: BEGIN
+  SET CONFIGURATION = ARRAY_DELETE(CONFIGURATION);
+  -- Sets a reference date 1970-01-01.
+  SET LAST_REFRESH = DATE(719163);
+  SET LOADED = FALSE;
+ END P_UNLOAD_CONF @ 
+
+/**
+ * Refreshes the configuration cache immediately.
+ *
+ * PRE
+ *   No preconditions.
+ * POS
+ *   The caches holds the most recent information.
+ */
+ALTER MODULE LOGGER ADD
+  PROCEDURE REFRESH_CONF (
+  )
+  LANGUAGE SQL
+  SPECIFIC P_REFRESH_CONF
+  DYNAMIC RESULT SETS 2
+  READS SQL DATA
+  NOT DETERMINISTIC
+  NO EXTERNAL ACTION
+  PARAMETER CCSID UNICODE
+ P_REFRESH_CONF: BEGIN
+  -- Clears the current configuration.
+  CALL UNLOAD_CONF();
+  -- Reads current configuration.
+  SELECT ARRAY_AGG(KEY, VALUE) INTO CONFIGURATION
+    FROM LOGDATA.CONFIGURATION
+    WITH UR;
+  SET LOADED = TRUE;
+  -- Sets the most recent configuration read as now.
+  SET LAST_REFRESH = CURRENT TIMESTAMP;
+ END P_REFRESH_CONF @
+
+/**
+ * Function that returns the value of the given key from the configuration
+ * table.
+ *
+ * IN KEY
+ *   Identification of the key/value parameter of the configuration table.
+ * RETURNS The associated value of the given key. NULL if there is not a key
+ * with that value.
+ * PRE
+ *   No preconditions.
+ * POS
+ *   The returned value correspond to the given value if exist.
+ */
+ALTER MODULE LOGGER ADD
+  FUNCTION GET_VALUE (
+  IN GIVEN_KEY ANCHOR LOGDATA.CONFIGURATION.KEY
+  )
+  RETURNS ANCHOR LOGDATA.CONFIGURATION.VALUE
+  LANGUAGE SQL
+  SPECIFIC F_GET_VALUE
+  READS SQL DATA
+  NOT DETERMINISTIC
+  NO EXTERNAL ACTION
+  PARAMETER CCSID UNICODE
+ F_GET_VALUE: BEGIN
+  DECLARE RET ANCHOR LOGDATA.CONFIGURATION.VALUE;
+  DECLARE SECS SMALLINT DEFAULT 60;
+  DECLARE EPOCH TIMESTAMP;
+
+  -- Checks if internal cache should be used.
+  IF (CACHE = TRUE) THEN
+
+   -- Sets the quantity of seconds before refresh. 60 seconds by default.
+   REFRESH: BEGIN
+    -- Handle for the second time the function is called and the param has not
+    -- been defined.
+    DECLARE CONTINUE HANDLER FOR SQLSTATE '2202E'
+      SET SECS = 60;
+    -- There is an invalid value.
+    DECLARE CONTINUE HANDLER FOR SQLSTATE '22018'
+      SET SECS = 60;
+    
+    SET SECS = INT(CONFIGURATION[REFRESH_CONS]);
+    IF (SECS IS NULL) THEN
+     SET SECS = 60;
+    END IF;
+   END REFRESH;
+
+   -- Sets a reference date 1970-01-01.
+   SET EPOCH = DATE(719163);
+   IF (LOADED = FALSE OR COALESCE(LAST_REFRESH, EPOCH) + SECS SECONDS < CURRENT TIMESTAMP) THEN
+    -- Refreshes the configuration
+    CALL LOGGER.REFRESH_CONF();
+   END IF;
+
+   BEGIN
+    -- NULL if the key is not in the configuration.
+    DECLARE CONTINUE HANDLER FOR SQLSTATE '2202E'
+      SET RET = NULL;
+
+    SET RET = CONFIGURATION[GIVEN_KEY];
+   END;
+  ELSE -- Does not use the internal cache but a query.
+   SELECT C.VALUE INTO RET
+     FROM LOGDATA.CONFIGURATION C
+     WHERE C.KEY = GIVEN_KEY
+     FETCH FIRST 1 ROW ONLY
+     WITH UR;
+  END IF;
+
+  RETURN RET;
+ END F_GET_VALUE @
+
+/**
+ * Deletes all values in the loggers cache.
+ *
+ * PRE
+ *   No preconditions.
+ * POS
+ *   The CONF_LOGGER cache is empty.
+ */
+ALTER MODULE LOGGER ADD
+  PROCEDURE DELETE_ALL_LOGGER_CACHE (
+  )
+  LANGUAGE SQL
+  SPECIFIC P_DELETE_ALL_LOGGER_CACHE
+  READS SQL DATA
+  NOT DETERMINISTIC
+  NO EXTERNAL ACTION
+  PARAMETER CCSID UNICODE
+ P_DELETE_ALL_LOGGER_CACHE: BEGIN
+  SET LOGGERS_CACHE = ARRAY_DELETE(LOGGERS_CACHE);
+ END P_DELETE_ALL_LOGGER_CACHE @
+
+/**
+ * Activates the cache. Cleans any previous value on the cache.
+ *
+ * PRE
+ *   No preconditions.
+ * POS
+ *   The cache holds the most recent information from the table.
+ */
+ALTER MODULE LOGGER ADD
+  PROCEDURE ACTIVATE_CACHE (
+  )
+  LANGUAGE SQL
+  SPECIFIC P_ACTIVATE_CACHE
+  READS SQL DATA
+  NOT DETERMINISTIC
+  NO EXTERNAL ACTION
+  PARAMETER CCSID UNICODE
+ P_ACTIVATE_CACHE: BEGIN
+  DECLARE VAL ANCHOR LOGDATA.CONFIGURATION.VALUE;
+
+  -- NOTE: Active for debugging.
+  -- Check that the configuration variable is true
+  --SELECT VALUE INTO VAL
+  --  FROM LOGDATA.CONFIGURATION
+  --  WHERE KEY = INTERNAL_CACHE;
+  --IF (VAL <> 'true') THEN
+  -- SIGNAL SQLSTATE VALUE 'LG002'
+  --   SET MESSAGE_TEXT = 'Invalid configuration state';
+  --END IF;
+  SET CACHE = TRUE;
+ END P_ACTIVATE_CACHE @
+
+/**
+ * Cleans the cache, and deactives it.
+ *
+ * PRE
+ *   No preconditions.
+ * POS
+ *   The cache is emptied.
+ */
+ALTER MODULE LOGGER ADD
+  PROCEDURE DEACTIVATE_CACHE (
+  )
+  LANGUAGE SQL
+  SPECIFIC P_DEACTIVATE_CACHE
+  READS SQL DATA
+  NOT DETERMINISTIC
+  NO EXTERNAL ACTION
+  PARAMETER CCSID UNICODE
+ P_DEACTIVATE_CACHE: BEGIN
+  DECLARE VAL ANCHOR LOGDATA.CONFIGURATION.VALUE;
+
+  -- NOTE: Active for debugging.
+  -- Check that the configuration variable is false
+  --SELECT VALUE INTO VAL
+  --  FROM LOGDATA.CONFIGURATION
+  --  WHERE KEY = INTERNAL_CACHE;
+  --IF (VAL = 'true') THEN
+  -- SIGNAL SQLSTATE VALUE 'LG002'
+  --   SET MESSAGE_TEXT = 'Invalid configuration state';
+  --END IF;
+  CALL UNLOAD_CONF();
+  CALL DELETE_ALL_LOGGER_CACHE();
+  SET CACHE = FALSE;
+ END P_DEACTIVATE_CACHE @
+
+/**
+ * Returns a character representation of the given boolean.
+ *
+ * IN VALUE
+ *   Value to convert.
+ * RETURN
+ *   The corresponding represtation of the given boolean.
+ */
+ALTER MODULE LOGGER ADD
+  FUNCTION BOOL_TO_CHAR(
+  IN VALUE BOOLEAN
+  ) RETURNS CHAR(5)
+  LANGUAGE SQL
+  SPECIFIC F_BOOL_TO_CHAR
+  DETERMINISTIC
+  NO EXTERNAL ACTION
+  PARAMETER CCSID UNICODE
+ F_GET_DEFAULT_LEVEL: BEGIN
+  DECLARE RET CHAR(5) DEFAULT 'FALSE';
+  
+  IF (VALUE IS NULL) THEN
+    SET RET = 'NULL';
+  ELSEIF (VALUE = TRUE) THEN
+   SET RET = 'TRUE';
+  END IF;
+  RETURN RET;
+ END F_GET_DEFAULT_LEVEL @
 
 /**
  * Retrieves the complete logger name for a given logged id.
@@ -162,269 +405,6 @@ ALTER MODULE LOGGER ADD
   
   RETURN COMPLETE_NAME;
  END F_GET_NAME @
-
-/**
- * Unload configuration. This is useful for tests, but it should not called
- * used in production.
- *
- * PRE
- *   No conditions.
- * POS
- *   The caches are emptied.
- */
-ALTER MODULE LOGGER ADD
-  PROCEDURE UNLOAD_CONF (
-  )
-  LANGUAGE SQL
-  SPECIFIC P_UNLOAD_CONF
-  READS SQL DATA
-  NOT DETERMINISTIC
-  NO EXTERNAL ACTION
-  PARAMETER CCSID UNICODE
- P_UNLOAD_CONF: BEGIN
-  SET CONFIGURATION = ARRAY_DELETE(CONFIGURATION);
-  SET LAST_REFRESH = CURRENT TIMESTAMP;
-  SET CACHE = TRUE;
-  SET LOADED = FALSE;
- END P_UNLOAD_CONF @ 
-
-/**
- * Refreshes the configuration cache immediately.
- *
- * PRE
- *   No preconditions.
- * POS
- *   The caches holds the most recent information.
- */
-ALTER MODULE LOGGER ADD
-  PROCEDURE REFRESH_CONF (
-  )
-  LANGUAGE SQL
-  SPECIFIC P_REFRESH_CONF
-  DYNAMIC RESULT SETS 2
-  READS SQL DATA
-  NOT DETERMINISTIC
-  NO EXTERNAL ACTION
-  PARAMETER CCSID UNICODE
- P_REFRESH_CONF: BEGIN
-  DECLARE VALUE ANCHOR LOGDATA.CONFIGURATION.VALUE;
-  DECLARE KEY ANCHOR LOGDATA.CONFIGURATION.KEY;
-  DECLARE AT_END BOOLEAN; -- End of the cursor.
-  DECLARE SIZE SMALLINT;
-  DECLARE CONF CURSOR FOR
-    SELECT KEY, VALUE
-    FROM LOGDATA.CONFIGURATION
-    OPTIMIZE FOR 10 ROWS
-    WITH UR;
-  DECLARE CONTINUE HANDLER FOR NOT FOUND
-    SET AT_END = TRUE;
-
-  -- Clears the current configuration.
-  CALL UNLOAD_CONF();
-  -- Reads current configuration.
-  SET AT_END = FALSE;
-  OPEN CONF;
-  FETCH CONF INTO KEY, VALUE;
-  WHILE (AT_END = FALSE) DO
-   SET CONFIGURATION[KEY] = VALUE;
-   FETCH CONF INTO KEY, VALUE;
-  END WHILE;
-  -- Sets the last configuration read as now.
-  SET LAST_REFRESH = CURRENT TIMESTAMP;
- END P_REFRESH_CONF @
-
-/**
- * Function that returns the value of the given key from the configuration
- * table.
- *
- * IN KEY
- *   Identification of the key/value parameter of the configuration table.
- * RETURNS The associated value of the given key. NULL if there is not a key
- * with that value.
- * PRE
- *   No preconditions.
- * POS
- *   The returned value correspond to the given value if exist.
- */
-ALTER MODULE LOGGER ADD
-  FUNCTION GET_VALUE (
-  IN GIVEN_KEY ANCHOR LOGDATA.CONFIGURATION.KEY
-  )
-  RETURNS ANCHOR LOGDATA.CONFIGURATION.VALUE
-  LANGUAGE SQL
-  SPECIFIC F_GET_VALUE
-  READS SQL DATA
-  NOT DETERMINISTIC
-  NO EXTERNAL ACTION
-  PARAMETER CCSID UNICODE
- F_GET_VALUE: BEGIN
-  DECLARE RET ANCHOR LOGDATA.CONFIGURATION.VALUE;
-  DECLARE SECS SMALLINT DEFAULT 60;
-  DECLARE EPOCH TIMESTAMP;
-
-  -- Checks if internal cache should be used.
-  IF (CACHE = TRUE) THEN
-
-   -- Sets the quantity of seconds before refresh. 60 seconds by default.
-   REFRESH: BEGIN
-    -- Handle for the second time the function is called and the param has not
-    -- been defined.
-    DECLARE CONTINUE HANDLER FOR SQLSTATE '2202E'
-      SET SECS = 60;
-    -- There is an invalid value.
-    DECLARE CONTINUE HANDLER FOR SQLSTATE '22018'
-      SET SECS = 60;
-    
-    SET SECS = INT(CONFIGURATION[REFRESH_CONS]);
-    IF (SECS IS NULL) THEN
-     SET SECS = 60;
-    END IF;
-   END REFRESH;
-
-   -- Sets a reference date 1970-01-01.
-   SET EPOCH = DATE(719163);
-   IF (COALESCE(LAST_REFRESH, EPOCH) + SECS SECONDS < CURRENT TIMESTAMP OR LOADED = FALSE) THEN
-    -- Refreshes the configuration
-    CALL LOGGER.REFRESH_CONF ();
-    SET LOADED = TRUE;
-   END IF;
-
-   BEGIN
-    -- NULL if the key is not in the configuration.
-    DECLARE CONTINUE HANDLER FOR SQLSTATE '2202E'
-      SET RET = NULL;
-
-    SET RET = CONFIGURATION[GIVEN_KEY];
-   END;
-  ELSE -- Does not use the internal cache but a query.
-   SELECT C.VALUE INTO RET
-     FROM LOGDATA.CONFIGURATION C
-     WHERE C.KEY = GIVEN_KEY
-     FETCH FIRST 1 ROW ONLY
-     WITH UR;
-  END IF;
-
-  RETURN RET;
- END F_GET_VALUE @
-
-/**
- * Deletes all values in the loggers cache.
- *
- * PRE
- *   No preconditions.
- * POS
- *   The CONF_LOGGER cache is empty.
- */
-ALTER MODULE LOGGER ADD
-  PROCEDURE DELETE_ALL_LOGGER_CACHE (
-  )
-  LANGUAGE SQL
-  SPECIFIC P_DELETE_ALL_CACHE
-  READS SQL DATA
-  NOT DETERMINISTIC
-  NO EXTERNAL ACTION
-  PARAMETER CCSID UNICODE
- P_DELETE_ALL_CACHE: BEGIN
-  SET LOGGERS_CACHE = ARRAY_DELETE(LOGGERS_CACHE);
- END P_DELETE_ALL_CACHE @
-
-/**
- * Activates the cache. Cleans any previous value on the cache.
- *
- * PRE
- *   No preconditions.
- * POS
- *   The cache holds the most recent information from the table.
- */
-ALTER MODULE LOGGER ADD
-  PROCEDURE ACTIVATE_CACHE (
-  )
-  LANGUAGE SQL
-  SPECIFIC P_ACTIVATE_CACHE
-  READS SQL DATA
-  NOT DETERMINISTIC
-  NO EXTERNAL ACTION
-  PARAMETER CCSID UNICODE
- P_ACTIVATE_CACHE: BEGIN
-  DECLARE VAL ANCHOR LOGDATA.CONFIGURATION.VALUE;
-
-  -- NOTE: Active for debugging.
-  -- Check that the configuration variable is true
-  --SELECT VALUE INTO VAL
-  --  FROM LOGDATA.CONFIGURATION
-  --  WHERE KEY = INTERNAL_CACHE;
-  --IF (VAL <> 'true') THEN
-  -- SIGNAL SQLSTATE VALUE 'LG002'
-  --   SET MESSAGE_TEXT = 'Invalid configuration state';
-  --END IF;
-  SET CACHE = TRUE;
-  SET LOADED = FALSE;
-  -- Cleans the cache
-  SET LOGGERS_CACHE = ARRAY_DELETE(LOGGERS_CACHE);
- END P_ACTIVATE_CACHE @
-
-/**
- * Cleans the cache, and deactives it.
- *
- * PRE
- *   No preconditions.
- * POS
- *   The cache is emptied.
- */
-ALTER MODULE LOGGER ADD
-  PROCEDURE DEACTIVATE_CACHE (
-  )
-  LANGUAGE SQL
-  SPECIFIC P_DEACTIVATE_CACHE
-  READS SQL DATA
-  NOT DETERMINISTIC
-  NO EXTERNAL ACTION
-  PARAMETER CCSID UNICODE
- P_DEACTIVATE_CACHE: BEGIN
-  DECLARE VAL ANCHOR LOGDATA.CONFIGURATION.VALUE;
-
-  -- NOTE: Active for debugging.
-  -- Check that the configuration variable is false
-  --SELECT VALUE INTO VAL
-  --  FROM LOGDATA.CONFIGURATION
-  --  WHERE KEY = INTERNAL_CACHE;
-  --IF (VAL = 'true') THEN
-  -- SIGNAL SQLSTATE VALUE 'LG002'
-  --   SET MESSAGE_TEXT = 'Invalid configuration state';
-  --END IF;
-  SET CACHE = FALSE;
-  SET LOADED = FALSE;
-  -- Cleans the cache
-  SET LOGGERS_CACHE = ARRAY_DELETE(LOGGERS_CACHE);
- END P_DEACTIVATE_CACHE @
-
-/**
- * Returns a character representation of the given boolean.
- *
- * IN VALUE
- *   Value to convert.
- * RETURN
- *   The corresponding represtation of the given boolean.
- */
-ALTER MODULE LOGGER ADD
-  FUNCTION BOOL_TO_CHAR(
-  IN VALUE BOOLEAN
-  ) RETURNS CHAR(5)
-  LANGUAGE SQL
-  SPECIFIC F_BOOL_TO_CHAR
-  DETERMINISTIC
-  NO EXTERNAL ACTION
-  PARAMETER CCSID UNICODE
- F_GET_DEFAULT_LEVEL: BEGIN
-  DECLARE RET CHAR(5) DEFAULT 'FALSE';
-  
-  IF (VALUE IS NULL) THEN
-    SET RET = 'NULL';
-  ELSEIF (VALUE = TRUE) THEN
-   SET RET = 'TRUE';
-  END IF;
-  RETURN RET;
- END F_GET_DEFAULT_LEVEL @
 
 /**
  * Modifies the descendancy of the provided logger changing the level to the
