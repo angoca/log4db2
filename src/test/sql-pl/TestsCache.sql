@@ -294,6 +294,7 @@ INSERT INTO LOGDATA.CONFIGURATION (KEY, VALUE)
          ('internalCache', 'true'),
          ('logInternals', 'false'),
          ('secondsToRefresh', '30');
+CALL LOGGER.ACTIVATE_CACHE();
 INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES (3, 'TestsCache: Finished succesfully');
 COMMIT;
 
