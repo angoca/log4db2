@@ -102,6 +102,19 @@ ALTER MODULE LOGGER ADD
   VARIABLE LOGGERS_CACHE LOGGERS_TYPE @
 
 /**
+ * Levels type. It is not possible to have an array of something different of
+ * VARCHAR and INTEGER. Thus, it is not possible to anchor the LEVEL_ID.
+ */
+ALTER MODULE LOGGER ADD
+  TYPE LEVELS_TYPE AS ANCHOR LOGDATA.LEVELS.NAME ARRAY [INTEGER] @
+
+/**
+ * Level-s names and ids.
+ */
+ALTER MODULE LOGGER ADD
+  VARIABLE LEVELS_CACHE LEVELS_TYPE @
+
+/**
  * Unload configuration. This is useful for debugging, but it should not called
  * used in production.
  *
@@ -147,18 +160,24 @@ ALTER MODULE LOGGER ADD
  P_REFRESH_CONF: BEGIN
   DECLARE VALUE ANCHOR LOGDATA.CONFIGURATION.VALUE;
   DECLARE KEY ANCHOR LOGDATA.CONFIGURATION.KEY;
+  DECLARE LVL ANCHOR LOGDATA.LEVELS.LEVEL_ID;
+  DECLARE NAME ANCHOR LOGDATA.LEVELS.NAME;
   DECLARE AT_END BOOLEAN; -- End of the cursor.
-  DECLARE SIZE SMALLINT;
-  DECLARE CURRENT_DEFAULT_ROOT ANCHOR LOGDATA.LEVELS.LEVEL_ID;
   DECLARE CONF CURSOR FOR
     SELECT KEY, VALUE
     FROM LOGDATA.CONFIGURATION
+    OPTIMIZE FOR 10 ROWS
+    WITH UR;
+  DECLARE LVLS CURSOR FOR
+    SELECT LEVEL_ID, NAME
+    FROM LOGDATA.LEVELS
     OPTIMIZE FOR 10 ROWS
     WITH UR;
   DECLARE CONTINUE HANDLER FOR NOT FOUND
     SET AT_END = TRUE;
   -- Clears the current configuration.
   CALL UNLOAD_CONF();
+  
   -- Reads current configuration.
   -- FIXME: ARRAY_AGG is not supported in previous versions to v10.1fp2
   -- SELECT ARRAY_AGG(KEY, VALUE) INTO CONFIGURATION
@@ -170,10 +189,59 @@ ALTER MODULE LOGGER ADD
   WHILE (AT_END = FALSE) DO
    SET CONFIGURATION[KEY] = VALUE;
    FETCH CONF INTO KEY, VALUE;
-  END WHILE;  SET LOADED = TRUE;
+  END WHILE;
+  -- Reads the levels
+  SET AT_END = FALSE;
+  OPEN LVLS;
+  FETCH LVLS INTO LVL, NAME;
+  WHILE (AT_END = FALSE) DO
+   SET LEVELS_CACHE[CHAR(LVL)] = NAME;
+   FETCH LVLS INTO LVL, NAME;
+  END WHILE;
+
+  SET LOADED = TRUE;
   -- Sets the most recent configuration read as now.
   SET LAST_REFRESH = CURRENT TIMESTAMP;
  END P_REFRESH_CONF @
+
+/**
+ * Verifies if the configuration should be reloaded, and if necessary, then
+ * reloads the configurations.
+ */
+ALTER MODULE LOGGER ADD
+  PROCEDURE CHECK_REFRESH()
+  LANGUAGE SQL
+  SPECIFIC P_CHECK_REFRESH
+  READS SQL DATA
+  NOT DETERMINISTIC
+  NO EXTERNAL ACTION
+  PARAMETER CCSID UNICODE
+ P_CHECK_REFRESH: BEGIN
+  DECLARE SECS SMALLINT DEFAULT 60;
+  DECLARE EPOCH TIMESTAMP;
+   -- Sets the quantity of seconds before refresh. 60 seconds by default.
+   REFRESH: BEGIN
+    -- Handle for the second time the function is called and the param has not
+    -- been defined.
+    DECLARE CONTINUE HANDLER FOR SQLSTATE '2202E'
+      SET SECS = 60;
+    -- There is an invalid value.
+    DECLARE CONTINUE HANDLER FOR SQLSTATE '22018'
+      SET SECS = 60;
+    
+    SET SECS = INT(CONFIGURATION[REFRESH_CONS]);
+    IF (SECS IS NULL) THEN
+     SET SECS = 60;
+    END IF;
+   END REFRESH;
+
+   -- Sets a reference date 1970-01-01.
+   SET EPOCH = DATE(719163);
+   IF (LOADED = FALSE OR COALESCE(LAST_REFRESH, EPOCH) + SECS SECONDS < CURRENT TIMESTAMP) THEN
+    -- Refreshes the configuration
+    CALL LOGGER.REFRESH_CONF();
+   END IF;
+ END P_CHECK_REFRESH @
 
 /**
  * Function that returns the value of the given key from the configuration
@@ -201,34 +269,10 @@ ALTER MODULE LOGGER ADD
   PARAMETER CCSID UNICODE
  F_GET_VALUE: BEGIN
   DECLARE RET ANCHOR LOGDATA.CONFIGURATION.VALUE;
-  DECLARE SECS SMALLINT DEFAULT 60;
-  DECLARE EPOCH TIMESTAMP;
 
   -- Checks if internal cache should be used.
   IF (CACHE = TRUE) THEN
-
-   -- Sets the quantity of seconds before refresh. 60 seconds by default.
-   REFRESH: BEGIN
-    -- Handle for the second time the function is called and the param has not
-    -- been defined.
-    DECLARE CONTINUE HANDLER FOR SQLSTATE '2202E'
-      SET SECS = 60;
-    -- There is an invalid value.
-    DECLARE CONTINUE HANDLER FOR SQLSTATE '22018'
-      SET SECS = 60;
-    
-    SET SECS = INT(CONFIGURATION[REFRESH_CONS]);
-    IF (SECS IS NULL) THEN
-     SET SECS = 60;
-    END IF;
-   END REFRESH;
-
-   -- Sets a reference date 1970-01-01.
-   SET EPOCH = DATE(719163);
-   IF (LOADED = FALSE OR COALESCE(LAST_REFRESH, EPOCH) + SECS SECONDS < CURRENT TIMESTAMP) THEN
-    -- Refreshes the configuration
-    CALL LOGGER.REFRESH_CONF();
-   END IF;
+   CALL CHECK_REFRESH();
 
    BEGIN
     -- NULL if the key is not in the configuration.
