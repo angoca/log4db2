@@ -115,10 +115,22 @@ ALTER MODULE LOGGER ADD
   TYPE LEVELS_TYPE AS ANCHOR LOGDATA.LEVELS.NAME ARRAY [INTEGER] @
 
 /**
- * Level-s names and ids.
+ * Level's names and ids.
  */
 ALTER MODULE LOGGER ADD
   VARIABLE LEVELS_CACHE LEVELS_TYPE @
+
+/**
+ * Complete logger's name type.
+ */
+ALTER MODULE LOGGER ADD
+  TYPE LOGGERS_NAME_TYPE AS ANCHOR COMPLETE_LOGGER_NAME @
+
+/**
+ * Complete logger's name array.
+ */
+ALTER MODULE LOGGER ADD
+  VARIABLE LOGGERS_NAME_CACHE LOGGERS_NAME_TYPE @
 
 /**
  * Unload configuration. This is useful for debugging, but it should not called
