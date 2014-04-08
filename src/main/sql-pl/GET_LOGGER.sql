@@ -115,7 +115,7 @@ ALTER MODULE LOGGER ADD
    DECLARE CONTINUE HANDLER FOR SQLSTATE '2202E'
      SET LOG_ID = NULL;
    IF (CACHE = TRUE) THEN
-    SET LOG_ID = LOGGERS_CACHE[NAME];
+    SET LOG_ID = LOGGERS_ID_CACHE[NAME];
    END IF;
   END;
   IF (LOG_ID IS NULL) THEN
@@ -194,11 +194,7 @@ ALTER MODULE LOGGER ADD
     SET PARENT = 0; -- Root logger is always 0.
     SET PARENT_HIERARCHY = '0'; -- Hierarchy path for root.
     -- Retrieves the logger level for the root logger.
-    SELECT C.LEVEL_ID INTO PARENT_LEVEL
-      FROM LOGDATA.CONF_LOGGERS C
-      WHERE C.LOGGER_ID = 0
-      FETCH FIRST 1 ROW ONLY
-      WITH UR;
+    SET PARENT_LEVEL = ROOT_CURRENT_LEVEL;
     -- If the root logger is not defined, then set the default level: WARN-3.
     IF (PARENT_LEVEL IS NULL) THEN
      SET PARENT_LEVEL = GET_DEFAULT_LEVEL();
@@ -227,7 +223,7 @@ ALTER MODULE LOGGER ADD
     -- Adds this logger name in the cache.
     IF (CACHE = TRUE) THEN
      BEGIN
-      SET LOGGERS_CACHE[NAME] = LOG_ID;
+      SET LOGGERS_ID_CACHE[NAME] = LOG_ID;
       -- Internal logging.
       IF (INTERNAL = TRUE) THEN
        INSERT INTO LOGDATA.LOGS (DATE, LEVEL_ID, LOGGER_ID, MESSAGE) VALUES 
