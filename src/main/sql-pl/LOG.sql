@@ -239,9 +239,13 @@ ALTER MODULE LOGGER ADD
   IF (LEV_ID IS NULL OR LEV_ID < 0) THEN
    SET LEV_ID = DEFAULT_LEVEL;
   ELSE
-   IF (NOT ARRAY_EXISTS(LEVELS_CACHE, LEV_ID)) THEN
-    SET LEV_ID = DEFAULT_LEVEL;
-   END IF;
+   BEGIN
+    DECLARE VAL BOOLEAN;
+    SET VAL = EXIST_LEVEL(LEV_ID);
+    IF (VAL = FALSE) THEN
+     SET LEV_ID = DEFAULT_LEVEL;
+    END IF;
+   END;
   END IF;
 
   -- Retrieves the current level in the configuration for the given logger.
@@ -296,7 +300,7 @@ ALTER MODULE LOGGER ADD
      SET NEW_MESSAGE = PATTERN;
      -- Inserts the level.
      SET NEW_MESSAGE = REPLACE(NEW_MESSAGE, '%p', (
-       COALESCE(UCASE(LEVELS_CACHE[LEV_ID]), 'UNK')));
+       COALESCE(UCASE(GET_LEVEL_NAME(LEV_ID)), 'UNK')));
      -- Inserts the application handle.
      SET NEW_MESSAGE = REPLACE(NEW_MESSAGE, '%H', 
        SYSPROC.MON_GET_APPLICATION_HANDLE());

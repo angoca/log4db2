@@ -244,6 +244,84 @@ ALTER MODULE LOGGER ADD
  END P_CHECK_REFRESH @
 
 /**
+ * Returns the name of a level of the given ID.
+ *
+ * IN LVL_ID
+ *   Level id to analyze.
+ * RETURN The text that represents the id.
+ */
+ALTER MODULE LOGGER ADD
+  FUNCTION GET_LEVEL_NAME (
+  IN LVL_ID ANCHOR LOGDATA.LEVELS.LEVEL_ID
+  )
+  RETURNS ANCHOR LOGDATA.LEVELS.NAME
+  LANGUAGE SQL
+  SPECIFIC F_GET_LEVEL_NAME
+  READS SQL DATA
+  NOT DETERMINISTIC
+  NO EXTERNAL ACTION
+  PARAMETER CCSID UNICODE
+ F_GET_LEVEL_NAME: BEGIN
+  DECLARE RET ANCHOR LOGDATA.LEVELS.NAME;
+
+  -- Checks if internal cache should be used.
+  IF (CACHE = TRUE) THEN
+   CALL CHECK_REFRESH();
+
+   SET RET = LEVELS_CACHE[LVL_ID];
+  ELSE -- Does not use the internal cache but a query.
+   SELECT L.NAME INTO RET
+     FROM LOGDATA.LEVELS L
+     WHERE L.LEVEL_ID = LVL_ID
+     FETCH FIRST 1 ROW ONLY
+     WITH UR;
+  END IF;
+
+  RETURN RET;
+ END F_GET_LEVEL_NAME @
+
+/**
+ * Tests if the given ID is present in the Levels array.
+ *
+ * IN LVL_ID
+ *   Level id to analyze.
+ * RETURN The true if the value is in the array. False otherwise.
+ */
+ALTER MODULE LOGGER ADD
+  FUNCTION EXIST_LEVEL (
+  IN LVL_ID ANCHOR LOGDATA.LEVELS.LEVEL_ID
+  )
+  RETURNS BOOLEAN
+  LANGUAGE SQL
+  SPECIFIC F_EXIST_LEVEL
+  READS SQL DATA
+  NOT DETERMINISTIC
+  NO EXTERNAL ACTION
+  PARAMETER CCSID UNICODE
+ F_EXIST_LEVEL: BEGIN
+  DECLARE RET BOOLEAN DEFAULT FALSE;
+  DECLARE ID ANCHOR LOGDATA.LEVELS.LEVEL_ID;
+
+  -- Checks if internal cache should be used.
+  IF (CACHE = TRUE) THEN
+   CALL CHECK_REFRESH();
+
+   SET RET = ARRAY_EXISTS(LEVELS_CACHE, LVL_ID);
+  ELSE -- Does not use the internal cache but a query.
+   SELECT L.LEVEL_ID INTO ID
+     FROM LOGDATA.LEVELS L
+     WHERE L.LEVEL_ID = LVL_ID
+     FETCH FIRST 1 ROW ONLY
+     WITH UR;
+   IF (ID IS NOT NULL) THEN
+    SET RET = TRUE;
+   END IF;
+  END IF;
+
+  RETURN RET;
+ END F_EXIST_LEVEL @
+
+/**
  * Function that returns the value of the given key from the configuration
  * table.
  *
