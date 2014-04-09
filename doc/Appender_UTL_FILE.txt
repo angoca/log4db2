@@ -34,7 +34,7 @@ TODO Import the data
          </filename>
         </configuration>
        </appender>
-      </log4db2>')), '[%p] %c - %m', NULL);
+      </log4db2>', '[%p] %c - %m', NULL);
 
  * Associate the conf_appender to a logger via the references table.
 
