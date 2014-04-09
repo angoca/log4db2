@@ -16,30 +16,13 @@ In order to configure the UTL_FILE appender you should
 
  * Add your own configuration or update the existing one.
 
-INSERT INTO LOGDATA.CONF_APPENDERS (REF_ID, NAME, APPENDER_ID, CONFIGURATION,
-      PATTERN) VALUES (3, 'UTL_FILE', 3, XMLVALIDATE(XMLPARSE(DOCUMENT 
-'<?xml version="1.0" encoding="UTF-8" ?>
-<log4db2
-
-xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-xsi:noNamespaceSchemaLocation="conf_appender.xsd">
- <appender>
-  <name>UTL_FILE</name>
-  <configuration>
-   <directory>
-    /home/db2inst1/log4db2
-   </directory>
-   <filename>
-    logs.log
-   </filename>
-  </configuration>
- </appender>
-</log4db2>')), '[%p] %c - %m');
 TODO Import the data
 
     INSERT INTO LOGDATA.CONF_APPENDERS (REF_ID, NAME, APPENDER_ID,
-      CONFIGURATION, PATTERN, LEVEL_ID) VALUES (3, 'Local file', 3, '
-      <log4db2>
+      CONFIGURATION, PATTERN, LEVEL_ID) VALUES (3, 'Local file', 3, 
+      XMLVALIDATE(XMLPARSE(DOCUMENT '
+      <log4db2 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:noNamespaceSchemaLocation="conf_appender.xsd">
        <appender>
         <name>UTL_FILE</name>
         <configuration>
@@ -51,7 +34,7 @@ TODO Import the data
          </filename>
         </configuration>
        </appender>
-      </log4db2>', NULL, NULL);
+      </log4db2>', '[%p] %c - %m', NULL);
 
  * Associate the conf_appender to a logger via the references table.
 
