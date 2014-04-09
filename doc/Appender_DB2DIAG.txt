@@ -9,7 +9,7 @@ In order to configure the DB2DIAG appender you should:
 
  * Insert your appender in the list of appenders.
 
-    INSERT INTO APPENDERS (APPENDER_ID, NAME)
+    INSERT INTO LOGDATA.APPENDERS (APPENDER_ID, NAME)
       VALUES (2, 'DB2DIAG');
 
  * Add your own configuration or update the existing one.

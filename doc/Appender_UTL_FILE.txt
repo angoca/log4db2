@@ -4,12 +4,6 @@ In order to configure the UTL_FILE appender you should
 
     db2licm -l
 
-  * Modify the LOGGER.LOG procedure to include the new appender. Look for the
-   >>> and <<< symbols in the file LOG.sql.
-
-        WHEN 3 THEN -- Writes in a file (Not available in Express-C)
-         CALL LOG_UTL_FILE(LOG_ID, LEV_ID, NEW_MESSAGE, CONFIGURATION);
-
  * Insert your appender in the list of appenders.
 
     INSERT INTO LOGDATA.APPENDERS (APPENDER_ID, NAME)
@@ -38,7 +32,7 @@ TODO Import the data
          </filename>
         </configuration>
        </appender>
-      </log4db2>', NULL, NULL);
+      </log4db2>', '[%p] %c - %m', NULL);
 
  * Associate the conf_appender to a logger via the references table.
 
