@@ -4,15 +4,12 @@ In order to configure the UTL_FILE appender you should
 
     db2licm -l
 
+# Configuration
+
  * Insert your appender in the list of appenders.
 
     INSERT INTO LOGDATA.APPENDERS (APPENDER_ID, NAME)
       VALUES (3, 'UTL_FILE');
-
- * Install the appenders from file:
-
-    cd sql-pl
-    db2 -tsf Appenders_No_ExpC.sql
 
  * Add your own configuration or update the existing one.
 
@@ -34,6 +31,30 @@ TODO Import the data
 
     INSERT INTO LOGDATA.REFERENCES (LOGGER_ID, APPENDER_REF_ID)
       VALUES (0, 3);
+
+# Code
+
+ * Install the appenders from file:
+
+    cd sql-pl
+    db2 -tsf Appenders_No_ExpC.sql
+
+ * Test the procedure
+
+    db2 "CALL LOGGER.LOG_UTL_FILE(0, 1, 'Message to log', XMLPASER(DOCUMENT '
+      <log4db2>
+       <appender>
+        <name>UTL_FILE</name>
+        <configuration>
+         <directory>
+          /home/db2inst1/log4db2
+         </directory>
+         <filename>
+          logs.log
+         </filename>
+        </configuration>
+       </appender>
+      </log4db2>'))"
 
 Ready to log!
 
