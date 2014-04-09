@@ -24,12 +24,8 @@ TODO Import the data
        <appender>
         <name>UTL_FILE</name>
         <configuration>
-         <directory>
-          /home/db2inst1/log4db2
-         </directory>
-         <filename>
-          logs.log
-         </filename>
+         <directory>/home/db2inst1/log4db2</directory>
+         <filename>logs.log</filename>
         </configuration>
        </appender>
       </log4db2>', '[%p] %c - %m', NULL);
