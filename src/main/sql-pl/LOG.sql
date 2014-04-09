@@ -249,6 +249,7 @@ ALTER MODULE LOGGER ADD
   END IF;
 
   -- Retrieves the current level in the configuration for the given logger.
+  -- TODO use the cache, update if necessary.
   SELECT C.LEVEL_ID, C.HIERARCHY INTO CURRENT_LEVEL_ID, HIERARCHY
     FROM LOGDATA.CONF_LOGGERS_EFFECTIVE C
     WHERE C.LOGGER_ID = LOG_ID
