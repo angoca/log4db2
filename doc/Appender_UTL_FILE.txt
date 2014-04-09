@@ -24,6 +24,22 @@ In order to configure the UTL_FILE appender you should
 
 TODO Import the data
 
+    INSERT INTO LOGDATA.CONF_APPENDERS (REF_ID, NAME, APPENDER_ID,
+      CONFIGURATION, PATTERN, LEVEL_ID) VALUES (3, 'Local file', 3, '
+      <log4db2>
+       <appender>
+        <name>UTL_FILE</name>
+        <configuration>
+         <directory>
+          /home/db2inst1/log4db2
+         </directory>
+         <filename>
+          logs.log
+         </filename>
+        </configuration>
+       </appender>
+      </log4db2>', NULL, NULL);
+
  * Associate the conf_appender to a logger via the references table.
 
     INSERT INTO LOGDATA.REFERENCES (LOGGER_ID, APPENDER_REF_ID)
