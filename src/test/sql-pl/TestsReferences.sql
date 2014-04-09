@@ -54,6 +54,7 @@ DECLARE CONTINUE HANDLER FOR NOT FOUND
 -- Prepares the environment.
 INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES (4, 'TestsReferences: Preparing environment');
 DELETE FROM LOGDATA.REFERENCES;
+CALL LOGGER.REFRESH_CACHE();
 COMMIT;
 
 -- Test01: Tries to log when references is empty.
