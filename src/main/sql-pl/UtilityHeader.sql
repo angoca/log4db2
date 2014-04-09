@@ -132,11 +132,6 @@ ALTER MODULE LOGGER PUBLISH
   PROCEDURE DEACTIVATE_CACHE (
   );
 
--- Deletes the whole cache.
-ALTER MODULE LOGGER PUBLISH
-  PROCEDURE DELETE_ALL_LOGGER_CACHE (
-  );
-
 -- Cleans up the configuration. Useful for tests.
 ALTER MODULE LOGGER PUBLISH
   PROCEDURE UNLOAD_CONF (
@@ -144,7 +139,7 @@ ALTER MODULE LOGGER PUBLISH
 
 -- Refreshes the configuration.
 ALTER MODULE LOGGER PUBLISH
-  PROCEDURE REFRESH_CONF (
+  PROCEDURE REFRESH_CACHE (
   );
 
 -- Returns the value of a configuration key.

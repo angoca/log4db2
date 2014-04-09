@@ -308,19 +308,6 @@ CREATE OR REPLACE TRIGGER T3_CNFLGR_SYN
 
 COMMENT ON TRIGGER T3_CNFLGR_SYN IS 'Inserts or updates in the effective table to synchronize the new configuration'@
 
-/**
- * Refreshes the loggers cache after any modification.
- */
-CREATE OR REPLACE TRIGGER T4_CNFLGER_CLN
-  AFTER INSERT OR UPDATE OR DELETE 
-  ON LOGDATA.CONF_LOGGERS
-  FOR EACH ROW
- T4_CNFLGER_CLN: BEGIN
-  CALL LOGGER.DELETE_ALL_LOGGER_CACHE();
- END T4_CNFLGER_CLN @
-
-COMMENT ON TRIGGER T4_CNFLGER_CLN IS 'Refreshes the loggers cache after any modification'@
-
 -- Table LOGDATA.CONF_LOGGERS_EFFECTIVE.
 
 /**
