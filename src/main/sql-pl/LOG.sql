@@ -45,10 +45,13 @@ SET PATH = SYSPROC, LOGGER_1B @
  * configuration.
  *
  * IN HIERARCHY
- *  Comma separated IDs that represents the ascendency of a logger.
+ *   Comma separated IDs that represents the ascendency of a logger.
  * IN LOGGER_ID
- *  Logger ID to check if that is part of the hierarchy.
+ *   Logger ID to check if that is part of the hierarchy.
  * RETURNS TRUE if the logger is part of the hierarchy. Otherwise false.
+ * TESTS
+ *   TestsHierarchy: Verifies different output to validate if the logger is
+ *   of the hierarchy.
  */
 ALTER MODULE LOGGER ADD
  FUNCTION IS_LOGGER_ACTIVE (
@@ -131,16 +134,32 @@ ALTER MODULE LOGGER ADD
  * IN LOG_ID
  *   This is the associated logger of the provided message. Default logger is
  *   ROOT, that is 0.
- * IN LEVEL_ID
+ * IN LEV_ID
  *   Level of the message. Default level is 3, which is WARN.
  * IN MESSAGE
  *   Message to log.
+ * PRE
+ *   The LOG_ID should exists in CONF_LOGGERS table in order to associate the
+ *   given message with the logger. If that does not exist or an invalid
+ *   LOG_ID is given, then it is associated to ROOT logger. Some exceptions
+ *   also exist.
+ * POS
+ *   According to the LEV_ID, the CONF_LOGGERS configuration, the
+ *   CONF_APPENDERS and REFERECES, the message could be or not written in an
+ *   appender.
+ * TESTS
+ *   TestsCascadeCallLimit: Allows to verify the quantity of levels, and to
+ *   register all messages.
+ *   TestsLayout: Validates the different options of the layout.
+ *   TestsLogs: Validates that the messages are well written.
+ *   TestsMessages: Checks the output of the error.
+ *   TestsReferences: Verifies when to write, and how.
  */
 ALTER MODULE LOGGER ADD 
   PROCEDURE LOG (
   IN LOG_ID ANCHOR LOGDATA.CONF_LOGGERS.LOGGER_ID DEFAULT 0,
   IN LEV_ID ANCHOR LOGDATA.LEVELS.LEVEL_ID DEFAULT DEFAULT_LEVEL,
-  IN MESSAGE ANCHOR LOGDATA.LOGS.MESSAGE
+  IN MESSAGE ANCHOR LOGGER.MESSAGE
   )
   LANGUAGE SQL
   SPECIFIC P_LOG
@@ -155,7 +174,7 @@ ALTER MODULE LOGGER ADD
   DECLARE SQLCODE INTEGER DEFAULT 0;
   DECLARE SQLSTATE CHAR(5) DEFAULT '00000';
 
-  DECLARE NEW_MESSAGE ANCHOR LOGDATA.LOGS.MESSAGE;
+  DECLARE NEW_MESSAGE ANCHOR LOGGER.MESSAGE;
   DECLARE INTERNAL BOOLEAN DEFAULT FALSE; -- Internal logging.
   DECLARE CURRENT_LEVEL_ID ANCHOR LOGDATA.LEVELS.LEVEL_ID; -- Level in the configuration.
   DECLARE REAL_LVL ANCHOR LOGDATA.LEVELS.LEVEL_ID; -- Real level if exist.
@@ -173,6 +192,8 @@ ALTER MODULE LOGGER ADD
     SELECT LOGGER_ID, NAME, APPENDER_ID, CONFIGURATION, PATTERN, LEVEL_ID
     FROM LOGDATA.REFERENCES R JOIN LOGDATA.CONF_APPENDERS C
     ON R.APPENDER_REF_ID = C.REF_ID
+    -- 5 active appenders is already too much.
+    OPTIMIZE FOR 5 ROW
     WITH UR;
   -- Ignore warning when the value has been truncate.
   DECLARE CONTINUE HANDLER FOR SQLSTATE '01004'
@@ -218,18 +239,20 @@ ALTER MODULE LOGGER ADD
   IF (LEV_ID IS NULL OR LEV_ID < 0) THEN
    SET LEV_ID = DEFAULT_LEVEL;
   ELSE
-   SELECT LEVEL_ID INTO REAL_LVL
-     FROM LOGDATA.LEVELS
-     WHERE LEVEL_ID = LEV_ID;
-   IF (REAL_LVL IS NULL) THEN
-    SET LEV_ID = DEFAULT_LEVEL;
-   END IF;
+   BEGIN
+    DECLARE VAL BOOLEAN;
+    SET VAL = EXIST_LEVEL(LEV_ID);
+    IF (VAL = FALSE) THEN
+     SET LEV_ID = DEFAULT_LEVEL;
+    END IF;
+   END;
   END IF;
 
   -- Retrieves the current level in the configuration for the given logger.
   SELECT C.LEVEL_ID, C.HIERARCHY INTO CURRENT_LEVEL_ID, HIERARCHY
     FROM LOGDATA.CONF_LOGGERS_EFFECTIVE C
     WHERE C.LOGGER_ID = LOG_ID
+    FETCH FIRST 1 ROW ONLY
     WITH UR;
 
   -- LOG_ID could not exist
@@ -277,18 +300,17 @@ ALTER MODULE LOGGER ADD
      SET NEW_MESSAGE = PATTERN;
      -- Inserts the level.
      SET NEW_MESSAGE = REPLACE(NEW_MESSAGE, '%p', (
-       SELECT UCASE(COALESCE(L.NAME,'UNK')) 
-       FROM LOGDATA.LEVELS L
-       WHERE L.LEVEL_ID = LEV_ID
-       WITH UR));
+       COALESCE(UCASE(GET_LEVEL_NAME(LEV_ID)), 'UNK')));
      -- Inserts the application handle.
      SET NEW_MESSAGE = REPLACE(NEW_MESSAGE, '%H', 
        SYSPROC.MON_GET_APPLICATION_HANDLE());
      -- Inserts the application name.
      SET NEW_MESSAGE = REPLACE(NEW_MESSAGE, '%N',
        (SELECT APPLICATION_NAME
-       FROM TABLE(MON_GET_CONNECTION(SYSPROC.MON_GET_APPLICATION_HANDLE(),
-       -1))));
+       FROM TABLE(MON_GET_CONNECTION(SYSPROC.MON_GET_APPLICATION_HANDLE(), -1))
+       FETCH FIRST 1 ROW ONLY
+       WITH UR
+       ));
      -- Inserts the application id.
      SET NEW_MESSAGE = REPLACE(NEW_MESSAGE, '%I', 
        SYSPROC.MON_GET_APPLICATION_ID());
@@ -340,6 +362,8 @@ ALTER MODULE LOGGER ADD
   END IF;
 END P_LOG @
 
+-- MACROS
+
 /**
  * Logs a message at debug (5) level. This method reduces the quantity of
  * internal calls by one.
@@ -352,7 +376,7 @@ END P_LOG @
 ALTER MODULE LOGGER ADD 
   PROCEDURE DEBUG (
   IN LOGGER_ID ANCHOR LOGDATA.CONF_LOGGERS.LOGGER_ID DEFAULT 0,
-  IN MESSAGE ANCHOR LOGDATA.LOGS.MESSAGE
+  IN MESSAGE ANCHOR LOGGER.MESSAGE
   )
   LANGUAGE SQL
   SPECIFIC P_DEBUG
@@ -387,7 +411,7 @@ ALTER MODULE LOGGER ADD
 ALTER MODULE LOGGER ADD 
   PROCEDURE INFO (
   IN LOGGER_ID ANCHOR LOGDATA.CONF_LOGGERS.LOGGER_ID DEFAULT 0,
-  IN MESSAGE ANCHOR LOGDATA.LOGS.MESSAGE
+  IN MESSAGE ANCHOR LOGGER.MESSAGE
   )
   LANGUAGE SQL
   SPECIFIC P_INFO
@@ -422,7 +446,7 @@ ALTER MODULE LOGGER ADD
 ALTER MODULE LOGGER ADD 
   PROCEDURE WARN (
   IN LOGGER_ID ANCHOR LOGDATA.CONF_LOGGERS.LOGGER_ID DEFAULT 0,
-  IN MESSAGE ANCHOR LOGDATA.LOGS.MESSAGE
+  IN MESSAGE ANCHOR LOGGER.MESSAGE
   )
   LANGUAGE SQL
   SPECIFIC P_WARN
@@ -457,7 +481,7 @@ ALTER MODULE LOGGER ADD
 ALTER MODULE LOGGER ADD 
   PROCEDURE ERROR (
   IN LOGGER_ID ANCHOR LOGDATA.CONF_LOGGERS.LOGGER_ID DEFAULT 0,
-  IN MESSAGE ANCHOR LOGDATA.LOGS.MESSAGE
+  IN MESSAGE ANCHOR LOGGER.MESSAGE
   )
   LANGUAGE SQL
   SPECIFIC P_ERROR
@@ -492,7 +516,7 @@ ALTER MODULE LOGGER ADD
 ALTER MODULE LOGGER ADD 
   PROCEDURE FATAL (
   IN LOGGER_ID ANCHOR LOGDATA.CONF_LOGGERS.LOGGER_ID DEFAULT 0,
-  IN MESSAGE ANCHOR LOGDATA.LOGS.MESSAGE
+  IN MESSAGE ANCHOR LOGGER.MESSAGE
   )
   LANGUAGE SQL
   SPECIFIC P_FATAL

@@ -36,13 +36,13 @@ SET CURRENT SCHEMA LOGGER_1B @
  */
 
 /**
- * Constanct internalCache (For debug purposes)
+ * Constant internalCache (For debug purposes)
  */
 ALTER MODULE LOGGER ADD
   VARIABLE INTERNAL_CACHE ANCHOR LOGDATA.CONFIGURATION.KEY CONSTANT 'internalCache' @
 
 /**
- * Constant logInternals
+ * Constant secondsToRefresh to define the period fo refreshness.
  */
 ALTER MODULE LOGGER ADD
   VARIABLE REFRESH_CONS ANCHOR LOGDATA.CONFIGURATION.KEY CONSTANT 'secondsToRefresh' @
@@ -75,7 +75,13 @@ ALTER MODULE LOGGER ADD
  * Variable for the last time the configuration was loaded.
  */
 ALTER MODULE LOGGER ADD
-  VARIABLE LAST_REFRESH TIMESTAMP DEFAULT CURRENT TIMESTAMP @
+  VARIABLE LAST_REFRESH TIMESTAMP DEFAULT NULL @
+
+/**
+ * Root's current level.
+ */
+ALTER MODULE LOGGER ADD
+  VARIABLE ROOT_CURRENT_LEVEL ANCHOR LOGDATA.LEVELS.LEVEL_ID @
 
 /**
  * Configuration values type.
@@ -87,79 +93,53 @@ ALTER MODULE LOGGER ADD
  * Configuration values in memory.
  */
 ALTER MODULE LOGGER ADD
-  VARIABLE CONFIGURATION CONF_VALUES_TYPE @
+  VARIABLE CONF_CACHE CONF_VALUES_TYPE @
 
 /**
- * Complete logger name.
+ * Logger's ID type.
  */
 ALTER MODULE LOGGER ADD
-  VARIABLE COMPLETE_LOGGER_NAME VARCHAR(256) @
+  TYPE LOGGERS_ID_TYPE AS ANCHOR LOGDATA.CONF_LOGGERS.LOGGER_ID ARRAY [ANCHOR COMPLETE_LOGGER_NAME] @
 
 /**
- * Loggers type.
+ * Logger's names => ids cache.
  */
 ALTER MODULE LOGGER ADD
-  TYPE LOGGERS_TYPE AS ANCHOR LOGDATA.CONF_LOGGERS.LOGGER_ID ARRAY [ANCHOR COMPLETE_LOGGER_NAME] @
+  VARIABLE LOGGERS_ID_CACHE LOGGERS_ID_TYPE @
 
 /**
- * Logger's names and ids.
+ * Levels type. It is not possible to have an array of something different of
+ * VARCHAR and INTEGER. Thus, it is not possible to anchor the LEVEL_ID.
  */
 ALTER MODULE LOGGER ADD
-  VARIABLE LOGGERS_CACHE LOGGERS_TYPE @
+  TYPE LEVELS_TYPE AS ANCHOR LOGDATA.LEVELS.NAME ARRAY [INTEGER] @
 
 /**
- * Retrieves the complete logger name for a given logged id.
- *
- * IN LOG_ID
- *  Identification of the logger in the effective table.
- * RETURNS the complete name of the logger (recursive.)
+ * Level's names and ids.
  */
 ALTER MODULE LOGGER ADD
- FUNCTION GET_LOGGER_NAME (
-  IN LOG_ID ANCHOR LOGDATA.CONF_LOGGERS.LOGGER_ID
-  ) RETURNS VARCHAR(256)
-  -- XXX: DB2 error when temporal capabilities are activated.
-  -- ) RETURNS ANCHOR COMPLETE_LOGGER_NAME
-  LANGUAGE SQL
-  PARAMETER CCSID UNICODE
-  SPECIFIC F_GET_NAME
-  NOT DETERMINISTIC
-  NO EXTERNAL ACTION
-  READS SQL DATA
- F_GET_NAME: BEGIN
-  DECLARE COMPLETE_NAME ANCHOR COMPLETE_LOGGER_NAME;
-  DECLARE PARENT ANCHOR LOGDATA.CONF_LOGGERS.LOGGER_ID;
-  DECLARE NAME ANCHOR LOGDATA.CONF_LOGGERS.NAME;
-  DECLARE RETURNED ANCHOR COMPLETE_LOGGER_NAME;
-  
-  -- The logger is ROOT.
-  IF (LOG_ID = 0) THEN
-   SET COMPLETE_NAME = 'ROOT';
-  ELSEIF (LOG_ID = -1 OR LOG_ID IS NULL) THEN
-   -- The logger is internal
-   SET COMPLETE_NAME = '-internal-';
-  ELSE
-   -- Retrieves the id of the parent logger.
-   SELECT C.PARENT_ID, C.NAME INTO PARENT, NAME
-     FROM LOGDATA.CONF_LOGGERS C
-     WHERE C.LOGGER_ID = LOG_ID
-     WITH UR;
-
-   SET RETURNED = GET_LOGGER_NAME (PARENT) ;
-   -- The parent is ROOT, thus do not concatenate.
-   IF (RETURNED <> 'ROOT') THEN
-    SET COMPLETE_NAME = RETURNED || '.' || NAME;
-   ELSE
-      SET COMPLETE_NAME = NAME;
-   END IF;
-  END IF;
-  
-  RETURN COMPLETE_NAME;
- END F_GET_NAME @
+  VARIABLE LEVELS_CACHE LEVELS_TYPE @
 
 /**
- * Unload configuration. This is useful for tests, but it should not called
+ * Complete logger's name type.
+ */
+ALTER MODULE LOGGER ADD
+  TYPE LOGGERS_NAME_TYPE AS ANCHOR COMPLETE_LOGGER_NAME ARRAY [INTEGER] @
+
+/**
+ * Complete logger's name array.
+ */
+ALTER MODULE LOGGER ADD
+  VARIABLE LOGGERS_NAME_CACHE LOGGERS_NAME_TYPE @
+
+/**
+ * Unload configuration. This is useful for debugging, but it should not called
  * used in production.
+ *
+ * PRE
+ *   No conditions.
+ * POS
+ *   The caches are emptied.
  */
 ALTER MODULE LOGGER ADD
   PROCEDURE UNLOAD_CONF (
@@ -171,59 +151,215 @@ ALTER MODULE LOGGER ADD
   NO EXTERNAL ACTION
   PARAMETER CCSID UNICODE
  P_UNLOAD_CONF: BEGIN
-  SET CONFIGURATION = ARRAY_DELETE(CONFIGURATION);
-  SET LAST_REFRESH = CURRENT TIMESTAMP;
-  SET CACHE = TRUE;
+  SET CONF_CACHE = ARRAY_DELETE(CONF_CACHE);
+  SET LOGGERS_ID_CACHE = ARRAY_DELETE(LOGGERS_ID_CACHE);
+  SET LEVELS_CACHE = ARRAY_DELETE(LEVELS_CACHE);
+  SET LOGGERS_NAME_CACHE = ARRAY_DELETE(LOGGERS_NAME_CACHE);
+  -- Sets a reference date 1970-01-01.
+  SET LAST_REFRESH = DATE(719163);
   SET LOADED = FALSE;
  END P_UNLOAD_CONF @ 
 
 /**
  * Refreshes the configuration cache immediately.
+ *
+ * PRE
+ *   No preconditions.
+ * POS
+ *   The caches holds the most recent information.
  */
 ALTER MODULE LOGGER ADD
-  PROCEDURE REFRESH_CONF (
+  PROCEDURE REFRESH_CACHE (
   )
   LANGUAGE SQL
-  SPECIFIC P_REFRESH_CONF
+  SPECIFIC P_REFRESH_CACHE
   DYNAMIC RESULT SETS 2
   READS SQL DATA
   NOT DETERMINISTIC
   NO EXTERNAL ACTION
   PARAMETER CCSID UNICODE
- P_REFRESH_CONF: BEGIN
+ P_REFRESH_CACHE: BEGIN
   DECLARE VALUE ANCHOR LOGDATA.CONFIGURATION.VALUE;
   DECLARE KEY ANCHOR LOGDATA.CONFIGURATION.KEY;
+  DECLARE LVL ANCHOR LOGDATA.LEVELS.LEVEL_ID;
+  DECLARE NAME ANCHOR LOGDATA.LEVELS.NAME;
   DECLARE AT_END BOOLEAN; -- End of the cursor.
-  DECLARE SIZE SMALLINT;
   DECLARE CONF CURSOR FOR
     SELECT KEY, VALUE
     FROM LOGDATA.CONFIGURATION
+    OPTIMIZE FOR 10 ROWS
+    WITH UR;
+  DECLARE LVLS CURSOR FOR
+    SELECT LEVEL_ID, NAME
+    FROM LOGDATA.LEVELS
+    OPTIMIZE FOR 10 ROWS
     WITH UR;
   DECLARE CONTINUE HANDLER FOR NOT FOUND
     SET AT_END = TRUE;
-
   -- Clears the current configuration.
   CALL UNLOAD_CONF();
+  
   -- Reads current configuration.
+  -- FIXME: ARRAY_AGG is not supported in previous versions to v10.1fp2
+  -- SELECT ARRAY_AGG(KEY, VALUE) INTO CONFIGURATION
+  --  FROM LOGDATA.CONFIGURATION
+  --  WITH UR;
   SET AT_END = FALSE;
   OPEN CONF;
   FETCH CONF INTO KEY, VALUE;
   WHILE (AT_END = FALSE) DO
-   SET CONFIGURATION[KEY] = VALUE;
+   SET CONF_CACHE[KEY] = VALUE;
    FETCH CONF INTO KEY, VALUE;
   END WHILE;
-  -- Sets the last configuration read as now.
+  -- Reads the levels
+  SET AT_END = FALSE;
+  OPEN LVLS;
+  FETCH LVLS INTO LVL, NAME;
+  WHILE (AT_END = FALSE) DO
+   SET LEVELS_CACHE[CHAR(LVL)] = NAME;
+   FETCH LVLS INTO LVL, NAME;
+  END WHILE;
+  -- Reads root's current levels.
+  SELECT C.LEVEL_ID INTO ROOT_CURRENT_LEVEL
+    FROM LOGDATA.CONF_LOGGERS C
+    WHERE C.LOGGER_ID = 0
+    FETCH FIRST 1 ROW ONLY
+    WITH UR;
+
+  SET LOADED = TRUE;
+  -- Sets the most recent configuration read as now.
   SET LAST_REFRESH = CURRENT TIMESTAMP;
- END P_REFRESH_CONF @
+ END P_REFRESH_CACHE @
+
+/**
+ * Verifies if the configuration should be reloaded, and if necessary, then
+ * reloads the configurations.
+ */
+ALTER MODULE LOGGER ADD
+  PROCEDURE CHECK_REFRESH()
+  LANGUAGE SQL
+  SPECIFIC P_CHECK_REFRESH
+  READS SQL DATA
+  NOT DETERMINISTIC
+  NO EXTERNAL ACTION
+  PARAMETER CCSID UNICODE
+ P_CHECK_REFRESH: BEGIN
+  DECLARE SECS SMALLINT DEFAULT 60;
+  DECLARE EPOCH TIMESTAMP;
+   -- Sets the quantity of seconds before refresh. 60 seconds by default.
+   REFRESH: BEGIN
+    -- Handle for the second time the function is called and the param has not
+    -- been defined.
+    DECLARE CONTINUE HANDLER FOR SQLSTATE '2202E'
+      SET SECS = 60;
+    -- There is an invalid value.
+    DECLARE CONTINUE HANDLER FOR SQLSTATE '22018'
+      SET SECS = 60;
+    
+    SET SECS = INT(CONF_CACHE[REFRESH_CONS]);
+    IF (SECS IS NULL) THEN
+     SET SECS = 60;
+    END IF;
+   END REFRESH;
+
+   -- Sets a reference date 1970-01-01.
+   SET EPOCH = DATE(719163);
+   IF (LOADED = FALSE OR COALESCE(LAST_REFRESH, EPOCH) + SECS SECONDS < CURRENT TIMESTAMP) THEN
+    -- Refreshes the configuration
+    CALL LOGGER.REFRESH_CACHE();
+   END IF;
+ END P_CHECK_REFRESH @
+
+/**
+ * Returns the name of a level of the given ID.
+ *
+ * IN LVL_ID
+ *   Level id to analyze.
+ * RETURN The text that represents the id.
+ */
+ALTER MODULE LOGGER ADD
+  FUNCTION GET_LEVEL_NAME (
+  IN LVL_ID ANCHOR LOGDATA.LEVELS.LEVEL_ID
+  )
+  RETURNS ANCHOR LOGDATA.LEVELS.NAME
+  LANGUAGE SQL
+  SPECIFIC F_GET_LEVEL_NAME
+  READS SQL DATA
+  NOT DETERMINISTIC
+  NO EXTERNAL ACTION
+  PARAMETER CCSID UNICODE
+ F_GET_LEVEL_NAME: BEGIN
+  DECLARE RET ANCHOR LOGDATA.LEVELS.NAME;
+
+  -- Checks if internal cache should be used.
+  IF (CACHE = TRUE) THEN
+   CALL CHECK_REFRESH();
+
+   SET RET = LEVELS_CACHE[LVL_ID];
+  ELSE -- Does not use the internal cache but a query.
+   SELECT L.NAME INTO RET
+     FROM LOGDATA.LEVELS L
+     WHERE L.LEVEL_ID = LVL_ID
+     FETCH FIRST 1 ROW ONLY
+     WITH UR;
+  END IF;
+
+  RETURN RET;
+ END F_GET_LEVEL_NAME @
+
+/**
+ * Tests if the given ID is present in the Levels array.
+ *
+ * IN LVL_ID
+ *   Level id to analyze.
+ * RETURN The true if the value is in the array. False otherwise.
+ */
+ALTER MODULE LOGGER ADD
+  FUNCTION EXIST_LEVEL (
+  IN LVL_ID ANCHOR LOGDATA.LEVELS.LEVEL_ID
+  )
+  RETURNS BOOLEAN
+  LANGUAGE SQL
+  SPECIFIC F_EXIST_LEVEL
+  READS SQL DATA
+  NOT DETERMINISTIC
+  NO EXTERNAL ACTION
+  PARAMETER CCSID UNICODE
+ F_EXIST_LEVEL: BEGIN
+  DECLARE RET BOOLEAN DEFAULT FALSE;
+  DECLARE ID ANCHOR LOGDATA.LEVELS.LEVEL_ID;
+
+  -- Checks if internal cache should be used.
+  IF (CACHE = TRUE) THEN
+   CALL CHECK_REFRESH();
+
+   SET RET = ARRAY_EXISTS(LEVELS_CACHE, LVL_ID);
+  ELSE -- Does not use the internal cache but a query.
+   SELECT L.LEVEL_ID INTO ID
+     FROM LOGDATA.LEVELS L
+     WHERE L.LEVEL_ID = LVL_ID
+     FETCH FIRST 1 ROW ONLY
+     WITH UR;
+   IF (ID IS NOT NULL) THEN
+    SET RET = TRUE;
+   END IF;
+  END IF;
+
+  RETURN RET;
+ END F_EXIST_LEVEL @
 
 /**
  * Function that returns the value of the given key from the configuration
  * table.
  *
  * IN KEY
- *  Identification of the key/value parameter of the configuration table.
+ *   Identification of the key/value parameter of the configuration table.
  * RETURNS The associated value of the given key. NULL if there is not a key
  * with that value.
+ * PRE
+ *   No preconditions.
+ * POS
+ *   The returned value correspond to the given value if exist.
  */
 ALTER MODULE LOGGER ADD
   FUNCTION GET_VALUE (
@@ -238,66 +374,36 @@ ALTER MODULE LOGGER ADD
   PARAMETER CCSID UNICODE
  F_GET_VALUE: BEGIN
   DECLARE RET ANCHOR LOGDATA.CONFIGURATION.VALUE;
-  DECLARE SECS SMALLINT DEFAULT 60;
-  DECLARE EPOCH TIMESTAMP;
 
   -- Checks if internal cache should be used.
   IF (CACHE = TRUE) THEN
-
-   -- Sets the quantity of seconds before refresh. 60 seconds by default.
-   REFRESH: BEGIN
-    -- Handle for the second time the function is called and the param has not
-    -- been defined.
-    DECLARE CONTINUE HANDLER FOR SQLSTATE '2202E'
-      SET SECS = 60;
-    SET SECS = INT(CONFIGURATION[REFRESH_CONS]);
-    IF (SECS IS NULL) THEN
-     SET SECS = 60;
-    END IF;
-   END REFRESH;
-
-   -- Sets a reference date 1970-01-01.
-   SET EPOCH = DATE(719163);
-   IF (COALESCE(LAST_REFRESH, EPOCH) + SECS SECONDS < CURRENT TIMESTAMP OR LOADED = FALSE) THEN
-    -- Refreshes the configuration
-    CALL LOGGER.REFRESH_CONF ();
-    SET LOADED = TRUE;
-   END IF;
+   CALL CHECK_REFRESH();
 
    BEGIN
     -- NULL if the key is not in the configuration.
-    DECLARE EXIT HANDLER FOR SQLSTATE '2202E'
+    DECLARE CONTINUE HANDLER FOR SQLSTATE '2202E'
       SET RET = NULL;
 
-    SET RET = CONFIGURATION[GIVEN_KEY];
+    SET RET = CONF_CACHE[GIVEN_KEY];
    END;
   ELSE -- Does not use the internal cache but a query.
    SELECT C.VALUE INTO RET
      FROM LOGDATA.CONFIGURATION C
-     WHERE C.KEY = GIVEN_KEY;
+     WHERE C.KEY = GIVEN_KEY
+     FETCH FIRST 1 ROW ONLY
+     WITH UR;
   END IF;
 
   RETURN RET;
  END F_GET_VALUE @
 
 /**
- * Deletes a value in the loggers cache.
- */
-ALTER MODULE LOGGER ADD
-  PROCEDURE DELETE_ALL_LOGGER_CACHE (
-  )
-  LANGUAGE SQL
-  SPECIFIC P_DELETE_ALL_CACHE
-  READS SQL DATA
-  NOT DETERMINISTIC
-  NO EXTERNAL ACTION
-  PARAMETER CCSID UNICODE
- P_DELETE_ALL_CACHE: BEGIN
-  SET LOGGERS_CACHE = ARRAY_DELETE(LOGGERS_CACHE);
- END P_DELETE_ALL_CACHE @
-
-/**
  * Activates the cache. Cleans any previous value on the cache.
+ *
+ * PRE
+ *   No preconditions.
+ * POS
+ *   The cache holds the most recent information from the table.
  */
 ALTER MODULE LOGGER ADD
   PROCEDURE ACTIVATE_CACHE (
@@ -321,13 +427,15 @@ ALTER MODULE LOGGER ADD
   --   SET MESSAGE_TEXT = 'Invalid configuration state';
   --END IF;
   SET CACHE = TRUE;
-  SET LOADED = FALSE;
-  -- Cleans the cache
-  SET LOGGERS_CACHE = ARRAY_DELETE(LOGGERS_CACHE);
  END P_ACTIVATE_CACHE @
 
 /**
  * Cleans the cache, and deactives it.
+ *
+ * PRE
+ *   No preconditions.
+ * POS
+ *   The cache is emptied.
  */
 ALTER MODULE LOGGER ADD
   PROCEDURE DEACTIVATE_CACHE (
@@ -350,10 +458,8 @@ ALTER MODULE LOGGER ADD
   -- SIGNAL SQLSTATE VALUE 'LG002'
   --   SET MESSAGE_TEXT = 'Invalid configuration state';
   --END IF;
+  CALL UNLOAD_CONF();
   SET CACHE = FALSE;
-  SET LOADED = FALSE;
-  -- Cleans the cache
-  SET LOGGERS_CACHE = ARRAY_DELETE(LOGGERS_CACHE);
  END P_DEACTIVATE_CACHE @
 
 /**
@@ -373,7 +479,7 @@ ALTER MODULE LOGGER ADD
   DETERMINISTIC
   NO EXTERNAL ACTION
   PARAMETER CCSID UNICODE
- F_GET_DEFAULT_LEVEL: BEGIN
+ F_BOOL_TO_CHAR: BEGIN
   DECLARE RET CHAR(5) DEFAULT 'FALSE';
   
   IF (VALUE IS NULL) THEN
@@ -382,7 +488,76 @@ ALTER MODULE LOGGER ADD
    SET RET = 'TRUE';
   END IF;
   RETURN RET;
- END F_GET_DEFAULT_LEVEL @
+ END F_BOOL_TO_CHAR @
+
+/**
+ * Retrieves the complete logger name for a given logged id.
+ *
+ * IN LOG_ID
+ *   Identification of the logger in the effective table.
+ * RETURNS the complete name of the logger (recursive.)
+ * TESTS
+ *   TestsGetLoggerName: Verifies different outputs for this function.
+ * PRE
+ *   ROOT is defined.
+ * POS
+ *   The returned name matches the hierarchy. If the inverse function of
+ *   GET_LOGGER.
+ */
+ALTER MODULE LOGGER ADD
+ FUNCTION GET_LOGGER_NAME (
+  IN LOG_ID ANCHOR LOGDATA.CONF_LOGGERS.LOGGER_ID
+  ) RETURNS ANCHOR COMPLETE_LOGGER_NAME
+  LANGUAGE SQL
+  PARAMETER CCSID UNICODE
+  SPECIFIC F_GET_NAME
+  NOT DETERMINISTIC
+  NO EXTERNAL ACTION
+  READS SQL DATA
+ F_GET_NAME: BEGIN
+  DECLARE COMPLETE_NAME ANCHOR COMPLETE_LOGGER_NAME;
+  DECLARE PARENT ANCHOR LOGDATA.CONF_LOGGERS.LOGGER_ID;
+  DECLARE NAME ANCHOR LOGDATA.CONF_LOGGERS.NAME;
+  DECLARE RETURNED ANCHOR COMPLETE_LOGGER_NAME;
+  DECLARE CONTINUE HANDLER FOR SQLSTATE '2202E'
+    SET COMPLETE_NAME = NULL;
+
+  SET COMPLETE_NAME = LOGGERS_NAME_CACHE[LOG_ID];
+  IF (COMPLETE_NAME IS NULL) THEN
+   -- The logger is ROOT.
+   IF (LOG_ID = 0) THEN
+    SET COMPLETE_NAME = 'ROOT';
+    ELSEIF (LOG_ID > 0) THEN
+    -- Retrieves the id of the parent logger.
+    SELECT C.PARENT_ID, C.NAME INTO PARENT, NAME
+      FROM LOGDATA.CONF_LOGGERS C
+      WHERE C.LOGGER_ID = LOG_ID
+      FETCH FIRST 1 ROW ONLY
+      WITH UR;
+
+    IF (PARENT IS NOT NULL) THEN
+     SET RETURNED = GET_LOGGER_NAME(PARENT) ;
+     -- The parent is ROOT, thus do not concatenate.
+     IF (RETURNED <> 'ROOT') THEN
+      SET COMPLETE_NAME = RETURNED || '.' || NAME;
+     ELSE
+      SET COMPLETE_NAME = NAME;
+     END IF;
+    ELSE
+     SET COMPLETE_NAME = 'Unknown';
+    END IF;
+   ELSEIF (LOG_ID = -1 OR LOG_ID IS NULL) THEN
+    -- The logger is internal
+    SET COMPLETE_NAME = '-internal-';
+   ELSE
+    SET COMPLETE_NAME = '-INVALID-';
+   END IF;
+   IF (LOG_ID IS NOT NULL) THEN
+    SET LOGGERS_NAME_CACHE[LOG_ID] = COMPLETE_NAME;
+   END IF;
+  END IF;
+  RETURN COMPLETE_NAME;
+ END F_GET_NAME @
 
 /**
  * Modifies the descendancy of the provided logger changing the level to the
@@ -392,6 +567,12 @@ ALTER MODULE LOGGER ADD
  *   Parent of the descendancy to be changed.
  * IN LEVEL
  *   Log level to be assigned to all descendancy.
+ * TESTS
+ *   TestsMessages: Checks the output of the error.
+ * PRE
+ *   ROOT exists and Levels are defined.
+ * POS
+ *   The Effective table reflects the new values.
  */
 ALTER MODULE LOGGER ADD
   PROCEDURE MODIFY_DESCENDANTS (
@@ -421,17 +602,22 @@ ALTER MODULE LOGGER ADD
     SELECT LOGGER_ID AS LOG_ID
     FROM LOGDATA.CONF_LOGGERS
     WHERE PARENT_ID = PARENT
+    OPTIMIZE FOR 20 ROW
+    WITH CS
     FOR UPDATE
     DO
    -- Checks if the level has a configured level, or it is inherited.
    SELECT LEVEL_ID INTO LVL_ID
      FROM LOGDATA.CONF_LOGGERS
-     WHERE LOGGER_ID = LOG_ID;
+     WHERE LOGGER_ID = LOG_ID
+     FETCH FIRST 1 ROW ONLY
+     WITH CS;
    IF (LVL_ID IS NULL) THEN
     -- Updates the current logger_id (son.)
     UPDATE LOGDATA.CONF_LOGGERS_EFFECTIVE
       SET LEVEL_ID = LEVEL
-      WHERE LOGGER_ID = LOG_ID;
+      WHERE LOGGER_ID = LOG_ID
+      WITH CS;
     -- Modifies the descendant level (recursion).
     BEGIN
      DECLARE STMT STATEMENT;
@@ -448,6 +634,10 @@ ALTER MODULE LOGGER ADD
  * modifications.
  *
  * RETURNS The configuration level for ROOT logger.
+ * PRE
+ *   No conditions.
+ * POS
+ *   The returned value corresponds to the value registered in the database.
  */
 ALTER MODULE LOGGER ADD
   FUNCTION GET_DEFAULT_LEVEL (
@@ -461,6 +651,8 @@ ALTER MODULE LOGGER ADD
  F_GET_DEFAULT_LEVEL: BEGIN
   DECLARE RET ANCHOR LOGDATA.LEVELS.LEVEL_ID;
   DECLARE VALUE ANCHOR LOGDATA.CONFIGURATION.VALUE;
+    DECLARE CONTINUE HANDLER FOR SQLSTATE '22018'
+      SET RET = DEFAULT_LEVEL;
 
   -- Debug
   -- INSERT INTO LOGS (DATE, LEVEL_ID, LOGGER_ID, MESSAGE) VALUES (GENERATE_UNIQUE(), 5, -1, 'aFLAG 6');
@@ -477,6 +669,13 @@ ALTER MODULE LOGGER ADD
  *   Logger id that will be analyzed to find a ascendency with a defined log
  *   level.
  * RETURNS The log level configured to a ascendancy or the default value.
+ * TESTS
+ *   TestsFunctionGetDefinedParent checks different inputs of this function.
+ *   TestsMessages: Checks the output of the error.
+ * PRE
+ *   ROOT is registered in the databas and levels are defined.
+ * POS
+ *   The returned level correspond to the closer ascendant in the hierarchy.
  */
 ALTER MODULE LOGGER ADD
   FUNCTION GET_DEFINED_PARENT_LOGGER (
@@ -501,6 +700,7 @@ ALTER MODULE LOGGER ADD
    SELECT LEVEL_ID INTO RET
      FROM LOGDATA.CONF_LOGGERS
      WHERE LOGGER_ID = 0
+     FETCH FIRST 1 ROW ONLY
      WITH UR;
    IF (RET IS NULL) THEN
     -- ROOT is not configured, getting the default value.
@@ -516,9 +716,13 @@ ALTER MODULE LOGGER ADD
    -- Retrieving the configured level for the parent of the given son.
    SELECT LEVEL_ID, LOGGER_ID INTO RET, PARENT
      FROM LOGDATA.CONF_LOGGERS
-     WHERE LOGGER_ID = (SELECT PARENT_ID
-     FROM LOGDATA.CONF_LOGGERS
-     WHERE LOGGER_ID = SON_ID)
+     WHERE LOGGER_ID = (
+      SELECT PARENT_ID
+      FROM LOGDATA.CONF_LOGGERS
+      WHERE LOGGER_ID = SON_ID
+      FETCH FIRST 1 ROW ONLY
+      WITH UR)
+     FETCH FIRST 1 ROW ONLY
      WITH UR;
    IF (RET IS NULL) THEN
 

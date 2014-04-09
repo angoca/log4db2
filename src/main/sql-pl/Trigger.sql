@@ -41,6 +41,10 @@ SET CURRENT SCHEMA LOGGER_1B @
 /**
  * Cleans the cache or update it when the related configuration parameter is
  * modified.
+ *
+ * TESTS
+ *   TestConfiguration: Validates if this error is thrown.
+ *   TestsMessages: Checks the output of the error.
  */
 CREATE OR REPLACE TRIGGER T1_CNF_CCHE
   AFTER INSERT OR UPDATE ON LOGDATA.CONFIGURATION
@@ -63,9 +67,18 @@ CREATE OR REPLACE TRIGGER T1_CNF_CCHE
    WHEN 'defaultRootLevelId' THEN
     BEGIN
      DECLARE LVL ANCHOR LOGDATA.CONF_LOGGERS.LEVEL_ID;
+     DECLARE EXIT HANDLER FOR SQLSTATE '22018'
+       RESIGNAL SQLSTATE 'LG0T1'
+       SET MESSAGE_TEXT = 'Invalid value for defaultRootLevelId';
+
+     -- Tests if the given value can be converted to smallint.
+     SET LVL = SMALLINT(N.VALUE);
+
      SELECT LEVEL_ID INTO LVL
        FROM LOGDATA.CONF_LOGGERS
-       WHERE LOGGER_ID = 0;
+       WHERE LOGGER_ID = 0
+       FETCH FIRST 1 ROW ONLY
+       WITH UR;
      -- Checks if root logger is defined.
      IF (LVL IS NULL) THEN
       SET LVL = SMALLINT(N.VALUE);
@@ -107,6 +120,10 @@ COMMENT ON TRIGGER T1_CNF_CCHE IS
 
 /**
  * Checks that the level are consecutives.
+ *
+ * TESTS
+ *   TestsLevels: Validates if the errors are thrown.
+ *   TestsMessages: Checks the output of the error.
  */
 CREATE OR REPLACE TRIGGER T1_LVL_CON
   BEFORE INSERT ON LOGDATA.LEVELS
@@ -120,7 +137,8 @@ CREATE OR REPLACE TRIGGER T1_LVL_CON
 
   SELECT MAX(LEVEL_ID) INTO MAX
     FROM LOGDATA.LEVELS
-    WITH UR;
+    FETCH FIRST 1 ROW ONLY
+    WITH CS;
   IF (N.LEVEL_ID < 0) THEN
    SIGNAL SQLSTATE VALUE 'LG0L1'
      SET MESSAGE_TEXT = 'LEVEL_ID should be equal or greater than zero';
@@ -145,6 +163,8 @@ COMMENT ON TRIGGER T2_LVL_NO_UPD IS 'Prevents the change of level_id'@
 
 /**
  * Allows to delete just the maximal LEVEL_ID value.
+ * TESTS
+ *   TestsMessages: Checks the output of the error.
  */
 CREATE OR REPLACE TRIGGER T3_LVL_DEL
   BEFORE DELETE ON LOGDATA.LEVELS
@@ -158,7 +178,8 @@ CREATE OR REPLACE TRIGGER T3_LVL_DEL
 
   SELECT MAX(LEVEL_ID) INTO MAX
     FROM LOGDATA.LEVELS
-    WITH UR;
+    FETCH FIRST 1 ROW ONLY
+    WITH CS;
   IF (O.LEVEL_ID = 0) THEN
    SIGNAL SQLSTATE VALUE 'LG0L4'
      SET MESSAGE_TEXT = 'Trying to delete the minimal value' ;
@@ -175,6 +196,10 @@ COMMENT ON TRIGGER T3_LVL_DEL IS 'Allows to delete just the maximal LEVEL_ID val
 /**
  * This trigger checks the insertion or updating in the conf_loggers table to see
  * if the logger_id already exists or retrieve from the sequence.
+ *
+ * TESTS
+ *   TestConfLoggers: Verifies if the different errors are thrown.
+ *   TestsMessages: Checks the output of the error.
  */
 CREATE OR REPLACE TRIGGER T1_CNFLGR_ID
   BEFORE UPDATE OR INSERT ON LOGDATA.CONF_LOGGERS
@@ -207,7 +232,8 @@ CREATE OR REPLACE TRIGGER T1_CNFLGR_ID
   SELECT LOGGER_ID INTO EXISTING
     FROM LOGDATA.CONF_LOGGERS
     WHERE PARENT_ID = N.PARENT_ID
-    AND NAME = N.NAME;
+    AND NAME = N.NAME
+    FETCH FIRST 1 ROW ONLY;
   IF (INSERTING AND EXISTING IS NOT NULL) THEN
    SIGNAL SQLSTATE VALUE  'LG0C6'
      SET MESSAGE_TEXT = 'The same son already exist in the database';
@@ -218,6 +244,10 @@ COMMENT ON TRIGGER T1_CNFLGR_ID IS 'This trigger checks the insertion or updatin
 
 /**
  * It restricts to update any value in CONF_LOGGERS different to LEVEL_ID.
+ *
+ * TESTS
+ *   TestConfLoggers verifies if the different errors are thrown.
+ *   TestsMessages: Checks the output of the error.
  */
 CREATE OR REPLACE TRIGGER T2_CNFLGR_NO_UPD
   BEFORE UPDATE OF LOGGER_ID, NAME, PARENT_ID ON LOGDATA.CONF_LOGGERS
@@ -255,7 +285,9 @@ CREATE OR REPLACE TRIGGER T3_CNFLGR_SYN
    -- If updating and exists in effective, then update
    SELECT COUNT(1) INTO QTY
      FROM LOGDATA.CONF_LOGGERS_EFFECTIVE
-     WHERE LOGGER_ID = N.LOGGER_ID;
+     WHERE LOGGER_ID = N.LOGGER_ID
+     FETCH FIRST 1 ROW ONLY
+     WITH UR;
 
   -- Debug
   -- INSERT INTO LOGS (LEVEL_ID, LOGGER_ID, MESSAGE) 
@@ -276,23 +308,10 @@ CREATE OR REPLACE TRIGGER T3_CNFLGR_SYN
 
 COMMENT ON TRIGGER T3_CNFLGR_SYN IS 'Inserts or updates in the effective table to synchronize the new configuration'@
 
-/**
- * Refreshes the loggers cache after any modification.
- */
-CREATE OR REPLACE TRIGGER T4_CNFLGER_CLN
-  AFTER INSERT OR UPDATE OR DELETE 
-  ON LOGDATA.CONF_LOGGERS
-  FOR EACH ROW
- T4_CNFLGER_CLN: BEGIN
-  CALL LOGGER.DELETE_ALL_LOGGER_CACHE();
- END T4_CNFLGER_CLN @
-
-COMMENT ON TRIGGER T4_CNFLGER_CLN IS 'Refreshes the loggers cache after any modification'@
-
 -- Table LOGDATA.CONF_LOGGERS_EFFECTIVE.
 
 /**
- *  Assigns the LEVEL_ID.
+ * Assigns the LEVEL_ID.
  */
 CREATE OR REPLACE TRIGGER T1_EFF_LVL_ID
   BEFORE INSERT OR UPDATE OF LEVEL_ID
@@ -308,7 +327,9 @@ CREATE OR REPLACE TRIGGER T1_EFF_LVL_ID
 
   SELECT LEVEL_ID INTO N.LEVEL_ID
     FROM LOGDATA.CONF_LOGGERS
-    WHERE LOGGER_ID = N.LOGGER_ID;
+    WHERE LOGGER_ID = N.LOGGER_ID
+    FETCH FIRST 1 ROW ONLY
+    WITH CS;
   -- Assigns the inherited level. It cannot be assigned by the insert/update.
   IF (N.LEVEL_ID IS NULL) THEN
 
@@ -330,6 +351,10 @@ COMMENT ON TRIGGER T1_EFF_LVL_ID IS 'Assigns the LEVEL_ID' @
 
 /**
  * It restricts the update of any value in this table different to LEVEL_ID.
+ *
+ * TESTS
+ *   TestConfLoggersEffective: Verifies if the different errors are thrown.
+ *   TestsMessages: Checks the output of the error.
  */
 CREATE OR REPLACE TRIGGER T2_EFF_NO_UPD
   BEFORE UPDATE OF LOGGER_ID, HIERARCHY ON LOGDATA.CONF_LOGGERS_EFFECTIVE
@@ -372,6 +397,11 @@ ascendency or default value, in the BEFORE trigger for this table'@
 /**
  * Verifies that the root logger is not deleted from the effective table. This
  * is the basic logger and it should always exist in this table.
+ *
+ * TESTS
+ *   TestConfLoggersDelete and TestConfLoggersEffective verify if the different
+ *   errors are thrown.
+ *   TestsMessages: Checks the output of the error.
  */
 CREATE OR REPLACE TRIGGER T4_EFF_ROOT_UNDEL
   BEFORE DELETE ON LOGDATA.CONF_LOGGERS_EFFECTIVE
@@ -391,12 +421,14 @@ COMMENT ON TRIGGER T4_EFF_ROOT_UNDEL IS
   'Verifies that the root logger is not deleted from the effective table.
 This is the basic logger and it should always exist in this table.'@
 
-  -- TODO Delete this method CALL LOGGER.DELETE_LOGGER_CACHE(O.LOGGER_ID);
-
 -- Table LOGDATA.APPENDERS.
 
 /**
  * Checks that the appender_id for an appender is greater or equal to zero.
+ *
+ * TESTS
+ *   TestsAppenders: Verifies the modification of Appenders.
+ *   TestsMessages: Checks the output of the error.
  */
 CREATE OR REPLACE TRIGGER T1_APP_GE_0
   BEFORE INSERT OR UPDATE ON LOGDATA.APPENDERS

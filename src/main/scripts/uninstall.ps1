@@ -37,7 +37,7 @@ if ( ${LastExitCode} -ne 0 ) {
  if ( Test-Path -Path init.ps1 -PathType Leaf ) {
   .\init.ps1
  }
- echo Uninstalling log4db2...
+ echo "Uninstalling log4db2"
  db2 -tf ${SRC_MAIN_CODE_PATH}\CleanTriggers.sql
  db2 -tf ${SRC_MAIN_CODE_PATH}\CleanObjects.sql
  db2 -tf ${SRC_MAIN_CODE_PATH}\CleanTables.sql

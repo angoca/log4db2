@@ -1,4 +1,3 @@
-#!/bin/bash
 # Copyright (c) 2012 - 2014, Andres Gomez Casanova (AngocA)
 # All rights reserved.
 #
@@ -23,43 +22,50 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-if [[ -x init-dev ]] ; then
-  . ./init-dev
+. ./init-dev
+
+db2 connect > /dev/null
+if [ ${?} -ne 0 ] ; then
+ echo "Please connect to a database before the execution of the tests."
+ echo "Remember that to call the script the command is '. ./allTests'"
+else
+ echo "Executing all tests with pauses in between."
+
+ echo "(next TestsAppenders)"
+ . ${SRC_TEST_SCRIPT_PATH}/test ${SRC_TEST_CODE_PATH}/TestsAppenders.sql
+ read -p "Press enter to continue (next TestsCache)"
+ . ${SRC_TEST_SCRIPT_PATH}/test ${SRC_TEST_CODE_PATH}/TestsCache.sql
+ read -p "Press enter to continue (next TestsCascadeCallLimit)"
+ . ${SRC_TEST_SCRIPT_PATH}/test ${SRC_TEST_CODE_PATH}/TestsCascadeCallLimit.sql
+ read -p "Press enter to continue (next TestsConfAppenders)"
+ . ${SRC_TEST_SCRIPT_PATH}/test ${SRC_TEST_CODE_PATH}/TestsConfAppenders.sql
+ read -p "Press enter to continue (next TestsConfiguration)"
+ . ${SRC_TEST_SCRIPT_PATH}/test ${SRC_TEST_CODE_PATH}/TestsConfiguration.sql
+ read -p "Press enter to continue (next TestsConfLoggers)"
+ . ${SRC_TEST_SCRIPT_PATH}/test ${SRC_TEST_CODE_PATH}/TestsConfLoggers.sql
+ read -p "Press enter to continue (next TestsConfLoggersDelete)"
+ . ${SRC_TEST_SCRIPT_PATH}/test ${SRC_TEST_CODE_PATH}/TestsConfLoggersDelete.sql
+ read -p "Press enter to continue (next TestsConfLoggersEffective)"
+ . ${SRC_TEST_SCRIPT_PATH}/test ${SRC_TEST_CODE_PATH}/TestsConfLoggersEffective.sql
+ read -p "Press enter to continue (next TestsFunctionsGetDefinedParentLogger)"
+ db2 -tf ${SRC_MAIN_CODE_PATH}/CleanTriggers.sql +O
+ . ${SRC_TEST_SCRIPT_PATH}/test ${SRC_TEST_CODE_PATH}/TestsFunctionGetDefinedParentLogger.sql
+ db2 -tf ${SRC_MAIN_CODE_PATH}/Trigger.sql +O
+ read -p "Press enter to continue (next TestsGetLogger)"
+ . ${SRC_TEST_SCRIPT_PATH}/test ${SRC_TEST_CODE_PATH}/TestsGetLogger.sql
+ read -p "Press enter to continue (next TestsGetLoggerName)"
+ . ${SRC_TEST_SCRIPT_PATH}/test ${SRC_TEST_CODE_PATH}/TestsGetLoggerName.sql
+ read -p "Press enter to continue (next TestsHierarchy)"
+ . ${SRC_TEST_SCRIPT_PATH}/test ${SRC_TEST_CODE_PATH}/TestsHierarchy.sql
+ read -p "Press enter to continue (next TestsLayout)"
+ . ${SRC_TEST_SCRIPT_PATH}/test ${SRC_TEST_CODE_PATH}/TestsLayout.sql
+ read -p "Press enter to continue (next TestsLevels)"
+ . ${SRC_TEST_SCRIPT_PATH}/test ${SRC_TEST_CODE_PATH}/TestsLevels.sql
+ read -p "Press enter to continue (next TestsLogs)"
+ . ${SRC_TEST_SCRIPT_PATH}/test ${SRC_TEST_CODE_PATH}/TestsLogs.sql
+ read -p "Press enter to continue (next TestsMessages)"
+ . ${SRC_TEST_SCRIPT_PATH}/test ${SRC_TEST_CODE_PATH}/TestsMessages.sql
+ read -p "Press enter to continue (next TestsReferences)"
+ . ${SRC_TEST_SCRIPT_PATH}/test ${SRC_TEST_CODE_PATH}/TestsReferences.sql
 fi
-
-echo Executing all tests with pauses in between.
-
-. ./${SRC_TEST_SCRIPT_PATH}/test ${SRC_TEST_CODE_PATH}/TestsAppenders.sql
-read -p "Press enter to continue (next TestsCache)"
-. ./${SRC_TEST_SCRIPT_PATH}/test ${SRC_TEST_CODE_PATH}/TestsCache.sql
-read -p "Press enter to continue (next TestsCascadeCallLimit)"
-. ./${SRC_TEST_SCRIPT_PATH}/test ${SRC_TEST_CODE_PATH}/TestsCascadeCallLimit.sql
-read -p "Press enter to continue (next TestsConfAppenders)"
-. ./${SRC_TEST_SCRIPT_PATH}/test ${SRC_TEST_CODE_PATH}/TestsConfAppenders.sql
-read -p "Press enter to continue (next TestConfiguration)"
-. ./${SRC_TEST_SCRIPT_PATH}/test ${SRC_TEST_CODE_PATH}/TestsConfiguration.sql
-read -p "Press enter to continue (next TestsConfLoggers)"
-. ./${SRC_TEST_SCRIPT_PATH}/test ${SRC_TEST_CODE_PATH}/TestsConfLoggers.sql
-read -p "Press enter to continue (next TestsConfLoggersDelete)"
-. ./${SRC_TEST_SCRIPT_PATH}/test ${SRC_TEST_CODE_PATH}/TestsConfLoggersDelete.sql
-read -p "Press enter to continue (next TestsConfLoggersEffective)"
-. ./${SRC_TEST_SCRIPT_PATH}/test ${SRC_TEST_CODE_PATH}/TestsConfLoggersEffective.sql
-read -p "Press enter to continue (next TestsFunctionsGetDefinedParentLogger)"
-. ./${SRC_TEST_SCRIPT_PATH}/cleanTriggers
-. ./${SRC_TEST_SCRIPT_PATH}/test ${SRC_TEST_CODE_PATH}/TestsFunctionGetDefinedParentLogger.sql
-. ./${SRC_TEST_SCRIPT_PATH}/createTriggers
-read -p "Press enter to continue (next TestsGetLogger)"
-. ./${SRC_TEST_SCRIPT_PATH}/test ${SRC_TEST_CODE_PATH}/TestsGetLogger.sql
-read -p "Press enter to continue (next TestsHierarchy)"
-. ./${SRC_TEST_SCRIPT_PATH}/test ${SRC_TEST_CODE_PATH}/TestsHierarchy.sql
-read -p "Press enter to continue (next TestsLayout)"
-. ./${SRC_TEST_SCRIPT_PATH}/test ${SRC_TEST_CODE_PATH}/TestsLayout.sql
-read -p "Press enter to continue (next TestsLevels)"
-. ./${SRC_TEST_SCRIPT_PATH}/test ${SRC_TEST_CODE_PATH}/TestsLevels.sql
-read -p "Press enter to continue (next TestsLogs)"
-. ./${SRC_TEST_SCRIPT_PATH}/test ${SRC_TEST_CODE_PATH}/TestsLogs.sql
-read -p "Press enter to continue (next TestsMessages)"
-. ./${SRC_TEST_SCRIPT_PATH}/test ${SRC_TEST_CODE_PATH}/TestsMessages.sql
-read -p "Press enter to continue (next TestsReferences)"
-. ./${SRC_TEST_SCRIPT_PATH}/test ${SRC_TEST_CODE_PATH}/TestsReferences.sql
 

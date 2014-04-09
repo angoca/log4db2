@@ -1,3 +1,4 @@
+@echo off
 :: Copyright (c) 2012 - 2014, Andres Gomez Casanova (AngocA)
 :: All rights reserved.
 ::
@@ -22,11 +23,8 @@
 :: ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 :: POSSIBILITY OF SUCH DAMAGE.
 
-:: This variable indicates the location of the sources, if it has not
-:: defined before.
-if "%LOG4DB2_PATH%" EQU "" (
- set LOG4DB2_PATH=..\..\..
-)
+:: This variable indicates the location of the sources.
+set LOG4DB2_PATH=%~dp0..\..\..
 
 set SRC_MAIN_CODE_PATH=%LOG4DB2_PATH%\src\main\sql-pl
 set SRC_MAIN_SCRIPT_PATH=%LOG4DB2_PATH%\src\main\scripts

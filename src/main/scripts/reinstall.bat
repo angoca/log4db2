@@ -29,6 +29,10 @@
 :: Author: Andres Gomez Casanova (AngocA)
 :: Made in COLOMBIA.
 
-call uninstall.bat
-call install.bat %1 %2
+if EXIST init.bat (
+ call init.bat
+)
+
+call %SRC_MAIN_SCRIPT_PATH%\uninstall.bat
+call %SRC_MAIN_SCRIPT_PATH%\install.bat %1 %2
 

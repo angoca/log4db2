@@ -33,14 +33,17 @@
 db2 connect > NUL
 if %ERRORLEVEL% NEQ 0 (
  echo Please connect to a database before the execution of the uninstallation.
- goto exit
 ) else (
  if EXIST init.bat (
   call init.bat
  )
- echo Uninstalling log4db2...
+ goto:uninstall
+)
+
+:: There is a problem with global variables when calling the first time.
+:uninstall
+ echo Uninstalling log4db2
  db2 -tf %SRC_MAIN_CODE_PATH%\CleanTriggers.sql
  db2 -tf %SRC_MAIN_CODE_PATH%\CleanObjects.sql
  db2 -tf %SRC_MAIN_CODE_PATH%\CleanTables.sql
-)
-
+goto:eof

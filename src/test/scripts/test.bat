@@ -23,11 +23,17 @@
 :: ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 :: POSSIBILITY OF SUCH DAMAGE.
 
-db2 DELETE FROM LOGDATA.LOGS
+db2 connect > NUL
+if %ERRORLEVEL% NEQ 0 (
+ echo Please connect to a database before the execution of the test
+ echo Remember that to call the script the command is 'test <TestSuite>'"
+) else (
+ db2 DELETE FROM LOGDATA.LOGS
 
-db2 -tf %1
+ db2 -tf %1
 
-db2 COMMIT
+ db2 COMMIT
 
-db2 "CALL LOGADMIN.LOGS(min_level=>4)"
+ db2 "CALL LOGADMIN.LOGS(min_level=>4)"
+)
 

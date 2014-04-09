@@ -58,7 +58,7 @@ function v10.1($p1) {
  cd xml
  if ( ${Script:continue} ) { installScript AppendersXML.sql }
  cd ..
- cd scripts | Out-Null
+ cd scripts 2>&1 | Out-Null
 
  # Temporal capabilities for tables.
  if ( ( ${p1} -eq "t" ) -and ( ${Script:continue} ) ) {

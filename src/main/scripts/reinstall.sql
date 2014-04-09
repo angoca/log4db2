@@ -1,7 +1,5 @@
---#SET TERMINATOR @
-
 /*
-Copyright (c) 2012 - 2014, Andres Gomez Casanova (AngocA)
+Copyright (c) 2013 - 2014, Andres Gomez Casanova (AngocA)
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -24,25 +22,13 @@ CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
 OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
-
-SET CURRENT SCHEMA LOGGER_1B @
-
 /**
- * Implementation of the included appenders. Here you can find how log4db2
- * interacts with different components to log messages.
+ * Reinstall the utility. Calls the uninstall and then the install.
  *
- * Version: 2012-10-15 1-Alpha
+ * Version: 2014-04-03 1-Beta
  * Author: Andres Gomez Casanova (AngocA)
  * Made in COLOMBIA.
  */
 
-SET PATH = SYSPROC, LOGGER_1B @
-
--- Configuration
-
-REGISTER XMLSCHEMA 'conf_appender.xsd' FROM 'conf_appender.xsd' AS CONF_APPENDERS@
-
-COMPLETE XMLSCHEMA CONF_APPENDERS @
-
-COMMENT ON XSROBJECT CONF_APPENDERS IS 'XML schema for ConfAppeners' @
-
+@ uninstall.sql
+@ install.sql

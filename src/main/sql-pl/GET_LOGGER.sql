@@ -44,12 +44,6 @@ SET CURRENT SCHEMA LOGGER_1B @
 -- length of the concatenated inner levels, and this lenght should be less than
 -- 256 chars. foo.bar.toto
 
--- TODO Add the optimized for
-
--- TODO Add the fetch first N rows only
-
--- TODO Add the isolation level.
-
 /**
  * Registers the logger name in the system, and retrieves the corresponding ID
  * for that logger. This ID will allow to write messages into that logger if
@@ -62,13 +56,24 @@ SET CURRENT SCHEMA LOGGER_1B @
  *   bar is the second and toto is the last one.
  *   The name could have a maximum of 256 characters, representing just one
  *   level, or several levels with short names.
- * OUT LOGGER_ID
+ * OUT LOG_ID
  *   The ID of the logger.
+ * PRE
+ *   Root logger exist.
+ * POS
+ *   If the given name is valid, a valid ID is returned that correspond to the
+ *   last son in the hierarchy.
+ * TESTS
+ *   TestsCascadeCallLimit: Allows to verify the quantity of levels, and to
+ *   register all messages.
+ *   TestsGetLogger: Verifies the inputs of this procedure, and checks the
+ *   outputs.
+ *   TestsMessages: Checks the output of the error.
  */
 ALTER MODULE LOGGER ADD
   PROCEDURE GET_LOGGER (
-  IN NAME VARCHAR(256),
-  OUT LOGGER_ID ANCHOR LOGDATA.CONF_LOGGERS.LOGGER_ID
+  IN NAME ANCHOR COMPLETE_LOGGER_NAME,
+  OUT LOG_ID ANCHOR LOGDATA.CONF_LOGGERS.LOGGER_ID
   )
   LANGUAGE SQL
   SPECIFIC P_GET_LOGGER
@@ -108,12 +113,12 @@ ALTER MODULE LOGGER ADD
   -- Checks the value in the cache if active.
   BEGIN
    DECLARE CONTINUE HANDLER FOR SQLSTATE '2202E'
-     SET LOGGER_ID = NULL;
+     SET LOG_ID = NULL;
    IF (CACHE = TRUE) THEN
-    SET LOGGER_ID = LOGGERS_CACHE[NAME];
+    SET LOG_ID = LOGGERS_ID_CACHE[NAME];
    END IF;
   END;
-  IF (LOGGER_ID IS NULL) THEN
+  IF (LOG_ID IS NULL) THEN
    BEGIN
     -- Declare variables.
     DECLARE LENGTH SMALLINT; -- Length of the logger name. Limits the guard.
@@ -151,10 +156,14 @@ ALTER MODULE LOGGER ADD
 
       -- Looks for the logger with the given name in the configuration table.
       -- This query waits for the data to be commited (CS Cursor stability)
+      -- FIXME: Try to convert the following query to an array. Two fields are
+      -- part of the key.
       SELECT C.LOGGER_ID, C.LEVEL_ID INTO SON, LEVEL
         FROM LOGDATA.CONF_LOGGERS C 
         WHERE C.NAME = STRING
-        AND C.PARENT_ID = PARENT;
+        AND C.PARENT_ID = PARENT
+        FETCH FIRST 1 ROW ONLY
+        WITH CS;
       -- If the logger is NOT already registered.
       IF (SON IS NULL) THEN
        -- Registers the new logger and retrieves the id. Switches the parent id.
@@ -185,15 +194,10 @@ ALTER MODULE LOGGER ADD
     SET PARENT = 0; -- Root logger is always 0.
     SET PARENT_HIERARCHY = '0'; -- Hierarchy path for root.
     -- Retrieves the logger level for the root logger.
-    -- This query waits for the data to be commited (CS Cursor stability)
-    SELECT C.LEVEL_ID INTO PARENT_LEVEL
-      FROM LOGDATA.CONF_LOGGERS C
-      WHERE C.LOGGER_ID = 0
-      WITH UR;
-    -- TODO To check the value defaultRootLevelId before assign Warn as default.
+    SET PARENT_LEVEL = ROOT_CURRENT_LEVEL;
     -- If the root logger is not defined, then set the default level: WARN-3.
     IF (PARENT_LEVEL IS NULL) THEN
-     SET PARENT_LEVEL = DEFAULT_LEVEL;
+     SET PARENT_LEVEL = GET_DEFAULT_LEVEL();
     END IF;
 
     -- Takes each level of the logger name (dots), and retrieves or creates the
@@ -215,15 +219,15 @@ ALTER MODULE LOGGER ADD
       SET POS = LENGTH;
      END IF;
     END WHILE;
-    SET LOGGER_ID = PARENT;
+    SET LOG_ID = PARENT;
     -- Adds this logger name in the cache.
     IF (CACHE = TRUE) THEN
      BEGIN
-      SET LOGGERS_CACHE[NAME] = LOGGER_ID;
+      SET LOGGERS_ID_CACHE[NAME] = LOG_ID;
       -- Internal logging.
       IF (INTERNAL = TRUE) THEN
        INSERT INTO LOGDATA.LOGS (DATE, LEVEL_ID, LOGGER_ID, MESSAGE) VALUES 
-         (GENERATE_UNIQUE(), 4, -1, 'Logger not in cache ' || NAME || ' with ' || LOGGER_ID );
+         (GENERATE_UNIQUE(), 4, -1, 'Logger not in cache ' || NAME || ' with ' || LOG_ID );
       END IF;
      END;
     END IF;
@@ -232,7 +236,7 @@ ALTER MODULE LOGGER ADD
   -- Internal logging.
   IF (INTERNAL = TRUE) THEN
    INSERT INTO LOGDATA.LOGS (DATE, LEVEL_ID, LOGGER_ID, MESSAGE) VALUES 
-     (GENERATE_UNIQUE(), 4, -1, 'Logger ID for ' || NAME || ' is ' || COALESCE(LOGGER_ID, -1));
+     (GENERATE_UNIQUE(), 4, -1, 'Logger ID for ' || NAME || ' is ' || COALESCE(LOG_ID, -1));
   END IF;
  END P_GET_LOGGER @
 
