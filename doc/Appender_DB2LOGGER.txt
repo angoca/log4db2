@@ -19,7 +19,7 @@ In order to configure the DB2LOGGER appender you should:
 
  * Insert your appender in the list of appenders.
 
-    INSERT INTO APPENDERS (APPENDER_ID, NAME)
+    INSERT INTO LOGDATA.APPENDERS (APPENDER_ID, NAME)
       VALUES (4, 'DB2LOGGER');
   
  * Add your own configuration or update the existing one.
