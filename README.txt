@@ -148,6 +148,8 @@ These are the files included in the released version:
       AdminBody.sql -- Body of the administration tools.
       AdminHeader.sql -- Headers of the administration tools.
       Appenders.sql -- Definition of the appenders.
+      Appenders_No_ExpC.sql -- Appenders for DB2 no Express-c (LOG_UTL_FILE).
+        This is not included in the installation.
       CleanObjects.sql -- Remove all objects.
       CleanTables.sql -- Remove all tables.
       CleanTriggers.sql -- Remove all triggers.
@@ -164,6 +166,9 @@ These are the files included in the released version:
       
     xml -- Directory for XML Schemas, XML files and related scripts for
       appenders configuration.
+      Appender_UTL_FILE.xml -- Configuration for LOG_UTL_FILE appender.
+      AppendersXML.sql -- Registers the XML Schema.
+      conf_appender.xsd -- XML Schema.
 
 The * in the install-related files means that several files for each one of
 them can be found:
