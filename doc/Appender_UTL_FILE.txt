@@ -13,7 +13,11 @@ In order to configure the UTL_FILE appender you should
 
  * Add your own configuration or update the existing one.
 
-TODO Import the data
+    cd xml
+    IMPORT FORM Appender_UTL_FILE.csv OF DEL INSERT INTO LOGDATA.CONF_APPENDERS;
+    cd ..
+
+If the previous method did not work, you can do:
 
     INSERT INTO LOGDATA.CONF_APPENDERS (REF_ID, NAME, APPENDER_ID,
       CONFIGURATION, PATTERN, LEVEL_ID) VALUES (3, 'Local file', 3, '
