@@ -41,7 +41,7 @@ TODO Import the data
 
  * Test the procedure
 
-    db2 "CALL LOGGER.LOG_UTL_FILE(0, 1, 'Message to log', XMLPASER(DOCUMENT '
+    db2 "CALL LOGGER.LOG_UTL_FILE(0, 1, 'Message to log', XMLPARSE(DOCUMENT '
       <log4db2>
        <appender>
         <name>UTL_FILE</name>
