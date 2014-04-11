@@ -37,17 +37,17 @@ if [ ${?} -ne 0 ] ; then
  echo "Please connect to a database before the execution of the tests."
  echo "Remember that to call the script the command is '. ./allTests'"
 else
- if [ "${1}" == "--np" ] ; then
+ if [ "${1}" == "-np" ] ; then
   PAUSE=false
-  TIME_INI=$(date +"%T.%N")
-  MILLIS_INI=$(date +"%s%N")
+  TIME_INI=$(date +"%T")
+  MILLIS_INI=$(date +"%s")
  else
   PAUSE=true
  fi
  if [ "${PAUSE}" == "true" ] ; then
   echo "Executing all tests with pauses in between."
  else
-  echo "All tests executed"
+  echo "Executing all tests."
  fi
 
  executeTest TestsAppenders
@@ -58,7 +58,7 @@ else
  executeTest TestsConfLoggers
  executeTest TestsConfLoggersDelete
  executeTest TestsConfLoggersEffective
- TEST=TestsFunctionsGetDefinedParentLogger
+ TEST=TestsFunctionGetDefinedParentLogger
  echo "====>Next: ${TEST}"
  [ "${PAUSE}" == "true" ] && read -p "Press enter to continue"
  db2 -tf ${SRC_MAIN_CODE_PATH}/CleanTriggers.sql +O
@@ -73,12 +73,12 @@ else
  executeTest TestsMessages
  executeTest TestsReferences
  if [ "${PAUSE}" != "true" ] ; then
-  MILLIS_END=$(date +"%s%N")
-  TIME_END=$(date +"%T.%N")
+  MILLIS_END=$(date +"%s")
+  TIME_END=$(date +"%T")
   echo "Difference:"
-  echo ${TIME_INI}
-  echo ${TIME_END}
-  echo $((${MILLIS_END}-${MILLIS_INI}))
+  echo "${TIME_INI} start"
+  echo "${TIME_END} end"
+  echo "$((${MILLIS_END}-${MILLIS_INI})) seconds"
  fi
 fi
 
