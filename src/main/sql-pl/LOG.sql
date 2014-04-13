@@ -205,21 +205,18 @@ ALTER MODULE LOGGER ADD
   DECLARE CONTINUE HANDLER FOR SQLSTATE '01004'
     BEGIN
     END;
-  -- Generate message when there is a problem with an appender.
-  DECLARE CONTINUE HANDLER FOR SQLSTATE '55019'
-    INSERT INTO LOGDATA.LOGS (LEVEL_ID, LOGGER_ID, MESSAGE) VALUES
-    (2, -1, 'Appender not available: ' || COALESCE(CURRENT_APPENDER_NAME,
-    'No name'));
   -- Log any other warning.
   DECLARE CONTINUE HANDLER FOR SQLWARNING
     INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE)
-    VALUES (4, TRIM(COALESCE(CURRENT_APPENDER_NAME, 'No name'))
-    || '-Warning SQLCode ' || SQLCODE || '-SQLState ' || SQLSTATE);
+    VALUES (4, 'Appender ' || TRIM(COALESCE(CURRENT_APPENDER_NAME, 'No name'))
+    || ':-Warning SQLCode ' || SQLCODE || '-SQLState ' || SQLSTATE
+    || '=' || COALESCE(MESSAGE,'No message'));
   -- Log any exception.
   DECLARE CONTINUE HANDLER FOR SQLEXCEPTION
     INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE)
-    VALUES (4, TRIM(COALESCE(CURRENT_APPENDER_NAME, 'No name'))
-    || '-Exception SQLCode ' || SQLCODE || '-SQLState ' || SQLSTATE);
+    VALUES (4, 'Appender ' || TRIM(COALESCE(CURRENT_APPENDER_NAME, 'No name'))
+    || ':-Exception SQLCode ' || SQLCODE || '-SQLState ' || SQLSTATE
+    || '=' || COALESCE(MESSAGE,'No message'));
   DECLARE CONTINUE HANDLER FOR NOT FOUND
     SET AT_END = TRUE;
   -- Handles the limit cascade call.
@@ -345,9 +342,33 @@ ALTER MODULE LOGGER ADD
          CALL LOG_NULL(LOG_ID, LEV_ID, NEW_MESSAGE, CONFIGURATION);
        ELSE -- Execute any other appender.
         DYNAMIC : BEGIN
+         DECLARE CALL VARCHAR(64);
+         DECLARE CONT BOOLEAN DEFAULT TRUE;
          DECLARE STMT STATEMENT;
-         PREPARE STMT FROM 'CALL LOG_' || APPEND_NAME || '(?, ?, ?, ?)';
-         EXECUTE STMT USING LOG_ID, LEV_ID, NEW_MESSAGE, CONFIGURATION;
+         DECLARE CONTINUE HANDLER FOR SQLSTATE '55019'
+           INSERT INTO LOGDATA.LOGS (LEVEL_ID, LOGGER_ID, MESSAGE) VALUES
+           (2, -1, 'Appender not available: ' || TRIM(COALESCE(
+           CURRENT_APPENDER_NAME, 'No name')) || '=' || NEW_MESSAGE);
+         
+         -- Using inexistant appender. 
+         DECLARE CONTINUE HANDLER FOR SQLSTATE '42884'
+           BEGIN
+            INSERT INTO LOGDATA.LOGS (LEVEL_ID, LOGGER_ID, MESSAGE) VALUES
+            (2, -1, 'Inexistant appender: '
+            || TRIM(COALESCE(CURRENT_APPENDER_NAME, 'No name')) || '='
+            || COALESCE(NEW_MESSAGE,'No message'));
+            SET CONT = FALSE;
+           END;
+         SET CALL = 'CALL LOG_' || APPEND_NAME || '(?, ?, ?, ?)';
+         -- Internal logging.
+         IF (INTERNAL = TRUE) THEN
+          INSERT INTO LOGDATA.LOGS (LEVEL_ID, LOGGER_ID, MESSAGE) VALUES 
+            (4, -1, 'Appender call: ' || COALESCE(CALL,'NULL'));
+         END IF;
+         PREPARE STMT FROM CALL;
+         IF (CONT = TRUE) THEN
+          EXECUTE STMT USING LOG_ID, LEV_ID, NEW_MESSAGE, CONFIGURATION;
+         END IF;
         END DYNAMIC;
      END CASE;
     ELSE
