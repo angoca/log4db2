@@ -64,6 +64,7 @@ else
  db2 -tf ${SRC_MAIN_CODE_PATH}/CleanTriggers.sql +O
  . ${SRC_TEST_SCRIPT_PATH}/test ${SRC_TEST_CODE_PATH}/${TEST}.sql
  db2 -tf ${SRC_MAIN_CODE_PATH}/Trigger.sql +O
+ executeTest TestsDynamicAppenders
  executeTest TestsGetLogger
  executeTest TestsGetLoggerName
  executeTest TestsHierarchy
