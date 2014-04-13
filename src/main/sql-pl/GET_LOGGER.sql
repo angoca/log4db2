@@ -200,6 +200,15 @@ ALTER MODULE LOGGER ADD
      SET PARENT_LEVEL = GET_DEFAULT_LEVEL();
     END IF;
 
+    RECURSION : BEGIN
+     DECLARE CONTINUE HANDLER FOR SQLSTATE '09000'
+       BEGIN
+        SET POS = LENGTH;
+        SET PARENT = 0;
+        INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES 
+          (2, 'LG001. Cascade call limit achieved, for GET_LOGGER: '
+          || COALESCE(NAME, 'null'));
+        END;
     -- Takes each level of the logger name (dots), and retrieves or creates the
     -- hierarchy in the configutation.
     WHILE (POS < LENGTH) DO
@@ -219,6 +228,7 @@ ALTER MODULE LOGGER ADD
       SET POS = LENGTH;
      END IF;
     END WHILE;
+    END RECURSION;
     SET LOG_ID = PARENT;
     -- Adds this logger name in the cache.
     IF (CACHE = TRUE) THEN
