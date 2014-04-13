@@ -60,6 +60,7 @@ if %ERRORLEVEL% NEQ 0 (
  db2 -tf !SRC_MAIN_CODE_PATH!\CleanTriggers.sql +O
  call !SRC_TEST_SCRIPT_PATH!\test.bat !SRC_TEST_CODE_PATH!\!TEST!.sql
  db2 -tf !SRC_MAIN_CODE_PATH!\Trigger.sql +O
+ call:executeTest TestsDynamicAppenders
  call:executeTest TestsGetLogger
  call:executeTest TestsGetLoggerName
  call:executeTest TestsHierarchy
