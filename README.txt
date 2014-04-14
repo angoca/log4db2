@@ -1,5 +1,5 @@
 # log4db2 #
-===========
+-----------
 
 Log4db2 is a logging utility for DB2 for LUW that uses SQL instructions with SQL
 PL code.
@@ -13,8 +13,10 @@ SQL routines, by centralizing the messages produced by the code.
 The idea and architecture of this utility are based on the popular Java logging
 utilities, such as Log4j and slf4j/logback.
 
- * Log4j [http://logging.apache.org/log4j]
- * Logback/SLF4J [http://logback.qos.ch/] [http://www.slf4j.org/]
+ * Log4j:
+    http://logging.apache.org/log4j
+ * Logback/SLF4J:
+    http://logback.qos.ch/] [http://www.slf4j.org/
 
 The license for the source code is "BSD 2-Clause license", and for the
 documentation is "FreeBSD Documentation license." With these two licenses you
@@ -33,7 +35,7 @@ These are some useful links:
  * A blog that explain things about this utility:
     http://angocadb2.blogspot.fr/
 
-
+Author:
 
 Andres Gomez Casanova (@angoca)
 
@@ -44,9 +46,9 @@ Andres Gomez Casanova (@angoca)
 One variable needs to the specified in order to run the install and example
 scripts.
 
- * LOG4DB2_PATH
+    LOG4DB2_PATH
 
-This variable is initialized via the 'init' script.
+This variable is initialized via the `init` script.
 
 Before installing the scripts in a database, a connection to it has to be
 established. If not, an error will be raised.
@@ -59,6 +61,9 @@ Just follow these steps:
     cd log4db2
     . ./init
     . ./install
+
+Make sure to put the dot before the command. This will source the values and
+use the current connection.
 
 **Windows Terminal (CMD - db2clp)**:
 
@@ -76,12 +81,12 @@ First, unzip the file log4db2.zip, and then:
     .\init.ps1
     .\install.ps1
 
-Make sure to put the dot before the command. This will source the values and
-use the current connection.
+----
 
 After the install, all statements should have been successful.
 
-A more detailed guide to install the utility can be found in the wiki:
+A more detailed guide to install the utility can be found in the _Install_
+section of the wiki:
 https://github.com/angoca/log4db2/wiki/Install
 
 You can also install the utility from the sources and run the examples and
@@ -89,7 +94,7 @@ tests:
 https://github.com/angoca/log4db2/wiki/Install%20from%20sources
 
 Once the utility is installed, you can customize the utility. For more
-information, please visit this link:
+information, please visit the _configuration_ section:
 https://github.com/angoca/log4db2/wiki/Configuration
 
 
@@ -98,23 +103,24 @@ https://github.com/angoca/log4db2/wiki/Configuration
 
 ### 1. Write the code ###
 
-This could be the structure of your code.
+This could be the structure of your routine's code (Procedure or function).
 
     CREATE ... HELLO_WORLD ()
      MODIFIES SQL
      BEGIN
       DECLARE LOGGER_ID SMALLINT;
-      ... Your declarations
+      -- Your declarations
 
       LOGGER.GET_LOGGER('Your.Hierarchy', LOGGER_ID);
-      ... Your code
+      -- Your code
       LOGGER.INFO(LOGGER_ID, 'Your message');
-      ... Your code
-     END@
+      -- Your code
+     END @
 
 ### 2. Invoke the code ###
 
-You invoke your code (if it is a stored procedure or a function.)
+Then, you invoke your code (Depending if it is a stored procedure or a
+function.)
 
     CALL HELLO_WORLD();
     VALUES HELLO_WORLD();
@@ -125,9 +131,11 @@ This is the easiest way to check the log messages.
 
     CALL LOGADMIN.LOGS();
 
+From the CLP is:
+
     db2 "CALL LOGADMIN.LOGS()"
 
-Check the Usage section for more information about the levels, how to access
+Check the _Usage_ section for more information about the levels, how to access
 the messages and configure the utility.
 https://github.com/angoca/log4db2/wiki/Usage
 
@@ -136,45 +144,45 @@ https://github.com/angoca/log4db2/wiki/Usage
 
 These are the files included in the released version:
 
-    COPYING.txt	-- License for the code (BSD license - OpenSource).
-    init* -- Environment configuration. 
-    install* -- Installation files.
-    README.txt -- This file.
-    reinstall* -- Reinstallation files.
-    uninstall* -- Uninstallation files.
+ * `COPYING.txt` -- License for the code (BSD license - OpenSource).
+ * `init*` -- Environment configuration. 
+ * `install*` -- Installation files.
+ * `README.txt` -- This file.
+ * `reinstall*` -- Reinstallation files.
+ * `uninstall*` -- Uninstallation files.
 
-    doc -- Documentation directory (ErrorCode, ER diagram).
-    sql-pl -- Directory for all objects: DDL, DML, routines definition.
-      AdminBody.sql -- Body of the administration tools.
-      AdminHeader.sql -- Headers of the administration tools.
-      Appenders.sql -- Definition of the appenders.
-      Appenders_No_ExpC.sql -- Appenders for DB2 no Express-c (LOG_UTL_FILE).
-        This is not included in the installation.
-      CleanObjects.sql -- Remove all objects.
-      CleanTables.sql -- Remove all tables.
-      CleanTriggers.sql -- Remove all triggers.
-      GET_LOGGER.sql -- GetLogger procedure definition for v10.1 or upper.
-      GET_LOGGER_v9_7.sql -- GetLogger procedure definition for v9.7.
-      LOG.sql -- Log procedure definition with its macros.
-      Tables.sql -- Tables, tablespaces, bufferpools, schemas, and DML.
-      TablesTimeTravel.sql -- Modifications for Time Travel.
-      Tables_v9_7.sql - Tables, tablespaces, bufferpools, schemas, and DML for
-        v9.7.
-      Trigger.sql -- Trigger of the different tables.
-      UtilityBody.sql -- Body of the core tools.
-      UtilityHeader.sql -- Headers of the core tools.
+ * `doc` -- Documentation directory (ErrorCode, ER diagram).
+ * `sql-pl` -- Directory for all objects: DDL, DML, routines definition.
+   * `AdminBody.sql` -- Body of the administration tools.
+   * `AdminHeader.sql` -- Headers of the administration tools.
+   * `Appenders.sql` -- Definition of the appenders.
+   * `Appenders_No_ExpC.sql` -- Appenders for DB2 no Express-c (LOG_UTL_FILE).
+    This is not included in the installation.
+   * `CleanObjects.sql` -- Remove all objects.
+   * `CleanTables.sql` -- Remove all tables.
+   * `CleanTriggers.sql` -- Remove all triggers.
+   * `GET_LOGGER.sql` -- GetLogger procedure definition for v10.1 or upper.
+   * `GET_LOGGER_v9_7.sql` -- GetLogger procedure definition for v9.7.
+   * `LOG.sql` -- Log procedure definition with its macros.
+   * `Tables.sql` -- Tables, tablespaces, bufferpools, schemas, and DML.
+   * `TablesTimeTravel.sql` -- Modifications for Time Travel.
+   * `Tables_v9_7.sql` - Tables, tablespaces, bufferpools, schemas, and DML for
+       v9.7.
+   * `Trigger.sql` -- Trigger of the different tables.
+   * `UtilityBody.sql` -- Body of the core tools.
+   * `UtilityHeader.sql` -- Headers of the core tools.
       
-    xml -- Directory for XML Schemas, XML files and related scripts for
-      appenders configuration.
-      Appender_UTL_FILE.xml -- Configuration for LOG_UTL_FILE appender.
-      AppendersXML.sql -- Registers the XML Schema.
-      conf_appender.xsd -- XML Schema.
+ * `xml` -- Directory for XML Schemas, XML files and related scripts for
+     appenders configuration.
+   * `Appender_UTL_FILE.xml` -- Configuration for LOG_UTL_FILE appender.
+   * `AppendersXML.sql` -- Registers the XML Schema.
+   * `conf_appender.xsd` -- XML Schema.
 
 The * in the install-related files means that several files for each one of
 them can be found:
 
-    .bat -- Windows Batch file for CMD.exe
-    .ps1 -- Windows PowerShell
-    .sql -- For DB2 CLPPlus.
-    No extension -- For Linux in bash.
+ * `.bat` -- Windows Batch file for CMD.exe
+ * `.ps1` -- Windows PowerShell
+ * `.sql` -- For DB2 CLPPlus.
+ * No extension -- For Linux in bash.
 
