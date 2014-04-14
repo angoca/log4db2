@@ -18,7 +18,7 @@
 
       <header>
         <h1>Log4db2</h1>
-        <p>A logging framework like log4j for IBM DB2 SQL-PL</p>
+        <p>A logging framework written in SQL-PL for IBM DB2 LUW</p>
       </header>
 
       <div id="banner">
@@ -42,9 +42,7 @@
         <h1>
 <a name="log4db2" class="anchor" href="#log4db2"><span class="octicon octicon-link"></span></a>log4db2</h1>
 
-<h1></h1>
-
-<p>Log4db2 is a logging utility for DB2 for LUW that uses SQL instructions with SQL
+<hr><p>Log4db2 is a logging utility for DB2 for LUW that uses SQL instructions with SQL
 PL code.</p>
 
 <p>Its purpose is to provide an easy way to write messages from a SQL routine, with
@@ -57,8 +55,12 @@ SQL routines, by centralizing the messages produced by the code.</p>
 utilities, such as Log4j and slf4j/logback.</p>
 
 <ul>
-<li>Log4j [<a href="http://logging.apache.org/log4j">http://logging.apache.org/log4j</a>]</li>
-<li>Logback/SLF4J [<a href="http://logback.qos.ch/">http://logback.qos.ch/</a>] [<a href="http://www.slf4j.org/">http://www.slf4j.org/</a>]</li>
+<li>Log4j:
+<a href="http://logging.apache.org/log4j">http://logging.apache.org/log4j</a>
+</li>
+<li>Logback/SLF4J:
+<a href="http://logback.qos.ch/">http://logback.qos.ch/</a>] [<a href="http://www.slf4j.org/">http://www.slf4j.org/</a>
+</li>
 </ul><p>The license for the source code is "BSD 2-Clause license", and for the
 documentation is "FreeBSD Documentation license." With these two licenses you
 are free to use, modify and distribute any part of this utility.</p>
@@ -81,7 +83,9 @@ are free to use, modify and distribute any part of this utility.</p>
 <li>A blog that explain things about this utility:
 <a href="http://angocadb2.blogspot.fr/">http://angocadb2.blogspot.fr/</a>
 </li>
-</ul><p>Andres Gomez Casanova (<a href="https://github.com/angoca" class="user-mention">@angoca</a>)</p>
+</ul><p>Author:</p>
+
+<p>Andres Gomez Casanova (<a href="https://github.com/angoca" class="user-mention">@angoca</a>)</p>
 
 <hr><h2>
 <a name="installation" class="anchor" href="#installation"><span class="octicon octicon-link"></span></a>Installation</h2>
@@ -89,9 +93,10 @@ are free to use, modify and distribute any part of this utility.</p>
 <p>One variable needs to the specified in order to run the install and example
 scripts.</p>
 
-<ul>
-<li>LOG4DB2_PATH</li>
-</ul><p>This variable is initialized via the 'init' script.</p>
+<pre><code>LOG4DB2_PATH
+</code></pre>
+
+<p>This variable is initialized via the <code>init</code> script.</p>
 
 <p>Before installing the scripts in a database, a connection to it has to be
 established. If not, an error will be raised.</p>
@@ -105,6 +110,9 @@ cd log4db2
 . ./init
 . ./install
 </code></pre>
+
+<p>Make sure to put the dot before the command. This will source the values and
+use the current connection.</p>
 
 <p><strong>Windows Terminal (CMD - db2clp)</strong>:</p>
 
@@ -124,20 +132,20 @@ install.bat
 .\install.ps1
 </code></pre>
 
-<p>Make sure to put the dot before the command. This will source the values and
-use the current connection.</p>
+<h1></h1>
 
 <p>After the install, all statements should have been successful.</p>
 
-<p>A more detailed guide to install the utility can be found in the wiki:
+<p>A more detailed guide to install the utility can be found in the <em>Install</em>
+section of the wiki:
 <a href="https://github.com/angoca/log4db2/wiki/Install">https://github.com/angoca/log4db2/wiki/Install</a></p>
 
-<p>You can also install the utility from the sources and run the examples an
-test:
+<p>You can also install the utility from the sources and run the examples and
+tests:
 <a href="https://github.com/angoca/log4db2/wiki/Install%20from%20sources">https://github.com/angoca/log4db2/wiki/Install%20from%20sources</a></p>
 
 <p>Once the utility is installed, you can customize the utility. For more
-information, please visit this link:
+information, please visit the <em>configuration</em> section:
 <a href="https://github.com/angoca/log4db2/wiki/Configuration">https://github.com/angoca/log4db2/wiki/Configuration</a></p>
 
 <hr><h2>
@@ -146,25 +154,26 @@ information, please visit this link:
 <h3>
 <a name="1-write-the-code" class="anchor" href="#1-write-the-code"><span class="octicon octicon-link"></span></a>1. Write the code</h3>
 
-<p>This could be the structure of your code.</p>
+<p>This could be the structure of your routine's code (Procedure or function).</p>
 
 <pre><code>CREATE ... HELLO_WORLD ()
  MODIFIES SQL
  BEGIN
   DECLARE LOGGER_ID SMALLINT;
-  ... Your declarations
+  -- Your declarations
 
   LOGGER.GET_LOGGER('Your.Hierarchy', LOGGER_ID);
-  ... Your code
+  -- Your code
   LOGGER.INFO(LOGGER_ID, 'Your message');
-  ... Your code
- END@
+  -- Your code
+ END @
 </code></pre>
 
 <h3>
 <a name="2-invoke-the-code" class="anchor" href="#2-invoke-the-code"><span class="octicon octicon-link"></span></a>2. Invoke the code</h3>
 
-<p>You invoke your code (if it is a stored procedure or a function.)</p>
+<p>Then, you invoke your code (Depending if it is a stored procedure or a
+function.)</p>
 
 <pre><code>CALL HELLO_WORLD();
 VALUES HELLO_WORLD();
@@ -176,13 +185,103 @@ VALUES HELLO_WORLD();
 <p>This is the easiest way to check the log messages.</p>
 
 <pre><code>CALL LOGADMIN.LOGS();
-
-db2 "CALL LOGADMIN.LOGS()"
 </code></pre>
 
-<p>Check the Usage section for more information about the levels, how to access
+<p>From the CLP is:</p>
+
+<pre><code>db2 "CALL LOGADMIN.LOGS()"
+</code></pre>
+
+<p>Check the <em>Usage</em> section for more information about the levels, how to access
 the messages and configure the utility.
 <a href="https://github.com/angoca/log4db2/wiki/Usage">https://github.com/angoca/log4db2/wiki/Usage</a></p>
+
+<hr><h2>
+<a name="files-and-directories" class="anchor" href="#files-and-directories"><span class="octicon octicon-link"></span></a>FILES AND DIRECTORIES</h2>
+
+<p>These are the files included in the released version:</p>
+
+<ul>
+<li>
+<code>COPYING.txt</code> -- License for the code (BSD license - OpenSource).</li>
+<li>
+<code>init*</code> -- Environment configuration. </li>
+<li>
+<code>install*</code> -- Installation files.</li>
+<li>
+<code>README.txt</code> -- This file.</li>
+<li>
+<code>reinstall*</code> -- Reinstallation files.</li>
+<li>
+<code>uninstall*</code> -- Uninstallation files.</li>
+<li>
+<code>doc</code> directory -- Documentation directory (ErrorCode, ER diagram).</li>
+<li>
+<p><code>sql-pl</code> directory -- Directory for all objects: DDL, DML, routines
+ definition.</p>
+
+<ul>
+<li>
+<code>AdminBody.sql</code> -- Body of the administration tools.</li>
+<li>
+<code>AdminHeader.sql</code> -- Headers of the administration tools.</li>
+<li>
+<code>Appenders.sql</code> -- Definition of the appenders.</li>
+<li>
+<code>Appenders_No_ExpC.sql</code> -- Appenders for DB2 no Express-c (LOG_UTL_FILE).
+This is not included in the installation.</li>
+<li>
+<code>CleanObjects.sql</code> -- Remove all objects.</li>
+<li>
+<code>CleanTables.sql</code> -- Remove all tables.</li>
+<li>
+<code>CleanTriggers.sql</code> -- Remove all triggers.</li>
+<li>
+<code>GET_LOGGER.sql</code> -- GetLogger procedure definition for v10.1 or upper.</li>
+<li>
+<code>GET_LOGGER_v9_7.sql</code> -- GetLogger procedure definition for v9.7.</li>
+<li>
+<code>LOG.sql</code> -- Log procedure definition with its macros.</li>
+<li>
+<code>Tables.sql</code> -- Tables, tablespaces, bufferpools, schemas, and DML.</li>
+<li>
+<code>TablesTimeTravel.sql</code> -- Modifications for Time Travel.</li>
+<li>
+<code>Tables_v9_7.sql</code> - Tables, tablespaces, bufferpools, schemas, and DML for
+v9.7.</li>
+<li>
+<code>Trigger.sql</code> -- Trigger of the different tables.</li>
+<li>
+<code>UtilityBody.sql</code> -- Body of the core tools.</li>
+<li>
+<code>UtilityHeader.sql</code> -- Headers of the core tools.</li>
+</ul>
+</li>
+<li>
+<p><code>xml</code> directory -- Directory for XML Schemas, XML files and related scripts
+ for appenders configuration.</p>
+
+<ul>
+<li>
+<code>Appender_UTL_FILE.xml</code> -- Configuration for LOG_UTL_FILE appender.</li>
+<li>
+<code>AppendersXML.sql</code> -- Registers the XML Schema.</li>
+<li>
+<code>conf_appender.xsd</code> -- XML Schema.</li>
+</ul>
+</li>
+</ul><p>The * in the install-related files means that several files for each one of
+them can be found:</p>
+
+<ul>
+<li>
+<code>.bat</code> -- Windows Batch file for CMD.exe</li>
+<li>
+<code>.ps1</code> -- Windows PowerShell</li>
+<li>
+<code>.sql</code> -- For DB2 CLPPlus.</li>
+<li>No extension -- For Linux/UNIX/Mac OS X.</li>
+</ul>
       </section>
       <footer>
         <p>Project maintained by <a href="https://github.com/angoca">angoca</a></p>
