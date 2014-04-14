@@ -329,14 +329,12 @@ COMMENT ON PUBLIC ALIAS LOGS IS 'log4db2 logs';
 
 -- Global configuration.
 -- autonomousLogging: Write in LOGS table with an autonomous procedure.
--- checkLevels: Checks the levels definition.
 -- defaultRootLevelId: Default ROOT logger when it is not defined (not cached)
 -- internalCache: Use internal cache instead of SELECT for each time.
 -- logInternals: Logs internal messages.
 -- secondsToRefresh: Quantity of second before refresh the conf.
 INSERT INTO CONFIGURATION (KEY, VALUE)
   VALUES ('autonomousLogging', 'true'),
-         ('checkLevels', 'false'),
          ('defaultRootLevelId', '3'),
          ('internalCache', 'true'),
          ('logInternals', 'false'),

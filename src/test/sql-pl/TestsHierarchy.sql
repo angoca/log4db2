@@ -356,7 +356,7 @@ END IF;
 INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES (3, 'TestsHierarchy: Cleaning environment');
 DELETE FROM LOGDATA.CONFIGURATION;
 INSERT INTO LOGDATA.CONFIGURATION (KEY, VALUE)
-  VALUES ('checkLevels', 'false'),
+  VALUES ('autonomousLogging', 'true'),
          ('defaultRootLevelId', '3'),
          ('internalCache', 'true'),
          ('logInternals', 'false'),

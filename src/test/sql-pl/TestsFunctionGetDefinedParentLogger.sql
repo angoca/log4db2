@@ -672,7 +672,7 @@ UPDATE LOGDATA.CONF_LOGGERS
   WHERE LOGGER_ID = 0;
 DELETE FROM LOGDATA.CONFIGURATION;
 INSERT INTO LOGDATA.CONFIGURATION (KEY, VALUE)
-  VALUES ('checkLevels', 'false'),
+  VALUES ('autonomousLogging', 'true'),
          ('defaultRootLevelId', '3'),
          ('internalCache', 'true'),
          ('logInternals', 'false'),
