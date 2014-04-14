@@ -33,6 +33,9 @@ if ( $LastExitCode -ne 0 ) {
 
  Write-Host "(next TestsAppenders)"
  & .\${SRC_TEST_SCRIPT_PATH}\test.ps1 ${SRC_TEST_CODE_PATH}\TestsAppenders.sql
+ Write-Host "Press enter to continue (next TestsAppendersImplementation)"
+ $x = $host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
+ & .\${SRC_TEST_SCRIPT_PATH}\test.ps1 ${SRC_TEST_CODE_PATH}\TestsAppendersImplementation.sql
  Write-Host "Press enter to continue (next TestsCache)"
  $x = $host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
  & .\${SRC_TEST_SCRIPT_PATH}\test.ps1 ${SRC_TEST_CODE_PATH}\TestsCache.sql

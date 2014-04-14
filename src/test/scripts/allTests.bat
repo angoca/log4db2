@@ -45,6 +45,7 @@ if %ERRORLEVEL% NEQ 0 (
   exit /B -1
  )
  call:executeTest TestsAppenders
+ call:executeTest TestsAppendersImplementation
  call:executeTest TestsCache
  call:executeTest TestsCascadeCallLimit
  call:executeTest TestsConfAppenders

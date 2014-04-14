@@ -52,6 +52,7 @@ else
  fi
 
  executeTest TestsAppenders
+ executeTest TestsAppendersImplementation
  executeTest TestsCache
  executeTest TestsCascadeCallLimit
  executeTest TestsConfAppenders
