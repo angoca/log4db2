@@ -96,7 +96,7 @@ CREATE OR REPLACE TRIGGER T1_CNF_CCHE
       -- GET_VALUE > REFRESH_CONF), and this creates a SQL0746, because the
       -- table is being modified and queried at the same time.
       INSERT INTO LOGS (LEVEL_ID, LOGGER_ID, MESSAGE)
-        VALUES (5, -1, 'A manual CONF_LOGGERS_EFFECTIVE update should be realized.');
+        VALUES (4, -1, 'A manual CONF_LOGGERS_EFFECTIVE update should be realized.');
 
       -- Conf_loggers is not defined, thus update conf_loggers_effective.
       -- FIXME
