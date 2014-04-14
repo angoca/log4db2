@@ -54,6 +54,13 @@ ALTER MODULE LOGGER ADD
   VARIABLE DEFAULT_ROOT_LEVEL_ID ANCHOR LOGDATA.CONFIGURATION.KEY CONSTANT 'defaultRootLevelId' @
 
 /**
+ * Constant for the autonomousLogging value for autonomous procedure to write
+ * in the LOGS table.
+ */
+ALTER MODULE LOGGER ADD
+  VARIABLE AUTONOMOUS_LOGGING ANCHOR LOGDATA.CONFIGURATION CONSTANT 'autonomousLogging' @
+
+/**
  * Constant for the value of the default level.
  */
 ALTER MODULE LOGGER ADD
@@ -431,7 +438,7 @@ ALTER MODULE LOGGER ADD
   --SELECT VALUE INTO VAL
   --  FROM LOGDATA.CONFIGURATION
   --  WHERE KEY = INTERNAL_CACHE;
-  --IF (VAL <> 'true') THEN
+  --IF (VAL <> LOGGER.VAL_TRUE) THEN
   -- SIGNAL SQLSTATE VALUE 'LG002'
   --   SET MESSAGE_TEXT = 'Invalid configuration state';
   --END IF;
@@ -463,7 +470,7 @@ ALTER MODULE LOGGER ADD
   --SELECT VALUE INTO VAL
   --  FROM LOGDATA.CONFIGURATION
   --  WHERE KEY = INTERNAL_CACHE;
-  --IF (VAL = 'true') THEN
+  --IF (VAL = LOGGER.VAL_TRUE) THEN
   -- SIGNAL SQLSTATE VALUE 'LG002'
   --   SET MESSAGE_TEXT = 'Invalid configuration state';
   --END IF;

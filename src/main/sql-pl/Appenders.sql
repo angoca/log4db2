@@ -62,6 +62,38 @@ ALTER MODULE LOGGER PUBLISH
   DYNAMIC RESULT SETS 0
   MODIFIES SQL DATA
   NOT DETERMINISTIC
+  NO EXTERNAL ACTION
+  PARAMETER CCSID UNICODE
+ P_LOG_TABLES: BEGIN
+  INSERT INTO LOGDATA.LOGS (LEVEL_ID, LOGGER_ID, MESSAGE) VALUES
+    (LEVEL_ID, LOGGER_ID, MESSAGE);
+ END P_LOG_TABLES @
+
+/**
+ * Writes the given message in the log table. This is a pure SQL implementation,
+ * without any external call. This procedure is exaclty the same as LOG_TABLES,
+ * the difference is that this is decalred as Autonomous.
+ *
+ * IN LOGGER_ID
+ *   Identification of the associated logger.
+ * IN LEVEL_ID
+ *   Identification of the associates level.
+ * IN MESSAGE
+ *   Descriptive message to write in the log table.
+ * TESTS
+ *   TestsLogs: Validates that the messages are well written.
+ */
+ALTER MODULE LOGGER PUBLISH 
+  PROCEDURE LOG_TABLES_AUTONOMOUS (
+  IN LOGGER_ID ANCHOR LOGDATA.CONF_LOGGERS.LOGGER_ID,
+  IN LEVEL_ID ANCHOR LOGDATA.LEVELS.LEVEL_ID,
+  IN MESSAGE ANCHOR LOGGER.MESSAGE
+  )
+  LANGUAGE SQL
+  SPECIFIC P_LOG_TABLES
+  DYNAMIC RESULT SETS 0
+  MODIFIES SQL DATA
+  NOT DETERMINISTIC
   AUTONOMOUS -- Transaction independent.
   NO EXTERNAL ACTION
   PARAMETER CCSID UNICODE
