@@ -203,25 +203,34 @@ ALTER MODULE LOGGER ADD
      SET PARENT_LEVEL = GET_DEFAULT_LEVEL();
     END IF;
 
-    -- Takes each level of the logger name (dots), and retrieves or creates the
-    -- hierarchy in the configutation.
-    WHILE (POS < LENGTH) DO
-     SET POS = POSSTR (SUBS_POS, '.');
-     -- If different to zero means that a dot was found => Root level.
-     IF (POS <> 0) THEN
-      -- Current logger level in hierarchy.
-      SET SUBS_PRE = SUBSTR(SUBS_POS, 1, POS - 1);
-      -- Rest of the logger name.
-      SET SUBS_POS = SUBSTR(SUBS_POS, POS + 1);
+    RECURSION : BEGIN
+     DECLARE EXIT HANDLER FOR SQLSTATE '09000'
+       BEGIN
+        SET PARENT = 0;
+        INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES 
+          (2, 'LG001. Cascade call limit achieved, for GET_LOGGER: '
+          || COALESCE(NAME, 'null'));
+       END;
+        -- Takes each level of the logger name (dots), and retrieves or creates
+        -- the hierarchy in the configutation.
+     WHILE (POS < LENGTH) DO
+      SET POS = POSSTR (SUBS_POS, '.');
+      -- If different to zero means that a dot was found => Root level.
+      IF (POS <> 0) THEN
+       -- Current logger level in hierarchy.
+       SET SUBS_PRE = SUBSTR(SUBS_POS, 1, POS - 1);
+       -- Rest of the logger name.
+       SET SUBS_POS = SUBSTR(SUBS_POS, POS + 1);
 
-      CALL ANALYZE_NAME(SUBS_PRE, PARENT, PARENT_LEVEL, PARENT_HIERARCHY);
-      SET PARENT_HIERARCHY = PARENT_HIERARCHY || ',' || PARENT;
-     ELSE -- No dot was found (in the remainding string).
-      CALL ANALYZE_NAME(SUBS_POS, PARENT, PARENT_LEVEL, PARENT_HIERARCHY);
-      -- Ends the while.
-      SET POS = LENGTH;
-     END IF;
-    END WHILE;
+       CALL ANALYZE_NAME(SUBS_PRE, PARENT, PARENT_LEVEL, PARENT_HIERARCHY);
+       SET PARENT_HIERARCHY = PARENT_HIERARCHY || ',' || PARENT;
+      ELSE -- No dot was found (in the remainding string).
+       CALL ANALYZE_NAME(SUBS_POS, PARENT, PARENT_LEVEL, PARENT_HIERARCHY);
+       -- Ends the while.
+       SET POS = LENGTH;
+      END IF;
+     END WHILE;
+    END RECURSION;
     SET LOG_ID = PARENT;
     -- Adds this logger name in the cache.
     IF (CACHE = TRUE) THEN
