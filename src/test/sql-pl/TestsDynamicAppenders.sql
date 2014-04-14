@@ -382,8 +382,7 @@ INSERT INTO LOGDATA.REFERENCES (LOGGER_ID, APPENDER_REF_ID)
   VALUES (0, 1);
 DELETE FROM LOGDATA.CONFIGURATION;
 INSERT INTO LOGDATA.CONFIGURATION (KEY, VALUE)
-  VALUES ('checkHierarchy', 'false'),
-         ('checkLevels', 'false'),
+  VALUES ('checkLevels', 'false'),
          ('defaultRootLevelId', '3'),
          ('internalCache', 'true'),
          ('logInternals', 'false'),
