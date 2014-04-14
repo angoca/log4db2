@@ -81,7 +81,7 @@ First, unzip the file log4db2.zip, and then:
     .\init.ps1
     .\install.ps1
 
-----
+====
 
 After the install, all statements should have been successful.
 
@@ -150,9 +150,9 @@ These are the files included in the released version:
  * `README.txt` -- This file.
  * `reinstall*` -- Reinstallation files.
  * `uninstall*` -- Uninstallation files.
-
- * `doc` -- Documentation directory (ErrorCode, ER diagram).
- * `sql-pl` -- Directory for all objects: DDL, DML, routines definition.
+ * `doc` directory -- Documentation directory (ErrorCode, ER diagram).
+ * `sql-pl` directory -- Directory for all objects: DDL, DML, routines
+     definition.
    * `AdminBody.sql` -- Body of the administration tools.
    * `AdminHeader.sql` -- Headers of the administration tools.
    * `Appenders.sql` -- Definition of the appenders.
@@ -172,8 +172,8 @@ These are the files included in the released version:
    * `UtilityBody.sql` -- Body of the core tools.
    * `UtilityHeader.sql` -- Headers of the core tools.
       
- * `xml` -- Directory for XML Schemas, XML files and related scripts for
-     appenders configuration.
+ * `xml` directory -- Directory for XML Schemas, XML files and related scripts
+     for appenders configuration.
    * `Appender_UTL_FILE.xml` -- Configuration for LOG_UTL_FILE appender.
    * `AppendersXML.sql` -- Registers the XML Schema.
    * `conf_appender.xsd` -- XML Schema.
@@ -184,5 +184,5 @@ them can be found:
  * `.bat` -- Windows Batch file for CMD.exe
  * `.ps1` -- Windows PowerShell
  * `.sql` -- For DB2 CLPPlus.
- * No extension -- For Linux in bash.
+ * No extension -- For Linux/UNIX/Mac OS X.
 
