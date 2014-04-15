@@ -659,7 +659,9 @@ ALTER MODULE LOGGER ADD
   DECLARE LVL_ID ANCHOR LOGDATA.LEVELS.LEVEL_ID;
 
   -- Debug
-  -- INSERT INTO LOGS (DATE, LEVEL_ID, LOGGER_ID, MESSAGE) VALUES (GENERATE_UNIQUE(), 5, -1, 'aFLAG 5 = ' || coalesce (PARENT, -1) || '=' || coalesce (LEVEL, -1));
+  -- INSERT INTO LOGS (DATE, LEVEL_ID, LOGGER_ID, MESSAGE) VALUES 
+  --   (GENERATE_UNIQUE(), 5, -1, '>MOD_DES parent ' || coalesce (PARENT, -1) 
+  --   || ',level ' || coalesce (LEVEL, -1));
 
   IF (PARENT IS NULL OR PARENT < 0 OR LEVEL IS NULL OR LEVEL < 0) THEN
    SIGNAL SQLSTATE VALUE 'LG0P1'
@@ -694,6 +696,12 @@ ALTER MODULE LOGGER ADD
     END;
    END IF;
   END FOR;
+
+  -- Debug
+  -- INSERT INTO LOGS (DATE, LEVEL_ID, LOGGER_ID, MESSAGE) VALUES (
+  --   GENERATE_UNIQUE(), 5, -1, '<MOD_DES parent ' || coalesce (PARENT, -1) 
+  --   || ',level ' || coalesce (LEVEL, -1));
+
  END P_MODIFY_DESCENDANTS @
 
 /**
