@@ -75,9 +75,9 @@ create a new one (new LOGGER_ID, correct NAME, probably same PARENT_ID).
 
 LG0C5
 The parent cannot be itself.
-* The given logger has himslef as a parent, and this cannot be possible because
+* The given logger has himself as a parent, and this cannot be possible because
 the relationship is a recursive one.
-* Corrent the parent ID and reissue the sentence.
+* Current the parent ID and reissue the sentence.
 
 LG0C6
 The same son already exist in the database.
