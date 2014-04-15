@@ -177,6 +177,9 @@ INSERT INTO LOGDATA.CONFIGURATION (KEY, VALUE)
          ('internalCache', 'true'),
          ('logInternals', 'false'),
          ('secondsToRefresh', '30');
+DELETE FROM LOGDATA.LOGS
+  WHERE MESSAGE = 'A manual CONF_LOGGERS_EFFECTIVE update should be realized.'
+  AND DATE = (SELECT MAX(DATE) FROM LOGDATA.LOGS);
 CALL LOGGER.ACTIVATE_CACHE();
 CALL LOGGER.REFRESH_CACHE();
 INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES (3, 'TestsAppenders: Finished succesfully');
