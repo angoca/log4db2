@@ -37,9 +37,6 @@ SET CURRENT SCHEMA LOGGER_1B @
  * Made in COLOMBIA.
  */
 
--- TODO Check if the logger levels between the conf and effective table are the
--- same. In conf could be INFO but in effective could be WARN.
-
 -- TODO Check the registered loggers in the database, calculating the maximum
 -- length of the concatenated inner levels, and this lenght should be less than
 -- 256 chars. foo.bar.toto
@@ -88,12 +85,9 @@ ALTER MODULE LOGGER ADD
   DECLARE INTERNAL BOOLEAN DEFAULT FALSE; -- Internal logging.
   -- Handles the limit cascade call.
   DECLARE EXIT HANDLER FOR SQLSTATE '54038'
-   BEGIN
     INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES 
-      (2, 'LG001. Cascade call limit achieved, for GET_LOGGER: ' || COALESCE(NAME, 'null'));
-    RESIGNAL SQLSTATE 'LG001'
-      SET MESSAGE_TEXT = 'Cascade call limit achieved. Log message was written';
-   END;
+      (2, 'LG001. Cascade call limit achieved, for GET_LOGGER: '
+      || COALESCE(NAME, 'null'));
 
   -- Internal logging.
   IF (GET_VALUE(LOG_INTERNALS) = VAL_TRUE) THEN
@@ -102,7 +96,8 @@ ALTER MODULE LOGGER ADD
 
   IF (INTERNAL = TRUE) THEN
    INSERT INTO LOGDATA.LOGS (DATE, LEVEL_ID, LOGGER_ID, MESSAGE) VALUES 
-     (GENERATE_UNIQUE(), 4, -1, 'Getting logger name for ' || COALESCE(NAME, 'null'));
+     (GENERATE_UNIQUE(), 4, -1, 'Getting logger name for '
+     || COALESCE(NAME, 'null'));
   END IF;
 
   -- Validate nullability
@@ -172,8 +167,8 @@ ALTER MODULE LOGGER ADD
        SET PARENT = IDENTITY_VAL_LOCAL();
        -- Updates the hierarchy path.
        SET PARENT_HIERARCHY = PARENT_HIERARCHY || ',' || CHAR(PARENT);
-       INSERT INTO LOGDATA.CONF_LOGGERS_EFFECTIVE (LOGGER_ID, LEVEL_ID, HIERARCHY)
-         VALUES (PARENT, PARENT_LEVEL, PARENT_HIERARCHY);
+       INSERT INTO LOGDATA.CONF_LOGGERS_EFFECTIVE (LOGGER_ID, LEVEL_ID,
+         HIERARCHY) VALUES (PARENT, PARENT_LEVEL, PARENT_HIERARCHY);
       ELSE
        -- It is registered in the configuration table, thus take the id of that
        -- logger.
@@ -181,7 +176,7 @@ ALTER MODULE LOGGER ADD
        SET PARENT_LEVEL = LEVEL;
       END IF;
      END P_ANALYZE_NAME ;
-    ------------------------------------------------------------------------------
+    ----------------------------------------------------------------------------
 
     -- Remove spaces at the beginning and at the end.
     SET NAME = TRIM(BOTH FROM NAME);
@@ -201,16 +196,23 @@ ALTER MODULE LOGGER ADD
     END IF;
 
     RECURSION : BEGIN
-     DECLARE EXIT HANDLER FOR SQLSTATE '09000'
+     DECLARE QTY SMALLINT;
+     DECLARE MAX_LEVELS SMALLINT CONSTANT 30;
+     DECLARE EXIT HANDLER FOR SQLSTATE '09000', SQLSTATE 'LG0P2'
        BEGIN
         SET PARENT = 0;
         INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES 
           (2, 'LG001. Cascade call limit achieved, for GET_LOGGER: '
           || COALESCE(NAME, 'null'));
        END;
-        -- Takes each level of the logger name (dots), and retrieves or creates
-        -- the hierarchy in the configutation.
+     SET QTY = 0;
+     -- Takes each level of the logger name (dots), and retrieves or creates
+     -- the hierarchy in the configutation.
      WHILE (POS < LENGTH) DO
+      IF (QTY >= MAX_LEVELS) THEN
+       SIGNAL SQLSTATE 'LG0P2'
+         SET MESSAGE_TEXT = 'Maximum levels for a hierarchy'; 
+      END IF;
       SET POS = POSSTR (SUBS_POS, '.');
       -- If different to zero means that a dot was found => Root level.
       IF (POS <> 0) THEN
@@ -226,6 +228,7 @@ ALTER MODULE LOGGER ADD
        -- Ends the while.
        SET POS = LENGTH;
       END IF;
+      SET QTY = QTY + 1;
      END WHILE;
     END RECURSION;
     SET LOG_ID = PARENT;
