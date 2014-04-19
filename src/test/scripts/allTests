@@ -54,6 +54,7 @@ else
  executeTest TestsAppenders
  executeTest TestsAppendersImplementation
  executeTest TestsCache
+ executeTest TestsCacheLevel
  executeTest TestsCascadeCallLimit
  executeTest TestsConfAppenders
  executeTest TestsConfiguration
