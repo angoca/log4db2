@@ -29,58 +29,66 @@ db2 connect > NUL
 if %ERRORLEVEL% NEQ 0 (
  echo Please connect to a database before the execution of the tests
 ) else (
- echo Executing all tests with pauses in between.
-
- echo (next TestsAppenders)
- call %SRC_TEST_SCRIPT_PATH%\test.bat %SRC_TEST_CODE_PATH%\TestsAppenders.sql
- echo (TestsCache)
- pause
- call %SRC_TEST_SCRIPT_PATH%\test.bat %SRC_TEST_CODE_PATH%\TestsCache.sql
- echo (TestsCascadeCallLimit)
- pause
- call %SRC_TEST_SCRIPT_PATH%\test.bat %SRC_TEST_CODE_PATH%\TestsCascadeCallLimit.sql
- echo (TestsConfAppenders)
- pause
- call %SRC_TEST_SCRIPT_PATH%\test.bat %SRC_TEST_CODE_PATH%\TestsConfAppenders.sql
- echo (TestsConfiguration)
- pause
- call %SRC_TEST_SCRIPT_PATH%\test.bat %SRC_TEST_CODE_PATH%\TestsConfiguration.sql
- echo (TestsConfLoggers)
- pause
- call %SRC_TEST_SCRIPT_PATH%\test.bat %SRC_TEST_CODE_PATH%\TestsConfLoggers.sql
- echo (TestsConfLoggersDelete)
- pause
- call %SRC_TEST_SCRIPT_PATH%\test.bat %SRC_TEST_CODE_PATH%\TestsConfLoggersDelete.sql
- echo (TestsConfLoggersEffective)
- pause
- call %SRC_TEST_SCRIPT_PATH%\test.bat %SRC_TEST_CODE_PATH%\TestsConfLoggersEffective.sql
- echo (TestsFunctionsGetDefinedParentLogger)
- pause
- db2 -tf %SRC_MAIN_CODE_PATH%\CleanTriggers.sql +O
- call %SRC_TEST_SCRIPT_PATH%\test.bat %SRC_TEST_CODE_PATH%\TestsFunctionGetDefinedParentLogger.sql
- db2 -tf %SRC_MAIN_CODE_PATH%\Trigger.sql +O
- echo (TestsGetLogger)
- pause
- call %SRC_TEST_SCRIPT_PATH%\test.bat %SRC_TEST_CODE_PATH%\TestsGetLogger.sql
- echo (TestsGetLoggerName)
- pause
- call %SRC_TEST_SCRIPT_PATH%\test.bat %SRC_TEST_CODE_PATH%\TestsGetLoggerName.sql
- echo (TestsHierarchy)
- pause
- call %SRC_TEST_SCRIPT_PATH%\test.bat %SRC_TEST_CODE_PATH%\TestsHierarchy.sql
- echo (TestsLayout)
- pause
- call %SRC_TEST_SCRIPT_PATH%\test.bat %SRC_TEST_CODE_PATH%\TestsLayout.sql
- echo (TestsLevels)
- pause
- call %SRC_TEST_SCRIPT_PATH%\test.bat %SRC_TEST_CODE_PATH%\TestsLevels.sql
- echo (TestsLogs)
- pause
- call %SRC_TEST_SCRIPT_PATH%\test.bat %SRC_TEST_CODE_PATH%\TestsLogs.sql
- echo (TestsMessages)
- pause
- call %SRC_TEST_SCRIPT_PATH%\test.bat %SRC_TEST_CODE_PATH%\TestsMessages.sql
- echo (TestsReferences)
- pause
- call %SRC_TEST_SCRIPT_PATH%\test.bat %SRC_TEST_CODE_PATH%\TestsReferences.sql
+ Setlocal EnableDelayedExpansion
+ if "%1" == "-np" (
+  set PAUSE=false
+  set TIME_INI=echo !time!
+ ) else (
+  set PAUSE=true
+ )
+ if "!PAUSE!" == "true" (
+  echo Executing all tests with pauses in between.
+ ) else if "!PAUSE!" == "false" (
+  echo Executing all test.
+ ) else (
+  echo Error expanding variable
+  exit /B -1
+ )
+ call:executeTest TestsAppenders
+ call:executeTest TestsAppendersImplementation
+ call:executeTest TestsCache
+ call:executeTest TestsCacheLevel
+ call:executeTest TestsCacheLoggers
+ call:executeTest TestsCascadeCallLimit
+ call:executeTest TestsConfAppenders
+ call:executeTest TestsConfiguration
+ call:executeTest TestsConfLoggers
+ call:executeTest TestsConfLoggersDelete
+ call:executeTest TestsConfLoggersEffective
+ set TEST=TestsFunctionGetDefinedParentLogger
+ echo ====Next: !TEST!
+ if "!PAUSE!" == "true" (
+  pause
+ )
+ db2 -tf !SRC_MAIN_CODE_PATH!\CleanTriggers.sql +O
+ call !SRC_TEST_SCRIPT_PATH!\test.bat !SRC_TEST_CODE_PATH!\!TEST!.sql
+ db2 -tf !SRC_MAIN_CODE_PATH!\Trigger.sql +O
+ call:executeTest TestsDynamicAppenders
+ call:executeTest TestsGetLogger
+ call:executeTest TestsGetLoggerName
+ call:executeTest TestsHierarchy
+ call:executeTest TestsLayout
+ call:executeTest TestsLevels
+ call:executeTest TestsLogs
+ call:executeTest TestsMessages
+ call:executeTest TestsReferences if not "!PAUSE!" == "true" (
+  set TIME_END=echo !time!
+  echo Difference:
+  echo !TIME_INI! start
+  echo !TIME_END! end
+ )
+ Setlocal DisableDelayedExpansion
+ set PAUSE=
 )
+goto:eof
+
+:: Execute a given test.
+:executeTest
+ set script=%~1
+ echo ====Next: %script%
+ if "!PAUSE!" == "true" (
+  pause
+ )
+ call %SRC_TEST_SCRIPT_PATH%\test.bat %SRC_TEST_CODE_PATH%\%script%.sql
+goto:eof
+

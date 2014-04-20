@@ -96,7 +96,7 @@ CREATE OR REPLACE TRIGGER T1_CNF_CCHE
       -- GET_VALUE > REFRESH_CONF), and this creates a SQL0746, because the
       -- table is being modified and queried at the same time.
       INSERT INTO LOGS (LEVEL_ID, LOGGER_ID, MESSAGE)
-        VALUES (5, -1, 'A manual CONF_LOGGERS_EFFECTIVE update should be realized.');
+        VALUES (4, -1, 'A manual CONF_LOGGERS_EFFECTIVE update should be realized.');
 
       -- Conf_loggers is not defined, thus update conf_loggers_effective.
       -- FIXME
@@ -272,9 +272,9 @@ CREATE OR REPLACE TRIGGER T3_CNFLGR_SYN
 
   -- Debug
   -- INSERT INTO LOGS (LEVEL_ID, LOGGER_ID, MESSAGE) 
-  --   VALUES (5, -1, '>T3_CNFLGR_SYN ' || COALESCE(N.LOGGER_ID, -1) || '='
-  --   || COALESCE(N.LEVEL_ID, -1) || '<>' || COALESCE(O.LEVEL_ID, -1)
-  --   || ',' || COALESCE(N.NAME, 'null'));
+  --   VALUES (5, -1, '>T3_CNFLGR_SYN logger ' || COALESCE(N.LOGGER_ID, -1)
+  --   || ',level ' || COALESCE(N.LEVEL_ID, -1) || '<>'
+  --   || COALESCE(O.LEVEL_ID, -1) || ',name ' || COALESCE(N.NAME, 'null'));
 
   IF (N.LEVEL_ID IS NULL) THEN
    SET LEVEL = 0;
@@ -291,7 +291,7 @@ CREATE OR REPLACE TRIGGER T3_CNFLGR_SYN
 
   -- Debug
   -- INSERT INTO LOGS (LEVEL_ID, LOGGER_ID, MESSAGE) 
-  --   VALUES (5, -1, ' T3_CNFLGR_SYN ' || QTY);
+  --   VALUES (5, -1, ' T3_CNFLGR_SYN qty_sync ' || QTY);
 
    IF (QTY > 0) THEN
     UPDATE LOGDATA.CONF_LOGGERS_EFFECTIVE
@@ -319,11 +319,17 @@ CREATE OR REPLACE TRIGGER T1_EFF_LVL_ID
   REFERENCING NEW AS N
   FOR EACH ROW
  T1_EFF_LVL_ID: BEGIN
+  DECLARE EXIT HANDLER FOR SQLSTATE '54038'
+    BEGIN
+     CALL LOGGER.LOG_TABLES(-1, 0, 'Limit nested limit arrived '
+       || N.LOGGER_ID);
+    RESIGNAL;
+   END;
 
   -- Debug
   -- INSERT INTO LOGS (LEVEL_ID, LOGGER_ID, MESSAGE)
-  --   VALUES (5, -1, '>T1_EFF_LVL_ID =: ' || COALESCE (N.LOGGER_ID, -1) || ':'
-  --   || COALESCE (N.LEVEL_ID, -1));
+  --   VALUES (5, -1, '>T1_EFF_LVL_ID logger ' || COALESCE (N.LOGGER_ID, -1)
+  --   || ',level ' || COALESCE (N.LEVEL_ID, -1));
 
   SELECT LEVEL_ID INTO N.LEVEL_ID
     FROM LOGDATA.CONF_LOGGERS
@@ -335,15 +341,15 @@ CREATE OR REPLACE TRIGGER T1_EFF_LVL_ID
 
    -- Debug
    -- INSERT INTO LOGS (LEVEL_ID, LOGGER_ID, MESSAGE)
-   --   VALUES (5, -1, ' T1_EFF_LVL_ID null value');
+   --   VALUES (5, -1, ' T1_EFF_LVL_ID null level');
 
    SET N.LEVEL_ID = LOGGER.GET_DEFINED_PARENT_LOGGER(N.LOGGER_ID);
   END IF;
 
   -- Debug
   -- INSERT INTO LOGS (LEVEL_ID, LOGGER_ID, MESSAGE)
-  --   VALUES (5, -1, '<T1_EFF_LVL_ID =: ' || COALESCE (N.LOGGER_ID, -1) || ':'
-  -- || COALESCE (N.LEVEL_ID, -1));
+  --   VALUES (5, -1, '<T1_EFF_LVL_ID logger ' || COALESCE (N.LOGGER_ID, -1)
+  --   || ',level ' || COALESCE (N.LEVEL_ID, -1));
 
  END T1_EFF_LVL_ID @
  
@@ -377,16 +383,28 @@ CREATE OR REPLACE TRIGGER T3_EFF_LVL_UPD
 
   -- Debug
   -- INSERT INTO LOGS (LEVEL_ID, LOGGER_ID, MESSAGE)
-  --   VALUES (5, -1, '> T3_EFF_LVL_UPD = ' || COALESCE (N.LOGGER_ID, -1) || '='
-  --   || COALESCE (N.LEVEL_ID, -1));
+  --   VALUES (5, -1, '>T3_EFF_LVL_UPD logger ' || COALESCE (N.LOGGER_ID, -1)
+  --   || ',level ' || COALESCE (N.LEVEL_ID, -1));
 
-  -- The provided level was verified in the previous trigger, thus
-  -- update the descendency.
-  CALL LOGGER.MODIFY_DESCENDANTS (N.LOGGER_ID, N.LEVEL_ID);
+   IF (LOGGER.LOCK_MODIFY_DESCENDANTS IS NULL) THEN
+    SET LOGGER.LOCK_MODIFY_DESCENDANTS = LOGGER.VAL_TRUE;
+
+    -- The provided level was verified in the previous trigger, thus
+    -- update the descendency.
+    CALL LOGGER.MODIFY_DESCENDANTS (N.LOGGER_ID, N.LEVEL_ID);
+
+    SET LOGGER.LOCK_MODIFY_DESCENDANTS = NULL;
+   ELSE
+
+    -- Debug
+    -- INSERT INTO LOGS (LEVEL_ID, LOGGER_ID, MESSAGE)
+    --   VALUES (5, -1, ' T3_EFF_LVL_UPD No modif');
+
+   END IF;
 
   -- Debug
   -- INSERT INTO LOGS (LEVEL_ID, LOGGER_ID, MESSAGE)
-  --   VALUES (5, -1, '< T3_EFF_LVL_UPD');
+  --   VALUES (5, -1, '<T3_EFF_LVL_UPD ' || COALESCE (N.LOGGER_ID, -1));
  END T3_EFF_LVL_UPD @
 
 COMMENT ON TRIGGER T3_EFF_LVL_UPD IS

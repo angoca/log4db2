@@ -4,25 +4,49 @@ In order to configure the UTL_FILE appender you should
 
     db2licm -l
 
+# Configuration
+
  * Insert your appender in the list of appenders.
 
     INSERT INTO LOGDATA.APPENDERS (APPENDER_ID, NAME)
       VALUES (3, 'UTL_FILE');
+
+ * Add your own configuration or update the existing one.
+
+    cd xml
+    IMPORT FORM Appender_UTL_FILE.csv OF DEL INSERT INTO LOGDATA.CONF_APPENDERS;
+    cd ..
+
+If the previous method did not work, you can do:
+
+    INSERT INTO LOGDATA.CONF_APPENDERS (REF_ID, NAME, APPENDER_ID,
+      CONFIGURATION, PATTERN, LEVEL_ID) VALUES (3, 'Local file', 3, '
+      <log4db2>
+       <appender>
+        <name>UTL_FILE</name>
+        <configuration>
+         <directory>/home/db2inst1/log4db2</directory>
+         <filename>logs.log</filename>
+        </configuration>
+       </appender>
+      </log4db2>', '[%p] %c - %m', NULL);
+
+ * Associate the conf_appender to a logger via the references table.
+
+    INSERT INTO LOGDATA.REFERENCES (LOGGER_ID, APPENDER_REF_ID)
+      VALUES (0, 3);
+
+# Code
 
  * Install the appenders from file:
 
     cd sql-pl
     db2 -tsf Appenders_No_ExpC.sql
 
- * Add your own configuration or update the existing one.
+ * Test the procedure
 
-TODO Import the data
-
-    INSERT INTO LOGDATA.CONF_APPENDERS (REF_ID, NAME, APPENDER_ID,
-      CONFIGURATION, PATTERN, LEVEL_ID) VALUES (3, 'Local file', 3, 
-      XMLVALIDATE(XMLPARSE(DOCUMENT '
-      <log4db2 xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"
-      xsi:noNamespaceSchemaLocation=\"conf_appender.xsd\">
+    db2 "CALL LOGGER.LOG_UTL_FILE(0, 1, 'Message to log', XMLPARSE(DOCUMENT '
+      <log4db2>
        <appender>
         <name>UTL_FILE</name>
         <configuration>
@@ -34,12 +58,7 @@ TODO Import the data
          </filename>
         </configuration>
        </appender>
-      </log4db2>')), '[%p] %c - %m', NULL);
-
- * Associate the conf_appender to a logger via the references table.
-
-    INSERT INTO LOGDATA.REFERENCES (LOGGER_ID, APPENDER_REF_ID)
-      VALUES (0, 3);
+      </log4db2>'))"
 
 Ready to log!
 
