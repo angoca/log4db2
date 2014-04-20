@@ -42,6 +42,9 @@ if ( $LastExitCode -ne 0 ) {
  Write-Host "Press enter to continue (next TestsCacheLevel)"
  $x = $host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
  & .\${SRC_TEST_SCRIPT_PATH}\test.ps1 ${SRC_TEST_CODE_PATH}\TestsCacheLevel.sql
+ Write-Host "Press enter to continue (next TestsCacheLoggers)"
+ $x = $host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
+ & .\${SRC_TEST_SCRIPT_PATH}\test.ps1 ${SRC_TEST_CODE_PATH}\TestsCacheLoggers.sql
  Write-Host "Press enter to continue (next TestsCascadeCallLimit)"
  $x = $host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
  & .\${SRC_TEST_SCRIPT_PATH}\test.ps1 ${SRC_TEST_CODE_PATH}\TestsCascadeCallLimit.sql

@@ -48,6 +48,7 @@ if %ERRORLEVEL% NEQ 0 (
  call:executeTest TestsAppendersImplementation
  call:executeTest TestsCache
  call:executeTest TestsCacheLevel
+ call:executeTest TestsCacheLoggers
  call:executeTest TestsCascadeCallLimit
  call:executeTest TestsConfAppenders
  call:executeTest TestsConfiguration
