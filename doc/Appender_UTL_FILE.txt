@@ -8,17 +8,20 @@ In order to configure the UTL_FILE appender you should
 
  * Insert your appender in the list of appenders.
 
+    db2 -t "
     INSERT INTO LOGDATA.APPENDERS (APPENDER_ID, NAME)
-      VALUES (3, 'UTL_FILE');
+      VALUES (3, 'UTL_FILE')
+    "
 
  * Add your own configuration or update the existing one.
 
     cd xml
-    IMPORT FORM Appender_UTL_FILE.csv OF DEL INSERT INTO LOGDATA.CONF_APPENDERS;
+    db2 IMPORT FROM Appender_UTL_FILE.csv OF DEL INSERT INTO LOGDATA.CONF_APPENDERS;
     cd ..
 
 If the previous method did not work, you can do:
 
+    db2 -t "
     INSERT INTO LOGDATA.CONF_APPENDERS (REF_ID, NAME, APPENDER_ID,
       CONFIGURATION, PATTERN, LEVEL_ID) VALUES (3, 'Local file', 3, '
       <log4db2>
@@ -29,12 +32,15 @@ If the previous method did not work, you can do:
          <filename>logs.log</filename>
         </configuration>
        </appender>
-      </log4db2>', '[%p] %c - %m', NULL);
+      </log4db2>', '[%p] %c - %m', NULL)
+    "
 
  * Associate the conf_appender to a logger via the references table.
 
+    db2 -t "
     INSERT INTO LOGDATA.REFERENCES (LOGGER_ID, APPENDER_REF_ID)
-      VALUES (0, 3);
+      VALUES (0, 3)
+    "
 
 # Code
 
@@ -42,10 +48,11 @@ If the previous method did not work, you can do:
 
     cd sql-pl
     db2 -tsf Appenders_No_ExpC.sql
+    cd ..
 
  * Test the procedure
 
-    db2 "CALL LOGGER.LOG_UTL_FILE(0, 1, 'Message to log', XMLPARSE(DOCUMENT '
+    db2 -t "CALL LOGGER.LOG_UTL_FILE(0, 1, 'Message to log', XMLPARSE(DOCUMENT '
       <log4db2>
        <appender>
         <name>UTL_FILE</name>
@@ -58,7 +65,8 @@ If the previous method did not work, you can do:
          </filename>
         </configuration>
        </appender>
-      </log4db2>'))"
+      </log4db2>'));
+      "
 
 Ready to log!
 
