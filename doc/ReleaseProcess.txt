@@ -21,6 +21,7 @@ https://github.com/angoca/log4db2/blob/master/src/main/sql-pl/AdminHeader.sql
 
 PERFORM
 
+* Execute (only) mvn release:prepare and provide a valid SNAPSHOT.
 * Perform a code release in GitHub (https://github.com/angoca/log4db2/releases)
 * Create a directory in SourceForge with the version to release as name.
 * Execute mvn.
