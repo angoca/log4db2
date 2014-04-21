@@ -176,7 +176,7 @@ These are the files included in the released version:
      for appenders configuration.
    * `Appender_UTL_FILE.xml` -- Configuration for LOG_UTL_FILE appender.
    * `AppendersXML.sql` -- Registers the XML Schema.
-   * `conf_appender.xsd` -- XML Schema.
+   * `conf_appender_X.xsd` -- XML Schema for the X release.
 
 The * in the install-related files means that several files for each one of
 them can be found:
