@@ -1,3 +1,6 @@
+This documentation is licensed under the terms of the FreeBSD Documentation
+License.
+
 In order to configure the Java appender you should:
 
  * Install the Java stored procedure.
@@ -14,8 +17,8 @@ In order to configure the Java appender you should:
 
  * Add your own configuration or update the existing one.
 
-    INSERT INTO LOGDATA.CONF_APPENDERS (REF_ID, NAME, APPENDER_ID, CONFIGURATION,
-      PATTERN) VALUES (5, 'Java', 5, NULL, '[%p] %c - %m');
+    INSERT INTO LOGDATA.CONF_APPENDERS (REF_ID, NAME, APPENDER_ID,
+      CONFIGURATION, PATTERN) VALUES (5, 'Java', 5, NULL, '[%p] %c - %m');
 
  * Associate the conf_appender to a logger via the references table.
 

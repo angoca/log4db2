@@ -1,3 +1,6 @@
+This documentation is licensed under the terms of the FreeBSD Documentation
+License.
+
 These are the possible error codes raised by log4db2
 
 ERROR CODE

@@ -1,3 +1,6 @@
+This documentation is licensed under the terms of the FreeBSD Documentation
+License.
+
 In order to configure the UTL_FILE appender you should
 
  * Make sure you do not have an Express-C edition.
