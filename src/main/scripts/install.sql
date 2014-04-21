@@ -25,7 +25,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 /**
  * Installs all scripts of the utility.
  *
- * Version: 2014-04-03 1-Beta
+ * Version: 2014-04-03 1-RC
  * Author: Andres Gomez Casanova (AngocA)
  * Made in COLOMBIA.
  */

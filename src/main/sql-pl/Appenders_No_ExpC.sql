@@ -32,7 +32,7 @@ SET CURRENT SCHEMA LOGGER_1B @
  * Express-C edition. Here you can find how log4db2 interacts with different
  * components to log messages.
  *
- * Version: 2014-04-02 1-Beta
+ * Version: 2014-04-02 1-RC
  * Author: Andres Gomez Casanova (AngocA)
  * Made in COLOMBIA.
  */

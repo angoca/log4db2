@@ -33,7 +33,7 @@ SET CURRENT SCHEMA LOGGER_1B;
  * mechanism that separates the configuration from the usage. A person who
  * writes in the logs is not the same person that configures the utility.
  *
- * Version: 2012-10-15 1-Beta
+ * Version: 2012-10-15 1-RC
  * Author: Andres Gomez Casanova (AngocA)
  * Made in COLOMBIA.
  */
@@ -49,7 +49,7 @@ COMMENT ON PUBLIC ALIAS LOGADMIN FOR MODULE IS 'Administrative routines for log4
 
 -- Module version.
 ALTER MODULE LOGADMIN PUBLISH
-  VARIABLE VERSION VARCHAR(32) CONSTANT '2014-04-21 1-Beta';
+  VARIABLE VERSION VARCHAR(32) CONSTANT '2014-04-21 1-RC';
 
 -- Deletes a value in the cache. Useful for tests.
 ALTER MODULE LOGGER PUBLISH

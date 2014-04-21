@@ -30,7 +30,7 @@ SET CURRENT SCHEMA LOGGER_1B;
 /**
  * Drops the trigger in the opposite order as they were created.
  *
- * Version: 2014-02-14 1-Beta
+ * Version: 2014-02-14 1-RC
  * Author: Andres Gomez Casanova (AngocA)
  * Made in COLOMBIA.
  */

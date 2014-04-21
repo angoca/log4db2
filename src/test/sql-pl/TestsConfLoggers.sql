@@ -28,7 +28,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 /**
  * Tests for the logger's insertions (conf_loggers table).
  *
- * Version: 2014-04-21 1-Beta
+ * Version: 2014-04-21 1-RC
  * Author: Andres Gomez Casanova (AngocA)
  * Made in COLOMBIA.
  */

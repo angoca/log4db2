@@ -25,7 +25,7 @@
 # Initialize the environment values to run the scripts for development,
 # examples and tests.
 #
-# Version: 2014-04-21 1-Beta
+# Version: 2014-04-21 1-RC
 # Author: Andres Gomez Casanova (AngocA)
 # Made in COLOMBIA.
 

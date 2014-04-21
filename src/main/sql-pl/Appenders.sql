@@ -31,7 +31,7 @@ SET CURRENT SCHEMA LOGGER_1B @
  * Implementation of the included appenders. Here you can find how log4db2
  * interacts with different components to log messages.
  *
- * Version: 2012-10-15 1-Beta
+ * Version: 2012-10-15 1-RC
  * Author: Andres Gomez Casanova (AngocA)
  * Made in COLOMBIA.
  */

@@ -36,7 +36,7 @@ SET CURRENT SCHEMA LOGDATA;
  * - Referential integrity
  * And also some DML for the basic content for the utility to run.
  *
- * Version: 2014-02-14 1-Beta
+ * Version: 2014-02-14 1-RC
  * Author: Andres Gomez Casanova (AngocA)
  * Made in COLOMBIA.
  */
