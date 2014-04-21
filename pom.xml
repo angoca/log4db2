@@ -133,7 +133,7 @@
  <scm>
   <connection>scm:git:ssh://github.com/angoca/log4db2.git</connection>
   <developerConnection>
-   scm:git:ssh://git@github.com:angoca/log4db2.git
+   scm:git:ssh://git@github.com/angoca/log4db2.git
   </developerConnection>
   <url>https://github.com/angoca/log4db2</url>
   <tag>log4db2-1-Delta</tag>
