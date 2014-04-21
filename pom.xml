@@ -24,7 +24,7 @@
  <!-- The Basics -->
  <groupId>com.github.angoca</groupId>
  <artifactId>log4db2</artifactId>
- <version>1-Delta-2-SNAPSHOT</version>
+ <version>1-RC-SNAPSHOT</version>
  <packaging>pom</packaging>
 
  <!-- Build Settings -->
