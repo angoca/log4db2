@@ -22,7 +22,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-# Reinstall the utility. Calls the uninstall and then the install.
+# Reinstall the utility. Calls the uninstall script and then the install one.
 #
 # Version: 2014-02-14 1-Beta
 # Author: Andres Gomez Casanova (AngocA)
