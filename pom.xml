@@ -90,15 +90,18 @@
  <inceptionYear>2012, 2013, 2014</inceptionYear>
  <licenses>
   <license>
-   <name>BSD 2-Clauses</name>
+   <name>BSD 2-Clauses License</name>
    <distribution>repo</distribution>
+   <comments>
+    The Simplified BSD license is for the code (core, test, examples).
+   </comments>
   </license>
   <license>
    <name>FreeBSD Documentation License</name>
    <distribution>repo</distribution>
    <comments>
-    This license is for the documentation, that is in the /doc
-    directory and in the Wiki.
+    This license is for the documentation, that is in the /doc directory and in
+    the Wiki.
    </comments>
   </license>
  </licenses>
@@ -114,6 +117,11 @@
     <role>Designer</role>
     <role>Developer</role>
    </roles>
+   <properties>
+    <picUrl>
+     https://secure.gravatar.com/avatar/6998587ec6de0bab814c70777bcdd2ce.png
+    </picUrl>
+   </properties>
   </developer>
  </developers>
 
