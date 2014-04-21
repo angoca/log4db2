@@ -22,6 +22,13 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
+# Initialize the environment values to run the scripts for development,
+# examples and tests.
+#
+# Version: 2014-04-21 1-Beta
+# Author: Andres Gomez Casanova (AngocA)
+# Made in COLOMBIA.
+
 # This variable indicates the location of the sources.
 ${LOG4DB2_PATH}="..\..\.."
 

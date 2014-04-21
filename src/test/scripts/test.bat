@@ -23,6 +23,12 @@
 :: ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 :: POSSIBILITY OF SUCH DAMAGE.
 
+:: Execute a test.
+::
+:: Version: 2014-04-21 1-Beta
+:: Author: Andres Gomez Casanova (AngocA)
+:: Made in COLOMBIA.
+
 db2 connect > NUL
 if %ERRORLEVEL% NEQ 0 (
  echo Please connect to a database before the execution of the test
