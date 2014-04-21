@@ -84,10 +84,9 @@
  <!-- More Project Information -->
  <name>log4db2</name>
  <description>
-  Log4db2 is a logging utility for DB2 for LUW that uses SQL
-  instructions with SQL PL code.
+  A logging framework written in SQL-PL for IBM DB2 LUW.
   </description>
- <url>https://github.com/angoca/log4db2</url>
+ <url>https://angoca.github.io/log4db2/</url>
  <inceptionYear>2012, 2013, 2014</inceptionYear>
  <licenses>
   <license>
@@ -99,7 +98,7 @@
    <distribution>repo</distribution>
    <comments>
     This license is for the documentation, that is in the /doc
-    direectory.
+    directory and in the Wiki.
    </comments>
   </license>
  </licenses>
@@ -136,3 +135,4 @@
   <maven>3.1.1</maven>
  </prerequisites>
 </project>
+
