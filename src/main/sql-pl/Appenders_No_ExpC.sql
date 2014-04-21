@@ -28,8 +28,9 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 SET CURRENT SCHEMA LOGGER_1B @
 
 /**
- * Implementation of the included appenders. Here you can find how log4db2
- * interacts with different components to log messages.
+ * Implementation of the included appenders that do not necessarily work on
+ * Express-C edition. Here you can find how log4db2 interacts with different
+ * components to log messages.
  *
  * Version: 2014-04-02 1-Beta
  * Author: Andres Gomez Casanova (AngocA)
