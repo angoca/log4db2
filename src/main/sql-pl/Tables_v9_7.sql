@@ -38,7 +38,7 @@ SET CURRENT SCHEMA LOGDATA;
  * Some features are not supported in DB2 version 9.7 like implicit hidded.
  * For this reason, there is a dedicated file for 9.7.
  *
- * Version: 2014-02-14 1-Alpha
+ * Version: 2014-02-14 1-Beta
  * Author: Andres Gomez Casanova (AngocA)
  * Made in COLOMBIA.
  */

@@ -25,7 +25,7 @@
  <!-- The Basics -->
  <groupId>com.github.angoca</groupId>
  <artifactId>log4db2</artifactId>
- <version>1.0-Alpha</version>
+ <version>1-Beta</version>
  <packaging>pom</packaging>
 
  <!-- Build Settings -->
@@ -88,7 +88,7 @@
   instructions with SQL PL code.
   </description>
  <url>https://github.com/angoca/log4db2</url>
- <inceptionYear>2012, 2013</inceptionYear>
+ <inceptionYear>2012, 2013, 2014</inceptionYear>
  <licenses>
   <license>
    <name>BSD 2-Clauses</name>

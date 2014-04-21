@@ -33,7 +33,7 @@ SET CURRENT SCHEMA LOGGER_1B @
  * one of the most important and longest routines in the utility; for this reason
  * it is in a dedicated file.
  *
- * Version: 2014-02-14 1-Alpha
+ * Version: 2014-02-14 1-Beta
  * Author: Andres Gomez Casanova (AngocA)
  * Made in COLOMBIA.
  */

@@ -30,7 +30,7 @@ SET CURRENT SCHEMA LOGGER_1B @
 /**
  * Implementation of the administrative routines of log4db2.
  *
- * Version: 2014-02-14 1-Alpha
+ * Version: 2014-02-14 1-Beta
  * Author: Andres Gomez Casanova (AngocA)
  * Made in COLOMBIA.
  */
