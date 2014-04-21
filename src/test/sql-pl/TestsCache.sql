@@ -27,6 +27,10 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 /**
  * Tests for the logger cache functionality.
+ *
+ * Version: 2014-04-21 1-Beta
+ * Author: Andres Gomez Casanova (AngocA)
+ * Made in COLOMBIA.
  */
 
 SET CURRENT SCHEMA LOGGER_1B @
