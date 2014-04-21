@@ -1,3 +1,6 @@
+This documentation is licensed under the terms of the FreeBSD Documentation
+License.
+
 This is the procedure to do for each release.
 
 There are three sections:
@@ -9,7 +12,7 @@ There are three sections:
 BEFORE
 
 * Run all tests to make sure there are not regressions.
-* To change the version variable in the code (AdminHeader):
+* To change the version constant in the code (AdminHeader.sql:VERSION):
 https://github.com/angoca/log4db2/blob/master/src/main/sql-pl/AdminHeader.sql
 * Change the version in the documentation (@version) of all source files.
 * Make sure the schema reflects the version number to release (all files.)
