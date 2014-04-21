@@ -27,6 +27,14 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 SET CURRENT SCHEMA TESTS @
 
+/**
+ * Stored procedure configuration to log at connection time.
+ *
+ * Version: 2014-02-14 1-Beta
+ * Author: Andres Gomez Casanova (AngocA)
+ * Made in COLOMBIA.
+ */
+
 SET PATH = "SYSIBM","SYSFUN","SYSPROC","SYSIBMADM", LOGGER_1B @
 
 CREATE SCHEMA TESTS @

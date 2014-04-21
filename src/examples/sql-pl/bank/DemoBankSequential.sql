@@ -27,6 +27,14 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 SET CURRENT SCHEMA DEMOBANK @
 
+/**
+ * Semi sequential execution of the DemoBank.
+ *
+ * Version: 2014-04-21 1-Beta
+ * Author: Andres Gomez Casanova (AngocA)
+ * Made in COLOMBIA.
+ */
+
 SET PATH = "SYSIBM","SYSFUN","SYSPROC","SYSIBMADM", DEMOBANK, LOGGER_1B @
 
 BEGIN

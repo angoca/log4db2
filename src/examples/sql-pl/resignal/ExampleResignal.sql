@@ -27,6 +27,14 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 SET CURRENT SCHEMA TESTS @
 
+/**
+ * Example to log a generated signal and resignal.
+ *
+ * Version: 2014-04-21 1-Beta
+ * Author: Andres Gomez Casanova (AngocA)
+ * Made in COLOMBIA.
+ */
+
 SET PATH = TESTS, LOGGER_1B @
 
 CREATE SCHEMA TESTS @
