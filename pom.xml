@@ -131,13 +131,21 @@
  </issueManagement>
 
  <scm>
-  <connection>scm:git:https://github.com/angoca/log4db2.git</connection>
+  <connection>scm:git:ssh://github.com/angoca/log4db2.git</connection>
   <developerConnection>
-   scm:git:git@github.com:angoca/log4db2.git
+   scm:git:ssh://git@github.com:angoca/log4db2.git
   </developerConnection>
-  <url>https://github.com/angoca/log4db2.git</url>
-   <tag>HEAD</tag>
-  </scm>
+  <url>https://github.com/angoca/log4db2</url>
+  <tag>HEAD</tag>
+ </scm>
+
+ <distributionManagement>
+  <repository>
+   <id>internal.repo</id>
+   <name>Temporary Staging Repository</name>
+   <url>file://${project.build.directory}/mvn-repo</url>
+  </repository>
+ </distributionManagement>
 
  <prerequisites>
   <maven>3.1.1</maven>
