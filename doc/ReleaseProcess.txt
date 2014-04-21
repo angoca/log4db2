@@ -32,6 +32,8 @@ PERFORM
   directory in SourceForge (change the button text) and in GitHub.
 * Delete the current README.txt from SourceForge. Upload the current version
   of README.txt
+* Fill the ChangeLog page in the wiki with all changes. To review the changes
+  compare the tag (git diff previous-tag current-tag)
 
 AFTER
 
