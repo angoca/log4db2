@@ -19,7 +19,7 @@ In order to configure the UTL_FILE appender you should
  * Add your own configuration or update the existing one.
 
     cd xml
-    db2 "IMPORT FROM Appender_UTL_FILE.csv OF DEL XMLPARSE STRIP WHITESPACE XMLVALIDATE USING SCHEMA LOGGER_1B.CONF_APPENDERS INSERT INTO LOGDATA.CONF_APPENDERS"
+    db2 "IMPORT FROM Appender_UTL_FILE.csv OF DEL XMLPARSE STRIP WHITESPACE XMLVALIDATE USING SCHEMA LOGGER_1RC.CONF_APPENDERS INSERT INTO LOGDATA.CONF_APPENDERS"
     cd ..
 
 If the previous method did not work, you can do:

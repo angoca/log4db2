@@ -25,7 +25,7 @@ OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-SET CURRENT SCHEMA LOGGER_1B;
+SET CURRENT SCHEMA LOGGER_1RC;
 
 /**
  * Defines the headers of the public procedures and functions.
@@ -36,9 +36,9 @@ SET CURRENT SCHEMA LOGGER_1B;
  */
 
 -- Schema for logger utility's objects.
-CREATE SCHEMA LOGGER_1B;
+CREATE SCHEMA LOGGER_1RC;
 
-COMMENT ON SCHEMA LOGGER_1B IS 'Schema for objects of the log4db2 utility';
+COMMENT ON SCHEMA LOGGER_1RC IS 'Schema for objects of the log4db2 utility';
 
 -- Module for all code for the logger utility.
 CREATE OR REPLACE MODULE LOGGER;

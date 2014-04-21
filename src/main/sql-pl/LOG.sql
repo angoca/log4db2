@@ -25,7 +25,7 @@ OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-SET CURRENT SCHEMA LOGGER_1B @
+SET CURRENT SCHEMA LOGGER_1RC @
 
 /**
  * Implementation of the LOG procedure. This is one of the most important and
@@ -37,7 +37,7 @@ SET CURRENT SCHEMA LOGGER_1B @
  * Made in COLOMBIA.
  */
 
-SET PATH = SYSPROC, LOGGER_1B @
+SET PATH = SYSPROC, LOGGER_1RC @
 
 /**
  * Verifies if the given logger hierarchy path includes the given logger id.
