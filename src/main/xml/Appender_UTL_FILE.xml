@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8" ?>
+<?xml version="1.0" encoding="UTF-8"?>
 <!-- Copyright (c) 2012 - 2014, Andres Gomez Casanova (AngocA) All rights 
  reserved. -->
 <!-- Redistribution and use in source and binary forms, with or without modification, 
@@ -20,7 +20,7 @@
  USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. -->
 <log4db2 xmlns="http://angoca.github.io/log4db2/conf_appender"
  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
- xsi:schemaLocation="http://angoca.github.io/log4db2 conf_appender.xsd">
+ xsi:schemaLocation="http://angoca.github.io/log4db2/conf_appender http://angoca.github.io/log4db2/conf_appender.xsd">
  <appender>
   <name>UTL_FILE</name>
   <configuration>
