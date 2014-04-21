@@ -30,8 +30,8 @@ SET CURRENT SCHEMA LOGGER_1B @
 /**
  * Contains the complete implementation of the GET_LOGGER procedure for DB2
  * version 9.7. This version does not support Declared Stored Procedure. This is
- * one of the most important and longest routines in the utility; for this reason
- * it is in a dedicated file.
+ * one of the most important and longest routines in the utility; for this
+ * reason it is in a dedicated file.
  *
  * Version: 2014-02-14 1-Beta
  * Author: Andres Gomez Casanova (AngocA)
