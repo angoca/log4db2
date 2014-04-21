@@ -107,7 +107,8 @@
   A logging framework written in SQL-PL for IBM DB2 LUW.
   </description>
  <url>https://angoca.github.io/log4db2/</url>
- <inceptionYear>2012, 2013, 2014</inceptionYear>
+ <!-- The first year. -->
+ <inceptionYear>2012</inceptionYear>
  <licenses>
   <license>
    <name>BSD 2-Clauses License</name>
