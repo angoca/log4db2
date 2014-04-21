@@ -16,12 +16,11 @@ In order to configure the UTL_FILE appender you should
  * Add your own configuration or update the existing one.
 
     cd xml
-    db2 IMPORT FROM Appender_UTL_FILE.csv OF DEL INSERT INTO LOGDATA.CONF_APPENDERS;
+    db2 "IMPORT FROM Appender_UTL_FILE.csv OF DEL XMLPARSE STRIP WHITESPACE XMLVALIDATE USING SCHEMA LOGGER_1B.CONF_APPENDERS INSERT INTO LOGDATA.CONF_APPENDERS"
     cd ..
 
 If the previous method did not work, you can do:
 
-    db2 -t "
     INSERT INTO LOGDATA.CONF_APPENDERS (REF_ID, NAME, APPENDER_ID,
       CONFIGURATION, PATTERN, LEVEL_ID) VALUES (3, 'Local file', 3, '
       <log4db2>
@@ -33,7 +32,6 @@ If the previous method did not work, you can do:
         </configuration>
        </appender>
       </log4db2>', '[%p] %c - %m', NULL)
-    "
 
  * Associate the conf_appender to a logger via the references table.
 
