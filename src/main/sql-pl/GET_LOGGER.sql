@@ -154,7 +154,7 @@ ALTER MODULE LOGGER ADD
       -- FIXME: Try to convert the following query to an array. Two fields are
       -- part of the key.
       SELECT C.LOGGER_ID, C.LEVEL_ID INTO SON, LEVEL
-        FROM LOGDATA.CONF_LOGGERS C 
+        FROM LOGDATA.CONF_LOGGERS C
         WHERE C.NAME = STRING
         AND C.PARENT_ID = PARENT
         FETCH FIRST 1 ROW ONLY
