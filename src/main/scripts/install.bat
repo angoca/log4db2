@@ -92,7 +92,7 @@ goto:eof
  if %continue% EQU 1 call:installScript %SRC_MAIN_CODE_PATH%\UtilityBody.sql
  if %continue% EQU 1 call:installScript %SRC_MAIN_CODE_PATH%\Appenders.sql
  if %continue% EQU 1 call:installScript %SRC_MAIN_CODE_PATH%\LOG.sql
- if %continue% EQU 1 call:installScript %SRC_MAIN_CODE_PATH%\GET_LOGGER.sql
+ if %continue% EQU 1 call:installScript %SRC_MAIN_CODE_PATH%\GET_LOGGER_v9_7.sql
  if %continue% EQU 1 call:installScript %SRC_MAIN_CODE_PATH%\Trigger.sql
 
  if %continue% EQU 1 call:installScript %SRC_MAIN_CODE_PATH%\AdminHeader.sql

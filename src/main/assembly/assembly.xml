@@ -61,6 +61,7 @@
     <include>**/uninstall</include>
    </includes>
    <fileMode>0777</fileMode>
+   <lineEnding>lf</lineEnding>
    <outputDirectory>/</outputDirectory>
   </fileSet>
   <!-- Scripts -->
@@ -71,6 +72,7 @@
     <include>**/*.ps1</include>
    </includes>
    <fileMode>0666</fileMode>
+   <lineEnding>crlf</lineEnding>
    <outputDirectory>/</outputDirectory>
   </fileSet>
   <!-- XML files -->
