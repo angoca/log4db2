@@ -103,7 +103,7 @@ goto:eof
  cd xml
  if %continue% EQU 1 call:installScript AppendersXML.sql
  cd ..
- cd scripts > NUL
+ cd scripts 2> NUL
 
  if %continue% EQU 1 (
   echo log4db2 was installed successfully
