@@ -16,7 +16,7 @@ utilities, such as Log4j and slf4j/logback.
  * Log4j:
     http://logging.apache.org/log4j
  * Logback/SLF4J:
-    http://logback.qos.ch/] [http://www.slf4j.org/
+    http://logback.qos.ch/ - http://www.slf4j.org/
 
 The license for the source code is "BSD 2-Clause license", and for the
 documentation is "FreeBSD Documentation license." With these two licenses you
