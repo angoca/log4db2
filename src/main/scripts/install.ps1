@@ -71,7 +71,7 @@ function v10.1($p1) {
  echo "To report an issue or provide feedback, please visit:"
  echo "https://github.com/angoca/log4db2/issues"
  if ( ${Script:continue} ) {
-  echo "log4db2 was installed successfully"
+  echo "log4db2 was successfully installed"
  } else {
   echo "Check the error(s) and reinstall the utility"
  }
@@ -103,7 +103,7 @@ function v9.7() {
  echo "To report an issue or provide feedback, please visit:"
  echo "https://github.com/angoca/log4db2/issues"
  if ( ${Script:continue} ) {
-  echo "log4db2 was installed successfully"
+  echo "log4db2 was successfully installed"
  } else {
   echo "Check the error(s) and reinstall the utility"
  }
