@@ -66,6 +66,10 @@ function v10.1($p1) {
   installScript ${SRC_MAIN_CODE_PATH}/TablesTimeTravel.sql
  }
 
+ echo "Please visit the wiki to learn how to use and configure this utility"
+ echo "https://github.com/angoca/log4db2/wiki"
+ echo "To report an issue or provide feedback, please visit:"
+ echo "https://github.com/angoca/log4db2/issues"
  if ( ${Script:continue} ) {
   echo "log4db2 was installed successfully"
  } else {
@@ -94,7 +98,11 @@ function v9.7() {
  cd ..
  cd scripts | Out-Null
 
-  if ( ${Script:continue} ) {
+ echo "Please visit the wiki to learn how to use and configure this utility"
+ echo "https://github.com/angoca/log4db2/wiki"
+ echo "To report an issue or provide feedback, please visit:"
+ echo "https://github.com/angoca/log4db2/issues"
+ if ( ${Script:continue} ) {
   echo "log4db2 was installed successfully"
  } else {
   echo "Check the error(s) and reinstall the utility"

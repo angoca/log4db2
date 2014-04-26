@@ -77,6 +77,11 @@ goto:eof
   call:installScript %SRC_MAIN_CODE_PATH%\TablesTimeTravel.sql
  )
 
+ echo Please visit the wiki to learn how to use and configure this utility
+ echo https://github.com/angoca/log4db2/wiki
+ echo To report an issue or provide feedback, please visit:
+ echo https://github.com/angoca/log4db2/issues
+ echo.
  if %continue% EQU 1 (
   echo log4db2 was installed successfully
  ) else (
@@ -105,6 +110,11 @@ goto:eof
  cd ..
  cd scripts 2> NUL
 
+ echo Please visit the wiki to learn how to use and configure this utility
+ echo https://github.com/angoca/log4db2/wiki
+ echo To report an issue or provide feedback, please visit:
+ echo https://github.com/angoca/log4db2/issues
+ echo.
  if %continue% EQU 1 (
   echo log4db2 was installed successfully
  ) else (
