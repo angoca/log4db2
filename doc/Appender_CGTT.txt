@@ -1,0 +1,42 @@
+This documentation is licensed under the terms of the FreeBSD Documentation
+License.
+
+In order to install and configure the Global Temporary table appender you should
+execute the scripts described here. If you want to change the configuration or
+behavior, you are free to modify the source code of the appender.
+
+
+# Prerequisites #
+
+You need to have a user with the rights to create a tablespace.
+
+
+# Code and configuration #
+
+ * Install the appender from file:
+
+    cd sql-pl
+    db2 -tsf Appender_CGTT_Create.sql
+    cd ..
+
+
+# Test the appender #
+
+Execute the appender directly, without log4db2, in order to test if the
+appender is correctly configured. Sometimes there are file permissions problems,
+or the path is wrong.
+
+    db2 "CALL LOGGER.LOG_CGTT(0, 1, 'Message to log', NULL))"
+
+Once you have finished this, you are ready to log!
+
+
+# Uninstall
+
+If you want to remove the configuration, and supposing you kept the same IDs,
+just execute the following script:
+
+    cd sql-pl
+    db2 -tf Appender_CGTT_Drop.sql
+    cd ..
+
