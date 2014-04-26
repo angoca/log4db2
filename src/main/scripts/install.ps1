@@ -114,6 +114,8 @@ function version($p1, $p2) {
   .\init.ps1
  }
 
+ echo "log4db2 is licensed under the terms of the Simplified-BSD license"
+
  # Checks in which DB2 version the utility will be installed.
  # DB2 v10.1 is the default version.
  if ( ! ( ${p1} ) ) {
