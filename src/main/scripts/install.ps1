@@ -70,6 +70,7 @@ function v10.1($p1) {
  echo "https://github.com/angoca/log4db2/wiki"
  echo "To report an issue or provide feedback, please visit:"
  echo "https://github.com/angoca/log4db2/issues"
+ Write-Object ' '
  if ( ${Script:continue} ) {
   echo "log4db2 was installed successfully"
  } else {
@@ -102,6 +103,7 @@ function v9.7() {
  echo "https://github.com/angoca/log4db2/wiki"
  echo "To report an issue or provide feedback, please visit:"
  echo "https://github.com/angoca/log4db2/issues"
+ Write-Object ' '
  if ( ${Script:continue} ) {
   echo "log4db2 was installed successfully"
  } else {
