@@ -83,7 +83,7 @@ goto:eof
  echo https://github.com/angoca/log4db2/issues
  echo.
  if %continue% EQU 1 (
-  echo log4db2 was installed successfully
+  echo log4db2 was successfully installed
  ) else (
   echo "Check the error(s) and reinstall the utility"
  )
@@ -116,7 +116,7 @@ goto:eof
  echo https://github.com/angoca/log4db2/issues
  echo.
  if %continue% EQU 1 (
-  echo log4db2 was installed successfully
+  echo log4db2 was successfully installed
  ) else (
   echo "Check the error(s) and reinstall the utility"
  )
