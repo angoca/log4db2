@@ -1,28 +1,52 @@
 This documentation is licensed under the terms of the FreeBSD Documentation
 License.
 
-In order to configure the UTL_FILE appender you should
+In order to install and configure the UTL_FILE appender you should follow this
+procedure that consist in three parts:
 
- * Make sure you do not have an Express-C edition.
+ * Install the code and basic configuration to write into files.
+ * Configure the appender. There is a working template here.
+ * Test the appender if that writes correctly.
+
+Once you have finished, you can use this appender to log your messages.
+
+
+# Prerequisites #
+
+Before to start, make sure you do not have an Express-C edition:
 
     db2licm -l
 
-# Configuration
+Also, you have to be sure the instance user, in which the database is running,
+has the right to create and modify the file provided in the configuration. In
+Linux you can switch to the instance user (i.e. db2inst1) and do a
 
- * Insert your appender in the list of appenders.
+    touch /home/db2inst1/log4db2/logs.log
 
-    db2 -t "
-    INSERT INTO LOGDATA.APPENDERS (APPENDER_ID, NAME)
-      VALUES (3, 'UTL_FILE')
-    "
+Probably you need to create the directory:
 
- * Add your own configuration or update the existing one.
+    mkdir -p /home/db2inst1/log4db2
+
+
+# Code #
+
+ * Install the appender from file:
+
+    cd sql-pl
+    db2 -tsf Appender_UTL_FILE_Create.sql
+    cd ..
+
+
+# Configuration #
+
+ * Add your own configuration or update the existing one in the file
+ Appender_UTL_FILE.csv. Once modified, import it in the database.
 
     cd xml
     db2 "IMPORT FROM Appender_UTL_FILE.csv OF DEL XMLPARSE STRIP WHITESPACE XMLVALIDATE USING SCHEMA LOGGER_1RC.CONF_APPENDERS INSERT INTO LOGDATA.CONF_APPENDERS"
     cd ..
 
-If the previous method did not work, you can do:
+If the previous method did not work, you can also modify the next sentence:
 
     INSERT INTO LOGDATA.CONF_APPENDERS (REF_ID, NAME, APPENDER_ID,
       CONFIGURATION, PATTERN, LEVEL_ID) VALUES (3, 'Local file', 3, '
@@ -36,22 +60,20 @@ If the previous method did not work, you can do:
        </appender>
       </log4db2>', '[%p] %c - %m', NULL)
 
- * Associate the conf_appender to a logger via the references table.
+ * Associate the conf_appender to a logger via the references table. You can do
+ this step, after testing the appender (the next step.)
 
-    db2 -t "
+    db2 "
     INSERT INTO LOGDATA.REFERENCES (LOGGER_ID, APPENDER_REF_ID)
-      VALUES (0, 3)
+      VALUES (0, 3) 
     "
 
-# Code
 
- * Install the appenders from file:
+# Test the appender #
 
-    cd sql-pl
-    db2 -tsf Appenders_No_ExpC.sql
-    cd ..
-
- * Test the procedure
+Execute the appender directly, without log4db2, in order to test if the
+appender is correctly configured. Sometimes there are file permissions problems,
+or the path is wrong.
 
     db2 -t "CALL LOGGER.LOG_UTL_FILE(0, 1, 'Message to log', XMLPARSE(DOCUMENT '
       <log4db2>
@@ -69,5 +91,15 @@ If the previous method did not work, you can do:
       </log4db2>'));
       "
 
-Ready to log!
+Once you have finished this, you are ready to log!
+
+
+# Uninstall
+
+If you want to remove the configuration, and supposing you kept the same IDs,
+just execute the following script:
+
+    cd sql-pl
+    db2 -tf Appender_UTL_FILE_Drop.sql
+    cd ..
 
