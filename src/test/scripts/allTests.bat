@@ -61,6 +61,7 @@ if %ERRORLEVEL% NEQ 0 (
  call:executeTest TestsConfLoggers
  call:executeTest TestsConfLoggersDelete
  call:executeTest TestsConfLoggersEffective
+ call:executeTest TestsConfLoggersEffectiveCases
  set TEST=TestsFunctionGetDefinedParentLogger
  echo ====Next: !TEST!
  if "!PAUSE!" == "true" (

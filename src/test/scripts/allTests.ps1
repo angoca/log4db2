@@ -69,6 +69,9 @@ if ( $LastExitCode -ne 0 ) {
  Write-Host "Press enter to continue (next TestsConfLoggersEffective)"
  $x = $host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
  & .\${SRC_TEST_SCRIPT_PATH}\test.ps1 ${SRC_TEST_CODE_PATH}\TestsConfLoggersEffective.sql
+ Write-Host "Press enter to continue (next TestsConfLoggersEffectiveCases)"
+ $x = $host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
+ & .\${SRC_TEST_SCRIPT_PATH}\test.ps1 ${SRC_TEST_CODE_PATH}\TestsConfLoggersEffectiveCases.sql
  Write-Host "Press enter to continue (next TestsFunctionsGetDefinedParentLogger)"
  $x = $host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
  db2 -tf ${SRC_MAIN_CODE_PATH}/CleanTriggers.sql +O

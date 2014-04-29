@@ -68,6 +68,7 @@ else
  executeTest TestsConfLoggers
  executeTest TestsConfLoggersDelete
  executeTest TestsConfLoggersEffective
+ executeTest TestsConfLoggersEffectiveCases
  TEST=TestsFunctionGetDefinedParentLogger
  echo "====>Next: ${TEST}"
  [ "${PAUSE}" == "true" ] && read -p "Press enter to continue"
