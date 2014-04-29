@@ -26,7 +26,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 /**
- * Tests for the conf loggers effective table.
+ * Tests for the conf loggers effective table with the 16 possible cases.
  *
  * Version: 2014-04-21 1-RC
  * Author: Andres Gomez Casanova (AngocA)
@@ -48,9 +48,12 @@ CREATE OR REPLACE FUNCTION GET_MAX_ID()
 
 CREATE OR REPLACE PROCEDURE DELETE_LAST_MESSAGE_FROM_TRIGGER()
  BEGIN
+  DECLARE MAX_DATE ANCHOR LOGDATA.LOGS.DATE;
+  
+  SELECT MAX(DATE) INTO MAX_DATE FROM LOGDATA.LOGS;
   DELETE FROM LOGDATA.LOGS
-  WHERE MESSAGE = 'A manual CONF_LOGGERS_EFFECTIVE update should be realized.'
-  AND DATE = (SELECT MAX(DATE) FROM LOGDATA.LOGS);
+    WHERE MESSAGE = 'A manual CONF_LOGGERS_EFFECTIVE update should be realized.'
+    AND DATE = MAX_DATE;
  END @
 
 BEGIN
@@ -140,7 +143,7 @@ DECLARE CONTINUE HANDLER FOR NOT FOUND
   INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES (5, 'Not found SQLCode ' || SQLCODE || '-SQLState ' || SQLSTATE);
 
 -- Prepares the environment.
-INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES (3, 'TestsConfLoggersEffective: Preparing environment');
+INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES (3, 'TestsConfLoggersEffectiveCases: Preparing environment');
 SET RAISED_LG0E1 = FALSE;
 SET RAISED_LG0E2 = FALSE;
 SET RAISED_LGAE3 = FALSE;
@@ -1009,7 +1012,7 @@ DELETE FROM LOGDATA.LOGS
 COMMIT;
 
 -- Cleans the environment.
-INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES (3, 'TestsConfLoggersEffective: Cleaning environment');
+INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES (3, 'TestsConfLoggersEffectiveCases: Cleaning environment');
 DELETE FROM LOGDATA.CONFIGURATION;
 INSERT INTO LOGDATA.CONFIGURATION (KEY, VALUE)
   VALUES ('autonomousLogging', 'true'),
@@ -1018,7 +1021,7 @@ INSERT INTO LOGDATA.CONFIGURATION (KEY, VALUE)
          ('logInternals', 'false'),
          ('secondsToRefresh', '30');
 CALL DELETE_LAST_MESSAGE_FROM_TRIGGER();
-INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES (3, 'TestsConfLoggersEffective: Finished succesfully');
+INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES (3, 'TestsConfLoggersEffectiveCases: Finished succesfully');
 COMMIT;
 
 END @
