@@ -55,3 +55,4 @@ set sqlterminator @
 
 PROMPT AppendersXML.sql
 @@ sql-pl/AppendersXML.sql
+

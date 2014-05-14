@@ -47,3 +47,4 @@ if %ERRORLEVEL% NEQ 0 (
  db2 -tf %SRC_MAIN_CODE_PATH%\CleanObjects.sql
  db2 -tf %SRC_MAIN_CODE_PATH%\CleanTables.sql
 goto:eof
+
