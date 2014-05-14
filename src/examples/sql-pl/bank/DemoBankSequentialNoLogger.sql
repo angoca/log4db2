@@ -49,9 +49,9 @@ BEGIN
  -- No logger
  -- No logger
  -- No logger
- 
+
  -- No logger
- 
+
  -- No logger
  COMMIT;
 
@@ -160,7 +160,7 @@ BEGIN
   END;
   SET ITERATION = ITERATION + 1;
  END WHILE;
- 
+
  -- No logger
  BEGIN
   CALL DEMOBANK.CLOSE_ACCOUNT(ACCOUNT);

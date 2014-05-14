@@ -56,10 +56,10 @@ P_DIVISION: BEGIN
 
  -- Retrieves the Id for the logger of the given name.
  CALL LOGGER.GET_LOGGER('DIVISION', LOGGER_ID);
- 
+
  -- Depending on the Logger configuration, some messages are not logged.
  CALL LOGGER.DEBUG(LOGGER_ID, '> DIVISION');
- 
+
  IF (DENOMINATOR = 0) THEN
   SIGNAL ZERO_DIVISION;
  ELSE
