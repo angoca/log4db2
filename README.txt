@@ -145,7 +145,7 @@ https://github.com/angoca/log4db2/wiki/Usage
 These are the files included in the released version:
 
  * `COPYING.txt` -- License for the code (BSD license - OpenSource).
- * `init*` -- Environment configuration. 
+ * `init*` -- Environment configuration.
  * `install*` -- Installation files.
  * `README.txt` -- This file.
  * `reinstall*` -- Reinstallation files.
@@ -171,7 +171,7 @@ These are the files included in the released version:
    * `Trigger.sql` -- Trigger of the different tables.
    * `UtilityBody.sql` -- Body of the core tools.
    * `UtilityHeader.sql` -- Headers of the core tools.
-      
+
  * `xml` directory -- Directory for XML Schemas, XML files and related scripts
      for appenders configuration.
    * `Appender_UTL_FILE.xml` -- Configuration for LOG_UTL_FILE appender.

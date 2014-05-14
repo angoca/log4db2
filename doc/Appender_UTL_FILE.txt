@@ -65,7 +65,7 @@ If the previous method did not work, you can also modify the next sentence:
 
     db2 "
     INSERT INTO LOGDATA.REFERENCES (LOGGER_ID, APPENDER_REF_ID)
-      VALUES (0, 3) 
+      VALUES (0, 3)
     "
 
 
