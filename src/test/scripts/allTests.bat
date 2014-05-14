@@ -45,7 +45,7 @@ if %ERRORLEVEL% NEQ 0 (
  if "!PAUSE!" == "true" (
   echo Executing all tests with pauses in between.
  ) else if "!PAUSE!" == "false" (
-  echo Executing all test.
+  echo Executing all tests.
  ) else (
   echo Error expanding variable
   exit /B -1
@@ -78,7 +78,8 @@ if %ERRORLEVEL% NEQ 0 (
  call:executeTest TestsLevels
  call:executeTest TestsLogs
  call:executeTest TestsMessages
- call:executeTest TestsReferences if not "!PAUSE!" == "true" (
+ call:executeTest TestsReferences
+ if not "!PAUSE!" == "true" (
   set TIME_END=echo !time!
   echo Difference:
   echo !TIME_INI! start
