@@ -63,7 +63,7 @@ COMMENT ON TABLESPACE LOGGER_SPACE IS
 -- EXTENT SIZE (bigger=less preallocation)
 -- PREFETCHSIZE (faster analyzes, less sync IO)
 CREATE TABLESPACE LOG_DATA_SPACE
-  PAGESIZE 8 K 
+  PAGESIZE 8 K
   EXTENTSIZE 64
   PREFETCHSIZE AUTOMATIC
   BUFFERPOOL LOG_BP;
@@ -295,7 +295,7 @@ COMMENT ON CONSTRAINT REFERENCES.LOG_REF_FK_CONF_APPEND IS
 -- does not impact the performance, and provides a better way to sort messages.
 -- This ID column could be hidden to the user. The benefic is that the logs
 -- could be accessed via an index, but it impacts the writes, because this
--- structure has to be maintained. 
+-- structure has to be maintained.
 CREATE TABLE LOGS (
   DATE CHAR(13) FOR BIT DATA NOT NULL IMPLICITLY HIDDEN,
   LEVEL_ID SMALLINT,

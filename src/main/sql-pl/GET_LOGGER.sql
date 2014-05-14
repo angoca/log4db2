@@ -85,7 +85,7 @@ ALTER MODULE LOGGER ADD
   DECLARE INTERNAL BOOLEAN DEFAULT FALSE; -- Internal logging.
   -- Handles the limit cascade call.
   DECLARE EXIT HANDLER FOR SQLSTATE '54038'
-    INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES 
+    INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES
       (2, 'LG001. Cascade call limit achieved, for GET_LOGGER: '
       || COALESCE(NAME, 'null'));
 
@@ -95,7 +95,7 @@ ALTER MODULE LOGGER ADD
   END IF;
 
   IF (INTERNAL = TRUE) THEN
-   INSERT INTO LOGDATA.LOGS (DATE, LEVEL_ID, LOGGER_ID, MESSAGE) VALUES 
+   INSERT INTO LOGDATA.LOGS (DATE, LEVEL_ID, LOGGER_ID, MESSAGE) VALUES
      (GENERATE_UNIQUE(), 4, -1, 'Getting logger name for '
      || COALESCE(NAME, 'null'));
   END IF;
@@ -201,7 +201,7 @@ ALTER MODULE LOGGER ADD
      DECLARE EXIT HANDLER FOR SQLSTATE '09000', SQLSTATE 'LG0P2'
        BEGIN
         SET PARENT = 0;
-        INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES 
+        INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES
           (2, 'LG001. Cascade call limit achieved, for GET_LOGGER: '
           || COALESCE(NAME, 'null'));
        END;
@@ -211,7 +211,7 @@ ALTER MODULE LOGGER ADD
      WHILE (POS < LENGTH) DO
       IF (QTY >= MAX_LEVELS) THEN
        SIGNAL SQLSTATE 'LG0P2'
-         SET MESSAGE_TEXT = 'Maximum levels for a hierarchy'; 
+         SET MESSAGE_TEXT = 'Maximum levels for a hierarchy';
       END IF;
       SET POS = POSSTR (SUBS_POS, '.');
       -- If different to zero means that a dot was found => Root level.
@@ -238,7 +238,7 @@ ALTER MODULE LOGGER ADD
       SET LOGGERS_ID_CACHE[NAME] = LOG_ID;
       -- Internal logging.
       IF (INTERNAL = TRUE) THEN
-       INSERT INTO LOGDATA.LOGS (DATE, LEVEL_ID, LOGGER_ID, MESSAGE) VALUES 
+       INSERT INTO LOGDATA.LOGS (DATE, LEVEL_ID, LOGGER_ID, MESSAGE) VALUES
          (GENERATE_UNIQUE(), 4, -1, 'Logger not in cache ' || NAME || ' with ' || LOG_ID );
       END IF;
      END;
@@ -247,7 +247,7 @@ ALTER MODULE LOGGER ADD
   END IF;
   -- Internal logging.
   IF (INTERNAL = TRUE) THEN
-   INSERT INTO LOGDATA.LOGS (DATE, LEVEL_ID, LOGGER_ID, MESSAGE) VALUES 
+   INSERT INTO LOGDATA.LOGS (DATE, LEVEL_ID, LOGGER_ID, MESSAGE) VALUES
      (GENERATE_UNIQUE(), 4, -1, 'Logger ID for ' || NAME || ' is ' || COALESCE(LOG_ID, -1));
   END IF;
  END P_GET_LOGGER @

@@ -174,7 +174,7 @@ ALTER MODULE LOGGER ADD
   -- Sets a reference date 1970-01-01.
   SET LAST_REFRESH = DATE(719163);
   SET LOADED = FALSE;
- END P_UNLOAD_CONF @ 
+ END P_UNLOAD_CONF @
 
 /**
  * Refreshes the configuration cache immediately.
@@ -214,7 +214,7 @@ ALTER MODULE LOGGER ADD
     SET AT_END = TRUE;
   -- Clears the current configuration.
   CALL UNLOAD_CONF();
-  
+
   -- Reads current configuration.
   -- FIXME: ARRAY_AGG is not supported in previous versions to v10.1fp2
   -- SELECT ARRAY_AGG(KEY, VALUE) INTO CONFIGURATION
@@ -271,7 +271,7 @@ ALTER MODULE LOGGER ADD
     -- There is an invalid value.
     DECLARE CONTINUE HANDLER FOR SQLSTATE '22018'
       SET SECS = 60;
-    
+
     SET SECS = INT(CONF_CACHE[REFRESH_CONS]);
     IF (SECS IS NULL) THEN
      SET SECS = 60;
@@ -503,7 +503,7 @@ ALTER MODULE LOGGER ADD
   PARAMETER CCSID UNICODE
  F_BOOL_TO_CHAR: BEGIN
   DECLARE RET CHAR(5) DEFAULT 'FALSE';
-  
+
   IF (VALUE IS NULL) THEN
     SET RET = 'NULL';
   ELSEIF (VALUE = TRUE) THEN
@@ -611,7 +611,7 @@ ALTER MODULE LOGGER ADD
      IF (PARENT = 0) THEN
       -- The parent is ROOT, thus do not concatenate.
       SET COMPLETE_NAME = NAME;
-     ELSE 
+     ELSE
       SET RETURNED = GET_LOGGER_NAME(PARENT) ;
       SET COMPLETE_NAME = RETURNED || '.' || NAME;
      END IF;
@@ -666,8 +666,8 @@ ALTER MODULE LOGGER ADD
   DECLARE LVL_ID ANCHOR LOGDATA.LEVELS.LEVEL_ID;
 
   -- Debug
-  -- INSERT INTO LOGS (DATE, LEVEL_ID, LOGGER_ID, MESSAGE) VALUES 
-  --   (GENERATE_UNIQUE(), 5, -1, '>MOD_DES parent ' || coalesce (PARENT, -1) 
+  -- INSERT INTO LOGS (DATE, LEVEL_ID, LOGGER_ID, MESSAGE) VALUES
+  --   (GENERATE_UNIQUE(), 5, -1, '>MOD_DES parent ' || coalesce (PARENT, -1)
   --   || ',level ' || coalesce (LEVEL, -1));
 
   IF (PARENT IS NULL OR PARENT < 0 OR LEVEL IS NULL OR LEVEL < 0) THEN
@@ -706,7 +706,7 @@ ALTER MODULE LOGGER ADD
 
   -- Debug
   -- INSERT INTO LOGS (DATE, LEVEL_ID, LOGGER_ID, MESSAGE) VALUES (
-  --   GENERATE_UNIQUE(), 5, -1, '<MOD_DES parent ' || coalesce (PARENT, -1) 
+  --   GENERATE_UNIQUE(), 5, -1, '<MOD_DES parent ' || coalesce (PARENT, -1)
   --   || ',level ' || coalesce (LEVEL, -1));
 
  END P_MODIFY_DESCENDANTS @

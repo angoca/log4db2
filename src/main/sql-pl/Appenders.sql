@@ -51,7 +51,7 @@ SET PATH = SYSPROC, LOGGER_1RC @
  * TESTS
  *   TestsLogs: Validates that the messages are well written.
  */
-ALTER MODULE LOGGER PUBLISH 
+ALTER MODULE LOGGER PUBLISH
   PROCEDURE LOG_TABLES (
   IN LOGGER_ID ANCHOR LOGDATA.CONF_LOGGERS.LOGGER_ID,
   IN LEVEL_ID ANCHOR LOGDATA.LEVELS.LEVEL_ID,
@@ -83,7 +83,7 @@ ALTER MODULE LOGGER PUBLISH
  * TESTS
  *   TestsLogs: Validates that the messages are well written.
  */
-ALTER MODULE LOGGER PUBLISH 
+ALTER MODULE LOGGER PUBLISH
   PROCEDURE LOG_TABLES_AUTONOMOUS (
   IN LOGGER_ID ANCHOR LOGDATA.CONF_LOGGERS.LOGGER_ID,
   IN LEVEL_ID ANCHOR LOGDATA.LEVELS.LEVEL_ID,
@@ -113,9 +113,9 @@ ALTER MODULE LOGGER PUBLISH
  * IN MESSAGE
  *   Descriptive message to write in the log table.
  * IN CONFIGURATION
- *   TODO Any particular configuration for the appender. 
+ *   TODO Any particular configuration for the appender.
  */
-ALTER MODULE LOGGER PUBLISH 
+ALTER MODULE LOGGER PUBLISH
   PROCEDURE LOG_DB2DIAG (
   IN LOGGER_ID ANCHOR LOGDATA.CONF_LOGGERS.LOGGER_ID,
   IN LEVEL_ID ANCHOR LOGDATA.LEVELS.LEVEL_ID,
@@ -132,8 +132,8 @@ ALTER MODULE LOGGER PUBLISH
 /**
  * Writes the provided message in the DB2LOGGER. This is an external logging
  * facility implemented in C, and that has only two levels for loggers.
- * 
- * For more information: 
+ *
+ * For more information:
  * - http://www.ibm.com/developerworks/data/library/techarticle/dm-0601khatri/
  * - http://www.zinox.com/node/89
  *
@@ -152,7 +152,7 @@ ALTER MODULE LOGGER PUBLISH
   IN LEVEL_ID ANCHOR LOGDATA.LEVELS.LEVEL_ID,
   IN MESSAGE ANCHOR MESSAGE,
   IN CONFIGURATION ANCHOR LOGDATA.CONF_APPENDERS.CONFIGURATION
-  ) 
+  )
   LANGUAGE SQL
   SPECIFIC P_LOG_DB2LOGGER
   DYNAMIC RESULT SETS 0
@@ -183,9 +183,9 @@ ALTER MODULE LOGGER PUBLISH
  * IN MESSAGE
  *   Descriptive message to write in the log table.
  * IN CONFIGURATION
- *   TODO Any particular configuration for the appender. 
+ *   TODO Any particular configuration for the appender.
  */
-ALTER MODULE LOGGER PUBLISH 
+ALTER MODULE LOGGER PUBLISH
   PROCEDURE LOG_JAVA (
   IN LOGGER_ID ANCHOR LOGDATA.CONF_LOGGERS.LOGGER_ID,
   IN LEVEL_ID ANCHOR LOGDATA.LEVELS.LEVEL_ID,
@@ -203,9 +203,9 @@ ALTER MODULE LOGGER PUBLISH
  * IN MESSAGE
  *   Descriptive message to write in the log table.
  * IN CONFIGURATION
- *   Any particular configuration for the appender. 
+ *   Any particular configuration for the appender.
  */
-ALTER MODULE LOGGER PUBLISH 
+ALTER MODULE LOGGER PUBLISH
   PROCEDURE LOG_NULL (
   IN LOGGER_ID ANCHOR LOGDATA.CONF_LOGGERS.LOGGER_ID,
   IN LEVEL_ID ANCHOR LOGDATA.LEVELS.LEVEL_ID,
