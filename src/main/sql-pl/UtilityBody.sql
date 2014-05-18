@@ -672,7 +672,7 @@ ALTER MODULE LOGGER ADD
 
   IF (PARENT IS NULL OR PARENT < 0 OR LEVEL IS NULL OR LEVEL < 0) THEN
    SIGNAL SQLSTATE VALUE 'LG0P1'
-     SET MESSAGE_TEXT = 'Invalid given parameter: PARENT or LEVEL ';
+     SET MESSAGE_TEXT = 'Invalid given parameter: PARENT or LEVEL';
   END IF;
   -- Analyzes all sons for the given parent.
   FOR F AS C CURSOR FOR
