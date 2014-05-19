@@ -73,7 +73,7 @@ CREATE OR REPLACE PROCEDURE TEAR_DOWN()
 
 CREATE OR REPLACE PROCEDURE ONE_TIME_TEAR_DOWN()
  BEGIN
-  -- Your code
+  -- Emtpy
  END @
 
 -- Test01: Check message limit.
