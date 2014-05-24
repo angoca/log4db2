@@ -390,7 +390,7 @@ ALTER MODULE LOGGER ADD
    -- When the logger id is -1, this is for internal logging.
    CALL LOG_TABLES(LOG_ID, LEV_ID, MESSAGE);
   END IF;
-END P_LOG @
+ END P_LOG @
 
 -- MACROS
 
