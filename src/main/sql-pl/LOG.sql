@@ -127,7 +127,7 @@ ALTER MODULE LOGGER ADD
  * +-----------------+---------------------------------------------------------+
  *
  * All this conversion words should be preceded by the % (percentage) sign.
- * The environment information is retreived via table and scalar functions
+ * The environment information is retrieved via table and scalar functions
  * included in DB2.
  *
  *
@@ -354,11 +354,11 @@ ALTER MODULE LOGGER ADD
            (2, -1, 'Appender not available: ' || TRIM(COALESCE(
            CURRENT_APPENDER_NAME, 'No name')) || '=' || NEW_MESSAGE);
 
-         -- Using inexistant appender.
+         -- Using non-existent appender.
          DECLARE CONTINUE HANDLER FOR SQLSTATE '42884'
            BEGIN
             INSERT INTO LOGDATA.LOGS (LEVEL_ID, LOGGER_ID, MESSAGE) VALUES
-            (2, -1, 'Inexistant appender: '
+            (2, -1, 'Non-existent appender: '
             || TRIM(COALESCE(CURRENT_APPENDER_NAME, 'No name')) || '='
             || COALESCE(NEW_MESSAGE,'No message'));
             SET CONT = FALSE;
