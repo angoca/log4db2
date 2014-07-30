@@ -43,77 +43,105 @@ installScript() {
 
 # DB2 v10.1.
 v10_1() {
+ local  __retInstall=$1
+
  echo "Installing utility for v10.1"
- [ ${continue} == true ] && installScript ${SRC_MAIN_CODE_PATH}/Tables.sql
- [ ${continue} == true ] && installScript ${SRC_MAIN_CODE_PATH}/UtilityHeader.sql
- [ ${continue} == true ] && installScript ${SRC_MAIN_CODE_PATH}/UtilityBody.sql
- [ ${continue} == true ] && installScript ${SRC_MAIN_CODE_PATH}/Appenders.sql
- [ ${continue} == true ] && installScript ${SRC_MAIN_CODE_PATH}/LOG.sql
- [ ${continue} == true ] && installScript ${SRC_MAIN_CODE_PATH}/GET_LOGGER.sql
- [ ${continue} == true ] && installScript ${SRC_MAIN_CODE_PATH}/Trigger.sql
+ [ ${continue} = true ] && installScript ${LOG4DB2_SRC_MAIN_CODE_PATH}/Tables.sql
+ [ ${continue} = true ] && installScript ${LOG4DB2_SRC_MAIN_CODE_PATH}/UtilityHeader.sql
+ [ ${continue} = true ] && installScript ${LOG4DB2_SRC_MAIN_CODE_PATH}/UtilityBody.sql
+ [ ${continue} = true ] && installScript ${LOG4DB2_SRC_MAIN_CODE_PATH}/Appenders.sql
+ [ ${continue} = true ] && installScript ${LOG4DB2_SRC_MAIN_CODE_PATH}/LOG.sql
+ [ ${continue} = true ] && installScript ${LOG4DB2_SRC_MAIN_CODE_PATH}/GET_LOGGER.sql
+ [ ${continue} = true ] && installScript ${LOG4DB2_SRC_MAIN_CODE_PATH}/Trigger.sql
 
- [ ${continue} == true ] && installScript ${SRC_MAIN_CODE_PATH}/AdminHeader.sql
- [ ${continue} == true ] && installScript ${SRC_MAIN_CODE_PATH}/AdminBody.sql
+ [ ${continue} = true ] && installScript ${LOG4DB2_SRC_MAIN_CODE_PATH}/AdminHeader.sql
+ [ ${continue} = true ] && installScript ${LOG4DB2_SRC_MAIN_CODE_PATH}/AdminBody.sql
 
- cd ${SRC_MAIN_CODE_PATH}
+ cd ${LOG4DB2_SRC_MAIN_CODE_PATH}
  cd ..
  cd xml
- [ ${continue} == true ] && installScript AppendersXML.sql
+ [ ${continue} = true ] && installScript AppendersXML.sql
  cd ..
  cd scripts 2> /dev/null
 
  # Temporal capabilities for tables.
- if [ "${1}" == "t" -a ${continue} == true ] ; then
+ if [ "${2}" = "t" -a ${continue} = true ] ; then
   echo "Create table for Time Travel"
-  installScript ${SRC_MAIN_CODE_PATH}/TablesTimeTravel.sql
+  installScript ${LOG4DB2_SRC_MAIN_CODE_PATH}/TablesTimeTravel.sql
  fi
+
+ [ ${continue} = true ] && installScript ${LOG4DB2_SRC_MAIN_CODE_PATH}/Version.sql
 
  echo "Please visit the wiki to learn how to use and configure this utility"
  echo "https://github.com/angoca/log4db2/wiki"
  echo "To report an issue or provide feedback, please visit:"
  echo "https://github.com/angoca/log4db2/issues"
  echo
- if [ ${continue} == true ] ; then
+ if [ ${continue} = true ] ; then
   echo "log4db2 was successfully installed"
+  db2 -x "values 'Database: ' || current server"
+  db2 -x "values 'Version: ' || logger.version"
+  db2 -x "select 'Schema: ' || base_moduleschema from syscat.modules where moduleschema = 'SYSPUBLIC' and modulename = 'LOGGER'"
+  retValue=0
  else
   echo "Check the error(s) and reinstall the utility"
+  unset continue
+  retValue=1
  fi
+
+ local  myRetInstall=${retValue}
+ eval $__retInstall="'${myRetInstall}'"
 }
 
 # DB2 v9.7
 v9_7() {
+ local  __retInstall=$1
+
  echo "Installing utility for DB2 v9.7"
- [ ${continue} == true ] && installScript ${SRC_MAIN_CODE_PATH}/Tables_v9_7.sql
- [ ${continue} == true ] && installScript ${SRC_MAIN_CODE_PATH}/UtilityHeader.sql
- [ ${continue} == true ] && installScript ${SRC_MAIN_CODE_PATH}/UtilityBody.sql
- [ ${continue} == true ] && installScript ${SRC_MAIN_CODE_PATH}/Appenders.sql
- [ ${continue} == true ] && installScript ${SRC_MAIN_CODE_PATH}/LOG.sql
- [ ${continue} == true ] && installScript ${SRC_MAIN_CODE_PATH}/GET_LOGGER_v9_7.sql
- [ ${continue} == true ] && installScript ${SRC_MAIN_CODE_PATH}/Trigger.sql
+ [ ${continue} = true ] && installScript ${LOG4DB2_SRC_MAIN_CODE_PATH}/Tables_v9_7.sql
+ [ ${continue} = true ] && installScript ${LOG4DB2_SRC_MAIN_CODE_PATH}/UtilityHeader.sql
+ [ ${continue} = true ] && installScript ${LOG4DB2_SRC_MAIN_CODE_PATH}/UtilityBody.sql
+ [ ${continue} = true ] && installScript ${LOG4DB2_SRC_MAIN_CODE_PATH}/Appenders.sql
+ [ ${continue} = true ] && installScript ${LOG4DB2_SRC_MAIN_CODE_PATH}/LOG.sql
+ [ ${continue} = true ] && installScript ${LOG4DB2_SRC_MAIN_CODE_PATH}/GET_LOGGER_v9_7.sql
+ [ ${continue} = true ] && installScript ${LOG4DB2_SRC_MAIN_CODE_PATH}/Trigger.sql
 
- [ ${continue} == true ] && installScript ${SRC_MAIN_CODE_PATH}/AdminHeader.sql
- [ ${continue} == true ] && installScript ${SRC_MAIN_CODE_PATH}/AdminBody.sql
+ [ ${continue} = true ] && installScript ${LOG4DB2_SRC_MAIN_CODE_PATH}/AdminHeader.sql
+ [ ${continue} = true ] && installScript ${LOG4DB2_SRC_MAIN_CODE_PATH}/AdminBody.sql
 
- cd ${SRC_MAIN_CODE_PATH}
+ cd ${LOG4DB2_SRC_MAIN_CODE_PATH}
  cd ..
  cd xml
- [ ${continue} == true ] && installScript AppendersXML.sql
+ [ ${continue} = true ] && installScript AppendersXML.sql
  cd ..
  cd scripts 2> /dev/null
+
+ [ ${continue} = true ] && installScript ${LOG4DB2_SRC_MAIN_CODE_PATH}/Version.sql
 
  echo "Please visit the wiki to learn how to use and configure this utility"
  echo "https://github.com/angoca/log4db2/wiki"
  echo "To report an issue or provide feedback, please visit:"
  echo "https://github.com/angoca/log4db2/issues"
  echo
- if [ ${continue} == true ] ; then
+ if [ ${continue} = true ] ; then
   echo "log4db2 was successfully installed"
+  db2 -x "values 'Database: ' || current server"
+  db2 -x "values 'Version: ' || logger.version"
+  db2 -x "select 'Schema: ' || base_moduleschema from syscat.modules where moduleschema = 'SYSPUBLIC' and modulename = 'LOGGER'"
+  retValue=0
  else
   echo "Check the error(s) and reinstall the utility"
+  unset continue
+  retValue=1
  fi
+
+ local  myRetInstall=${retValue}
+ eval $__retInstall="'${myRetInstall}'"
 }
 
-version() {
+init() {
+ local  __retInit=$1
+
  if [ -x init ] ; then
   . ./init
  fi
@@ -122,32 +150,45 @@ version() {
 
  # Checks in which DB2 version the utility will be installed.
  # DB2 v10.1 is the default version.
- if [ "${1}" == "" ] ; then
-  v10_1
- elif [ "${1}" == "t" ] ; then
-  v10_1 t
- elif [ "${1}" == "-v10.1" ] ; then
-  if [ "${2}" == "" ] ; then
-   v10_1
-  elif [ "${2}" == "t" ] ; then
-   v10_1 t
+ param1=${2}
+ param2=${3}
+ if [ "${param1}" = "" ] ; then
+  v10_1 retInstall
+ elif [ "${param1}" = "t" ] ; then
+  v10_1 retInstall t
+ elif [ "${param1}" = "-v10.1" ] ; then
+  if [ "${param2}" = "" ] ; then
+   v10_1 retInstall
+  elif [ "${param2}" = "t" ] ; then
+   v10_1 retInstall t
   else
-   echo ERROR
+   echo "ERROR1 in parameters"
   fi
- elif [ "${1}" == "-v9.7" ] ; then
-  v9_7
+ elif [ "${param1}" = "-v9.7" ] ; then
+  v9_7 retInstall
  else
-  echo ERROR
+  echo "ERROR2 in parameters"
  fi
+
+ if [ -x uninit ] ; then
+  . ./uninit
+ fi
+
+ local  myRetInit=${retInstall}
+ eval $__retInit="'${myRetInit}'"
 }
 
 # Checks if there is already a connection established
 db2 connect > /dev/null
 if [ ${?} -eq 0 ] ; then
- version ${1} ${2}
+ init ret ${1} ${2}
 else
  echo "Please connect to a database before the execution of the installation."
  echo "Remember that to call the script the command is '. ./install'"
+ ret=2
 fi
+
 unset continue
+
+return ${ret}
 
