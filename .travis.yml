@@ -28,7 +28,7 @@ before_install:
   # Creates the database
   - sudo su - db2inst1 -c "db2 create db log4db2 ; db2 connect to log4db2 ; db2 grant dbadm on database to user $USER ; db2 \"CREATE TABLESPACE SYSTOOLSPACE IN IBMCATGROUP MANAGED BY AUTOMATIC STORAGE USING STOGROUP IBMSTOGROUP EXTENTSIZE 4\""
   # Retrieves and extract db2unit
-  - wget https://github.com/angoca/db2unit/releases/download/1-Beta/db2unit.tar.gz
+  - wget https://github.com/angoca/db2unit/releases/download/db2unit-1-Beta/db2unit.tar.gz
   - tar zxvf db2unit.tar.gz
 
 install:
