@@ -46,6 +46,7 @@ v10_1() {
  local  __retInstall=$1
 
  echo "Installing utility for v10.1"
+ [ ${continue} = true ] && installScript ${LOG4DB2_SRC_MAIN_CODE_PATH}/AdminObjects.sql
  [ ${continue} = true ] && installScript ${LOG4DB2_SRC_MAIN_CODE_PATH}/Tables.sql
  [ ${continue} = true ] && installScript ${LOG4DB2_SRC_MAIN_CODE_PATH}/UtilityHeader.sql
  [ ${continue} = true ] && installScript ${LOG4DB2_SRC_MAIN_CODE_PATH}/UtilityBody.sql
@@ -98,6 +99,7 @@ v9_7() {
  local  __retInstall=$1
 
  echo "Installing utility for DB2 v9.7"
+ [ ${continue} = true ] && installScript ${LOG4DB2_SRC_MAIN_CODE_PATH}/AdminObjects.sql
  [ ${continue} = true ] && installScript ${LOG4DB2_SRC_MAIN_CODE_PATH}/Tables_v9_7.sql
  [ ${continue} = true ] && installScript ${LOG4DB2_SRC_MAIN_CODE_PATH}/UtilityHeader.sql
  [ ${continue} = true ] && installScript ${LOG4DB2_SRC_MAIN_CODE_PATH}/UtilityBody.sql
