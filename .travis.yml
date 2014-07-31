@@ -34,7 +34,7 @@ install:
   - cd ${TRAVIS_BUILD_DIR}
   - sh -c "if [ '$ENV' = 'release' ]; then mvn ; fi"
   - sh -c "if [ '$ENV' = 'release' ]; then . ~db2inst1/sqllib/db2profile ; db2 connect to log4db2 ; cd target/log4db2/log4db2 ; . ./install ; fi"
-  - sh -c "if [ '$ENV' = 'test' ]; then . ~db2inst1/sqllib/db2profile ; db2 connect to log4db2 ; cd src/test/scripts ; . ./init-dev ; cd ../../main/scripts ; . ./install ; fi"
+  - bash -c "if [ '$ENV' = 'test' ]; then . ~db2inst1/sqllib/db2profile ; db2 connect to log4db2 ; cd src/test/scripts ; . ./init-dev ; cd ../../main/scripts ; . ./install ; fi"
   # Install db2unit
   - bash -c "if [ '$ENV' = 'test' ]; then . ~db2inst1/sqllib/db2profile ; db2 connect to log4db2 ; cd ; cd db2unit ; . ./install ; fi"
   - cd src/test/scripts ; . ./init-dev
