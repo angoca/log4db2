@@ -35,7 +35,7 @@ executeTest() {
  if [ "${PAUSE}" == "true" ] ; then
   read -p "Press enter to continue"
  fi
- . ${SRC_TEST_SCRIPT_PATH}/test ${SRC_TEST_CODE_PATH}/${script}.sql
+ . ${LOG4DB2_SRC_TEST_SCRIPT_PATH}/test ${LOG4DB2_SRC_TEST_CODE_PATH}/${script}.sql
 }
 . ./init-dev
 
@@ -72,9 +72,9 @@ else
  TEST=TestsFunctionGetDefinedParentLogger
  echo "====>Next: ${TEST}"
  [ "${PAUSE}" == "true" ] && read -p "Press enter to continue"
- db2 -tf ${SRC_MAIN_CODE_PATH}/CleanTriggers.sql +O
- . ${SRC_TEST_SCRIPT_PATH}/test ${SRC_TEST_CODE_PATH}/${TEST}.sql
- db2 -tf ${SRC_MAIN_CODE_PATH}/Trigger.sql +O
+ db2 -tf ${LOG4DB2_SRC_MAIN_CODE_PATH}/CleanTriggers.sql +O
+ . ${LOG4DB2_SRC_TEST_SCRIPT_PATH}/test ${LOG4DB2_SRC_TEST_CODE_PATH}/${TEST}.sql
+ db2 -tf ${LOG4DB2_SRC_MAIN_CODE_PATH}/Trigger.sql +O
  executeTest TestsDynamicAppenders
  executeTest TestsGetLogger
  executeTest TestsGetLoggerName
