@@ -30,6 +30,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * Made in COLOMBIA.
  */
 
+PROMPT AdminObjects.sql
+@@ sql-pl/AdminObjects.sql
 PROMPT Tables.sql
 @@ sql-pl/Tables.sql
 PROMPT UtilityHeader.sql
@@ -55,4 +57,7 @@ set sqlterminator @
 
 PROMPT AppendersXML.sql
 @@ sql-pl/AppendersXML.sql
+
+PROMPT Version.sql
+@@ sql-pl/Version.sql
 
