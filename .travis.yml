@@ -38,6 +38,7 @@ install:
   # Install db2unit
   - cd
   - cd db2unit
+  - find
   - . ./install
   - cd src/test/scripts ; . ./init-dev
 
