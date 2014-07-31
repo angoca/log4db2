@@ -35,11 +35,6 @@ SET CURRENT SCHEMA LOGGER_1RC;
  * Made in COLOMBIA.
  */
 
--- Schema for logger utility's objects.
-CREATE SCHEMA LOGGER_1RC;
-
-COMMENT ON SCHEMA LOGGER_1RC IS 'Schema for objects of the log4db2 utility';
-
 -- Module for all code for the logger utility.
 CREATE OR REPLACE MODULE LOGGER;
 

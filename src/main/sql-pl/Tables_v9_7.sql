@@ -43,38 +43,6 @@ SET CURRENT SCHEMA LOGDATA;
  * Made in COLOMBIA.
  */
 
--- Buffer pool for log data.
-CREATE BUFFERPOOL LOG_CONF_BP
-  PAGESIZE 4K;
-
--- Buffer pool for log data.
-CREATE BUFFERPOOL LOG_BP
-  PAGESIZE 8K;
-
--- Tablespace for logger utility.
-CREATE TABLESPACE LOGGER_SPACE
-  PAGESIZE 4 K
-  BUFFERPOOL LOG_CONF_BP;
-
-COMMENT ON TABLESPACE LOGGER_SPACE IS
-  'All configuration tables for the logger utility';
-
--- Tablespace for logs (data).
--- PERF: Try to change the configuration to improve the performance:
--- LARGE tablespace (more rows per page)
--- EXTENT SIZE (bigger=less preallocation)
--- PREFETCHSIZE (faster analyzes, less sync IO)
-CREATE TABLESPACE LOG_DATA_SPACE
-  PAGESIZE 8 K
-  EXTENTSIZE 64
-  PREFETCHSIZE AUTOMATIC
-  BUFFERPOOL LOG_BP;
-
-COMMENT ON TABLESPACE LOGGER_SPACE IS 'Logs in an independent tablespace';
-
--- Schema for logger tables.
-CREATE SCHEMA LOGDATA;
-
 COMMENT ON SCHEMA LOGDATA IS 'Schema for table of the log4db2 utility';
 
 -- Table for the global configuration of the logger utility.
