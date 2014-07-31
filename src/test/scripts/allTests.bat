@@ -67,9 +67,9 @@ if %ERRORLEVEL% NEQ 0 (
  if "!PAUSE!" == "true" (
   pause
  )
- db2 -tf !SRC_MAIN_CODE_PATH!\CleanTriggers.sql +O
- call !SRC_TEST_SCRIPT_PATH!\test.bat !SRC_TEST_CODE_PATH!\!TEST!.sql
- db2 -tf !SRC_MAIN_CODE_PATH!\Trigger.sql +O
+ db2 -tf !LOG4DB2_SRC_MAIN_CODE_PATH!\CleanTriggers.sql +O
+ call !LOG4DB2_SRC_TEST_SCRIPT_PATH!\test.bat !LOG4DB2_SRC_TEST_CODE_PATH!\!TEST!.sql
+ db2 -tf !LOG4DB2_SRC_MAIN_CODE_PATH!\Trigger.sql +O
  call:executeTest TestsDynamicAppenders
  call:executeTest TestsGetLogger
  call:executeTest TestsGetLoggerName
@@ -97,6 +97,6 @@ goto:eof
  if "!PAUSE!" == "true" (
   pause
  )
- call %SRC_TEST_SCRIPT_PATH%\test.bat %SRC_TEST_CODE_PATH%\%script%.sql
+ call %LOG4DB2_SRC_TEST_SCRIPT_PATH%\test.bat %LOG4DB2_SRC_TEST_CODE_PATH%\%script%.sql
 goto:eof
 

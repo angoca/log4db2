@@ -38,7 +38,7 @@ else
   . ./init
  fi
  echo Uninstalling log4db2
- db2 -tf ${SRC_MAIN_CODE_PATH}/../../examples/sql-pl/disable/FakeCleanObjects.sql
- db2 -tf ${SRC_MAIN_CODE_PATH}/../../examples/sql-pl/disable/FakeCleanTables.sql
+ db2 -tf ${LOG4DB2_SRC_MAIN_CODE_PATH}/../../examples/sql-pl/disable/FakeCleanObjects.sql
+ db2 -tf ${LOG4DB2_SRC_MAIN_CODE_PATH}/../../examples/sql-pl/disable/FakeCleanTables.sql
 fi
 

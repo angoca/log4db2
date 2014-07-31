@@ -23,31 +23,16 @@
 :: ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 :: POSSIBILITY OF SUCH DAMAGE.
 
-:: Uninstalls all the components of this utility.
+:: Cleans the environment variables.
 ::
 :: Version: 2014-02-14 1-RC
 :: Author: Andres Gomez Casanova (AngocA)
 :: Made in COLOMBIA.
 
-:: Checks if there is already a connection established
-db2 connect > NUL
-if %ERRORLEVEL% NEQ 0 (
- echo Please connect to a database before the execution of the uninstallation.
-) else (
- if EXIST init.bat (
-  call init.bat
- )
- goto:uninstall
+:: When testing, the variables are preserved.
+if "%LOG4DB2_SRC_TEST_CODE_PATH%" EQU "" (
+ set LOG4DB2_SRC_MAIN_CODE_PATH=
+ set LOG4DB2_SRC_MAIN_SCRIPT_PATH=
+ set LOG4DB2_PATH=
 )
-
-:: There is a problem with global variables when calling the first time.
-:uninstall
- echo Uninstalling log4db2
- db2 -tf %LOG4DB2_SRC_MAIN_CODE_PATH%\CleanTriggers.sql
- db2 -tf %LOG4DB2_SRC_MAIN_CODE_PATH%\CleanObjects.sql
- db2 -tf %LOG4DB2_SRC_MAIN_CODE_PATH%\CleanTables.sql
- db2 -tf PACKAGES_TO_DROP.sql
- del PACKAGES_TO_DROP.sql
- db2 -tf %LOG4DB2_SRC_MAIN_CODE_PATH%\CleanAdmin.sql
-goto:eof
 

@@ -34,8 +34,8 @@ if ( ! ( Test-Path Variable:\LOG4DB2_PATH ) ) {
  ${LOG4DB2_PATH}="."
 }
 
-if ( ! ( Test-Path Variable:\SRC_MAIN_CODE_PATH ) ) {
- ${Global:SRC_MAIN_CODE_PATH}="${LOG4DB2_PATH}\sql-pl"
- ${Global:SRC_MAIN_SCRIPT_PATH}="${LOG4DB2_PATH}"
+if ( ! ( Test-Path Variable:\LOG4DB2_SRC_MAIN_CODE_PATH ) ) {
+ ${Global:LOG4DB2_SRC_MAIN_CODE_PATH}="${LOG4DB2_PATH}\sql-pl"
+ ${Global:LOG4DB2_SRC_MAIN_SCRIPT_PATH}="${LOG4DB2_PATH}"
 }
 

@@ -33,6 +33,6 @@ if EXIST init.bat (
  call init.bat
 )
 
-call %SRC_MAIN_SCRIPT_PATH%\uninstall.bat
-call %SRC_MAIN_SCRIPT_PATH%\install.bat %1 %2
+call %LOG4DB2_SRC_MAIN_SCRIPT_PATH%\uninstall.bat
+call %LOG4DB2_SRC_MAIN_SCRIPT_PATH%\install.bat %1 %2
 

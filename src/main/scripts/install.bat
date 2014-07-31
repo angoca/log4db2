@@ -30,14 +30,17 @@
 :: Made in COLOMBIA.
 
 set continue=1
+set retValue=0
 
 :: Checks if there is already a connection established
 db2 connect > NUL
 if %ERRORLEVEL% EQU 0 (
- call:version %1 %2
+ call:init %1 %2
 ) else (
  echo Please connect to a database before the execution of the installation.
+ set retValue=2
 )
+exit /B %retValue%
 goto:eof
 
 :: Installs a given script.
@@ -53,18 +56,21 @@ goto:eof
 :: DB2 v10.1
 :v10.1
  echo Installing utility for v10.1
- if %continue% EQU 1 call:installScript %SRC_MAIN_CODE_PATH%\Tables.sql
- if %continue% EQU 1 call:installScript %SRC_MAIN_CODE_PATH%\UtilityHeader.sql
- if %continue% EQU 1 call:installScript %SRC_MAIN_CODE_PATH%\UtilityBody.sql
- if %continue% EQU 1 call:installScript %SRC_MAIN_CODE_PATH%\Appenders.sql
- if %continue% EQU 1 call:installScript %SRC_MAIN_CODE_PATH%\LOG.sql
- if %continue% EQU 1 call:installScript %SRC_MAIN_CODE_PATH%\GET_LOGGER.sql
- if %continue% EQU 1 call:installScript %SRC_MAIN_CODE_PATH%\Trigger.sql
+ if %continue% EQU 1 call:installScript %LOG4DB2_SRC_MAIN_CODE_PATH%\AdminObjects.sql
+ if %continue% EQU 1 call:installScript %LOG4DB2_SRC_MAIN_CODE_PATH%\Tables.sql
+ if %continue% EQU 1 call:installScript %LOG4DB2_SRC_MAIN_CODE_PATH%\UtilityHeader.sql
+ if %continue% EQU 1 call:installScript %LOG4DB2_SRC_MAIN_CODE_PATH%\UtilityBody.sql
+ if %continue% EQU 1 call:installScript %LOG4DB2_SRC_MAIN_CODE_PATH%\Appenders.sql
+ if %continue% EQU 1 call:installScript %LOG4DB2_SRC_MAIN_CODE_PATH%\LOG.sql
+ if %continue% EQU 1 call:installScript %LOG4DB2_SRC_MAIN_CODE_PATH%\GET_LOGGER.sql
+ if %continue% EQU 1 call:installScript %LOG4DB2_SRC_MAIN_CODE_PATH%\Trigger.sql
 
- if %continue% EQU 1 call:installScript %SRC_MAIN_CODE_PATH%\AdminHeader.sql
- if %continue% EQU 1 call:installScript %SRC_MAIN_CODE_PATH%\AdminBody.sql
+ if %continue% EQU 1 call:installScript %LOG4DB2_SRC_MAIN_CODE_PATH%\AdminHeader.sql
+ if %continue% EQU 1 call:installScript %LOG4DB2_SRC_MAIN_CODE_PATH%\AdminBody.sql
 
- cd %SRC_MAIN_CODE_PATH%
+ if %continue% EQU 1 call:installScript %LOG4DB2_SRC_MAIN_CODE_PATH%\Version.sql
+
+ cd %LOG4DB2_SRC_MAIN_CODE_PATH%
  cd ..
  cd xml
  if %continue% EQU 1 call:installScript AppendersXML.sql
@@ -74,7 +80,7 @@ goto:eof
  :: Temporal capabilities for tables.
  if "%1" EQU "t" if %continue% EQU 1 (
   echo Create table for Time Travel
-  call:installScript %SRC_MAIN_CODE_PATH%\TablesTimeTravel.sql
+  call:installScript %LOG4DB2_SRC_MAIN_CODE_PATH%\TablesTimeTravel.sql
  )
 
  echo Please visit the wiki to learn how to use and configure this utility
@@ -84,26 +90,34 @@ goto:eof
  echo.
  if %continue% EQU 1 (
   echo log4db2 was successfully installed
+  db2 -x "values 'Database: ' || current server"
+  db2 -x "values 'Version: ' || logger.version"
+  db2 -x "select 'Schema: ' || base_moduleschema from syscat.modules where moduleschema = 'SYSPUBLIC' and modulename = 'LOGGER'"
+  set retValue=0
  ) else (
   echo "Check the error(s) and reinstall the utility"
+  set retValue=1
  )
 goto:eof
 
 :: DB2 v9.7
 :v9.7
  echo Installing utility for v9.7
- if %continue% EQU 1 call:installScript %SRC_MAIN_CODE_PATH%\Tables_v9_7.sql
- if %continue% EQU 1 call:installScript %SRC_MAIN_CODE_PATH%\UtilityHeader.sql
- if %continue% EQU 1 call:installScript %SRC_MAIN_CODE_PATH%\UtilityBody.sql
- if %continue% EQU 1 call:installScript %SRC_MAIN_CODE_PATH%\Appenders.sql
- if %continue% EQU 1 call:installScript %SRC_MAIN_CODE_PATH%\LOG.sql
- if %continue% EQU 1 call:installScript %SRC_MAIN_CODE_PATH%\GET_LOGGER_v9_7.sql
- if %continue% EQU 1 call:installScript %SRC_MAIN_CODE_PATH%\Trigger.sql
+ if %continue% EQU 1 call:installScript %LOG4DB2_SRC_MAIN_CODE_PATH%\AdminObjects.sql
+ if %continue% EQU 1 call:installScript %LOG4DB2_SRC_MAIN_CODE_PATH%\Tables_v9_7.sql
+ if %continue% EQU 1 call:installScript %LOG4DB2_SRC_MAIN_CODE_PATH%\UtilityHeader.sql
+ if %continue% EQU 1 call:installScript %LOG4DB2_SRC_MAIN_CODE_PATH%\UtilityBody.sql
+ if %continue% EQU 1 call:installScript %LOG4DB2_SRC_MAIN_CODE_PATH%\Appenders.sql
+ if %continue% EQU 1 call:installScript %LOG4DB2_SRC_MAIN_CODE_PATH%\LOG.sql
+ if %continue% EQU 1 call:installScript %LOG4DB2_SRC_MAIN_CODE_PATH%\GET_LOGGER_v9_7.sql
+ if %continue% EQU 1 call:installScript %LOG4DB2_SRC_MAIN_CODE_PATH%\Trigger.sql
 
- if %continue% EQU 1 call:installScript %SRC_MAIN_CODE_PATH%\AdminHeader.sql
- if %continue% EQU 1 call:installScript %SRC_MAIN_CODE_PATH%\AdminBody.sql
+ if %continue% EQU 1 call:installScript %LOG4DB2_SRC_MAIN_CODE_PATH%\AdminHeader.sql
+ if %continue% EQU 1 call:installScript %LOG4DB2_SRC_MAIN_CODE_PATH%\AdminBody.sql
 
- cd %SRC_MAIN_CODE_PATH%
+ if %continue% EQU 1 call:installScript %LOG4DB2_SRC_MAIN_CODE_PATH%\Version.sql
+
+ cd %LOG4DB2_SRC_MAIN_CODE_PATH%
  cd ..
  cd xml
  if %continue% EQU 1 call:installScript AppendersXML.sql
@@ -117,12 +131,17 @@ goto:eof
  echo.
  if %continue% EQU 1 (
   echo log4db2 was successfully installed
+  db2 -x "values 'Database: ' || current server"
+  db2 -x "values 'Version: ' || logger.version"
+  db2 -x "select 'Schema: ' || base_moduleschema from syscat.modules where moduleschema = 'SYSPUBLIC' and modulename = 'LOGGER'"
+  set retValue=0
  ) else (
   echo "Check the error(s) and reinstall the utility"
+  set retValue=1
  )
 goto:eof
 
-:version
+:init
  if EXIST init.bat (
   call init.bat
  )
@@ -147,6 +166,10 @@ goto:eof
   call:v9.7
  ) else (
   echo ERROR
+ )
+
+ if EXIST uninit.bat (
+  call uninit.bat
  )
 goto:eof
 

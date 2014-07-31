@@ -33,8 +33,8 @@
 :: This variable indicates the location of the sources.
 set LOG4DB2_PATH=%~dp0..\..\..
 
-set SRC_MAIN_CODE_PATH=%LOG4DB2_PATH%\src\main\sql-pl
-set SRC_MAIN_SCRIPT_PATH=%LOG4DB2_PATH%\src\main\scripts
-set SRC_TEST_CODE_PATH=%LOG4DB2_PATH%\src\test\sql-pl
-set SRC_TEST_SCRIPT_PATH=%LOG4DB2_PATH%\src\test\scripts
+set LOG4DB2_SRC_MAIN_CODE_PATH=%LOG4DB2_PATH%\src\main\sql-pl
+set LOG4DB2_SRC_MAIN_SCRIPT_PATH=%LOG4DB2_PATH%\src\main\scripts
+set LOG4DB2_SRC_TEST_CODE_PATH=%LOG4DB2_PATH%\src\test\sql-pl
+set LOG4DB2_SRC_TEST_SCRIPT_PATH=%LOG4DB2_PATH%\src\test\scripts
 

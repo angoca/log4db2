@@ -29,6 +29,7 @@
 # Made in COLOMBIA.
 
 ${Script:continue}=1
+${Script:retValue}=0
 
 # Installs a given script.
 function installScript($script) {
@@ -42,18 +43,21 @@ function installScript($script) {
 # DB2 v10.1.
 function v10.1($p1) {
  echo "Installing utility for v10.1"
- if ( ${Script:continue} ) { installScript ${SRC_MAIN_CODE_PATH}\Tables.sql }
- if ( ${Script:continue} ) { installScript ${SRC_MAIN_CODE_PATH}\UtilityHeader.sql }
- if ( ${Script:continue} ) { installScript ${SRC_MAIN_CODE_PATH}\UtilityBody.sql }
- if ( ${Script:continue} ) { installScript ${SRC_MAIN_CODE_PATH}\Appenders.sql }
- if ( ${Script:continue} ) { installScript ${SRC_MAIN_CODE_PATH}\LOG.sql }
- if ( ${Script:continue} ) { installScript ${SRC_MAIN_CODE_PATH}\GET_LOGGER.sql }
- if ( ${Script:continue} ) { installScript ${SRC_MAIN_CODE_PATH}\Trigger.sql }
+ if ( ${Script:continue} ) { installScript ${LOG4DB2_SRC_MAIN_CODE_PATH}\AdminObjects.sql }
+ if ( ${Script:continue} ) { installScript ${LOG4DB2_SRC_MAIN_CODE_PATH}\Tables.sql }
+ if ( ${Script:continue} ) { installScript ${LOG4DB2_SRC_MAIN_CODE_PATH}\UtilityHeader.sql }
+ if ( ${Script:continue} ) { installScript ${LOG4DB2_SRC_MAIN_CODE_PATH}\UtilityBody.sql }
+ if ( ${Script:continue} ) { installScript ${LOG4DB2_SRC_MAIN_CODE_PATH}\Appenders.sql }
+ if ( ${Script:continue} ) { installScript ${LOG4DB2_SRC_MAIN_CODE_PATH}\LOG.sql }
+ if ( ${Script:continue} ) { installScript ${LOG4DB2_SRC_MAIN_CODE_PATH}\GET_LOGGER.sql }
+ if ( ${Script:continue} ) { installScript ${LOG4DB2_SRC_MAIN_CODE_PATH}\Trigger.sql }
 
- if ( ${Script:continue} ) { installScript ${SRC_MAIN_CODE_PATH}\AdminHeader.sql }
- if ( ${Script:continue} ) { installScript ${SRC_MAIN_CODE_PATH}\AdminBody.sql }
+ if ( ${Script:continue} ) { installScript ${LOG4DB2_SRC_MAIN_CODE_PATH}\AdminHeader.sql }
+ if ( ${Script:continue} ) { installScript ${LOG4DB2_SRC_MAIN_CODE_PATH}\AdminBody.sql }
 
- cd ${SRC_MAIN_CODE_PATH}
+ if ( ${Script:continue} ) { installScript ${LOG4DB2_SRC_MAIN_CODE_PATH}\Version.sql }
+
+ cd ${LOG4DB2_SRC_MAIN_CODE_PATH}
  cd ..
  cd xml
  if ( ${Script:continue} ) { installScript AppendersXML.sql }
@@ -63,7 +67,7 @@ function v10.1($p1) {
  # Temporal capabilities for tables.
  if ( ( ${p1} -eq "t" ) -and ( ${Script:continue} ) ) {
   echo "Create table for Time Travel"
-  installScript ${SRC_MAIN_CODE_PATH}/TablesTimeTravel.sql
+  installScript ${LOG4DB2_SRC_MAIN_CODE_PATH}/TablesTimeTravel.sql
  }
 
  echo "Please visit the wiki to learn how to use and configure this utility"
@@ -73,26 +77,34 @@ function v10.1($p1) {
  Write-Object ' '
  if ( ${Script:continue} ) {
   echo "log4db2 was successfully installed"
+  db2 -x "values 'Database: ' || current server"
+  db2 -x "values 'Version: ' || logger.version"
+  db2 -x "select 'Schema: ' || base_moduleschema from syscat.modules where moduleschema = 'SYSPUBLIC' and modulename = 'LOGGER'"
+  ${Script:retValue}=0
  } else {
   echo "Check the error(s) and reinstall the utility"
+  ${Script:retValue}=1
  }
 }
 
 # DB2 v9.7
 function v9.7() {
  echo "Installing utility for DB2 v9.7"
- if ( ${Script:continue} ) { installScript ${SRC_MAIN_CODE_PATH}\Tables_v9_7.sql }
- if ( ${Script:continue} ) { installScript ${SRC_MAIN_CODE_PATH}\UtilityHeader.sql }
- if ( ${Script:continue} ) { installScript ${SRC_MAIN_CODE_PATH}\UtilityBody.sql }
- if ( ${Script:continue} ) { installScript ${SRC_MAIN_CODE_PATH}\Appenders.sql }
- if ( ${Script:continue} ) { installScript ${SRC_MAIN_CODE_PATH}\LOG.sql }
- if ( ${Script:continue} ) { installScript ${SRC_MAIN_CODE_PATH}\GET_LOGGER_v9_7.sql }
- if ( ${Script:continue} ) { installScript ${SRC_MAIN_CODE_PATH}\Trigger.sql }
+ if ( ${Script:continue} ) { installScript ${LOG4DB2_SRC_MAIN_CODE_PATH}\AdminObjects.sql }
+ if ( ${Script:continue} ) { installScript ${LOG4DB2_SRC_MAIN_CODE_PATH}\Tables_v9_7.sql }
+ if ( ${Script:continue} ) { installScript ${LOG4DB2_SRC_MAIN_CODE_PATH}\UtilityHeader.sql }
+ if ( ${Script:continue} ) { installScript ${LOG4DB2_SRC_MAIN_CODE_PATH}\UtilityBody.sql }
+ if ( ${Script:continue} ) { installScript ${LOG4DB2_SRC_MAIN_CODE_PATH}\Appenders.sql }
+ if ( ${Script:continue} ) { installScript ${LOG4DB2_SRC_MAIN_CODE_PATH}\LOG.sql }
+ if ( ${Script:continue} ) { installScript ${LOG4DB2_SRC_MAIN_CODE_PATH}\GET_LOGGER_v9_7.sql }
+ if ( ${Script:continue} ) { installScript ${LOG4DB2_SRC_MAIN_CODE_PATH}\Trigger.sql }
 
- if ( ${Script:continue} ) { installScript ${SRC_MAIN_CODE_PATH}\AdminHeader.sql }
- if ( ${Script:continue} ) { installScript ${SRC_MAIN_CODE_PATH}\AdminBody.sql }
+ if ( ${Script:continue} ) { installScript ${LOG4DB2_SRC_MAIN_CODE_PATH}\AdminHeader.sql }
+ if ( ${Script:continue} ) { installScript ${LOG4DB2_SRC_MAIN_CODE_PATH}\AdminBody.sql }
 
- cd ${SRC_MAIN_CODE_PATH}
+ if ( ${Script:continue} ) { installScript ${LOG4DB2_SRC_MAIN_CODE_PATH}\Version.sql }
+
+ cd ${LOG4DB2_SRC_MAIN_CODE_PATH}
  cd ..
  cd xml
  if ( ${Script:continue} ) { installScript AppendersXML.sql }
@@ -106,12 +118,17 @@ function v9.7() {
  Write-Object ' '
  if ( ${Script:continue} ) {
   echo "log4db2 was successfully installed"
+  db2 -x "values 'Database: ' || current server"
+  db2 -x "values 'Version: ' || logger.version"
+  db2 -x "select 'Schema: ' || base_moduleschema from syscat.modules where moduleschema = 'SYSPUBLIC' and modulename = 'LOGGER'"
+  ${Script:retValue}=0
  } else {
   echo "Check the error(s) and reinstall the utility"
+  ${Script:retValue}=1
  }
 }
 
-function version($p1, $p2) {
+function init($p1, $p2) {
  if ( Test-Path -Path init.ps1 -PathType Leaf ) {
   .\init.ps1
  }
@@ -137,14 +154,21 @@ function version($p1, $p2) {
  } else {
   echo ERROR
  }
+
+ if ( Test-Path -Path uninit.ps1 -PathType Leaf ) {
+  .\uninit.ps1
+ }
 }
 
 # Checks if there is already a connection established
 db2 connect | Out-Null
 if ( $LastExitCode -eq 0 ) {
- version $Args[0] $Args[1]
+ init $Args[0] $Args[1]
 } else {
  echo "Please connect to a database before the execution of the installation."
  echo "Load the DB2 profile with: set-item -path env:DB2CLP -value `"**`$$**`""
+ ${Script:retValue}=2
 }
+
+exit ${Script:retValue}
 

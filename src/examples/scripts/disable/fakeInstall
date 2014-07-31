@@ -48,9 +48,9 @@ install() {
 
  echo "log4db2 is licensed under the terms of the Simplified-BSD license"
  echo "Installing utility"
- [ ${continue} == true ] && installScript ${SRC_MAIN_CODE_PATH}/../../examples/sql-pl/disable/FakeTables.sql
- [ ${continue} == true ] && installScript ${SRC_MAIN_CODE_PATH}/../../examples/sql-pl/disable/FakeUtilityHeader.sql
- [ ${continue} == true ] && installScript ${SRC_MAIN_CODE_PATH}/../../examples/sql-pl/disable/FakeUtilityBody.sql
+ [ ${continue} == true ] && installScript ${LOG4DB2_SRC_MAIN_CODE_PATH}/../../examples/sql-pl/disable/FakeTables.sql
+ [ ${continue} == true ] && installScript ${LOG4DB2_SRC_MAIN_CODE_PATH}/../../examples/sql-pl/disable/FakeUtilityHeader.sql
+ [ ${continue} == true ] && installScript ${LOG4DB2_SRC_MAIN_CODE_PATH}/../../examples/sql-pl/disable/FakeUtilityBody.sql
 
  echo "Please visit the wiki to learn how to use and configure this utility"
  echo "https://github.com/angoca/log4db2/wiki"
