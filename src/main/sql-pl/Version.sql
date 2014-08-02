@@ -27,6 +27,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 SET CURRENT SCHEMA LOGGER_1RC;
 
+SET PATH = SYSTEM PATH, CURRENT USER;
+
 /**
  * Writes the version. This script is the last in order to validate the
  * installation for other components.
