@@ -68,8 +68,6 @@ goto:eof
  if %continue% EQU 1 call:installScript %LOG4DB2_SRC_MAIN_CODE_PATH%\AdminHeader.sql
  if %continue% EQU 1 call:installScript %LOG4DB2_SRC_MAIN_CODE_PATH%\AdminBody.sql
 
- if %continue% EQU 1 call:installScript %LOG4DB2_SRC_MAIN_CODE_PATH%\Version.sql
-
  cd %LOG4DB2_SRC_MAIN_CODE_PATH%
  cd ..
  cd xml
@@ -82,6 +80,8 @@ goto:eof
   echo Create table for Time Travel
   call:installScript %LOG4DB2_SRC_MAIN_CODE_PATH%\TablesTimeTravel.sql
  )
+
+ if %continue% EQU 1 call:installScript %LOG4DB2_SRC_MAIN_CODE_PATH%\Version.sql
 
  echo Please visit the wiki to learn how to use and configure this utility
  echo https://github.com/angoca/log4db2/wiki
@@ -115,14 +115,14 @@ goto:eof
  if %continue% EQU 1 call:installScript %LOG4DB2_SRC_MAIN_CODE_PATH%\AdminHeader.sql
  if %continue% EQU 1 call:installScript %LOG4DB2_SRC_MAIN_CODE_PATH%\AdminBody.sql
 
- if %continue% EQU 1 call:installScript %LOG4DB2_SRC_MAIN_CODE_PATH%\Version.sql
-
  cd %LOG4DB2_SRC_MAIN_CODE_PATH%
  cd ..
  cd xml
  if %continue% EQU 1 call:installScript AppendersXML.sql
  cd ..
  cd scripts 2> NUL
+
+ if %continue% EQU 1 call:installScript %LOG4DB2_SRC_MAIN_CODE_PATH%\Version.sql
 
  echo Please visit the wiki to learn how to use and configure this utility
  echo https://github.com/angoca/log4db2/wiki

@@ -102,14 +102,14 @@ function v9.7() {
  if ( ${Script:continue} ) { installScript ${LOG4DB2_SRC_MAIN_CODE_PATH}\AdminHeader.sql }
  if ( ${Script:continue} ) { installScript ${LOG4DB2_SRC_MAIN_CODE_PATH}\AdminBody.sql }
 
- if ( ${Script:continue} ) { installScript ${LOG4DB2_SRC_MAIN_CODE_PATH}\Version.sql }
-
  cd ${LOG4DB2_SRC_MAIN_CODE_PATH}
  cd ..
  cd xml
  if ( ${Script:continue} ) { installScript AppendersXML.sql }
  cd ..
  cd scripts | Out-Null
+
+ if ( ${Script:continue} ) { installScript ${LOG4DB2_SRC_MAIN_CODE_PATH}\Version.sql }
 
  echo "Please visit the wiki to learn how to use and configure this utility"
  echo "https://github.com/angoca/log4db2/wiki"
