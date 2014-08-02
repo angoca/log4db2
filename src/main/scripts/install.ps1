@@ -141,18 +141,18 @@ function init($p1, $p2) {
   v10.1
  } elseif ( ${p1} -eq "t" ) {
   v10.1 t
- } elseif ( ${p1} -eq "-v10_1" ) {
+ } elseif ( ${p1} -eq "-v10.1" ) {
   if ( ! ( ${p2} ) ) {
    v10.1
   } elseif ( ${p2} -eq "t" ) {
    v10.1 t
   } else {
-   echo ERROR1 in parameters
+   echo "ERROR1 in parameters"
   }
- } elseif ( ${p1} -eq "-v9_7" ) {
+ } elseif ( ${p1} -eq "-v9.7" ) {
   v9.7
  } else {
-  echo ERROR2 in parameters
+  echo "ERROR2 in parameters"
  }
 
  if ( Test-Path -Path uninit.ps1 -PathType Leaf ) {
