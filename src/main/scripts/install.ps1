@@ -55,8 +55,6 @@ function v10.1($p1) {
  if ( ${Script:continue} ) { installScript ${LOG4DB2_SRC_MAIN_CODE_PATH}\AdminHeader.sql }
  if ( ${Script:continue} ) { installScript ${LOG4DB2_SRC_MAIN_CODE_PATH}\AdminBody.sql }
 
- if ( ${Script:continue} ) { installScript ${LOG4DB2_SRC_MAIN_CODE_PATH}\Version.sql }
-
  cd ${LOG4DB2_SRC_MAIN_CODE_PATH}
  cd ..
  cd xml
@@ -70,11 +68,13 @@ function v10.1($p1) {
   installScript ${LOG4DB2_SRC_MAIN_CODE_PATH}/TablesTimeTravel.sql
  }
 
+ if ( ${Script:continue} ) { installScript ${LOG4DB2_SRC_MAIN_CODE_PATH}\Version.sql }
+
  echo "Please visit the wiki to learn how to use and configure this utility"
  echo "https://github.com/angoca/log4db2/wiki"
  echo "To report an issue or provide feedback, please visit:"
  echo "https://github.com/angoca/log4db2/issues"
- Write-Object ' '
+ Write-Host
  if ( ${Script:continue} ) {
   echo "log4db2 was successfully installed"
   db2 -x "values 'Database: ' || current server"
@@ -115,7 +115,7 @@ function v9.7() {
  echo "https://github.com/angoca/log4db2/wiki"
  echo "To report an issue or provide feedback, please visit:"
  echo "https://github.com/angoca/log4db2/issues"
- Write-Object ' '
+ Write-Host
  if ( ${Script:continue} ) {
   echo "log4db2 was successfully installed"
   db2 -x "values 'Database: ' || current server"
