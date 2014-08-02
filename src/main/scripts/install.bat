@@ -160,12 +160,12 @@ goto:eof
   ) else if /I "%2" EQU "t" (
    call:v10.1 t
   ) else (
-   echo ERROR
+   echo ERROR1 in parameters
   )
  ) else if /I "%1" EQU "-v9.7" (
   call:v9.7
  ) else (
-  echo ERROR
+  echo ERROR2 in parameters
  )
 
  if EXIST uninit.bat (
