@@ -37,13 +37,32 @@ install:
   - bash -c "if [ '$ENV' = 'test' ]; then . ~db2inst1/sqllib/db2profile ; db2 connect to log4db2 ; cd src/test/scripts ; . ./init-dev ; cd ../../main/scripts ; . ./install ; fi"
   # Install db2unit
   - bash -c "if [ '$ENV' = 'test' ]; then . ~db2inst1/sqllib/db2profile ; db2 connect to log4db2 ; cd ; cd db2unit ; . ./install ; fi"
-  - cd src/test/scripts ; . ./init-dev
-  - . ~db2inst1/sqllib/db2profile ; db2 connect to log4db2 
+  - cd src/test/scripts ; . ./init-dev ; cd ../sql-pl
+  - . ~db2inst1/sqllib/db2profile
 
 script:
-  - bash -c "if [ '$TESTS' = 'script' ]; then db2 connect to log4db2 ; . ./test ; fi" x TEST_DB2UNIT_EMPTY i
-  - bash -c "if [ '$TESTS' = 'script' ]; then db2 connect to log4db2 ; . ./test ; fi" x TEST_DB2UNIT_EXECUTION i
-  - bash -c "if [ '$TESTS' = 'script' ]; then db2 connect to log4db2 ; . ./test ; fi" x TEST_DB2UNIT_ASSERTIONS i
+  - bash -c "if [ '$TESTS' = 'script' ]; then db2 connect to log4db2 ; db2 -tf TestAppenders.sql ; fi"
+  - bash -c "if [ '$TESTS' = 'script' ]; then db2 connect to log4db2 ; db2 -tf TestAppendersImplementation.sql ; fi"
+  - bash -c "if [ '$TESTS' = 'script' ]; then db2 connect to log4db2 ; db2 -tf TestCacheConfiguration.sql ; fi"
+  - bash -c "if [ '$TESTS' = 'script' ]; then db2 connect to log4db2 ; db2 -tf TestCacheLevel.sql ; fi"
+  - bash -c "if [ '$TESTS' = 'script' ]; then db2 connect to log4db2 ; db2 -tf TestCacheLoggers.sql ; fi"
+  - bash -c "if [ '$TESTS' = 'script' ]; then db2 connect to log4db2 ; db2 -tf TestCascadeCallLimit.sql ; fi"
+  - bash -c "if [ '$TESTS' = 'script' ]; then db2 connect to log4db2 ; db2 -tf TestConfAppenders.sql ; fi"
+  - bash -c "if [ '$TESTS' = 'script' ]; then db2 connect to log4db2 ; db2 -tf TestConfiguration.sql ; fi"
+  - bash -c "if [ '$TESTS' = 'script' ]; then db2 connect to log4db2 ; db2 -tf TestConfLoggers.sql ; fi"
+  - bash -c "if [ '$TESTS' = 'script' ]; then db2 connect to log4db2 ; db2 -tf TestConfLoggersDelete.sql ; fi"
+  - bash -c "if [ '$TESTS' = 'script' ]; then db2 connect to log4db2 ; db2 -tf TestConfLoggersEffective.sql ; fi"
+  - bash -c "if [ '$TESTS' = 'script' ]; then db2 connect to log4db2 ; db2 -tf TestConfLoggersEffectiveCases.sql ; fi"
+  - bash -c "if [ '$TESTS' = 'script' ]; then db2 connect to log4db2 ; db2 -tf TestDynamicAppenders.sql ; fi"
+  - bash -c "if [ '$TESTS' = 'script' ]; then db2 connect to log4db2 ; db2 -tf TestFunctionGetDefinedParentLogger.sql ; fi"
+  - bash -c "if [ '$TESTS' = 'script' ]; then db2 connect to log4db2 ; db2 -tf TestGetLogger.sql ; fi"
+  - bash -c "if [ '$TESTS' = 'script' ]; then db2 connect to log4db2 ; db2 -tf TestGetLoggerName.sql ; fi"
+  - bash -c "if [ '$TESTS' = 'script' ]; then db2 connect to log4db2 ; db2 -tf TestHierarchy.sql ; fi"
+  - bash -c "if [ '$TESTS' = 'script' ]; then db2 connect to log4db2 ; db2 -tf TestLayout.sql ; fi"
+  - bash -c "if [ '$TESTS' = 'script' ]; then db2 connect to log4db2 ; db2 -tf TestLevels.sql ; fi"
+  - bash -c "if [ '$TESTS' = 'script' ]; then db2 connect to log4db2 ; db2 -tf TestLogs.sql ; fi"
+  - bash -c "if [ '$TESTS' = 'script' ]; then db2 connect to log4db2 ; db2 -tf TestMessages.sql ; fi"
+  - bash -c "if [ '$TESTS' = 'script' ]; then db2 connect to log4db2 ; db2 -tf TestReferences.sql ; fi"
   - bash -c "if [ '$TESTS' = 'script' ]; then db2 connect to log4db2 ; . ./allTests ; fi" x "-np"
   - cd ../sql-pl
   - sh -c "if [ '$TESTS' = 'manual' ]; then db2 connect to log4db2 ; db2 -tf Tests_TEST_DB2UNIT_EMPTY.sql ; fi"
