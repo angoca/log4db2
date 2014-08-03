@@ -40,7 +40,7 @@ install:
   - . ~db2inst1/sqllib/db2profile
   - pwd
   - ls -l
-  - bash -c "if [ '$ENV' = 'test' ]; then db2 connect to log4db2 ; db2 -tf TestAppenders.sql ; fi"
+  - bash -c "if [ '$ENV' = 'test' ]; then pwd ; ls -l ; db2 connect to log4db2 ; db2 -tf TestAppenders.sql ; fi"
   - bash -c "if [ '$ENV' = 'test' ]; then db2 connect to log4db2 ; db2 -tf TestAppendersImplementation.sql ; fi"
   - bash -c "if [ '$ENV' = 'test' ]; then db2 connect to log4db2 ; db2 -tf TestCacheConfiguration.sql ; fi"
   - bash -c "if [ '$ENV' = 'test' ]; then db2 connect to log4db2 ; db2 -tf TestCacheLevel.sql ; fi"
