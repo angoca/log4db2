@@ -327,10 +327,8 @@ INSERT INTO APPENDERS (APPENDER_ID, NAME)
 -- Configuration for included appender.
 INSERT INTO CONF_APPENDERS (NAME, APPENDER_ID, CONFIGURATION,
   PATTERN)
-  VALUES ('Null', 0, NULL, NULL);
-INSERT INTO CONF_APPENDERS (NAME, APPENDER_ID, CONFIGURATION,
-  PATTERN)
-  VALUES ('Tables', 1, NULL, '[%p] %c - %m');
+  VALUES ('Null', 0, NULL, NULL),
+         ('Tables', 1, NULL, '[%p] %c - %m');
 
 -- Configuration for appender - logger.
 INSERT INTO REFERENCES (LOGGER_ID, APPENDER_REF_ID)
