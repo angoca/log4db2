@@ -61,7 +61,7 @@ install:
   - bash -c "if [ '$ENV' = 'test' ]; then db2 connect to log4db2 ; db2 -tf TestsLogs.sql ; fi"
   - bash -c "if [ '$ENV' = 'test' ]; then db2 connect to log4db2 ; db2 -tf TestsMessages.sql ; fi"
   - bash -c "if [ '$ENV' = 'test' ]; then db2 connect to log4db2 ; db2 -tf TestsReferences.sql ; fi"
-  - bash -c "if [ '$ENV' = 'test' ]; then db2 connect to log4db2 ; db2 \"EXPORT TO SUITES.sql OF DEL MODIFIED BY NOCHARDEL SELECT 'CALL DB2UNIT.RUN_SUITE(''' || SUITE_NAME || ''');' FROM DB2UNIT_1.SUITES\"; fi"
+  - bash -c "if [ '$ENV' = 'test' ]; then db2 connect to log4db2 ; db2 \"EXPORT TO SUITES.sql OF DEL MODIFIED BY NOCHARDEL SELECT * FROM (SELECT 'CALL DB2UNIT.RUN_SUITE(''' || SUITE_NAME || ''');' FROM DB2UNIT_1.SUITES) ORDER BY RAND()\"; fi"
 
 script:
   - bash -c "if [ '$ENV' = 'test' ]; then db2 connect to log4db2 ; db2 -tsf SUITES.sql ; fi"
