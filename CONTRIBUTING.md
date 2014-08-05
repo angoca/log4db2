@@ -3,7 +3,7 @@ Welcome to _log4db2_ and thanks for contributing to this project.
 If you found a bug and you are creating an issue, please describe as much as
 possible the environment where you execute this utility:
 
- * Platform (OS, version, architecture (32/64))
+ * Platform (OS, version, architecture (32/64 bits))
  * DB2 (edition, version, fixpack)
  * Utility (version)
 
