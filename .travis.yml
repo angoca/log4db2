@@ -38,7 +38,7 @@ install:
   - bash -c "if [ '$ENV' = 'test' ]; then . ~db2inst1/sqllib/db2profile ; db2 connect to log4db2 ; cd ; cd db2unit ; . ./install ; fi"
   - cd src/test/scripts ; . ./init-dev ; cd ../sql-pl
   - . ~db2inst1/sqllib/db2profile
-  - bash -c "if [ '$ENV' = 'test' ]; then db2 connect to log4db2 ; db2 \"ALTER MODULE DB2UNIT_1B.DB2UNIT PUBLISH PROCEDURE REGISTER_SUITE (IN SCHEMA VARCHAR(128)) INSERT INTO DB2UNIT_1.SUITES VALUES (SCHEMA)\" ; fi"
+  - bash -c "if [ '$ENV' = 'test' ]; then db2 connect to log4db2 ; db2 \"ALTER MODULE DB2UNIT_1B.DB2UNIT PUBLISH PROCEDURE REGISTER_SUITE (IN SCHMA VARCHAR(128)) INSERT INTO DB2UNIT_1.SUITES (SUITE_NAME) VALUES (SCHMA)\" ; fi"
   - bash -c "if [ '$ENV' = 'test' ]; then db2 connect to log4db2 ; db2 -tf TestsAppenders.sql ; fi"
   - bash -c "if [ '$ENV' = 'test' ]; then db2 connect to log4db2 ; db2 -tf TestsAppendersImplementation.sql ; fi"
   - bash -c "if [ '$ENV' = 'test' ]; then db2 connect to log4db2 ; db2 -tf TestsCacheConfiguration.sql ; fi"
