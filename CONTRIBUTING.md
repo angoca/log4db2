@@ -7,7 +7,7 @@ possible the environment where you execute this utility:
  * DB2 (edition, version, fixpack)
  * Utility (version)
 
-And explain what you do.
+And explain us what you did, what you git, and what you did not get.
 
 If you develop a new feature (bug fix, enhancement, etc.) and you want that
 feature be integrated in the project, please make sure you wrote some tests,
