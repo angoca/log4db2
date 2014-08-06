@@ -90,6 +90,11 @@ ALTER MODULE LOGADMIN PUBLISH
   IN LEVEL ANCHOR LOGDATA.LEVELS.LEVEL_ID
   );
 
+-- Reset tables of this framework.
+ALTER MODULE LOGADMIN PUBLISH
+  PROCEDURE RESET_TABLES (
+  );
+
 -- View to retrieve the logger name with level and logger name in characters.
 CREATE OR REPLACE VIEW LOG_MESSAGES
   (DATE, LEVEL, LOGGER, MESSAGE) AS
