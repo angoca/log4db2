@@ -1,6 +1,7 @@
 env:
   - ENV=release
-  - ENV=test
+  - ENV=test TESTS=seq
+  - ENV=test TESTS=random
 
 before_install:
   # Install the required libraries
@@ -25,8 +26,11 @@ before_install:
   - sudo su - db2inst1 -c "db2 create db log4db2 ; db2 connect to log4db2 ; db2 grant dbadm on database to user $USER ; db2 \"CREATE TABLESPACE SYSTOOLSPACE IN IBMCATGROUP MANAGED BY AUTOMATIC STORAGE USING STOGROUP IBMSTOGROUP EXTENTSIZE 4\""
   # Retrieves and extract db2unit
   - cd
-  - wget https://github.com/angoca/db2unit/releases/download/db2unit-1-Beta/db2unit.tar.gz
-  - tar zxvf db2unit.tar.gz
+  # - wget https://github.com/angoca/db2unit/releases/download/db2unit-1-Beta/db2unit.tar.gz
+  # - tar zxvf db2unit.tar.gz
+  # TODO Delete next lines. They are temporal for the next db2unit release.
+  - git clone https://github.com/angoca/db2unit.wiki.git
+  - cd db2unit ; mvn
 
 install:
   # Install log4db2
@@ -35,7 +39,9 @@ install:
   - sh -c "if [ '$ENV' = 'release' ]; then . ~db2inst1/sqllib/db2profile ; db2 connect to log4db2 ; cd target/log4db2/log4db2 ; . ./install ; fi"
   - bash -c "if [ '$ENV' = 'test' ]; then . ~db2inst1/sqllib/db2profile ; db2 connect to log4db2 ; cd src/test/scripts ; . ./init-dev ; cd ../../main/scripts ; . ./install ; fi"
   # Install db2unit
-  - bash -c "if [ '$ENV' = 'test' ]; then . ~db2inst1/sqllib/db2profile ; db2 connect to log4db2 ; cd ; cd db2unit ; . ./install ; fi"
+  # - bash -c "if [ '$ENV' = 'test' ]; then . ~db2inst1/sqllib/db2profile ; db2 connect to log4db2 ; cd ; cd db2unit ; . ./install ; fi"
+  # TODO Next line is temporal until next db2unit release
+  - bash -c "if [ '$ENV' = 'test' ]; then . ~db2inst1/sqllib/db2profile ; db2 connect to log4db2 ; cd ; cd db2unit/target/db2unit/db2unit ; . ./install ; fi"
   - cd src/test/scripts ; . ./init-dev ; cd ../sql-pl
   - . ~db2inst1/sqllib/db2profile
   - bash -c "if [ '$ENV' = 'test' ]; then db2 connect to log4db2 ; db2 \"ALTER MODULE DB2UNIT_1B.DB2UNIT PUBLISH PROCEDURE REGISTER_SUITE (IN SCHMA VARCHAR(128)) INSERT INTO DB2UNIT_1B.SUITES (SUITE_NAME) VALUES (SCHMA)\" ; fi"
@@ -61,29 +67,30 @@ install:
   - bash -c "if [ '$ENV' = 'test' ]; then db2 connect to log4db2 ; db2 -tf TestsLogs.sql ; fi"
   - bash -c "if [ '$ENV' = 'test' ]; then db2 connect to log4db2 ; db2 -tf TestsMessages.sql ; fi"
   - bash -c "if [ '$ENV' = 'test' ]; then db2 connect to log4db2 ; db2 -tf TestsReferences.sql ; fi"
-  - bash -c "if [ '$ENV' = 'test' ]; then db2 connect to log4db2 ; db2 \"EXPORT TO SUITES.sql OF DEL MODIFIED BY NOCHARDEL SELECT * FROM (SELECT 'CALL DB2UNIT.RUN_SUITE(''' || SUITE_NAME || ''');' FROM DB2UNIT_1B.SUITES) ORDER BY RAND()\"; fi"
+  - bash -c "if [ '$ENV' = 'random' ]; then db2 connect to log4db2 ; db2 "call db2unit.export_tests_list"; chmod +x /tmp/listOfTestSuites ; chmod +x /tmp/returnCode ; fi"
 
 script:
-  - bash -c "if [ '$ENV' = 'test' ]; then db2 connect to log4db2 ; db2 -r /tmp/db2unit.output \"call db2unit.run_suite('LOG4DB2_APPENDERS')\" ; ../../../travis/procSP ; fi"
-  - bash -c "if [ '$ENV' = 'test' ]; then db2 connect to log4db2 ; db2 -r /tmp/db2unit.output \"call db2unit.run_suite('LOG4DB2_APPENDERS_IMPLEMENTATION')\" ; ../../../travis/procSP ; fi"
-  - bash -c "if [ '$ENV' = 'test' ]; then db2 connect to log4db2 ; db2 -r /tmp/db2unit.output \"call db2unit.run_suite('LOG4DB2_CACHE_CONFIGURATION')\" ; ../../../travis/procSP ; fi"
-  - bash -c "if [ '$ENV' = 'test' ]; then db2 connect to log4db2 ; db2 -r /tmp/db2unit.output \"call db2unit.run_suite('LOG4DB2_CACHE_LEVELS')\" ; ../../../travis/procSP ; fi"
-  - bash -c "if [ '$ENV' = 'test' ]; then db2 connect to log4db2 ; db2 -r /tmp/db2unit.output \"call db2unit.run_suite('LOG4DB2_CACHE_LOGGERS')\" ; ../../../travis/procSP ; fi"
-  - bash -c "if [ '$ENV' = 'test' ]; then db2 connect to log4db2 ; db2 -r /tmp/db2unit.output \"call db2unit.run_suite('LOG4DB2_CASCADE_CALL_LIMIT')\" ; ../../../travis/procSP ; fi"
-  - bash -c "if [ '$ENV' = 'test' ]; then db2 connect to log4db2 ; db2 -r /tmp/db2unit.output \"call db2unit.run_suite('LOG4DB2_CONF_APPENDERS')\" ; ../../../travis/procSP ; fi"
-  - bash -c "if [ '$ENV' = 'test' ]; then db2 connect to log4db2 ; db2 -r /tmp/db2unit.output \"call db2unit.run_suite('LOG4DB2_CONFIGURATION')\" ; ../../../travis/procSP ; fi"
-  - bash -c "if [ '$ENV' = 'test' ]; then db2 connect to log4db2 ; db2 -r /tmp/db2unit.output \"call db2unit.run_suite('LOG4DB2_CONF_LOGGERS')\" ; ../../../travis/procSP ; fi"
-  - bash -c "if [ '$ENV' = 'test' ]; then db2 connect to log4db2 ; db2 -r /tmp/db2unit.output \"call db2unit.run_suite('LOG4DB2_CONF_LOGGERS_DELETE')\" ; ../../../travis/procSP ; fi"
-  - bash -c "if [ '$ENV' = 'test' ]; then db2 connect to log4db2 ; db2 -r /tmp/db2unit.output \"call db2unit.run_suite('LOG4DB2_CONF_LOGGERS_EFFECTIVE')\" ; ../../../travis/procSP ; fi"
-  - bash -c "if [ '$ENV' = 'test' ]; then db2 connect to log4db2 ; db2 -r /tmp/db2unit.output \"call db2unit.run_suite('LOG4DB2_CONF_LOGGERS_EFFECTIVE_CASES')\" ; ../../../travis/procSP ; fi"
-  - bash -c "if [ '$ENV' = 'test' ]; then db2 connect to log4db2 ; db2 -r /tmp/db2unit.output \"call db2unit.run_suite('LOG4DB2_DYNAMIC_APPENDERS')\" ; ../../../travis/procSP ; fi"
-  - bash -c "if [ '$ENV' = 'test' ]; then db2 connect to log4db2 ; db2 -r /tmp/db2unit.output \"call db2unit.run_suite('LOG4DB2_FUNCTION_GET_DEFINED_PARENT_LOGGER')\" ; ../../../travis/procSP ; fi"
-  - bash -c "if [ '$ENV' = 'test' ]; then db2 connect to log4db2 ; db2 -r /tmp/db2unit.output \"call db2unit.run_suite('LOG4DB2_GET_LOGGER')\" ; ../../../travis/procSP ; fi"
-  - bash -c "if [ '$ENV' = 'test' ]; then db2 connect to log4db2 ; db2 -r /tmp/db2unit.output \"call db2unit.run_suite('LOG4DB2_GET_LOGGER_NAME')\" ; ../../../travis/procSP ; fi"
-  - bash -c "if [ '$ENV' = 'test' ]; then db2 connect to log4db2 ; db2 -r /tmp/db2unit.output \"call db2unit.run_suite('LOG4DB2_HIERARCHY')\" ; ../../../travis/procSP ; fi"
-  - bash -c "if [ '$ENV' = 'test' ]; then db2 connect to log4db2 ; db2 -r /tmp/db2unit.output \"call db2unit.run_suite('LOG4DB2_LAYOUT')\" ; ../../../travis/procSP ; fi"
-  - bash -c "if [ '$ENV' = 'test' ]; then db2 connect to log4db2 ; db2 -r /tmp/db2unit.output \"call db2unit.run_suite('LOG4DB2_LEVELS')\" ; ../../../travis/procSP ; fi"
-  - bash -c "if [ '$ENV' = 'test' ]; then db2 connect to log4db2 ; db2 -r /tmp/db2unit.output \"call db2unit.run_suite('LOG4DB2_LOGS')\" ; ../../../travis/procSP ; fi"
-  - bash -c "if [ '$ENV' = 'test' ]; then db2 connect to log4db2 ; db2 -r /tmp/db2unit.output \"call db2unit.run_suite('LOG4DB2_MESSAGES')\" ; ../../../travis/procSP ; fi"
-  - bash -c "if [ '$ENV' = 'test' ]; then db2 connect to log4db2 ; db2 -r /tmp/db2unit.output \"call db2unit.run_suite('LOG4DB2_REFERENCES')\" ; ../../../travis/procSP ; fi"
-  - bash -c "if [ '$ENV' = 'test' ]; then db2 connect to log4db2 ; db2 -tsf SUITES.sql ; fi"
+  - bash -c "if [ '$TESTS' = 'seq' ]; then db2 connect to log4db2 ; db2 -r /tmp/db2unit.output \"call db2unit.run_suite('LOG4DB2_APPENDERS')\" ; ../../../travis/procSP ; fi"
+  - bash -c "if [ '$TESTS' = 'seq' ]; then db2 connect to log4db2 ; db2 -r /tmp/db2unit.output \"call db2unit.run_suite('LOG4DB2_APPENDERS_IMPLEMENTATION')\" ; ../../../travis/procSP ; fi"
+  - bash -c "if [ '$TESTS' = 'seq' ]; then db2 connect to log4db2 ; db2 -r /tmp/db2unit.output \"call db2unit.run_suite('LOG4DB2_CACHE_CONFIGURATION')\" ; ../../../travis/procSP ; fi"
+  - bash -c "if [ '$TESTS' = 'seq' ]; then db2 connect to log4db2 ; db2 -r /tmp/db2unit.output \"call db2unit.run_suite('LOG4DB2_CACHE_LEVELS')\" ; ../../../travis/procSP ; fi"
+  - bash -c "if [ '$TESTS' = 'seq' ]; then db2 connect to log4db2 ; db2 -r /tmp/db2unit.output \"call db2unit.run_suite('LOG4DB2_CACHE_LOGGERS')\" ; ../../../travis/procSP ; fi"
+  - bash -c "if [ '$TESTS' = 'seq' ]; then db2 connect to log4db2 ; db2 -r /tmp/db2unit.output \"call db2unit.run_suite('LOG4DB2_CASCADE_CALL_LIMIT')\" ; ../../../travis/procSP ; fi"
+  - bash -c "if [ '$TESTS' = 'seq' ]; then db2 connect to log4db2 ; db2 -r /tmp/db2unit.output \"call db2unit.run_suite('LOG4DB2_CONF_APPENDERS')\" ; ../../../travis/procSP ; fi"
+  - bash -c "if [ '$TESTS' = 'seq' ]; then db2 connect to log4db2 ; db2 -r /tmp/db2unit.output \"call db2unit.run_suite('LOG4DB2_CONFIGURATION')\" ; ../../../travis/procSP ; fi"
+  - bash -c "if [ '$TESTS' = 'seq' ]; then db2 connect to log4db2 ; db2 -r /tmp/db2unit.output \"call db2unit.run_suite('LOG4DB2_CONF_LOGGERS')\" ; ../../../travis/procSP ; fi"
+  - bash -c "if [ '$TESTS' = 'seq' ]; then db2 connect to log4db2 ; db2 -r /tmp/db2unit.output \"call db2unit.run_suite('LOG4DB2_CONF_LOGGERS_DELETE')\" ; ../../../travis/procSP ; fi"
+  - bash -c "if [ '$TESTS' = 'seq' ]; then db2 connect to log4db2 ; db2 -r /tmp/db2unit.output \"call db2unit.run_suite('LOG4DB2_CONF_LOGGERS_EFFECTIVE')\" ; ../../../travis/procSP ; fi"
+  - bash -c "if [ '$TESTS' = 'seq' ]; then db2 connect to log4db2 ; db2 -r /tmp/db2unit.output \"call db2unit.run_suite('LOG4DB2_CONF_LOGGERS_EFFECTIVE_CASES')\" ; ../../../travis/procSP ; fi"
+  - bash -c "if [ '$TESTS' = 'seq' ]; then db2 connect to log4db2 ; db2 -r /tmp/db2unit.output \"call db2unit.run_suite('LOG4DB2_DYNAMIC_APPENDERS')\" ; ../../../travis/procSP ; fi"
+  - bash -c "if [ '$TESTS' = 'seq' ]; then db2 connect to log4db2 ; db2 -r /tmp/db2unit.output \"call db2unit.run_suite('LOG4DB2_FUNCTION_GET_DEFINED_PARENT_LOGGER')\" ; ../../../travis/procSP ; fi"
+  - bash -c "if [ '$TESTS' = 'seq' ]; then db2 connect to log4db2 ; db2 -r /tmp/db2unit.output \"call db2unit.run_suite('LOG4DB2_GET_LOGGER')\" ; ../../../travis/procSP ; fi"
+  - bash -c "if [ '$TESTS' = 'seq' ]; then db2 connect to log4db2 ; db2 -r /tmp/db2unit.output \"call db2unit.run_suite('LOG4DB2_GET_LOGGER_NAME')\" ; ../../../travis/procSP ; fi"
+  - bash -c "if [ '$TESTS' = 'seq' ]; then db2 connect to log4db2 ; db2 -r /tmp/db2unit.output \"call db2unit.run_suite('LOG4DB2_HIERARCHY')\" ; ../../../travis/procSP ; fi"
+  - bash -c "if [ '$TESTS' = 'seq' ]; then db2 connect to log4db2 ; db2 -r /tmp/db2unit.output \"call db2unit.run_suite('LOG4DB2_LAYOUT')\" ; ../../../travis/procSP ; fi"
+  - bash -c "if [ '$TESTS' = 'seq' ]; then db2 connect to log4db2 ; db2 -r /tmp/db2unit.output \"call db2unit.run_suite('LOG4DB2_LEVELS')\" ; ../../../travis/procSP ; fi"
+  - bash -c "if [ '$TESTS' = 'seq' ]; then db2 connect to log4db2 ; db2 -r /tmp/db2unit.output \"call db2unit.run_suite('LOG4DB2_LOGS')\" ; ../../../travis/procSP ; fi"
+  - bash -c "if [ '$TESTS' = 'seq' ]; then db2 connect to log4db2 ; db2 -r /tmp/db2unit.output \"call db2unit.run_suite('LOG4DB2_MESSAGES')\" ; ../../../travis/procSP ; fi"
+  - bash -c "if [ '$TESTS' = 'seq' ]; then db2 connect to log4db2 ; db2 -r /tmp/db2unit.output \"call db2unit.run_suite('LOG4DB2_REFERENCES')\" ; ../../../travis/procSP ; fi"
+  - bash -c "if [ '$TESTS' = 'random' ]; then db2 connect to log4db2 ; . /tmp/listOfTestSuites ; /tmp/returnCode fi"
+
