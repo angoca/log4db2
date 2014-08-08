@@ -10,6 +10,15 @@ before_install:
   - sudo apt-get -y install libpam0g:i386
   - sudo ln -s /lib/i386-linux-gnu/libpam.so.0 /lib/libpam.so.0
   - sudo apt-get install numactl
+
+  # Retrieves and extract db2unit
+  - cd
+  # - wget https://github.com/angoca/db2unit/releases/download/db2unit-1-Beta/db2unit.tar.gz
+  # - tar zxvf db2unit.tar.gz
+  # TODO Delete next lines. They are temporal for the next db2unit release.
+  - bash -c "if [ '$ENV' = 'test' ]; then git clone https://github.com/angoca/db2unit.git ; fi"
+  - bash -c "if [ '$ENV' = 'test' ]; then cd db2unit ; mvn ; fi"
+
   # Retrieves and extracts the DB2 binaries
   - cd /tmp
   - wget https://delivery04.dhe.ibm.com/sdfdl/v2/sar/CM/IM/04jdl/0/Xa.2/Xb.jusyLTSp44S03ZzHXWiLS32b1e23wbv6kF1tCDJAPkRERERERnijyifuPVo/Xc.CM/IM/04jdl/0/v10.5fp3a_linuxx64_server.tar.gz/Xd./Xf.LPR.D1vk/Xg.7681598/Xi.habanero/XY.habanero/XZ.JbRvkLE8TTv7J_Y3RP3k7E4qO_g/v10.5fp3a_linuxx64_server.tar.gz ; tar zxf v10.5fp3a_linuxx64_server.tar.gz ; cd server
@@ -24,13 +33,6 @@ before_install:
   - sudo su - db2inst1 -c "db2 update dbm cfg using SYSADM_GROUP db2iadm1 ; db2stop ; db2start"
   # Creates the database
   - sudo su - db2inst1 -c "db2 create db log4db2 ; db2 connect to log4db2 ; db2 grant dbadm on database to user $USER ; db2 \"CREATE TABLESPACE SYSTOOLSPACE IN IBMCATGROUP MANAGED BY AUTOMATIC STORAGE USING STOGROUP IBMSTOGROUP EXTENTSIZE 4\""
-  # Retrieves and extract db2unit
-  - cd
-  # - wget https://github.com/angoca/db2unit/releases/download/db2unit-1-Beta/db2unit.tar.gz
-  # - tar zxvf db2unit.tar.gz
-  # TODO Delete next lines. They are temporal for the next db2unit release.
-  - bash -c "if [ '$ENV' = 'test' ]; then git clone https://github.com/angoca/db2unit.git ; fi
-  - bash -c "if [ '$ENV' = 'test' ]; then cd db2unit ; mvn ; fi
 
 install:
   # Install log4db2
