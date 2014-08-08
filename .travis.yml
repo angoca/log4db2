@@ -29,8 +29,8 @@ before_install:
   # - wget https://github.com/angoca/db2unit/releases/download/db2unit-1-Beta/db2unit.tar.gz
   # - tar zxvf db2unit.tar.gz
   # TODO Delete next lines. They are temporal for the next db2unit release.
-  - git clone https://github.com/angoca/db2unit.wiki.git
-  - cd db2unit ; mvn
+  - bash -c "if [ '$ENV' = 'test' ]; then git clone https://github.com/angoca/db2unit.git ; fi
+  - bash -c "if [ '$ENV' = 'test' ]; then cd db2unit ; mvn ; fi
 
 install:
   # Install log4db2
