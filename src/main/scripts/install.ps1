@@ -28,10 +28,15 @@
 # Author: Andres Gomez Casanova (AngocA)
 # Made in COLOMBIA.
 
+# Global variables
 ${Script:continue}=1
+${Script:adminInstall}=1
+${Script:temporalTable}=0
+${Script:v9_7}=0
 ${Script:retValue}=0
 
-# Installs a given script.
+# Installs a given script in DB2.
+# It uses the continue global variable to stop the execution if an error occurs.
 function installScript($script) {
  echo $script
  db2 -tsf ${script}
@@ -40,10 +45,13 @@ function installScript($script) {
  }
 }
 
+# Function that install the utility for version 10.1.
 # DB2 v10.1.
 function v10.1($p1) {
  echo "Installing utility for v10.1"
- if ( ${Script:continue} ) { installScript ${LOG4DB2_SRC_MAIN_CODE_PATH}\AdminObjects.sql }
+ if ( ${Script:adminInstall} ) {
+  if ( ${Script:continue} ) { installScript ${LOG4DB2_SRC_MAIN_CODE_PATH}\AdminObjects.sql }
+ }
  if ( ${Script:continue} ) { installScript ${LOG4DB2_SRC_MAIN_CODE_PATH}\Tables.sql }
  if ( ${Script:continue} ) { installScript ${LOG4DB2_SRC_MAIN_CODE_PATH}\UtilityHeader.sql }
  if ( ${Script:continue} ) { installScript ${LOG4DB2_SRC_MAIN_CODE_PATH}\UtilityBody.sql }
@@ -87,10 +95,13 @@ function v10.1($p1) {
  }
 }
 
+# Function that install the utility for version 9.7.
 # DB2 v9.7
 function v9.7() {
  echo "Installing utility for DB2 v9.7"
- if ( ${Script:continue} ) { installScript ${LOG4DB2_SRC_MAIN_CODE_PATH}\AdminObjects.sql }
+ if ( ${Script:adminInstall} ) {
+  if ( ${Script:continue} ) { installScript ${LOG4DB2_SRC_MAIN_CODE_PATH}\AdminObjects.sql }
+ }
  if ( ${Script:continue} ) { installScript ${LOG4DB2_SRC_MAIN_CODE_PATH}\Tables_v9_7.sql }
  if ( ${Script:continue} ) { installScript ${LOG4DB2_SRC_MAIN_CODE_PATH}\UtilityHeader.sql }
  if ( ${Script:continue} ) { installScript ${LOG4DB2_SRC_MAIN_CODE_PATH}\UtilityBody.sql }
@@ -128,31 +139,39 @@ function v9.7() {
  }
 }
 
-function init($p1, $p2) {
+# This functions checks all parameters and assign them to global variables.
+function checkParam($p1, $p2, $p3 {
+ param1=${p1}
+ param2=${p2}
+ param3=${p3}
+ if ( "${param1}" = "-A" -o "${param2}" = "-A" -o "${param3}" = "-A" ) {
+  ${Script:adminInstall}=0
+ }
+ if ( "${param1}" = "-t" -o "${param2}" = "-t" -o "${param3}" = "-t" ) {
+  ${Script:temporalTable}=1
+ }
+ if ( "${param1}" = "-v9.7" -o "${param2}" = "-v9.7" -o "${param3}" = "-v9.7" ) {
+  ${Script:v9_7}=1
+ }
+}
+
+# Main unction that starts the installation.
+function init($p1, $p2, $p3) {
  if ( Test-Path -Path init.ps1 -PathType Leaf ) {
   .\init.ps1
  }
 
  echo "log4db2 is licensed under the terms of the Simplified-BSD license"
 
+ # Check the given parameters.
+ checkParam ${p1} ${p2} ${p3}
+
  # Checks in which DB2 version the utility will be installed.
  # DB2 v10.1 is the default version.
- if ( ! ( ${p1} ) ) {
-  v10.1
- } elseif ( ${p1} -eq "t" ) {
-  v10.1 t
- } elseif ( ${p1} -eq "-v10.1" ) {
-  if ( ! ( ${p2} ) ) {
-   v10.1
-  } elseif ( ${p2} -eq "t" ) {
-   v10.1 t
-  } else {
-   echo "ERROR1 in parameters"
-  }
- } elseif ( ${p1} -eq "-v9.7" ) {
-  v9.7
+ if ( ${Script:v9_7} ) {
+  v9_7
  } else {
-  echo "ERROR2 in parameters"
+  v10_1
  }
 
  if ( Test-Path -Path uninit.ps1 -PathType Leaf ) {
@@ -163,7 +182,7 @@ function init($p1, $p2) {
 # Checks if there is already a connection established
 db2 connect | Out-Null
 if ( $LastExitCode -eq 0 ) {
- init $Args[0] $Args[1]
+ init $Args[0] $Args[1] $Args[2]
 } else {
  echo "Please connect to a database before the execution of the installation."
  echo "Load the DB2 profile with: set-item -path env:DB2CLP -value `"**`$$**`""

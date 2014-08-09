@@ -29,13 +29,18 @@
 :: Author: Andres Gomez Casanova (AngocA)
 :: Made in COLOMBIA.
 
+:: Global variables
 set continue=1
+set adminInstall=1
+set temporalTable=0
+set v9_7=0
 set retValue=0
 
+:: Main call.
 :: Checks if there is already a connection established
 db2 connect > NUL
 if %ERRORLEVEL% EQU 0 (
- call:init %1 %2
+ call:init %1 %2 %3
 ) else (
  echo Please connect to a database before the execution of the installation.
  set retValue=2
@@ -43,7 +48,8 @@ if %ERRORLEVEL% EQU 0 (
 exit /B %retValue%
 goto:eof
 
-:: Installs a given script.
+:: Installs a given script in DB2.
+:: It uses the continue global variable to stop the execution if an error occurs.
 :installScript
  set script=%~1
  echo %script%
@@ -53,10 +59,13 @@ goto:eof
  )
 goto:eof
 
+:: Function that install the utility for version 10.1.
 :: DB2 v10.1
 :v10.1
  echo Installing utility for v10.1
- if %continue% EQU 1 call:installScript %LOG4DB2_SRC_MAIN_CODE_PATH%\AdminObjects.sql
+ if %adminInstall% EQU 1 (
+  if %continue% EQU 1 call:installScript %LOG4DB2_SRC_MAIN_CODE_PATH%\AdminObjects.sql
+ )
  if %continue% EQU 1 call:installScript %LOG4DB2_SRC_MAIN_CODE_PATH%\Tables.sql
  if %continue% EQU 1 call:installScript %LOG4DB2_SRC_MAIN_CODE_PATH%\UtilityHeader.sql
  if %continue% EQU 1 call:installScript %LOG4DB2_SRC_MAIN_CODE_PATH%\UtilityBody.sql
@@ -100,10 +109,13 @@ goto:eof
  )
 goto:eof
 
+:: Function that install the utility for version 9.7.
 :: DB2 v9.7
 :v9.7
  echo Installing utility for v9.7
- if %continue% EQU 1 call:installScript %LOG4DB2_SRC_MAIN_CODE_PATH%\AdminObjects.sql
+ if %adminInstall% EQU 1 (
+  if %continue% EQU 1 call:installScript %LOG4DB2_SRC_MAIN_CODE_PATH%\AdminObjects.sql
+ )
  if %continue% EQU 1 call:installScript %LOG4DB2_SRC_MAIN_CODE_PATH%\Tables_v9_7.sql
  if %continue% EQU 1 call:installScript %LOG4DB2_SRC_MAIN_CODE_PATH%\UtilityHeader.sql
  if %continue% EQU 1 call:installScript %LOG4DB2_SRC_MAIN_CODE_PATH%\UtilityBody.sql
@@ -141,31 +153,58 @@ goto:eof
  )
 goto:eof
 
+:: This functions checks all parameters and assign them to global variables.
+:checkParam
+ set param1=%1
+ set param2=%2
+ set param3=%3
+ if /I "%param1%" == "-A"
+  set adminInstall=0
+ )
+ if /I "%param2%" == "-A"
+  set adminInstall=0
+ )
+ if /I "%param3%" == "-A"
+  set adminInstall=0
+ )
+ if /I "%param1%" == "-t"
+  set temporalTable=1
+ )
+ if /I "%param2%" == "-t"
+  set temporalTable=1
+ )
+ if /I "%param3%" == "-t"
+  set temporalTable=1
+ )
+ if /I "%param1%" == "-v9.7"
+  set v9_7=1
+ )
+ if /I "%param2%" == "-v9.7"
+  set v9_7=1
+ )
+ if /I "%param3%" == "-v9.7"
+  set v9_7=1
+ )
+goto:eof
+
+:: Main unction that starts the installation.
 :init
+ :: Initialize the environment.
  if EXIST init.bat (
   call init.bat
  )
 
  echo log4db2 is licensed under the terms of the Simplified-BSD license
 
+ :: Check the given parameters.
+ checkParam %1 %2 %3
+
  :: Checks in which DB2 version the utility will be installed.
  :: DB2 v10.1 is the default version.
- if "%1" EQU "" (
-  call:v10.1
- ) else if /I "%1" EQU "t" (
-  call:v10.1 t
- ) else if /I "%1" EQU "-v10.1" (
-  if /I "%2" EQU "" (
-   call:v10.1
-  ) else if /I "%2" EQU "t" (
-   call:v10.1 t
-  ) else (
-   echo ERROR1 in parameters
-  )
- ) else if /I "%1" EQU "-v9.7" (
+ if "%v9_7" EQU 1 (
   call:v9.7
  ) else (
-  echo ERROR2 in parameters
+   call:v10.1
  )
 
  if EXIST uninit.bat (

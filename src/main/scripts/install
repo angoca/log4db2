@@ -28,12 +28,14 @@
 # Author: Andres Gomez Casanova (AngocA)
 # Made in COLOMBIA.
 
+# Global variables
 export continue=true
 export adminInstall=true
 export temporalTable=false
 export v9_7=false
 
-# Installs a given script.
+# Installs a given script in DB2.
+# It uses the continue global variable to stop the execution if an error occurs.
 installScript() {
  script=${1}
  echo $script
@@ -44,6 +46,7 @@ installScript() {
  unset script
 }
 
+# Function that install the utility for version 10.1.
 # DB2 v10.1.
 v10_1() {
  local  __retInstall=$1
@@ -99,6 +102,7 @@ v10_1() {
  eval $__retInstall="'${myRetInstall}'"
 }
 
+# Function that install the utility for version 9.7.
 # DB2 v9.7
 v9_7() {
  local  __retInstall=$1
@@ -148,6 +152,7 @@ v9_7() {
  eval $__retInstall="'${myRetInstall}'"
 }
 
+# This functions checks all parameters and assign them to global variables.
 checkParam() {
  param1=${1}
  param2=${2}
@@ -163,15 +168,18 @@ checkParam() {
  fi
 }
 
+# Main unction that starts the installation.
 init() {
  local  __retInit=$1
 
+ # Initialize the environment.
  if [ -x init ] ; then
   . ./init
  fi
 
  echo "log4db2 is licensed under the terms of the Simplified-BSD license"
 
+ # Check the given parameters.
  checkParam ${2} ${3} ${4}
 
  # Checks in which DB2 version the utility will be installed.
