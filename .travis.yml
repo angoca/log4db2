@@ -73,7 +73,7 @@ install:
   - bash -c "if [ '$ENV' = 'test' ]; then db2 connect to log4db2 ; db2 -tf TestsLogs.sql ; fi"
   - bash -c "if [ '$ENV' = 'test' ]; then db2 connect to log4db2 ; db2 -tf TestsMessages.sql ; fi"
   - bash -c "if [ '$ENV' = 'test' ]; then db2 connect to log4db2 ; db2 -tf TestsReferences.sql ; fi"
-  - bash -c "if [ '$TESTS' = 'random' ]; then db2 connect to log4db2 ; db2 \"call db2unit.export_tests_list\"; chmod +x /tmp/listOfTestSuites ; chmod +x /tmp/returnCode ; fi"
+  - bash -c "if [ '$TESTS' = 'random' ]; then db2 connect to log4db2 ; db2 \"call db2unit.export_tests_list\"; sudo chmod +x /tmp/listOfTestSuites ; sudo chmod +x /tmp/returnCode ; fi"
 
 script:
   - bash -c "if [ '$TESTS' = 'seq' ]; then db2 connect to log4db2 ; db2 -r /tmp/db2unit.output \"call db2unit.run_suite('LOG4DB2_APPENDERS')\" ; ../../../travis/procSP ; fi"
