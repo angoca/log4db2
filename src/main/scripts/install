@@ -29,6 +29,9 @@
 # Made in COLOMBIA.
 
 export continue=true
+export adminInstall=true
+export temporalTable=false
+export v9_7=false
 
 # Installs a given script.
 installScript() {
@@ -46,7 +49,9 @@ v10_1() {
  local  __retInstall=$1
 
  echo "Installing utility for v10.1"
- [ ${continue} = true ] && installScript ${LOG4DB2_SRC_MAIN_CODE_PATH}/AdminObjects.sql
+ if [ ${adminInstall} = true ] ; then
+  [ ${continue} = true ] && installScript ${LOG4DB2_SRC_MAIN_CODE_PATH}/AdminObjects.sql
+ fi
  [ ${continue} = true ] && installScript ${LOG4DB2_SRC_MAIN_CODE_PATH}/Tables.sql
  [ ${continue} = true ] && installScript ${LOG4DB2_SRC_MAIN_CODE_PATH}/UtilityHeader.sql
  [ ${continue} = true ] && installScript ${LOG4DB2_SRC_MAIN_CODE_PATH}/UtilityBody.sql
@@ -66,7 +71,7 @@ v10_1() {
  cd scripts 2> /dev/null
 
  # Temporal capabilities for tables.
- if [ "${2}" = "t" -a ${continue} = true ] ; then
+ if [ "${temporalTable}" = "true" -a ${continue} = true ] ; then
   echo "Create table for Time Travel"
   installScript ${LOG4DB2_SRC_MAIN_CODE_PATH}/TablesTimeTravel.sql
  fi
@@ -99,7 +104,9 @@ v9_7() {
  local  __retInstall=$1
 
  echo "Installing utility for DB2 v9.7"
- [ ${continue} = true ] && installScript ${LOG4DB2_SRC_MAIN_CODE_PATH}/AdminObjects.sql
+ if [ ${adminInstall} = true ] ; then
+  [ ${continue} = true ] && installScript ${LOG4DB2_SRC_MAIN_CODE_PATH}/AdminObjects.sql
+ fi
  [ ${continue} = true ] && installScript ${LOG4DB2_SRC_MAIN_CODE_PATH}/Tables_v9_7.sql
  [ ${continue} = true ] && installScript ${LOG4DB2_SRC_MAIN_CODE_PATH}/UtilityHeader.sql
  [ ${continue} = true ] && installScript ${LOG4DB2_SRC_MAIN_CODE_PATH}/UtilityBody.sql
@@ -141,6 +148,21 @@ v9_7() {
  eval $__retInstall="'${myRetInstall}'"
 }
 
+checkParam() {
+ param1=${1}
+ param2=${2}
+ param3=${3}
+ if [ "${param1}" = "-A" -o "${param2}" = "-A" -o "${param3}" = "-A" ] ; then
+  export adminInstall=false
+ fi
+ if [ "${param1}" = "-t" -o "${param2}" = "-t" -o "${param3}" = "-t" ] ; then
+  export temporalTable=true
+ fi
+ if [ "${param1}" = "-v9.7" -o "${param2}" = "-v9.7" -o "${param3}" = "-v9.7" ] ; then
+  export v9_7=true
+ fi
+}
+
 init() {
  local  __retInit=$1
 
@@ -150,26 +172,14 @@ init() {
 
  echo "log4db2 is licensed under the terms of the Simplified-BSD license"
 
+ checkParam ${2} ${3} ${4}
+
  # Checks in which DB2 version the utility will be installed.
  # DB2 v10.1 is the default version.
- param1=${2}
- param2=${3}
- if [ "${param1}" = "" ] ; then
-  v10_1 retInstall
- elif [ "${param1}" = "t" ] ; then
-  v10_1 retInstall t
- elif [ "${param1}" = "-v10.1" ] ; then
-  if [ "${param2}" = "" ] ; then
-   v10_1 retInstall
-  elif [ "${param2}" = "t" ] ; then
-   v10_1 retInstall t
-  else
-   echo "ERROR1 in parameters"
-  fi
- elif [ "${param1}" = "-v9.7" ] ; then
+ if [ "${v9_7}" = "true" ] ; then
   v9_7 retInstall
  else
-  echo "ERROR2 in parameters"
+  v10_1 retInstall
  fi
 
  if [ -x uninit ] ; then
@@ -183,7 +193,7 @@ init() {
 # Checks if there is already a connection established
 db2 connect > /dev/null
 if [ ${?} -eq 0 ] ; then
- init ret ${1} ${2}
+ init ret ${1} ${2} ${3}
 else
  echo "Please connect to a database before the execution of the installation."
  echo "Remember that to call the script the command is '. ./install'"
