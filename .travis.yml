@@ -99,5 +99,7 @@ script:
   - bash -c "if [ '$TESTS' = 'seq' ]; then db2 connect to log4db2 ; db2 -r /tmp/db2unit.output \"call db2unit.run_suite('LOG4DB2_MESSAGES')\" ; ../../../travis/procSP ; fi"
   - bash -c "if [ '$TESTS' = 'seq' ]; then db2 connect to log4db2 ; db2 -r /tmp/db2unit.output \"call db2unit.run_suite('LOG4DB2_REFERENCES')\" ; ../../../travis/procSP ; fi"
 
-  - bash -c "if [ '$TESTS' = 'random' ]; then db2 connect to log4db2 ; . /tmp/listOfTestSuites ; /tmp/returnCode ; fi" -v
+  - bash -c "if [ '$TESTS' = 'random' ]; then db2 connect to log4db2 ; ls -l /tmp ; . /tmp/listOfTestSuites ; /tmp/returnCode ; fi" 
+  - cat /tmp/listOfTestSuites
+  - cat /tmp/returnCode
 
