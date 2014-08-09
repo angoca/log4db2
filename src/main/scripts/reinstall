@@ -33,5 +33,5 @@ if [ -x init ] ; then
 fi
 
 . ${LOG4DB2_SRC_MAIN_SCRIPT_PATH}/uninstall
-. ${LOG4DB2_SRC_MAIN_SCRIPT_PATH}/install ${1} ${2}
+. ${LOG4DB2_SRC_MAIN_SCRIPT_PATH}/install ${1} ${2} ${3}
 

@@ -32,5 +32,5 @@
   .\init.ps1
  }
 & ${LOG4DB2_SRC_MAIN_SCRIPT_PATH}\uninstall.ps1
-& ${LOG4DB2_SRC_MAIN_SCRIPT_PATH}\install.ps1 $Args[0] $Args[1]
+& ${LOG4DB2_SRC_MAIN_SCRIPT_PATH}\install.ps1 $Args[0] $Args[1] $Args[2]
 
