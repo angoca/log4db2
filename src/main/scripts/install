@@ -75,7 +75,7 @@ v10_1() {
  cd scripts 2> /dev/null
 
  # Temporal capabilities for tables.
- if [ "${temporalTable}" = "true" -a ${continue} = true ] ; then
+ if [ ${temporalTable} = true -a ${continue} = true ] ; then
   echo "Create table for Time Travel"
   installScript ${LOG4DB2_SRC_MAIN_CODE_PATH}/TablesTimeTravel.sql
  fi
@@ -164,7 +164,7 @@ checkParam() {
  if [ "${param1}" = "-t" -o "${param2}" = "-t" -o "${param3}" = "-t" ] ; then
   export temporalTable=true
  fi
- if [ "${param1}" = "-v9.7" -o "${param2}" = "-v9.7" -o "${param3}" = "-v9.7" ] ; then
+ if [ "${param1}" = "-v9_7" -o "${param2}" = "-v9_7" -o "${param3}" = "-v9_7" ] ; then
   export v9_7=true
  fi
 }

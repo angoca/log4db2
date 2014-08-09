@@ -33,7 +33,7 @@
 ${Script:continue}=1
 ${Script:adminInstall}=1
 ${Script:temporalTable}=0
-${Script:v9_7}=0
+${Script:v97}=0
 ${Script:retValue}=0
 
 # Installs a given script in DB2.
@@ -141,18 +141,18 @@ function v9.7() {
 }
 
 # This functions checks all parameters and assign them to global variables.
-function checkParam($p1, $p2, $p3 {
- param1=${p1}
- param2=${p2}
- param3=${p3}
- if ( "${param1}" = "-A" -o "${param2}" = "-A" -o "${param3}" = "-A" ) {
+function checkParam($p1, $p2, $p3) {
+ $param1=${p1}
+ $param2=${p2}
+ $param3=${p3}
+ if ( "${param1}" -eq "-A" -or "${param2}" -eq "-A" -or "${param3}" -eq "-A" ) {
   ${Script:adminInstall}=0
  }
- if ( "${param1}" = "-t" -o "${param2}" = "-t" -o "${param3}" = "-t" ) {
+ if ( "${param1}" -eq "-t" -or "${param2}" -eq "-t" -or "${param3}" -eq "-t" ) {
   ${Script:temporalTable}=1
  }
- if ( "${param1}" = "-v9.7" -o "${param2}" = "-v9.7" -o "${param3}" = "-v9.7" ) {
-  ${Script:v9_7}=1
+ if ( "${param1}" -eq "-v9_7" -or "${param2}" -eq "-v9_7" -or "${param3}" -eq "-v9_7" ) {
+  ${Script:v97}=1
  }
 }
 
@@ -169,10 +169,10 @@ function init($p1, $p2, $p3) {
 
  # Checks in which DB2 version the utility will be installed.
  # DB2 v10.1 is the default version.
- if ( ${Script:v9_7} ) {
-  v9_7
+ if ( ${Script:v97} ) {
+  v9.7
  } else {
-  v10_1
+  v10.1
  }
 
  if ( Test-Path -Path uninit.ps1 -PathType Leaf ) {

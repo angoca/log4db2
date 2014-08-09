@@ -86,7 +86,7 @@ goto:eof
  cd scripts 2> NUL
 
  :: Temporal capabilities for tables.
- if "%1" EQU "t" if %continue% EQU 1 (
+ if %temporalTable% EQU 1 if %continue% EQU 1 (
   echo Create table for Time Travel
   call:installScript %LOG4DB2_SRC_MAIN_CODE_PATH%\TablesTimeTravel.sql
  )
@@ -159,31 +159,31 @@ goto:eof
  set param1=%1
  set param2=%2
  set param3=%3
- if /I "%param1%" == "-A"
+ if /I "%param1%" == "-A" (
   set adminInstall=0
  )
- if /I "%param2%" == "-A"
+ if /I "%param2%" == "-A" (
   set adminInstall=0
  )
- if /I "%param3%" == "-A"
+ if /I "%param3%" == "-A" (
   set adminInstall=0
  )
- if /I "%param1%" == "-t"
+ if /I "%param1%" == "-t" (
   set temporalTable=1
  )
- if /I "%param2%" == "-t"
+ if /I "%param2%" == "-t" (
   set temporalTable=1
  )
- if /I "%param3%" == "-t"
+ if /I "%param3%" == "-t" (
   set temporalTable=1
  )
- if /I "%param1%" == "-v9.7"
+ if /I "%param1%" == "-v9_7" (
   set v9_7=1
  )
- if /I "%param2%" == "-v9.7"
+ if /I "%param2%" == "-v9_7" (
   set v9_7=1
  )
- if /I "%param3%" == "-v9.7"
+ if /I "%param3%" == "-v9_7" (
   set v9_7=1
  )
 goto:eof
@@ -198,14 +198,14 @@ goto:eof
  echo log4db2 is licensed under the terms of the Simplified-BSD license
 
  :: Check the given parameters.
- checkParam %1 %2 %3
+ call:checkParam %1 %2 %3
 
  :: Checks in which DB2 version the utility will be installed.
  :: DB2 v10.1 is the default version.
- if "%v9_7" EQU 1 (
+ if %v9_7% EQU 1 (
   call:v9.7
  ) else (
-   call:v10.1
+  call:v10.1
  )
 
  if EXIST uninit.bat (
