@@ -39,4 +39,8 @@ set sqlterminator @
 PROMPT CleanTables.sql
 set sqlterminator ;
 @@ sql-pl/CleanTables.sql
+PROMPT PACKAGES_TO_DROP.sql
+@@ PACKAGES_TO_DROP.sql
+PROMPT CleanAdmin.sql
+@@ sql-pl/CleanAdmin.sql
 

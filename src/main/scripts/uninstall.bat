@@ -47,7 +47,7 @@ if %ERRORLEVEL% NEQ 0 (
  db2 -tf %LOG4DB2_SRC_MAIN_CODE_PATH%\CleanObjects.sql
  db2 -tf %LOG4DB2_SRC_MAIN_CODE_PATH%\CleanTables.sql
  db2 -tf PACKAGES_TO_DROP.sql
- del PACKAGES_TO_DROP.sql
  db2 -tf %LOG4DB2_SRC_MAIN_CODE_PATH%\CleanAdmin.sql
+ del PACKAGES_TO_DROP.sql
 goto:eof
 
