@@ -34,13 +34,13 @@ PROMPT Uninstalling log4db2...
 PROMPT CleanTriggers.sql
 @@ sql-pl/CleanTriggers.sql
 PROMPT CleanObjects.sql
-set sqlterminator @
 @@ sql-pl/CleanObjects.sql
+PROMPT Drop packages
+@@ PACKAGES_TO_DROP_SCHEMA.sql
 PROMPT CleanTables.sql
-set sqlterminator ;
 @@ sql-pl/CleanTables.sql
-PROMPT PACKAGES_TO_DROP.sql
-@@ PACKAGES_TO_DROP.sql
+PROMPT Drop packages
+@@ PACKAGES_TO_DROP_SCHEMA.sql
 PROMPT CleanAdmin.sql
 @@ sql-pl/CleanAdmin.sql
 
