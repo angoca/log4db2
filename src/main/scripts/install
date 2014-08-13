@@ -54,33 +54,33 @@ v10_1() {
 
  echo "Installing utility for v10.1"
  if [ ${adminInstall} = true ] ; then
-  [ ${continue} = true ] && installScript ${LOG4DB2_SRC_MAIN_CODE_PATH}/AdminObjects.sql
+  [ ${continue} = true ] && installScript ${LOG4DB2_SRC_MAIN_CODE_PATH}/00-AdminObjects.sql
  fi
- [ ${continue} = true ] && installScript ${LOG4DB2_SRC_MAIN_CODE_PATH}/Tables.sql
- [ ${continue} = true ] && installScript ${LOG4DB2_SRC_MAIN_CODE_PATH}/UtilityHeader.sql
- [ ${continue} = true ] && installScript ${LOG4DB2_SRC_MAIN_CODE_PATH}/UtilityBody.sql
- [ ${continue} = true ] && installScript ${LOG4DB2_SRC_MAIN_CODE_PATH}/Appenders.sql
- [ ${continue} = true ] && installScript ${LOG4DB2_SRC_MAIN_CODE_PATH}/LOG.sql
- [ ${continue} = true ] && installScript ${LOG4DB2_SRC_MAIN_CODE_PATH}/GET_LOGGER.sql
- [ ${continue} = true ] && installScript ${LOG4DB2_SRC_MAIN_CODE_PATH}/Trigger.sql
+ [ ${continue} = true ] && installScript ${LOG4DB2_SRC_MAIN_CODE_PATH}/01-Tables.sql
+ [ ${continue} = true ] && installScript ${LOG4DB2_SRC_MAIN_CODE_PATH}/02-UtilityHeader.sql
+ [ ${continue} = true ] && installScript ${LOG4DB2_SRC_MAIN_CODE_PATH}/03-UtilityBody.sql
+ [ ${continue} = true ] && installScript ${LOG4DB2_SRC_MAIN_CODE_PATH}/04-Appenders.sql
+ [ ${continue} = true ] && installScript ${LOG4DB2_SRC_MAIN_CODE_PATH}/05-LOG.sql
+ [ ${continue} = true ] && installScript ${LOG4DB2_SRC_MAIN_CODE_PATH}/06-GET_LOGGER.sql
+ [ ${continue} = true ] && installScript ${LOG4DB2_SRC_MAIN_CODE_PATH}/07-Trigger.sql
 
- [ ${continue} = true ] && installScript ${LOG4DB2_SRC_MAIN_CODE_PATH}/AdminHeader.sql
- [ ${continue} = true ] && installScript ${LOG4DB2_SRC_MAIN_CODE_PATH}/AdminBody.sql
+ [ ${continue} = true ] && installScript ${LOG4DB2_SRC_MAIN_CODE_PATH}/08-AdminHeader.sql
+ [ ${continue} = true ] && installScript ${LOG4DB2_SRC_MAIN_CODE_PATH}/09-AdminBody.sql
 
  cd ${LOG4DB2_SRC_MAIN_CODE_PATH}
  cd ..
  cd xml
- [ ${continue} = true ] && installScript AppendersXML.sql
+ [ ${continue} = true ] && installScript 10-AppendersXML.sql
  cd ..
  cd scripts 2> /dev/null
 
  # Temporal capabilities for tables.
  if [ ${temporalTable} = true -a ${continue} = true ] ; then
   echo "Create table for Time Travel"
-  installScript ${LOG4DB2_SRC_MAIN_CODE_PATH}/TablesTimeTravel.sql
+  installScript ${LOG4DB2_SRC_MAIN_CODE_PATH}/11-TablesTimeTravel.sql
  fi
 
- [ ${continue} = true ] && installScript ${LOG4DB2_SRC_MAIN_CODE_PATH}/Version.sql
+ [ ${continue} = true ] && installScript ${LOG4DB2_SRC_MAIN_CODE_PATH}/12-Version.sql
 
  echo "Please visit the wiki to learn how to use and configure this utility"
  echo "https://github.com/angoca/log4db2/wiki"
@@ -110,27 +110,27 @@ v9_7() {
 
  echo "Installing utility for DB2 v9.7"
  if [ ${adminInstall} = true ] ; then
-  [ ${continue} = true ] && installScript ${LOG4DB2_SRC_MAIN_CODE_PATH}/AdminObjects.sql
+  [ ${continue} = true ] && installScript ${LOG4DB2_SRC_MAIN_CODE_PATH}/00-AdminObjects.sql
  fi
- [ ${continue} = true ] && installScript ${LOG4DB2_SRC_MAIN_CODE_PATH}/Tables_v9_7.sql
- [ ${continue} = true ] && installScript ${LOG4DB2_SRC_MAIN_CODE_PATH}/UtilityHeader.sql
- [ ${continue} = true ] && installScript ${LOG4DB2_SRC_MAIN_CODE_PATH}/UtilityBody.sql
- [ ${continue} = true ] && installScript ${LOG4DB2_SRC_MAIN_CODE_PATH}/Appenders.sql
- [ ${continue} = true ] && installScript ${LOG4DB2_SRC_MAIN_CODE_PATH}/LOG.sql
- [ ${continue} = true ] && installScript ${LOG4DB2_SRC_MAIN_CODE_PATH}/GET_LOGGER_v9_7.sql
- [ ${continue} = true ] && installScript ${LOG4DB2_SRC_MAIN_CODE_PATH}/Trigger.sql
+ [ ${continue} = true ] && installScript ${LOG4DB2_SRC_MAIN_CODE_PATH}/01-Tables_v9_7.sql
+ [ ${continue} = true ] && installScript ${LOG4DB2_SRC_MAIN_CODE_PATH}/02-UtilityHeader.sql
+ [ ${continue} = true ] && installScript ${LOG4DB2_SRC_MAIN_CODE_PATH}/03-UtilityBody.sql
+ [ ${continue} = true ] && installScript ${LOG4DB2_SRC_MAIN_CODE_PATH}/04-Appenders.sql
+ [ ${continue} = true ] && installScript ${LOG4DB2_SRC_MAIN_CODE_PATH}/05-LOG.sql
+ [ ${continue} = true ] && installScript ${LOG4DB2_SRC_MAIN_CODE_PATH}/06-GET_LOGGER_v9_7.sql
+ [ ${continue} = true ] && installScript ${LOG4DB2_SRC_MAIN_CODE_PATH}/07-Trigger.sql
 
- [ ${continue} = true ] && installScript ${LOG4DB2_SRC_MAIN_CODE_PATH}/AdminHeader.sql
- [ ${continue} = true ] && installScript ${LOG4DB2_SRC_MAIN_CODE_PATH}/AdminBody.sql
+ [ ${continue} = true ] && installScript ${LOG4DB2_SRC_MAIN_CODE_PATH}/08-AdminHeader.sql
+ [ ${continue} = true ] && installScript ${LOG4DB2_SRC_MAIN_CODE_PATH}/09-AdminBody.sql
 
  cd ${LOG4DB2_SRC_MAIN_CODE_PATH}
  cd ..
  cd xml
- [ ${continue} = true ] && installScript AppendersXML.sql
+ [ ${continue} = true ] && installScript 10-AppendersXML.sql
  cd ..
  cd scripts 2> /dev/null
 
- [ ${continue} = true ] && installScript ${LOG4DB2_SRC_MAIN_CODE_PATH}/Version.sql
+ [ ${continue} = true ] && installScript ${LOG4DB2_SRC_MAIN_CODE_PATH}/12-Version.sql
 
  echo "Please visit the wiki to learn how to use and configure this utility"
  echo "https://github.com/angoca/log4db2/wiki"

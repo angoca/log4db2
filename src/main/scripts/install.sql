@@ -32,34 +32,34 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * Made in COLOMBIA.
  */
 
-PROMPT AdminObjects.sql
-@@ sql-pl/AdminObjects.sql
-PROMPT Tables.sql
-@@ sql-pl/Tables.sql
-PROMPT UtilityHeader.sql
-@@ sql-pl/UtilityHeader.sql
-PROMPT UtilityBody.sql
+PROMPT 00-AdminObjects.sql
+@@ sql-pl/00-AdminObjects.sql
+PROMPT 01-Tables.sql
+@@ sql-pl/01-Tables.sql
+PROMPT 02-UtilityHeader.sql
+@@ sql-pl/02-UtilityHeader.sql
+PROMPT 03-UtilityBody.sql
 set sqlterminator @
-@@ sql-pl/UtilityBody.sql
-PROMPT Appenders.sql
-@@ sql-pl/Appenders.sql
-PROMPT LOG.sql
-@@ sql-pl/LOG.sql
-PROMPT GET_LOGGER.sql
-@@ sql-pl/GET_LOGGER.sql
-PROMPT Trigger.sql
-@@ sql-pl/Trigger.sql
+@@ sql-pl/03-UtilityBody.sql
+PROMPT 04-Appenders.sql
+@@ sql-pl/04-Appenders.sql
+PROMPT 05-LOG.sql
+@@ sql-pl/05-LOG.sql
+PROMPT 06-GET_LOGGER.sql
+@@ sql-pl/06-GET_LOGGER.sql
+PROMPT 07-Trigger.sql
+@@ sql-pl/07-Trigger.sql
 
-PROMPT AdminHeader.sql
+PROMPT 08-AdminHeader.sql
 set sqlterminator ;
-@@ sql-pl/AdminHeader.sql
-PROMPT AdminBody.sql
+@@ sql-pl/08-AdminHeader.sql
+PROMPT 09-AdminBody.sql
 set sqlterminator @
-@@ sql-pl/AdminBody.sql
+@@ sql-pl/09-AdminBody.sql
 
-PROMPT AppendersXML.sql
-@@ sql-pl/AppendersXML.sql
+PROMPT 10-AppendersXML.sql
+@@ sql-pl/10-AppendersXML.sql
 
-PROMPT Version.sql
-@@ sql-pl/Version.sql
+PROMPT 12-Version.sql
+@@ sql-pl/12-Version.sql
 

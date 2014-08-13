@@ -12,8 +12,8 @@ There are three sections:
 BEFORE
 
 * Run all tests to make sure there are not regressions.
-* To change the version constant in the code (AdminHeader.sql:VERSION):
-https://github.com/angoca/log4db2/blob/master/src/main/sql-pl/AdminHeader.sql
+* To change the version constant in the code (12-Version.sql:VERSION):
+https://github.com/angoca/log4db2/blob/master/src/main/sql-pl/12-Version.sql
 * Change the version in the documentation (@version) of all source files.
 * Rename the XML schema for the new version if modified.
 * Make sure the schema reflects the version number to release (all files.)

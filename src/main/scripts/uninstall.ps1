@@ -38,11 +38,11 @@ if ( ${LastExitCode} -ne 0 ) {
   .\init.ps1
  }
  echo "Uninstalling log4db2"
- db2 -tf ${LOG4DB2_SRC_MAIN_CODE_PATH}\CleanTriggers.sql
- db2 -tf ${LOG4DB2_SRC_MAIN_CODE_PATH}\CleanObjects.sql
- db2 -tf ${LOG4DB2_SRC_MAIN_CODE_PATH}\CleanTables.sql
+ db2 -tf ${LOG4DB2_SRC_MAIN_CODE_PATH}\96-CleanTriggers.sql
+ db2 -tf ${LOG4DB2_SRC_MAIN_CODE_PATH}\97-CleanObjects.sql
+ db2 -tf ${LOG4DB2_SRC_MAIN_CODE_PATH}\98-CleanTables.sql
  db2 -tf PACKAGES_TO_DROP.sql
- db2 -tf ${LOG4DB2_SRC_MAIN_CODE_PATH}\CleanAdmin.sql
+ db2 -tf ${LOG4DB2_SRC_MAIN_CODE_PATH}\99-CleanAdmin.sql
  del PACKAGES_TO_DROP.sql
 }
 

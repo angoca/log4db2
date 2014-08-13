@@ -31,16 +31,16 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 PROMPT Uninstalling log4db2...
-PROMPT CleanTriggers.sql
-@@ sql-pl/CleanTriggers.sql
-PROMPT CleanObjects.sql
-@@ sql-pl/CleanObjects.sql
+PROMPT 96-CleanTriggers.sql
+@@ sql-pl/96-CleanTriggers.sql
+PROMPT 97-CleanObjects.sql
+@@ sql-pl/97-CleanObjects.sql
 PROMPT Drop packages
 @@ PACKAGES_TO_DROP_SCHEMA.sql
-PROMPT CleanTables.sql
-@@ sql-pl/CleanTables.sql
+PROMPT 98-CleanTables.sql
+@@ sql-pl/98-CleanTables.sql
 PROMPT Drop packages
 @@ PACKAGES_TO_DROP_SCHEMA.sql
-PROMPT CleanAdmin.sql
-@@ sql-pl/CleanAdmin.sql
+PROMPT 99-CleanAdmin.sql
+@@ sql-pl/99-CleanAdmin.sql
 
