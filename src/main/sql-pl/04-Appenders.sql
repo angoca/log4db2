@@ -71,8 +71,8 @@ ALTER MODULE LOGGER PUBLISH
 
 /**
  * Writes the given message in the log table. This is a pure SQL implementation,
- * without any external call. This procedure is exaclty the same as LOG_TABLES,
- * the difference is that this is decalred as Autonomous.
+ * without any external call. This procedure is exactly the same as LOG_TABLES,
+ * the difference is that this is declared as Autonomous.
  *
  * IN LOGGER_ID
  *   Identification of the associated logger.
