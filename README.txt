@@ -149,33 +149,39 @@ These are the files included in the released version:
  * `install*` -- Installation files.
  * `README.txt` -- This file.
  * `reinstall*` -- Reinstallation files.
+ * `uninit*` -- Clean environment.
  * `uninstall*` -- Uninstallation files.
  * `doc` directory -- Documentation directory (ErrorCode, ER diagram).
  * `sql-pl` directory -- Directory for all objects: DDL, DML, routines
      definition.
-   * `AdminBody.sql` -- Body of the administration tools.
-   * `AdminHeader.sql` -- Headers of the administration tools.
-   * `Appenders.sql` -- Definition of the appenders.
-   * `Appenders_No_ExpC.sql` -- Appenders for DB2 no Express-c (LOG_UTL_FILE).
-    This is not included in the installation.
-   * `CleanObjects.sql` -- Remove all objects.
-   * `CleanTables.sql` -- Remove all tables.
-   * `CleanTriggers.sql` -- Remove all triggers.
-   * `GET_LOGGER.sql` -- GetLogger procedure definition for v10.1 or upper.
-   * `GET_LOGGER_v9_7.sql` -- GetLogger procedure definition for v9.7.
-   * `LOG.sql` -- Log procedure definition with its macros.
-   * `Tables.sql` -- Tables, tablespaces, bufferpools, schemas, and DML.
-   * `TablesTimeTravel.sql` -- Modifications for Time Travel.
-   * `Tables_v9_7.sql` - Tables, tablespaces, bufferpools, schemas, and DML for
-       v9.7.
-   * `Trigger.sql` -- Trigger of the different tables.
-   * `UtilityBody.sql` -- Body of the core tools.
-   * `UtilityHeader.sql` -- Headers of the core tools.
+   * `00-AdminObjects.sql` -- Create admin objects: BP, TS and schema.
+   * `01-Tables.sql` -- Tables, tablespaces, bufferpools, schemas, and DML.
+   * `01-Tables_v9_7.sql` - Tables, tablespaces, bufferpools, schemas, and DML
+       for v9.7.
+   * `02-UtilityHeader.sql` -- Headers of the core tools.
+   * `03-UtilityBody.sql` -- Body of the core tools.
+   * `04-Appenders.sql` -- Definition of the appenders.
+   * `05-LOG.sql` -- Log procedure definition with its macros.
+   * `06-GET_LOGGER.sql` -- GetLogger procedure definition for v10.1 or upper.
+   * `06-GET_LOGGER_v9_7.sql` -- GetLogger procedure definition for v9.7.
+   * `07-Trigger.sql` -- Trigger of the different tables.
+   * `08-AdminHeader.sql` -- Headers of the administration tools.
+   * `09-AdminBody.sql` -- Body of the administration tools.
+   * `11-TablesTimeTravel.sql` -- Modifications for Time Travel.
+   * `12-Version.sql` -- Version of the utility.
+   * `96-CleanTriggers.sql` -- Remove all triggers.
+   * `97-CleanObjects.sql` -- Remove all objects.
+   * `98-CleanTables.sql` -- Remove all tables.
+   * `Appender_CGTT_Create.sql` -- Appender for temporary tables.
+   * `Appender_CGTT_Drop.sql` -- Drops appender for temporary tables.
+   * `Appender_UTL_FILE_Create.sql` -- Appender to write in a file
+   * `Appender_UTL_FILE_Drop.sql` -- Drop appender that write in a file.
 
  * `xml` directory -- Directory for XML Schemas, XML files and related scripts
      for appenders configuration.
+   * `Appender_UTL_FILE.csv` -- Description of the appender..
    * `Appender_UTL_FILE.xml` -- Configuration for LOG_UTL_FILE appender.
-   * `AppendersXML.sql` -- Registers the XML Schema.
+   * `10-AppendersXML.sql` -- Registers the XML Schema.
    * `conf_appender_X.xsd` -- XML Schema for the X release.
 
 The * in the install-related files means that several files for each one of
