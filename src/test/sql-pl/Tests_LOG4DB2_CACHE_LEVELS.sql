@@ -68,6 +68,7 @@ CREATE OR REPLACE PROCEDURE ONE_TIME_TEAR_DOWN()
            ('logInternals', 'false'),
            ('secondsToRefresh', '30');
   CALL LOGGER.ACTIVATE_CACHE();
+  CALL LOGGER.REFRESH_CACHE();
   INSERT INTO LOGDATA.LOGS (LEVEL_ID, MESSAGE) VALUES (3, 'TestsCacheLevel: Finished succesfully');
  END P_ONE_TIME_TEAR_DOWN @
 
