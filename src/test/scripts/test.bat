@@ -23,7 +23,7 @@
 :: ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 :: POSSIBILITY OF SUCH DAMAGE.
 
-:: Execute a test.
+:: Install and/or execute a suite of tests.
 ::
 :: Version: 2014-04-21 1-RC
 :: Author: Andres Gomez Casanova (AngocA)
@@ -32,14 +32,40 @@
 db2 connect > NUL
 if %ERRORLEVEL% NEQ 0 (
  echo Please connect to a database before the execution of the test
- echo Remember that to call the script the command is 'test <TestSuite>'
+ echo Remember that to call the script the command is 'test <TestSuite> {i} {x}'
+ echo i for installing (by default)
+ echo x for executing
+ echo The test file should have this structure: Test_<SCHEMA_NAME>.sql
 ) else (
- db2 DELETE FROM LOGDATA.LOGS
+ set SCHEMA=%1
+ set OPTION_1=%2
+ set OPTION_2=%3
+ :: Execute the tests.
+ :: if "%OPTION_1%" EQU "" -o "%OPTION_1%" EQU "i" -o "%OPTION_2%" EQU "i" (
+ :: A OR B OR C = not [ not { not ( not A and not B ) } and not C ]
+ if (not if (not if (not if (not "%OPTION_1%" EQU "") if (not "%OPTION_1%" EQU "i"))) if (not "%OPTION_2%" EQU "i")) (
+  :: Prepares the installation.
+  db2 "DELETE FROM LOGS" > NUL
+  db2 "DROP TABLE %1.REPORT_TESTS" > NUL
+  db2 "CALL SYSPROC.ADMIN_DROP_SCHEMA('%SCHEMA%', NULL, 'ERRORSCHEMA', 'ERRORTABLE')" > NUL
+  db2 "SELECT VARCHAR(SUBSTR(DIAGTEXT, 1, 256), 256) AS ERROR FROM ERRORSCHEMA.ERRORTABLE" 2> NUL
+  db2 "DROP TABLE ERRORSCHEMA.ERRORTABLE" > NUL
+  db2 "DROP SCHEMA ERRORSCHEMA RESTRICT" > NUL
 
- db2 -tf %1
+  :: Installs the tests.
+  db2 -td@ -f ../sql-pl/Tests_%SCHEMA%.sql
+ )
 
- db2 COMMIT
+ :: Execute the tests.
+ ::if "%OPTION_1%" EQU "x" -o "%OPTION_2%" EQU "x" (
+ if (not "%OPTION_1%" EQU "x") if ("%OPTION_2%" EQU "x") (
+  db2 "CALL DB2UNIT.CLEAN()"
+  db2 "CALL DB2UNIT.RUN_SUITE('%SCHEMA%')"
+  db2 "CALL DB2UNIT.CLEAN()"
+ )
 
- db2 "CALL LOGADMIN.LOGS(min_level=>4)"
+ if (not if (not if (not if (not "%OPTION_1%" EQU "") if (not "%OPTION_1%" EQU "i"))) if (not "%OPTION_2%" EQU "i")) (
+  db2 "CALL LOGADMIN.LOGS(min_level=>4)"
+ )
 )
 

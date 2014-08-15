@@ -37,69 +37,72 @@ if ( $LastExitCode -ne 0 ) {
 } else {
  echo "Executing all tests with pauses in between."
 
- Write-Host "(next TestsAppenders)"
- & .\${LOG4DB2_SRC_TEST_SCRIPT_PATH}\test.ps1 ${LOG4DB2_SRC_TEST_CODE_PATH}\TestsAppenders.sql
- Write-Host "Press enter to continue (next TestsAppendersImplementation)"
+ Write-Host "(next LOG4DB2_APPENDERS)"
+ & .\${LOG4DB2_SRC_TEST_SCRIPT_PATH}\test.ps1 LOG4DB2_APPENDERS i x
+ Write-Host "Press enter to continue (next LOG4DB2_APPENDERS_IMPLEMENTATION)"
  $x = $host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
- & .\${LOG4DB2_SRC_TEST_SCRIPT_PATH}\test.ps1 ${LOG4DB2_SRC_TEST_CODE_PATH}\TestsAppendersImplementation.sql
- Write-Host "Press enter to continue (next TestsCache)"
+ & .\${LOG4DB2_SRC_TEST_SCRIPT_PATH}\test.ps1 LOG4DB2_APPENDERS_IMPLEMENTATION i x
+ Write-Host "Press enter to continue (next LOG4DB2_CACHE_CONFIGURATION)"
  $x = $host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
- & .\${LOG4DB2_SRC_TEST_SCRIPT_PATH}\test.ps1 ${LOG4DB2_SRC_TEST_CODE_PATH}\TestsCache.sql
- Write-Host "Press enter to continue (next TestsCacheLevel)"
+ & .\${LOG4DB2_SRC_TEST_SCRIPT_PATH}\test.ps1 LOG4DB2_CACHE_CONFIGURATION i x
+ Write-Host "Press enter to continue (next LOG4DB2_CACHE_LEVELS)"
  $x = $host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
- & .\${LOG4DB2_SRC_TEST_SCRIPT_PATH}\test.ps1 ${LOG4DB2_SRC_TEST_CODE_PATH}\TestsCacheLevel.sql
- Write-Host "Press enter to continue (next TestsCacheLoggers)"
+ & .\${LOG4DB2_SRC_TEST_SCRIPT_PATH}\test.ps1 LOG4DB2_CACHE_LEVELS i x
+ Write-Host "Press enter to continue (next LOG4DB2_CACHE_LOGGERS)"
  $x = $host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
- & .\${LOG4DB2_SRC_TEST_SCRIPT_PATH}\test.ps1 ${LOG4DB2_SRC_TEST_CODE_PATH}\TestsCacheLoggers.sql
- Write-Host "Press enter to continue (next TestsCascadeCallLimit)"
+ & .\${LOG4DB2_SRC_TEST_SCRIPT_PATH}\test.ps1 LOG4DB2_CACHE_LOGGERS i x
+ Write-Host "Press enter to continue (next LOG4DB2_CASCADE_CALL_LIMIT)"
  $x = $host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
- & .\${LOG4DB2_SRC_TEST_SCRIPT_PATH}\test.ps1 ${LOG4DB2_SRC_TEST_CODE_PATH}\TestsCascadeCallLimit.sql
- Write-Host "Press enter to continue (next TestsConfAppenders)"
+ & .\${LOG4DB2_SRC_TEST_SCRIPT_PATH}\test.ps1 LOG4DB2_CASCADE_CALL_LIMIT i x
+ Write-Host "Press enter to continue (next LOG4DB2_CONF_APPENDERS)"
  $x = $host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
- & .\${LOG4DB2_SRC_TEST_SCRIPT_PATH}\test.ps1 ${LOG4DB2_SRC_TEST_CODE_PATH}\TestsConfAppenders.sql
- Write-Host "Press enter to continue (next TestConfiguration)"
+ & .\${LOG4DB2_SRC_TEST_SCRIPT_PATH}\test.ps1 LOG4DB2_CONF_APPENDERS i x
+ Write-Host "Press enter to continue (next LOG4DB2_CONFIGURATION)"
  $x = $host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
- & .\${LOG4DB2_SRC_TEST_SCRIPT_PATH}\test.ps1 ${LOG4DB2_SRC_TEST_CODE_PATH}\TestsConfiguration.sql
- Write-Host "Press enter to continue (next TestsConfLoggers)"
+ & .\${LOG4DB2_SRC_TEST_SCRIPT_PATH}\test.ps1 LOG4DB2_CONFIGURATION i x
+ Write-Host "Press enter to continue (next LOG4DB2_CONF_LOGGERS)"
  $x = $host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
- & .\${LOG4DB2_SRC_TEST_SCRIPT_PATH}\test.ps1 ${LOG4DB2_SRC_TEST_CODE_PATH}\TestsConfLoggers.sql
- Write-Host "Press enter to continue (next TestsConfLoggersDelete)"
+ & .\${LOG4DB2_SRC_TEST_SCRIPT_PATH}\test.ps1 LOG4DB2_CONF_LOGGERS i x
+ Write-Host "Press enter to continue (next LOG4DB2_CONF_LOGGERS_DELETE)"
  $x = $host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
- & .\${LOG4DB2_SRC_TEST_SCRIPT_PATH}\test.ps1 ${LOG4DB2_SRC_TEST_CODE_PATH}\TestsConfLoggersDelete.sql
- Write-Host "Press enter to continue (next TestsConfLoggersEffective)"
+ & .\${LOG4DB2_SRC_TEST_SCRIPT_PATH}\test.ps1 LOG4DB2_CONF_LOGGERS_DELETE i x
+ Write-Host "Press enter to continue (next LOG4DB2_CONF_LOGGERS_EFFECTIVE)"
  $x = $host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
- & .\${LOG4DB2_SRC_TEST_SCRIPT_PATH}\test.ps1 ${LOG4DB2_SRC_TEST_CODE_PATH}\TestsConfLoggersEffective.sql
- Write-Host "Press enter to continue (next TestsConfLoggersEffectiveCases)"
+ & .\${LOG4DB2_SRC_TEST_SCRIPT_PATH}\test.ps1 LOG4DB2_CONF_LOGGERS_EFFECTIVE i x
+ Write-Host "Press enter to continue (next LOG4DB2_CONF_LOGGERS_EFFECTIVE_CASES)"
  $x = $host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
- & .\${LOG4DB2_SRC_TEST_SCRIPT_PATH}\test.ps1 ${LOG4DB2_SRC_TEST_CODE_PATH}\TestsConfLoggersEffectiveCases.sql
- Write-Host "Press enter to continue (next TestsFunctionsGetDefinedParentLogger)"
+ & .\${LOG4DB2_SRC_TEST_SCRIPT_PATH}\test.ps1 LOG4DB2_CONF_LOGGERS_EFFECTIVE_CASES i x
+ Write-Host "Press enter to continue (next LOG4DB2_DYNAMIC_APPENDERS)"
  $x = $host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
- db2 -tf ${LOG4DB2_LOG4DB2_SRC_MAIN_CODE_PATH}/CleanTriggers.sql +O
- & .\${LOG4DB2_SRC_TEST_SCRIPT_PATH}\test.ps1 ${LOG4DB2_SRC_TEST_CODE_PATH}\TestsFunctionGetDefinedParentLogger.sql
- db2 -tf ${LOG4DB2_LOG4DB2_SRC_MAIN_CODE_PATH}/Trigger.sql +O
- Write-Host "Press enter to continue (next TestsGetLogger)"
+ & .\${LOG4DB2_SRC_TEST_SCRIPT_PATH}\test.ps1 LOG4DB2_DYNAMIC_APPENDERS i x
+ Write-Host "Press enter to continue (next LOG4DB2_FUNCTION_GET_DEFINED_PARENT_LOGGER)"
  $x = $host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
- & .\${LOG4DB2_SRC_TEST_SCRIPT_PATH}\test.ps1 ${LOG4DB2_SRC_TEST_CODE_PATH}\TestsGetLogger.sql
- Write-Host "Press enter to continue (next TestsGetLoggerName)"
+ db2 -tf ${LOG4DB2_LOG4DB2_SRC_MAIN_CODE_PATH}/96-CleanTriggers +O
+ & .\${LOG4DB2_SRC_TEST_SCRIPT_PATH}\test.ps1 LOG4DB2_FUNCTION_GET_DEFINED_PARENT_LOGGER i x
+ db2 -tf ${LOG4DB2_LOG4DB2_SRC_MAIN_CODE_PATH}/07-Trigger +O
+ Write-Host "Press enter to continue (next LOG4DB2_GET_LOGGER)"
  $x = $host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
- & .\${LOG4DB2_SRC_TEST_SCRIPT_PATH}\test.ps1 ${LOG4DB2_SRC_TEST_CODE_PATH}\TestsGetLoggerName.sql
- Write-Host "Press enter to continue (next TestsHierarchy)"
+ & .\${LOG4DB2_SRC_TEST_SCRIPT_PATH}\test.ps1 LOG4DB2_GET_LOGGER i x
+ Write-Host "Press enter to continue (next LOG4DB2_GET_LOGGER_NAME)"
  $x = $host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
- & .\${LOG4DB2_SRC_TEST_SCRIPT_PATH}\test.ps1 ${LOG4DB2_SRC_TEST_CODE_PATH}\TestsHierarchy.sql
- Write-Host "Press enter to continue (next TestsLayout)"
+ & .\${LOG4DB2_SRC_TEST_SCRIPT_PATH}\test.ps1 LOG4DB2_GET_LOGGER_NAME i x
+ Write-Host "Press enter to continue (next LOG4DB2_HIERARCHY)"
  $x = $host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
- & .\${LOG4DB2_SRC_TEST_SCRIPT_PATH}\test.ps1 ${LOG4DB2_SRC_TEST_CODE_PATH}\TestsLayout.sql
- Write-Host "Press enter to continue (next TestsLevels)"
+ & .\${LOG4DB2_SRC_TEST_SCRIPT_PATH}\test.ps1 LOG4DB2_HIERARCHY i x
+ Write-Host "Press enter to continue (next LOG4DB2_LAYOUT)"
  $x = $host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
- & .\${LOG4DB2_SRC_TEST_SCRIPT_PATH}\test.ps1 ${LOG4DB2_SRC_TEST_CODE_PATH}\TestsLevels.sql
- Write-Host "Press enter to continue (next TestsLogs)"
+ & .\${LOG4DB2_SRC_TEST_SCRIPT_PATH}\test.ps1 LOG4DB2_LAYOUT i x
+ Write-Host "Press enter to continue (next LOG4DB2_LEVELS)"
  $x = $host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
- & .\${LOG4DB2_SRC_TEST_SCRIPT_PATH}\test.ps1 ${LOG4DB2_SRC_TEST_CODE_PATH}\TestsLogs.sql
- Write-Host "Press enter to continue (next TestsMessages)"
+ & .\${LOG4DB2_SRC_TEST_SCRIPT_PATH}\test.ps1 LOG4DB2_LEVELS i x
+ Write-Host "Press enter to continue (next LOG4DB2_LOGS)"
  $x = $host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
- & .\${LOG4DB2_SRC_TEST_SCRIPT_PATH}\test.ps1 ${LOG4DB2_SRC_TEST_CODE_PATH}\TestsMessages.sql
- Write-Host "Press enter to continue (next TestsReferences)"
+ & .\${LOG4DB2_SRC_TEST_SCRIPT_PATH}\test.ps1 LOG4DB2_LOGS i x
+ Write-Host "Press enter to continue (next LOG4DB2_MESSAGES)"
  $x = $host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
- &.\${LOG4DB2_SRC_TEST_SCRIPT_PATH}\test.ps1 ${LOG4DB2_SRC_TEST_CODE_PATH}\TestsReferences.sql
+ & .\${LOG4DB2_SRC_TEST_SCRIPT_PATH}\test.ps1 LOG4DB2_MESSAGES i x
+ Write-Host "Press enter to continue (next LOG4DB2_REFERENCES)"
+ $x = $host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
+ &.\${LOG4DB2_SRC_TEST_SCRIPT_PATH}\test.ps1 LOG4DB2_REFERENCES i x
 }
 

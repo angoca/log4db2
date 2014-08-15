@@ -28,15 +28,22 @@
 # Author: Andres Gomez Casanova (AngocA)
 # Made in COLOMBIA.
 
+export RET=0
+
 # Execute a given test.
 executeTest() {
- script=${1}
- echo "====>Next: ${script}"
- if [ "${PAUSE}" == "true" ] ; then
+ SCHEMA=${1}
+ PAUSE=${2}
+ echo "====>Next: ${SCHEMA}"
+ if [ "${PAUSE}" = "true" ] ; then
   read -p "Press enter to continue"
+  . ${LOG4DB2_SRC_TEST_SCRIPT_PATH}/test ${SCHEMA} i x
+ else
+  . ${LOG4DB2_SRC_TEST_SCRIPT_PATH}/test ${SCHEMA} x
+  export RET=$(tail -1 /tmp/db2unit.output | awk '/Return Status/ {print $4}')
  fi
- . ${LOG4DB2_SRC_TEST_SCRIPT_PATH}/test ${LOG4DB2_SRC_TEST_CODE_PATH}/${script}.sql
 }
+
 . ./init-dev
 
 db2 connect > /dev/null
@@ -44,46 +51,88 @@ if [ ${?} -ne 0 ] ; then
  echo "Please connect to a database before the execution of the tests."
  echo "Remember that to call the script the command is '. ./allTests'"
 else
- if [ "${1}" == "-np" ] ; then
+ if [ "${1}" = "-np" ] ; then
   PAUSE=false
   TIME_INI=$(date +"%T")
   MILLIS_INI=$(date +"%s")
  else
   PAUSE=true
  fi
- if [ "${PAUSE}" == "true" ] ; then
+ if [ "${PAUSE}" = "true" ] ; then
   echo "Executing all tests with pauses in between."
  else
   echo "Executing all tests."
  fi
 
- executeTest TestsAppenders
- executeTest TestsAppendersImplementation
- executeTest TestsCache
- executeTest TestsCacheLevel
- executeTest TestsCacheLoggers
- executeTest TestsCascadeCallLimit
- executeTest TestsConfAppenders
- executeTest TestsConfiguration
- executeTest TestsConfLoggers
- executeTest TestsConfLoggersDelete
- executeTest TestsConfLoggersEffective
- executeTest TestsConfLoggersEffectiveCases
- TEST=TestsFunctionGetDefinedParentLogger
- echo "====>Next: ${TEST}"
- [ "${PAUSE}" == "true" ] && read -p "Press enter to continue"
+ export RET=0
+ executeTest LOG4DB2_APPENDERS ${PAUSE}
+ SUM=${RET}
+ export RET=0
+ executeTest LOG4DB2_APPENDERS_IMPLEMENTATION ${PAUSE}
+ SUM=$((${SUM}+${RET}))
+ export RET=0
+ executeTest LOG4DB2_CACHE_CONFIGURATION ${PAUSE}
+ SUM=$((${SUM}+${RET}))
+ export RET=0
+ executeTest LOG4DB2_CACHE_LEVELS ${PAUSE}
+ SUM=$((${SUM}+${RET}))
+ export RET=0
+ executeTest LOG4DB2_CACHE_LOGGERS ${PAUSE}
+ SUM=$((${SUM}+${RET}))
+ export RET=0
+ executeTest LOG4DB2_CASCADE_CALL_LIMIT ${PAUSE}
+ SUM=$((${SUM}+${RET}))
+ export RET=0
+ executeTest LOG4DB2_CONF_APPENDERS ${PAUSE}
+ SUM=$((${SUM}+${RET}))
+ export RET=0
+ executeTest LOG4DB2_CONFIGURATION ${PAUSE}
+ SUM=$((${SUM}+${RET}))
+ export RET=0
+ executeTest LOG4DB2_CONF_LOGGERS ${PAUSE}
+ SUM=$((${SUM}+${RET}))
+ export RET=0
+ executeTest LOG4DB2_CONF_LOGGERS_DELETE ${PAUSE}
+ SUM=$((${SUM}+${RET}))
+ export RET=0
+ executeTest LOG4DB2_CONF_LOGGERS_EFFECTIVE ${PAUSE}
+ SUM=$((${SUM}+${RET}))
+ export RET=0
+ executeTest LOG4DB2_CONF_LOGGERS_EFFECTIVE_CASES ${PAUSE}
+ SUM=$((${SUM}+${RET}))
+ export RET=0
+ executeTest LOG4DB2_DYNAMIC_APPENDERS ${PAUSE}
+ SUM=$((${SUM}+${RET}))
+ export RET=0
  db2 -tf ${LOG4DB2_SRC_MAIN_CODE_PATH}/96-CleanTriggers.sql +O
- . ${LOG4DB2_SRC_TEST_SCRIPT_PATH}/test ${LOG4DB2_SRC_TEST_CODE_PATH}/${TEST}.sql
+ executeTest LOG4DB2_FUNCTION_GET_DEFINED_PARENT_LOGGER ${PAUSE}
+ SUM=$((${SUM}+${RET}))
  db2 -tf ${LOG4DB2_SRC_MAIN_CODE_PATH}/07-Trigger.sql +O
- executeTest TestsDynamicAppenders
- executeTest TestsGetLogger
- executeTest TestsGetLoggerName
- executeTest TestsHierarchy
- executeTest TestsLayout
- executeTest TestsLevels
- executeTest TestsLogs
- executeTest TestsMessages
- executeTest TestsReferences
+ export RET=0
+ executeTest LOG4DB2_GET_LOGGER ${PAUSE}
+ SUM=$((${SUM}+${RET}))
+ export RET=0
+ executeTest LOG4DB2_GET_LOGGER_NAME ${PAUSE}
+ SUM=$((${SUM}+${RET}))
+ export RET=0
+ executeTest LOG4DB2_HIERARCHY ${PAUSE}
+ SUM=$((${SUM}+${RET}))
+ export RET=0
+ executeTest LOG4DB2_LAYOUT ${PAUSE}
+ SUM=$((${SUM}+${RET}))
+ export RET=0
+ executeTest LOG4DB2_LEVELS ${PAUSE}
+ SUM=$((${SUM}+${RET}))
+ export RET=0
+ executeTest LOG4DB2_LOGS ${PAUSE}
+ SUM=$((${SUM}+${RET}))
+ export RET=0
+ executeTest LOG4DB2_MESSAGES ${PAUSE}
+ SUM=$((${SUM}+${RET}))
+ export RET=0
+ executeTest LOG4DB2_REFERENCES ${PAUSE}
+ SUM=$((${SUM}+${RET}))
+
  if [ "${PAUSE}" != "true" ] ; then
   MILLIS_END=$(date +"%s")
   TIME_END=$(date +"%T")
@@ -93,4 +142,6 @@ else
   echo "$((${MILLIS_END}-${MILLIS_INI})) seconds"
  fi
 fi
+
+return ${SUM}
 

@@ -50,19 +50,20 @@ if %ERRORLEVEL% NEQ 0 (
   echo Error expanding variable
   exit /B -1
  )
- call:executeTest TestsAppenders
- call:executeTest TestsAppendersImplementation
- call:executeTest TestsCache
- call:executeTest TestsCacheLevel
- call:executeTest TestsCacheLoggers
- call:executeTest TestsCascadeCallLimit
- call:executeTest TestsConfAppenders
- call:executeTest TestsConfiguration
- call:executeTest TestsConfLoggers
- call:executeTest TestsConfLoggersDelete
- call:executeTest TestsConfLoggersEffective
- call:executeTest TestsConfLoggersEffectiveCases
- set TEST=TestsFunctionGetDefinedParentLogger
+ call:executeTest LOG4DB2_APPENDERS
+ call:executeTest LOG4DB2_APPENDERS_IMPLEMENTATION
+ call:executeTest LOG4DB2_CACHE_CONFIGURATION
+ call:executeTest LOG4DB2_CACHE_LEVELS
+ call:executeTest LOG4DB2_CACHE_LOGGERS
+ call:executeTest LOG4DB2_CASCADE_CALL_LIMIT
+ call:executeTest LOG4DB2_CONF_APPENDERS
+ call:executeTest LOG4DB2_CONFIGURATION
+ call:executeTest LOG4DB2_CONF_LOGGERS
+ call:executeTest LOG4DB2_CONF_LOGGERS_DELETE
+ call:executeTest LOG4DB2_CONF_LOGGERS_EFFECTIVE
+ call:executeTest LOG4DB2_CONF_LOGGERS_EFFECTIVE_CASES
+ call:executeTest LOG4DB2_DYNAMIC_APPENDERS
+ set TEST=LOG4DB2_FUNCTION_GET_DEFINED_PARENT_LOGGER
  echo ====Next: !TEST!
  if "!PAUSE!" == "true" (
   pause
@@ -70,15 +71,14 @@ if %ERRORLEVEL% NEQ 0 (
  db2 -tf !LOG4DB2_SRC_MAIN_CODE_PATH!\96-CleanTriggers.sql +O
  call !LOG4DB2_SRC_TEST_SCRIPT_PATH!\test.bat !LOG4DB2_SRC_TEST_CODE_PATH!\!TEST!.sql
  db2 -tf !LOG4DB2_SRC_MAIN_CODE_PATH!\07-Trigger.sql +O
- call:executeTest TestsDynamicAppenders
- call:executeTest TestsGetLogger
- call:executeTest TestsGetLoggerName
- call:executeTest TestsHierarchy
- call:executeTest TestsLayout
- call:executeTest TestsLevels
- call:executeTest TestsLogs
- call:executeTest TestsMessages
- call:executeTest TestsReferences
+ call:executeTest LOG4DB2_GET_LOGGER
+ call:executeTest LOG4DB2_GET_LOGGER_NAME
+ call:executeTest LOG4DB2_HIERARCHY
+ call:executeTest LOG4DB2_LAYOUT
+ call:executeTest LOG4DB2_LEVELS
+ call:executeTest LOG4DB2_LOGS
+ call:executeTest LOG4DB2_MESSAGES
+ call:executeTest LOG4DB2_REFERENCES
  if not "!PAUSE!" == "true" (
   set TIME_END=echo !time!
   echo Difference:
@@ -92,11 +92,13 @@ goto:eof
 
 :: Execute a given test.
 :executeTest
- set script=%~1
- echo ====Next: %script%
+ set schema=%~1
+ echo ====Next: %schema%
  if "!PAUSE!" == "true" (
   pause
+  call %LOG4DB2_SRC_TEST_SCRIPT_PATH%\test.bat schema i x
+ ) else (
+  call %LOG4DB2_SRC_TEST_SCRIPT_PATH%\test.bat schema x
  )
- call %LOG4DB2_SRC_TEST_SCRIPT_PATH%\test.bat %LOG4DB2_SRC_TEST_CODE_PATH%\%script%.sql
 goto:eof
 
