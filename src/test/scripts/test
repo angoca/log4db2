@@ -60,8 +60,9 @@ else
   db2 "CALL DB2UNIT.CLEAN()"
  fi
 
- if [ "${OPTION_1}" = "" -o "${OPTION_1}" = "i" -o "${OPTION_2}" = "i" ] ; then
+ if [ ! '(' "${OPTION_1}" = "x" -a "${OPTION_2}" = "" ')' ] ; then
   db2 "CALL LOGADMIN.LOGS(min_level=>4)"
+  db2 "select * from ${SCHEMA}.REPORT_TESTS"
  fi
 fi
 
