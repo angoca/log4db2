@@ -182,13 +182,13 @@ CREATE OR REPLACE PROCEDURE TEST_03()
   SET EXPECTED_QTY = 5;
   DELETE FROM LOGDATA.CONF_LOGGERS;
 
-  CALL DB2UNIT.ASSERT_BOOLEAN_TRUE('Test03: Tests to delete all inserted '
+  CALL DB2UNIT.ASSERT_BOOLEAN_TRUE('Test03a: Tests to delete all inserted '
     || 'loggers', RAISED_LG0E2);
 
   SELECT COUNT(1) INTO ACTUAL_QTY
     FROM LOGDATA.CONF_LOGGERS;
 
-  CALL DB2UNIT.ASSERT_INT_EQUALS('Test03: Tests to delete all inserted '
+  CALL DB2UNIT.ASSERT_INT_EQUALS('Test03b: Tests to delete all inserted '
     || 'loggers', EXPECTED_QTY, ACTUAL_QTY);
 
   SET EXPECTED_LEVEL = 3;
@@ -196,7 +196,7 @@ CREATE OR REPLACE PROCEDURE TEST_03()
     FROM LOGDATA.CONF_LOGGERS_EFFECTIVE
     WHERE LOGGER_ID = MAX_ID;
 
-  CALL DB2UNIT.ASSERT_INT_EQUALS('Test03: -Tests to delete all inserted '
+  CALL DB2UNIT.ASSERT_INT_EQUALS('Test03c: -Tests to delete all inserted '
     || 'loggers', EXPECTED_LEVEL, ACTUAL_LEVEL);
 
   SET EXPECTED_LEVEL = 5;
@@ -204,7 +204,7 @@ CREATE OR REPLACE PROCEDURE TEST_03()
     FROM LOGDATA.CONF_LOGGERS_EFFECTIVE
     WHERE LOGGER_ID = 0;
 
-  CALL DB2UNIT.ASSERT_INT_EQUALS('Test03: Tests to delete all inserted '
+  CALL DB2UNIT.ASSERT_INT_EQUALS('Test03d: Tests to delete all inserted '
     || 'loggers', EXPECTED_LEVEL, ACTUAL_LEVEL);
  END @
 
@@ -234,27 +234,27 @@ CREATE OR REPLACE PROCEDURE TEST_04()
   SET EXPECTED_QTY = 5;
   DELETE FROM LOGDATA.CONF_LOGGERS;
 
-  CALL DB2UNIT.ASSERT_BOOLEAN_TRUE('Test04: Tests to delete all null inserted '
+  CALL DB2UNIT.ASSERT_BOOLEAN_TRUE('Test04a: Tests to delete all null inserted '
     || 'logger', RAISED_LG0E2);
 
   SELECT COUNT(1) INTO ACTUAL_QTY
     FROM LOGDATA.CONF_LOGGERS;
 
-  CALL DB2UNIT.ASSERT_INT_EQUALS('Test04: Tests to delete all null inserted '
+  CALL DB2UNIT.ASSERT_INT_EQUALS('Test04b: Tests to delete all null inserted '
     || 'logger', EXPECTED_QTY, ACTUAL_QTY);
 
   SELECT LEVEL_ID INTO ACTUAL_LEVEL
     FROM LOGDATA.CONF_LOGGERS_EFFECTIVE
     WHERE LOGGER_ID = MAX_ID + 1;
 
-  CALL DB2UNIT.ASSERT_INT_EQUALS('Test04: -Tests to delete all null inserted '
+  CALL DB2UNIT.ASSERT_INT_EQUALS('Test04c: -Tests to delete all null inserted '
     || 'logger', EXPECTED_LEVEL, ACTUAL_LEVEL);
 
   SELECT LEVEL_ID INTO ACTUAL_LEVEL
     FROM LOGDATA.CONF_LOGGERS_EFFECTIVE
     WHERE LOGGER_ID = 0;
 
-  CALL DB2UNIT.ASSERT_INT_EQUALS('Test04: Tests to delete all null inserted '
+  CALL DB2UNIT.ASSERT_INT_EQUALS('Test04d: Tests to delete all null inserted '
     || 'logger', EXPECTED_LEVEL, ACTUAL_LEVEL);
  END @
 
