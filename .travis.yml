@@ -4,6 +4,19 @@ env:
   - ENV=test TESTS=random
 
 before_install:
+  # Parallel download
+  - mvn > /dev/null &
+  - sudo ./travis/update.sh > /dev/null &
+
+  # Retrieves and extracts the DB2 binaries
+  - cd /tmp ; wget https://delivery04.dhe.ibm.com/sdfdl/v2/sar/CM/IM/04jdl/0/Xa.2/Xb.jusyLTSp44S03Ud2hqNz8SvywlJcj6dHjPURNh0iCvzE79MnIkpREqrUv_U/Xc.CM/IM/04jdl/0/v10.5fp3a_linuxx64_server.tar.gz/Xd./Xf.LPR.D1vk/Xg.7708245/Xi.habanero/XY.habanero/XZ.6Ndokz98qNHthR6iSKORF6OAY0c/v10.5fp3a_linuxx64_server.tar.gz ; tar zxf v10.5fp3a_linuxx64_server.tar.gz
+
+  # Retrieves and extract db2unit
+  # cd ; wget https://github.com/angoca/db2unit/releases/download/db2unit-1-Beta/db2unit.tar.gz ; tar zxvf db2unit.tar.gz
+
+
+  # INSTALL
+
   # Install the required libraries
   - sudo apt-get update -qq
   - sudo apt-get -y install libaio1 ksh libstdc++6-4.4-pic libstdc++6-4.4-dev libstdc++5 rpm
@@ -11,30 +24,19 @@ before_install:
   - sudo ln -s /lib/i386-linux-gnu/libpam.so.0 /lib/libpam.so.0
   - sudo apt-get install numactl
 
-  # Retrieves and extract db2unit
-  - cd
-  # - wget https://github.com/angoca/db2unit/releases/download/db2unit-1-Beta/db2unit.tar.gz
-  # - tar zxvf db2unit.tar.gz
-  # TODO Delete next lines. They are temporal for the next db2unit release.
-  - bash -c "if [ '$ENV' = 'test' ]; then git clone https://github.com/angoca/db2unit.git ; fi"
-  - bash -c "if [ '$ENV' = 'test' ]; then cd db2unit ; mvn ; fi"
-
-  # Retrieves and extracts the DB2 binaries
-  - cd /tmp
-  # TODO Next from IBM
-  - wget https://delivery04.dhe.ibm.com/sdfdl/v2/sar/CM/IM/04jdl/0/Xa.2/Xb.jusyLTSp44S03Ud2hqNz8SvywlJcj6dHjPURNh0iCvzE79MnIkpREqrUv_U/Xc.CM/IM/04jdl/0/v10.5fp3a_linuxx64_server.tar.gz/Xd./Xf.LPR.D1vk/Xg.7708245/Xi.habanero/XY.habanero/XZ.6Ndokz98qNHthR6iSKORF6OAY0c/v10.5fp3a_linuxx64_server.tar.gz ; tar zxf v10.5fp3a_linuxx64_server.tar.gz ; cd server
-  #- wget http://204.236.237.168/db2/v10.5fp3a_linuxx64_server.tar.gz ; tar zxf v10.5fp3a_linuxx64_server.tar.gz ; cd server
   # Checks the prerequisites
-  - ./db2prereqcheck -i
+  - cd /tmp/server ; ./db2prereqcheck -i
   # Install DB2 and creates an instance (Response file)
-  - sudo ./db2setup -r /home/travis/build/angoca/log4db2/travis/db2.rsp || cat /tmp/db2setup.log
+  - sudo ./db2setup -r ${TRAVIS_BUILD_DIR}/travis/db2.rsp || cat /tmp/db2setup.log
   # Changes the security
-  - id
   - sudo usermod -a -G db2iadm1 $USER
-  - id
   - sudo su - db2inst1 -c "db2 update dbm cfg using SYSADM_GROUP db2iadm1 ; db2stop ; db2start"
   # Creates the database
   - sudo su - db2inst1 -c "db2 create db log4db2 ; db2 connect to log4db2 ; db2 grant dbadm on database to user $USER ; db2 \"CREATE TABLESPACE SYSTOOLSPACE IN IBMCATGROUP MANAGED BY AUTOMATIC STORAGE USING STOGROUP IBMSTOGROUP EXTENTSIZE 4\""
+
+  # Retrieves and extract db2unit
+  # TODO Delete next lines. They are temporal for the next db2unit release.
+  - bash -c "if [ '$ENV' = 'test' ]; then cd ; git clone https://github.com/angoca/db2unit.git ; cd db2unit ; mvn ; fi"
 
 install:
   # Install log4db2
@@ -42,6 +44,7 @@ install:
   - sh -c "if [ '$ENV' = 'release' ]; then mvn ; fi"
   - sh -c "if [ '$ENV' = 'release' ]; then . ~db2inst1/sqllib/db2profile ; db2 connect to log4db2 ; cd target/log4db2/log4db2 ; . ./install ; fi"
   - bash -c "if [ '$ENV' = 'test' ]; then . ~db2inst1/sqllib/db2profile ; db2 connect to log4db2 ; cd src/test/scripts ; . ./init-dev ; cd ../../main/scripts ; . ./install ; fi"
+
   # Install db2unit
   # - bash -c "if [ '$ENV' = 'test' ]; then . ~db2inst1/sqllib/db2profile ; db2 connect to log4db2 ; cd ; cd db2unit ; . ./install ; fi"
   # TODO Next line is temporal until next db2unit release
@@ -50,6 +53,8 @@ install:
   - . ~db2inst1/sqllib/db2profile
   # TODO delete next line, it will be included in the next db2unit release
   #- bash -c "if [ '$ENV' = 'test' ]; then db2 connect to log4db2 ; db2 \"ALTER MODULE DB2UNIT_1.DB2UNIT PUBLISH PROCEDURE REGISTER_SUITE (IN SCHMA VARCHAR(128)) INSERT INTO DB2UNIT_1B.SUITES (SUITE_NAME) VALUES (SCHMA)\" ; fi"
+
+  # Install the tests
   - bash -c "if [ '$ENV' = 'test' ]; then db2 connect to log4db2 ; db2 -tf Tests_LOG4DB2_APPENDERS.sql ; fi"
   - bash -c "if [ '$ENV' = 'test' ]; then db2 connect to log4db2 ; db2 -tf Tests_LOG4DB2_APPENDERS_IMPLEMENTATION.sql ; fi"
   - bash -c "if [ '$ENV' = 'test' ]; then db2 connect to log4db2 ; db2 -tf Tests_LOG4DB2_CACHE_CONFIGURATION.sql ; fi"
@@ -100,4 +105,10 @@ script:
 
   - bash -c "if [ '$TESTS' = 'random' ]; then db2 connect to log4db2 ; . /tmp/listOfTestSuites ; /tmp/returnCode ; fi" 
 
+after_failure:
+  # If there is any error, shows the logs
+  - cat /home/db2inst1/sqllib/db2dump/db2diag.log
+  - db2 "call logadmin.logs"
+  - db2 "select * from DB2UNIT_1.DB2UNIT_EXECUTION_REPORTS"
+  - db2 "select * from NSLOOKUP.REPORT_TESTS"
 
