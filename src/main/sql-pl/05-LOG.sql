@@ -95,6 +95,33 @@ ALTER MODULE LOGGER ADD
  END F_IS_LOGGER_ACTIVE @
 
 /**
+ * Returns a string with the tabulation according to the given quantity of
+ * levels, it means the nesting level.
+ *
+ * IN LEVELS
+ *   Quantity of levels.
+ */
+ALTER MODULE LOGGER ADD
+  FUNCTION GET_TABULATION (
+  IN LEVELS INTEGER
+  ) RETURNS ANCHOR MESSAGE
+  LANGUAGE SQL
+  PARAMETER CCSID UNICODE
+  SPECIFIC F_GET_TABULATION
+  NOT DETERMINISTIC
+  NO EXTERNAL ACTION
+  READS SQL DATA
+ F_GET_TABULATION: BEGIN
+  DECLARE INDEX SMALLINT DEFAULT 0;
+  DECLARE TABULATION ANCHOR MESSAGE DEFAULT '';
+  WHILE (INDEX < LEVELS) DO
+   SET TABULATION = ' ' || TABULATION;
+   SET INDEX = INDEX + 1;
+  END WHILE;
+  RETURN TABULATION;
+ END F_GET_TABULATION @
+
+/**
  * Sends a message into the logger system. Before to log this message in an
  * appender, this method verifies the logger level given if it is superior or
  * or equal to the configured level. If not, it skips this process.
@@ -124,6 +151,8 @@ ALTER MODULE LOGGER ADD
  * | N               | Inserts the application name.                           |
  * +-----------------+---------------------------------------------------------+
  * | S               | Inserts the session authorisation.                      |
+ * +-----------------+---------------------------------------------------------+
+ * | T               | Tabulates the nesting level.                            |
  * +-----------------+---------------------------------------------------------+
  *
  * All this conversion words should be preceded by the % (percentage) sign.
@@ -190,6 +219,7 @@ ALTER MODULE LOGGER ADD
   DECLARE AT_END BOOLEAN; -- End of the cursor.
   DECLARE ACTIVE BOOLEAN;
   DECLARE NESTING_LEVEL INTEGER;
+  DECLARE TABULATION ANCHOR MESSAGE;
   DECLARE TRUNCATED_STRING CONDITION FOR SQLSTATE '01004';
   DECLARE NESTED_LIMIT_ACHIEVED CONDITION FOR SQLSTATE '54038';
   -- FIXME: The following query cannot be cached because it has an XML column.
@@ -324,6 +354,9 @@ ALTER MODULE LOGGER ADD
      -- Insert the nesting level.
      GET DIAGNOSTICS NESTING_LEVEL = DB2_SQL_NESTING_LEVEL;
      SET NEW_MESSAGE = REPLACE(NEW_MESSAGE, '%L', NESTING_LEVEL);
+     -- Tabulates according to the nesting level.
+     SET TABULATION = GET_TABULATION(NESTING_LEVEL);
+     SET NEW_MESSAGE = REPLACE(NEW_MESSAGE, '%T', TABULATION);
      -- Inserts the logger name.
      SET NEW_MESSAGE = REPLACE(NEW_MESSAGE, '%c',
        COALESCE(GET_LOGGER_NAME(LOG_ID), 'No name'));
