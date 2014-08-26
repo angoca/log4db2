@@ -155,6 +155,12 @@ ALTER MODULE LOGGER ADD
   CONDITION ARRAY_ERROR FOR SQLSTATE '2202E' @
 
 /**
+ * Condition where the nested limit call has been reached.
+ */
+ALTER MODULE LOGGER ADD
+  CONDITION NESTED_LIMIT_ACHIEVED FOR SQLSTATE '54038' @
+
+/**
  * Unload configuration. This is useful for debugging, but it should not called
  * used in production.
  *
