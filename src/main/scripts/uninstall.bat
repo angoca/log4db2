@@ -45,9 +45,11 @@ if %ERRORLEVEL% NEQ 0 (
  echo Uninstalling log4db2
  db2 -tf %LOG4DB2_SRC_MAIN_CODE_PATH%\96-CleanTriggers.sql
  db2 -tf %LOG4DB2_SRC_MAIN_CODE_PATH%\97-CleanObjects.sql
+ db2 -tf PACKAGES_TO_DROP_SCHEMA.sql
  db2 -tf %LOG4DB2_SRC_MAIN_CODE_PATH%\98-CleanTables.sql
- db2 -tf PACKAGES_TO_DROP.sql
+ db2 -tf PACKAGES_TO_DROP_DATA.sql
  db2 -tf %LOG4DB2_SRC_MAIN_CODE_PATH%\99-CleanAdmin.sql
- del PACKAGES_TO_DROP.sql
+ del PACKAGES_TO_DROP_SCHEMA.sql
+ del PACKAGES_TO_DROP_DATA.sql
 goto:eof
 
