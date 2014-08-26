@@ -115,27 +115,27 @@ goto:eof
 :v9.7
  echo Installing utility for v9.7
  if %adminInstall% EQU 1 (
-  if %continue% EQU 1 call:installScript %LOG4DB2_SRC_MAIN_CODE_PATH%\AdminObjects.sql
+  if %continue% EQU 1 call:installScript %LOG4DB2_SRC_MAIN_CODE_PATH%\00-AdminObjects.sql
  )
- if %continue% EQU 1 call:installScript %LOG4DB2_SRC_MAIN_CODE_PATH%\Tables_v9_7.sql
- if %continue% EQU 1 call:installScript %LOG4DB2_SRC_MAIN_CODE_PATH%\UtilityHeader.sql
- if %continue% EQU 1 call:installScript %LOG4DB2_SRC_MAIN_CODE_PATH%\UtilityBody.sql
- if %continue% EQU 1 call:installScript %LOG4DB2_SRC_MAIN_CODE_PATH%\Appenders.sql
- if %continue% EQU 1 call:installScript %LOG4DB2_SRC_MAIN_CODE_PATH%\LOG.sql
- if %continue% EQU 1 call:installScript %LOG4DB2_SRC_MAIN_CODE_PATH%\GET_LOGGER_v9_7.sql
- if %continue% EQU 1 call:installScript %LOG4DB2_SRC_MAIN_CODE_PATH%\Trigger.sql
+ if %continue% EQU 1 call:installScript %LOG4DB2_SRC_MAIN_CODE_PATH%\01-Tables_v9_7.sql
+ if %continue% EQU 1 call:installScript %LOG4DB2_SRC_MAIN_CODE_PATH%\02-UtilityHeader.sql
+ if %continue% EQU 1 call:installScript %LOG4DB2_SRC_MAIN_CODE_PATH%\03-UtilityBody.sql
+ if %continue% EQU 1 call:installScript %LOG4DB2_SRC_MAIN_CODE_PATH%\04-Appenders.sql
+ if %continue% EQU 1 call:installScript %LOG4DB2_SRC_MAIN_CODE_PATH%\05-LOG.sql
+ if %continue% EQU 1 call:installScript %LOG4DB2_SRC_MAIN_CODE_PATH%\06-GET_LOGGER_v9_7.sql
+ if %continue% EQU 1 call:installScript %LOG4DB2_SRC_MAIN_CODE_PATH%\07-Trigger.sql
 
- if %continue% EQU 1 call:installScript %LOG4DB2_SRC_MAIN_CODE_PATH%\AdminHeader.sql
- if %continue% EQU 1 call:installScript %LOG4DB2_SRC_MAIN_CODE_PATH%\AdminBody.sql
+ if %continue% EQU 1 call:installScript %LOG4DB2_SRC_MAIN_CODE_PATH%\08-AdminHeader.sql
+ if %continue% EQU 1 call:installScript %LOG4DB2_SRC_MAIN_CODE_PATH%\09-AdminBody.sql
 
  cd %LOG4DB2_SRC_MAIN_CODE_PATH%
  cd ..
  cd xml
- if %continue% EQU 1 call:installScript AppendersXML.sql
+ if %continue% EQU 1 call:installScript 10-AppendersXML.sql
  cd ..
  cd scripts 2> NUL
 
- if %continue% EQU 1 call:installScript %LOG4DB2_SRC_MAIN_CODE_PATH%\Version.sql
+ if %continue% EQU 1 call:installScript %LOG4DB2_SRC_MAIN_CODE_PATH%\12-Version.sql
 
  echo Please visit the wiki to learn how to use and configure this utility
  echo https://github.com/angoca/log4db2/wiki
