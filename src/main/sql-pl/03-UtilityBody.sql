@@ -161,6 +161,12 @@ ALTER MODULE LOGGER ADD
   CONDITION NESTED_LIMIT_ACHIEVED FOR SQLSTATE '54038' @
 
 /**
+ * Maximum levels for the logger hierarchy.
+ */
+ALTER MODULE LOGGER ADD
+  CONDITION MAX_LEVELS_HIERARCHY FOR SQLSTATE 'LG0P2' @
+
+/**
  * Unload configuration. This is useful for debugging, but it should not called
  * used in production.
  *
