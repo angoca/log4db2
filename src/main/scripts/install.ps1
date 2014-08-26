@@ -72,9 +72,9 @@ function v10.1($p1) {
  cd scripts 2>&1 | Out-Null
 
  # Temporal capabilities for tables.
- if ( ( ${p1} -eq "t" ) -and ( ${Script:continue} ) ) {
+ if ( ( ${Script:temporalTable} ) -and ( ${Script:continue} ) ) {
   echo "Create table for Time Travel"
-  installScript ${LOG4DB2_SRC_MAIN_CODE_PATH}/11-TablesTimeTravel.sql
+  installScript ${LOG4DB2_SRC_MAIN_CODE_PATH}\11-TablesTimeTravel.sql
  }
 
  if ( ${Script:continue} ) { installScript ${LOG4DB2_SRC_MAIN_CODE_PATH}\12-Version.sql }
