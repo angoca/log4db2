@@ -82,24 +82,7 @@ v10_1() {
 
  [ ${continue} = true ] && installScript ${LOG4DB2_SRC_MAIN_CODE_PATH}/12-Version.sql
 
- echo "Please visit the wiki to learn how to use and configure this utility"
- echo "https://github.com/angoca/log4db2/wiki"
- echo "To report an issue or provide feedback, please visit:"
- echo "https://github.com/angoca/log4db2/issues"
- echo
- if [ ${continue} = true ] ; then
-  echo "log4db2 was successfully installed"
-  db2 -x "values 'Database: ' || current server"
-  db2 -x "values 'Version: ' || logger.version"
-  db2 -x "select 'Schema: ' || base_moduleschema from syscat.modules where moduleschema = 'SYSPUBLIC' and modulename = 'LOGGER'"
-  retValue=0
- else
-  echo "Check the error(s) and reinstall the utility"
-  unset continue
-  retValue=1
- fi
-
- local  myRetInstall=${retValue}
+ local  myRetInstall=${continue}
  eval $__retInstall="'${myRetInstall}'"
 }
 
@@ -132,24 +115,7 @@ v9_7() {
 
  [ ${continue} = true ] && installScript ${LOG4DB2_SRC_MAIN_CODE_PATH}/12-Version.sql
 
- echo "Please visit the wiki to learn how to use and configure this utility"
- echo "https://github.com/angoca/log4db2/wiki"
- echo "To report an issue or provide feedback, please visit:"
- echo "https://github.com/angoca/log4db2/issues"
- echo
- if [ ${continue} = true ] ; then
-  echo "log4db2 was successfully installed"
-  db2 -x "values 'Database: ' || current server"
-  db2 -x "values 'Version: ' || logger.version"
-  db2 -x "select 'Schema: ' || base_moduleschema from syscat.modules where moduleschema = 'SYSPUBLIC' and modulename = 'LOGGER'"
-  retValue=0
- else
-  echo "Check the error(s) and reinstall the utility"
-  unset continue
-  retValue=1
- fi
-
- local  myRetInstall=${retValue}
+ local  myRetInstall=${continue}
  eval $__retInstall="'${myRetInstall}'"
 }
 
@@ -190,6 +156,23 @@ init() {
  else
   v10_1 retInstall
  fi
+
+ echo "Please visit the wiki to learn how to use and configure this utility"
+ echo "https://github.com/angoca/log4db2/wiki"
+ echo "To report an issue or provide feedback, please visit:"
+ echo "https://github.com/angoca/log4db2/issues"
+ echo
+ if [ ${continue} = true ] ; then
+  echo "log4db2 was successfully installed"
+  db2 -x "values 'Database: ' || current server"
+  db2 -x "values 'Version: ' || logger.version"
+  db2 -x "select 'Schema: ' || base_moduleschema from syscat.modules where moduleschema = 'SYSPUBLIC' and modulename = 'LOGGER'"
+  retValue=0
+ else
+  echo "Check the error(s) and reinstall the utility"
+  retValue=1
+ fi
+ unset continue
 
  if [ -x uninit ] ; then
   . ./uninit
