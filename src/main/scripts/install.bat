@@ -58,6 +58,7 @@ goto:eof
  if %ERRORLEVEL% NEQ 0 (
   set continue=0
  )
+ set script=
 goto:eof
 
 :: Function that install the utility for version 10.1.
@@ -92,6 +93,7 @@ goto:eof
  )
 
  if %continue% EQU 1 call:installScript %LOG4DB2_SRC_MAIN_CODE_PATH%\12-Version.sql
+ set continue=
 
  echo Please visit the wiki to learn how to use and configure this utility
  echo https://github.com/angoca/log4db2/wiki
@@ -136,6 +138,7 @@ goto:eof
  cd scripts 2> NUL
 
  if %continue% EQU 1 call:installScript %LOG4DB2_SRC_MAIN_CODE_PATH%\12-Version.sql
+ set continue=
 
  echo Please visit the wiki to learn how to use and configure this utility
  echo https://github.com/angoca/log4db2/wiki
@@ -186,9 +189,12 @@ goto:eof
  if /I "%param3%" == "-v9_7" (
   set v9_7=1
  )
+ set param1=
+ set param2=
+ set param3=
 goto:eof
 
-:: Main unction that starts the installation.
+:: Main function that starts the installation.
 :init
  :: Initialize the environment.
  if EXIST init.bat (
@@ -208,6 +214,10 @@ goto:eof
   call:v10.1
  )
 
+ :: Clean environment.
+ set v9_7=
+ set adminInstall=
+ set temporalTable=
  if EXIST uninit.bat (
   call uninit.bat
  )
