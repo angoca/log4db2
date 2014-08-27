@@ -93,23 +93,9 @@ goto:eof
  )
 
  if %continue% EQU 1 call:installScript %LOG4DB2_SRC_MAIN_CODE_PATH%\12-Version.sql
- set continue=
 
- echo Please visit the wiki to learn how to use and configure this utility
- echo https://github.com/angoca/log4db2/wiki
- echo To report an issue or provide feedback, please visit:
- echo https://github.com/angoca/log4db2/issues
- echo.
- if %continue% EQU 1 (
-  echo log4db2 was successfully installed
-  db2 -x "values 'Database: ' || current server"
-  db2 -x "values 'Version: ' || logger.version"
-  db2 -x "select 'Schema: ' || base_moduleschema from syscat.modules where moduleschema = 'SYSPUBLIC' and modulename = 'LOGGER'"
-  set retValue=0
- ) else (
-  echo "Check the error(s) and reinstall the utility"
-  set retValue=1
- )
+ set retValue=%continue%
+ set continue=
 goto:eof
 
 :: Function that install the utility for version 9.7.
@@ -138,23 +124,9 @@ goto:eof
  cd scripts 2> NUL
 
  if %continue% EQU 1 call:installScript %LOG4DB2_SRC_MAIN_CODE_PATH%\12-Version.sql
- set continue=
 
- echo Please visit the wiki to learn how to use and configure this utility
- echo https://github.com/angoca/log4db2/wiki
- echo To report an issue or provide feedback, please visit:
- echo https://github.com/angoca/log4db2/issues
- echo.
- if %continue% EQU 1 (
-  echo log4db2 was successfully installed
-  db2 -x "values 'Database: ' || current server"
-  db2 -x "values 'Version: ' || logger.version"
-  db2 -x "select 'Schema: ' || base_moduleschema from syscat.modules where moduleschema = 'SYSPUBLIC' and modulename = 'LOGGER'"
-  set retValue=0
- ) else (
-  echo "Check the error(s) and reinstall the utility"
-  set retValue=1
- )
+ set retValue=%continue%
+ set continue=
 goto:eof
 
 :: This functions checks all parameters and assign them to global variables.
@@ -212,6 +184,21 @@ goto:eof
   call:v9.7
  ) else (
   call:v10.1
+ )
+
+ echo Please visit the wiki to learn how to use and configure this utility
+ echo https://github.com/angoca/log4db2/wiki
+ echo To report an issue or provide feedback, please visit:
+ echo https://github.com/angoca/log4db2/issues
+ echo.
+ if %retValue% EQU 1 (
+  echo log4db2 was successfully installed
+  db2 -x "values 'Database: ' || current server"
+  db2 -x "values 'Version: ' || logger.version"
+  db2 -x "select 'Schema: ' || base_moduleschema from syscat.modules where moduleschema = 'SYSPUBLIC' and modulename = 'LOGGER'"
+ ) else (
+  echo "Check the error(s) and reinstall the utility"
+  set retValue=1
  )
 
  :: Clean environment.
