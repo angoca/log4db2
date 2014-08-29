@@ -158,7 +158,7 @@ init() {
  echo "To report an issue or provide feedback, please visit:"
  echo "https://github.com/angoca/log4db2/issues"
  echo
- if [ ${continue} = "true" ] ; then
+ if [ ${retInstall} = "true" ] ; then
   echo "log4db2 was successfully installed"
   db2 -x "values 'Database: ' || current server"
   db2 -x "values 'Version: ' || logger.version"
@@ -175,7 +175,7 @@ init() {
   . ./uninit
  fi
 
- local  myRetInit=${retInstall}
+ local  myRetInit=${retValue}
  eval $__retInit="'${myRetInit}'"
 }
 
