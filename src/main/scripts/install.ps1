@@ -22,7 +22,6 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-
 # Installs all scripts of the utility.
 #
 # Version: 2014-02-14 1-RC
@@ -108,7 +107,7 @@ function v9.7() {
  if ( ${Script:continue} ) { installScript ${LOG4DB2_SRC_MAIN_CODE_PATH}\12-Version.sql }
 }
 
-# This functions checks all parameters and assign them to global variables.
+# This function checks all parameters and assign them to global variables.
 function checkParam($p1, $p2, $p3) {
  $param1=${p1}
  $param2=${p2}
@@ -147,7 +146,7 @@ function init($p1, $p2, $p3) {
  echo "https://github.com/angoca/log4db2/wiki"
  echo "To report an issue or provide feedback, please visit:"
  echo "https://github.com/angoca/log4db2/issues"
- Write-Host
+ echo ' '
  if ( ${Script:continue} ) {
   echo "log4db2 was successfully installed"
   db2 -x "values 'Database: ' || current server"
@@ -159,6 +158,7 @@ function init($p1, $p2, $p3) {
   ${Script:retValue}=1
  }
 
+ # Clean environment.
  if ( Test-Path -Path uninit.ps1 -PathType Leaf ) {
   .\uninit.ps1
  }
