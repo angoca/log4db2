@@ -93,9 +93,12 @@ goto:eof
  )
 
  if %continue% EQU 1 call:installScript %LOG4DB2_SRC_MAIN_CODE_PATH%\12-Version.sql
+<<<<<<< HEAD
 
  set retValue=%continue%
  set continue=
+=======
+>>>>>>> 7d5e1d2eb87b13701048f918f919cf0400f6ad0f
 goto:eof
 
 :: Function that install the utility for version 9.7.
@@ -124,9 +127,12 @@ goto:eof
  cd scripts 2> NUL
 
  if %continue% EQU 1 call:installScript %LOG4DB2_SRC_MAIN_CODE_PATH%\12-Version.sql
+<<<<<<< HEAD
 
  set retValue=%continue%
  set continue=
+=======
+>>>>>>> 7d5e1d2eb87b13701048f918f919cf0400f6ad0f
 goto:eof
 
 :: This functions checks all parameters and assign them to global variables.
@@ -191,20 +197,31 @@ goto:eof
  echo To report an issue or provide feedback, please visit:
  echo https://github.com/angoca/log4db2/issues
  echo.
+<<<<<<< HEAD
  if %retValue% EQU 1 (
+=======
+ if %continue% EQU 1 (
+>>>>>>> 7d5e1d2eb87b13701048f918f919cf0400f6ad0f
   echo log4db2 was successfully installed
   db2 -x "values 'Database: ' || current server"
   db2 -x "values 'Version: ' || logger.version"
   db2 -x "select 'Schema: ' || base_moduleschema from syscat.modules where moduleschema = 'SYSPUBLIC' and modulename = 'LOGGER'"
+<<<<<<< HEAD
+=======
+  set retValue=0
+>>>>>>> 7d5e1d2eb87b13701048f918f919cf0400f6ad0f
  ) else (
   echo "Check the error(s) and reinstall the utility"
   set retValue=1
  )
+<<<<<<< HEAD
 
  :: Clean environment.
  set v9_7=
  set adminInstall=
  set temporalTable=
+=======
+>>>>>>> 7d5e1d2eb87b13701048f918f919cf0400f6ad0f
  if EXIST uninit.bat (
   call uninit.bat
  )
