@@ -32,6 +32,7 @@ before_install:
   - sudo ./db2setup -r ${TRAVIS_BUILD_DIR}/travis/db2.rsp || cat /tmp/db2setup.log
   # Changes the security
   - sudo usermod -a -G db2iadm1 $USER
+  - sudo chsh -s /bin/bash db2inst1
   - sudo su - db2inst1 -c "db2 update dbm cfg using SYSADM_GROUP db2iadm1 ; db2stop ; db2start"
   # Creates the database
   - sudo su - db2inst1 -c "db2 create db log4db2 ; db2 connect to log4db2 ; db2 grant dbadm on database to user $USER ; db2 \"CREATE TABLESPACE SYSTOOLSPACE IN IBMCATGROUP MANAGED BY AUTOMATIC STORAGE USING STOGROUP IBMSTOGROUP EXTENTSIZE 4\""
@@ -79,7 +80,7 @@ install:
   - bash -c "if [ '$ENV' = 'test' ]; then db2 connect to log4db2 ; db2 -tf Tests_LOG4DB2_LOGS.sql ; fi"
   - bash -c "if [ '$ENV' = 'test' ]; then db2 connect to log4db2 ; db2 -tf Tests_LOG4DB2_MESSAGES.sql ; fi"
   - bash -c "if [ '$ENV' = 'test' ]; then db2 connect to log4db2 ; db2 -tf Tests_LOG4DB2_REFERENCES.sql ; fi"
-  - bash -c "if [ '$TESTS' = 'random' ]; then db2 connect to log4db2 ; db2 \"call db2unit.export_tests_list\"; sudo chmod +x /tmp/listOfTestSuites ; sudo chmod +x /tmp/returnCode ; fi"
+  - bash -c "if [ '$TESTS' = 'random' ]; then db2 connect to log4db2 ; db2 \"call db2unit.export_tests_list\"; sudo chmod +x /tmp/listOfTestSuites ; sudo chmod +x /tmp/returnCode ; cat /tmp/listOfTestSuites ; fi"
 
 script:
   - bash -c "if [ '$TESTS' = 'seq' ]; then db2 connect to log4db2 ; db2 -r /tmp/db2unit.output \"call db2unit.run_suite('LOG4DB2_APPENDERS')\"                          ; bash -c \"exit \$(tail -1 /tmp/db2unit.output | awk '/Return Status/ {print \$4}')\" ; fi"
@@ -111,7 +112,7 @@ after_failure:
   # If there is any error, shows the logs
   - cat /home/db2inst1/sqllib/db2dump/db2diag.log
   - db2 "call logadmin.logs"
-  - db2 "select * from DB2UNIT_1.DB2UNIT_EXECUTION_REPORTS"
+  - db2 "select * from DB2UNIT_1.EXECUTION_REPORTS"
   - db2 "select * from LOG4DB2_APPENDERS.REPORT_TESTS"
   - db2 "select * from LOG4DB2_APPENDERS_IMPLEMENTATION.REPORT_TESTS"
   - db2 "select * from LOG4DB2_CACHE_CONFIGURATION.REPORT_TESTS"
