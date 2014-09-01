@@ -12,7 +12,7 @@ before_install:
   # Retrieves and extracts the DB2 binaries
   # If it does not work, change it according to the next page:
   # http://www.ibm.com/support/fixcentral/swg/quickorder?product=ibm/Information+Management/DB2&release=10.5.*&platform=Linux+64-bit,x86_64&function=fixId&fixids=DB2-linuxx64-server_t-10.5.0.4-FP004&includeRequisites=1&includeSupersedes=0&downloadMethod=http&source=fc
-  - cd /tmp ; aria2c -x 16 https://delivery04.dhe.ibm.com/sdfdl/v2/sar/CM/IM/04qts/0/Xa.2/Xb.jusyLTSp44S03WBleB_843yZ1M2TpxpbAUQYQHHST1MSF6rM-yEskGR18T0/Xc.CM/IM/04qts/0/v10.5fp4_linuxx64_server_t.tar.gz/Xd./Xf.LPR.D1vk/Xg.7735247/Xi.habanero/XY.habanero/XZ.aN6T3huH_q_HyGslJlMuIU-XsXg/v10.5fp4_linuxx64_server_t.tar.gz ; tar zxvf v10.5fp4_linuxx64_server.tar.gz
+  - cd /tmp ; aria2c -x 16 https://delivery04.dhe.ibm.com/sdfdl/v2/sar/CM/IM/04qts/0/Xa.2/Xb.jusyLTSp44S03WBleB_843yZ1M2TpxpbAUQYQHHST1MSF6rM-yEskGR18T0/Xc.CM/IM/04qts/0/v10.5fp4_linuxx64_server_t.tar.gz/Xd./Xf.LPR.D1vk/Xg.7735247/Xi.habanero/XY.habanero/XZ.aN6T3huH_q_HyGslJlMuIU-XsXg/v10.5fp4_linuxx64_server_t.tar.gz ; tar zxvf v10.5fp4_linuxx64_server_t.tar.gz
 
   # Retrieves and extract db2unit
   # cd ; wget https://github.com/angoca/db2unit/releases/download/db2unit-1-Beta/db2unit.tar.gz ; tar zxvf db2unit.tar.gz
@@ -27,7 +27,7 @@ before_install:
   - sudo ln -s /lib/i386-linux-gnu/libpam.so.0 /lib/libpam.so.0
 
   # Checks the prerequisites
-  - cd /tmp/server ; ./db2prereqcheck -l
+  - cd /tmp/server_t ; ./db2prereqcheck -l
   # Install DB2 and creates an instance (Response file)
   - sudo ./db2setup -r ${TRAVIS_BUILD_DIR}/travis/db2.rsp || cat /tmp/db2setup.log
   # Changes the security
