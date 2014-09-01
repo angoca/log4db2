@@ -154,7 +154,11 @@ function init($p1, $p2, $p3) {
   db2 -x "select 'Schema: ' || base_moduleschema from syscat.modules where moduleschema = 'SYSPUBLIC' and modulename = 'LOGGER'"
   ${Script:retValue}=0
  } else {
-  echo "Check the error(s) and reinstall the utility"
+  echo "Check the ERROR(s) and reinstall the utility"
+  echo "For more information visit check the FAQs:"
+  echo "https://github.com/angoca/log4db2/wiki/FAQs"
+  echo "You can also check the install guide:"
+  echo "https://github.com/angoca/log4db2/wiki/Install"
   ${Script:retValue}=1
  }
 
