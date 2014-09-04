@@ -95,7 +95,7 @@ ALTER MODULE LOGGER PUBLISH
    SET FILENAME = XMLCAST(
      XMLQUERY('$c/log4db2/appender/configuration/filename' PASSING CONFIGURATION AS "c")
      AS VARCHAR(128));
-   -- Remove any carriage return and whitespace around the value.
+   -- Remove any carriage return and blank-space around the value.
    SET DIRECTORY = TRIM(REPLACE(REPLACE(DIRECTORY, CHR(10), ''), CHR(13),
      ''));
    SET FILENAME = TRIM(REPLACE(REPLACE(FILENAME, CHR(10), ''), CHR(13), ''));

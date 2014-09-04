@@ -57,7 +57,7 @@ COMMENT ON TABLESPACE LOGGER_SPACE IS
 -- PERF: Try to change the configuration to improve the performance:
 -- LARGE tablespace (more rows per page)
 -- EXTENT SIZE (bigger=less preallocation)
--- PREFETCHSIZE (faster analyzes, less sync IO)
+-- PREFETCHSIZE (faster analyses, less sync IO)
 CREATE TABLESPACE LOG_DATA_SPACE
   PAGESIZE 8 K
   EXTENTSIZE 64

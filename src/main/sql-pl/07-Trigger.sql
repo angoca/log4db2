@@ -90,7 +90,7 @@ CREATE OR REPLACE TRIGGER T1_CNF_CCHE
 
       -- Writes a message to indicate that is necessary to update the table
       -- manually. If this is automatic, there is an error, because this
-      -- trigger is actived when the configuration is modified, and the trigger
+      -- trigger is activated when the configuration is modified, and the trigger
       -- actives another one (T1_EFF_LVL_ID) when update the table; this last
       -- does not take into account the given value, but looks for the it in the
       -- configuration (GET_DEFINED_PARENT_LOGGER > GET_DEFAULT_LEVEL >
@@ -120,7 +120,7 @@ COMMENT ON TRIGGER T1_CNF_CCHE IS
 -- Table LOGDATA.LEVELS.
 
 /**
- * Checks that the level are consecutives.
+ * Checks that the level are consecutive.
  *
  * TESTS
  *   TestsLevels: Validates if the errors are thrown.
@@ -296,7 +296,7 @@ CREATE OR REPLACE TRIGGER T3_CNFLGR_SYN
 
    IF (QTY > 0) THEN
     UPDATE LOGDATA.CONF_LOGGERS_EFFECTIVE
-    -- LEVEL_ID could be null, thus we update with an always existant level.
+    -- LEVEL_ID could be null, thus we update with an always existent level.
       SET LEVEL_ID = 0
       WHERE LOGGER_ID = N.LOGGER_ID;
    END IF;
@@ -373,7 +373,7 @@ CREATE OR REPLACE TRIGGER T2_EFF_NO_UPD
 COMMENT ON TRIGGER T2_EFF_NO_UPD IS 'It restricts the update of any value in this table different to LEVEL_ID'@
 
 /**
- * Updates the descendancy based on the configuration. If the conf was deleted
+ * Updates the descents based on the configuration. If the conf was deleted
  * from the same logger, it is retrieved from the ascendency or default value,
  * in the BEFORE trigger for this table.
  */
@@ -392,7 +392,7 @@ CREATE OR REPLACE TRIGGER T3_EFF_LVL_UPD
     SET LOGGER.LOCK_MODIFY_DESCENDANTS = LOGGER.VAL_TRUE;
 
     -- The provided level was verified in the previous trigger, thus
-    -- update the descendency.
+    -- update the descents.
     CALL LOGGER.MODIFY_DESCENDANTS (N.LOGGER_ID, N.LEVEL_ID);
 
     SET LOGGER.LOCK_MODIFY_DESCENDANTS = NULL;
