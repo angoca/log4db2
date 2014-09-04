@@ -28,7 +28,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 SET CURRENT SCHEMA LOGDATA;
 
 /**
- * Drops all sequences, alias, tables, schemas, tablespaces and bufferpools.
+ * Drops all seauences, alias, tables, schemas, tablespaces and bufferpools.
  *
  * Version: 2014-02-14 1-RC
  * Author: Andres Gomez Casanova (AngocA)
@@ -57,4 +57,3 @@ EXPORT TO PACKAGES_TO_DROP_DATA.sql OF DEL MODIFIED BY NOCHARDEL
   SELECT 'DROP PACKAGE LOGDATA.' || TRIM(PKGNAME) || ';'
   FROM SYSCAT.PACKAGES
   WHERE PKGSCHEMA LIKE 'LOGDATA%';
-

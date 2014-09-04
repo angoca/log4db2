@@ -28,7 +28,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 SET CURRENT SCHEMA LOGGER_1RC @
 
 /**
- * Drops the appender implementation of writing in a global temporary table.
+ * Drops the appender implementation of writting in a global temporary table.
  *
  * Version: 2014-04-26 1-RC
  * Author: Andres Gomez Casanova (AngocA)

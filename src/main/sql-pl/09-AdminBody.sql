@@ -203,8 +203,8 @@ ALTER MODULE LOGADMIN ADD
 
 /**
  * Returns an opened cursor showing the log messages truncated to 72 characters
- * by default, the date limited to the hour part with milliseconds, and just the
- * last 100 (by default) log messages registered. The concurrence is uncommitted
+ * by default, the date limited to the hour part with miliseconds, and just the
+ * last 100 (by deafult) log messages registered. The concurrence is uncommited
  * read. This procedure is useful to be called with named parameter, for
  * example: CALL LOGS (QTY => 50).
  *
@@ -263,8 +263,8 @@ ALTER MODULE LOGADMIN ADD
 
 /**
  * Returns an opened cursor showing the more recent log messages truncated to 72
- * characters by default and the date limited to the hour part with milliseconds.
- * The concurrence is uncommitted read. This procedure is useful to see the
+ * characters by default and the date limited to the hour part with miliseconds.
+ * The concurrence is uncommited read. This procedure is useful to see the
  * progress of the generated logs.
  *
  * IN LENGTH
@@ -345,7 +345,7 @@ ALTER MODULE LOGADMIN ADD
  *
  * IN NAME
  *   Name of the logger. This string has to be separated by dots to
- *   differentiate the levels. e.g.: foo.bar.toto, where foo is the first level,
+ *   differenciate the levels. e.g.: foo.bar.toto, where foo is the first level,
  *   bar is the second and toto is the last one.
  *   The name could have a maximum of 256 characters, representing just one
  *   level, or several levels with short names.
@@ -355,7 +355,7 @@ ALTER MODULE LOGADMIN ADD
  *   No preconditions.
  * POS
  *   If the given name is valid, and if the logger does not exist, a new logger
- *   is created in the CONF_LOGGERS table; if the logger exist, its ID is
+ *   is created in the CONF_LOGGERS table; if the logges exist, its ID is
 *    returned. Finally, the given level is associated with the logger.
  */
 ALTER MODULE LOGADMIN ADD

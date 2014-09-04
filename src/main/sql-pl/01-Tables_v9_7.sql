@@ -35,7 +35,7 @@ SET CURRENT SCHEMA LOGDATA;
  * - Sequences
  * - Referential integrity
  * And also some DML for the basic content for the utility to run.
- * Some features are not supported in DB2 version 9.7 like implicit hidden.
+ * Some features are not supported in DB2 version 9.7 like implicit hidded.
  * For this reason, there is a dedicated file for 9.7.
  *
  * Version: 2014-02-14 1-RC
@@ -119,7 +119,7 @@ COMMENT ON CONSTRAINT CONF_LOGGERS.LOG_LOGGERS_FK_LEVELS IS
 COMMENT ON CONSTRAINT CONF_LOGGERS.LOG_LOGGERS_FK_PARENT IS
   'Recursive relation - parent';
 
--- Table for the effective loggers configuration.
+-- Table for the effecetive loggers configuration.
 -- This table allows to keep an id related to a specific logger across database
 -- activations.
 CREATE TABLE CONF_LOGGERS_EFFECTIVE
@@ -263,7 +263,7 @@ COMMENT ON CONSTRAINT REFERENCES.LOG_REF_FK_CONF_APPEND IS
 -- Table for the pure SQL Tables appender.
 -- TODO make tests in order to check in a auto generated column for an id
 -- does not impact the performance, and provides a better way to sort messages.
--- This ID column could be hidden to the user. The benefit is that the logs
+-- This ID column could be hidden to the user. The benefic is that the logs
 -- could be accessed via an index, but it impacts the writes, because this
 -- structure has to be maintained.
 CREATE TABLE LOGS (

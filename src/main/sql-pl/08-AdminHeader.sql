@@ -38,7 +38,7 @@ SET CURRENT SCHEMA LOGGER_1RC;
  * Made in COLOMBIA.
  */
 
--- Module for the administration for the logger utility.
+-- Module for the adminsitration for the logger utility.
 CREATE OR REPLACE MODULE LOGADMIN;
 
 COMMENT ON MODULE LOGADMIN IS 'Admin routines for the log4db2 utility';
@@ -58,7 +58,7 @@ ALTER MODULE LOGGER PUBLISH
   PROCEDURE SHOW_CONF (
   );
 
--- Shows the content of the cache. Useful for debugging.
+-- Shows the content of the cache. Useful for debuging.
 ALTER MODULE LOGGER PUBLISH
   PROCEDURE SHOW_CACHE (
   );

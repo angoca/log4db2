@@ -40,8 +40,7 @@ SET PATH = SYSPROC, LOGGER_1RC @
 
 -- Configuration
 
-REGISTER XMLSCHEMA 'http://angoca.github.io/log4db2/conf_appender/1-RC'
- FROM 'conf_appender_1-RC.xsd'
+REGISTER XMLSCHEMA 'http://angoca.github.io/log4db2/conf_appender/1-RC' FROM 'conf_appender_1-RC.xsd'
   AS CONF_APPENDERS @
 
 COMPLETE XMLSCHEMA CONF_APPENDERS @
