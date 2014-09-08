@@ -135,4 +135,5 @@ after_failure:
   - db2 "select * from LOG4DB2_LOGS.REPORT_TESTS"
   - db2 "select * from LOG4DB2_MESSAGES.REPORT_TESTS"
   - db2 "select * from LOG4DB2_REFERENCES.REPORT_TESTS"
+  - db2 "export to /tmp/sorts.txt of del select * from db2unit_1.sorts" ; cat /tmp/sorts.txt
 
