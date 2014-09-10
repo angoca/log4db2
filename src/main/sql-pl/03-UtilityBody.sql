@@ -42,7 +42,7 @@ ALTER MODULE LOGGER ADD
   VARIABLE INTERNAL_CACHE ANCHOR LOGDATA.CONFIGURATION.KEY CONSTANT 'internalCache' @
 
 /**
- * Constant secondsToRefresh to define the period fo refreshness.
+ * Constant secondsToRefresh to define the period of freshness.
  */
 ALTER MODULE LOGGER ADD
   VARIABLE REFRESH_CONS ANCHOR LOGDATA.CONFIGURATION.KEY CONSTANT 'secondsToRefresh' @
@@ -128,7 +128,7 @@ ALTER MODULE LOGGER ADD
   VARIABLE LEVELS_CACHE LEVELS_TYPE @
 
 /**
- * Row logger'data.
+ * Row logger's data.
  */
 ALTER MODULE LOGGER ADD
   TYPE LOGGERS_ROW AS ROW (
@@ -137,13 +137,13 @@ ALTER MODULE LOGGER ADD
   HIERARCHY ANCHOR LOGDATA.CONF_LOGGERS_EFFECTIVE.HIERARCHY) @
 
 /**
- * Logger'data type.
+ * Logger's data type.
  */
 ALTER MODULE LOGGER ADD
   TYPE LOGGERS_TYPE AS LOGGERS_ROW ARRAY [INTEGER] @
 
 /**
- * Logger'data array.
+ * Logger's data array.
  */
 ALTER MODULE LOGGER ADD
   VARIABLE LOGGERS_CACHE LOGGERS_TYPE @
@@ -320,7 +320,7 @@ ALTER MODULE LOGGER ADD
  * Returns the name of a level of the given ID.
  *
  * IN LVL_ID
- *   Level id to analyze.
+ *   Level id to analyse.
  * RETURN The text that represents the id.
  */
 ALTER MODULE LOGGER ADD
@@ -362,7 +362,7 @@ ALTER MODULE LOGGER ADD
  * Tests if the given ID is present in the Levels array.
  *
  * IN LVL_ID
- *   Level id to analyze.
+ *   Level id to analyse.
  * RETURN The true if the value is in the array. False otherwise.
  */
 ALTER MODULE LOGGER ADD
@@ -479,7 +479,7 @@ ALTER MODULE LOGGER ADD
  END P_ACTIVATE_CACHE @
 
 /**
- * Cleans the cache, and deactives it.
+ * Cleans the cache, and deactivates it.
  *
  * PRE
  *   No preconditions.
@@ -517,7 +517,7 @@ ALTER MODULE LOGGER ADD
  * IN VALUE
  *   Value to convert.
  * RETURN
- *   The corresponding represtation of the given boolean.
+ *   The corresponding representation of the given boolean.
  */
 ALTER MODULE LOGGER ADD
   FUNCTION BOOL_TO_CHAR(
@@ -543,7 +543,7 @@ ALTER MODULE LOGGER ADD
  * Returns all data of a given logger.
  *
  * IN LOG_ID
- *   Logger to analyze.
+ *   Logger to analyse.
  * RETURN The data of the logger.
  */
 ALTER MODULE LOGGER ADD
@@ -652,7 +652,7 @@ ALTER MODULE LOGGER ADD
     -- The logger is internal
     SET COMPLETE_NAME = '-internal-';
    ELSE
-    -- Never happends.
+    -- Never happens.
     SET COMPLETE_NAME = '-INVALID-';
    END IF;
    IF (LOG_ID IS NOT NULL) THEN
@@ -664,13 +664,13 @@ ALTER MODULE LOGGER ADD
  END F_GET_LOGGER_NAME @
 
 /**
- * Modifies the descendancy of the provided logger changing the level to the
+ * Modifies the descendants of the provided logger changing the level to the
  * given one.
  *
  * IN PARENT
- *   Parent of the descendancy to be changed.
+ *   Parent of the descendants to be changed.
  * IN LEVEL
- *   Log level to be assigned to all descendancy.
+ *   Log level to be assigned to all descendants.
  * TESTS
  *   TestsMessages: Checks the output of the error.
  * PRE
@@ -703,7 +703,7 @@ ALTER MODULE LOGGER ADD
    SIGNAL SQLSTATE VALUE 'LG0P1'
      SET MESSAGE_TEXT = 'Invalid given parameter: PARENT or LEVEL';
   END IF;
-  -- Analyzes all sons for the given parent.
+  -- Analyses all sons for the given parent.
   FOR F AS C CURSOR FOR
     SELECT LOGGER_ID AS LOG_ID
     FROM LOGDATA.CONF_LOGGERS
@@ -778,14 +778,14 @@ ALTER MODULE LOGGER ADD
  * Function that retrieves the defined log level from the closer ascendency.
  *
  * IN SON_ID
- *   Logger id that will be analyzed to find a ascendency with a defined log
+ *   Logger id that will be analysed to find a ascendency with a defined log
  *   level.
  * RETURNS The log level configured to a ascendancy or the default value.
  * TESTS
  *   TestsFunctionGetDefinedParent checks different inputs of this function.
  *   TestsMessages: Checks the output of the error.
  * PRE
- *   ROOT is registered in the databas and levels are defined.
+ *   ROOT is registered in the database and levels are defined.
  * POS
  *   The returned level correspond to the closer ascendant in the hierarchy.
  */

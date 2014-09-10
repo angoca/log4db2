@@ -28,7 +28,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 SET CURRENT SCHEMA LOGDATA;
 
 /**
- * Drops all seauences, alias, tables, schemas, tablespaces and bufferpools.
+ * Drops all alias and tables.
  *
  * Version: 2014-02-14 1-RC
  * Author: Andres Gomez Casanova (AngocA)

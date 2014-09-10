@@ -39,16 +39,16 @@ SET CURRENT SCHEMA LOGGER_1RC @
  */
 
 -- TODO Check the registered loggers in the database, calculating the maximum
--- length of the concatenated inner levels, and this lenght should be less than
+-- length of the concatenated inner levels, and this length should be less than
 -- 256 chars. foo.bar.toto
 
 /**
- * Internal method that analyzes a string against the tables to see if the
+ * Internal method that analyses a string against the tables to see if the
  * level name is already registered there, and finally retrieves the logging
  * level and logger id.
  *
  * IN STRING
- *   This is the string to analyze.
+ *   This is the string to analyse.
  * INOUT PARENT SMALLINT
  *   Enters as the parent Id of this string, and goes out as the new id.
  * INOUT PARENT_LEVEL
@@ -68,7 +68,7 @@ ALTER MODULE LOGGER ADD PROCEDURE ANALYZE_NAME (
   DECLARE LEVEL ANCHOR LOGDATA.LEVELS.LEVEL_ID; -- Id of the associated logger level.
 
   -- Looks for the logger with the given name in the configuration table.
-  -- This query waits for the data to be commited (CS Cursor stability)
+  -- This query waits for the data to be committed (CS Cursor stability)
   -- FIXME: Try to convert the following query to an array. Two fields are
   -- part of the key.
   SELECT C.LOGGER_ID, C.LEVEL_ID INTO SON, LEVEL
@@ -99,11 +99,11 @@ ALTER MODULE LOGGER ADD PROCEDURE ANALYZE_NAME (
  * Registers the logger name in the system, and retrieves the corresponding ID
  * for that logger. This ID will allow to write messages into that logger if
  * the configuration level allows it. This method processes the logger name
- * in order to remove any leading or trailing whitespace or dot.
+ * in order to remove any leading or trailing blank-space or dot.
  *
  * IN NAME
  *   Name of the logger. This string has to be separated by dots to
- *   differenciate the levels. e.g.: foo.bar.toto, where foo is the first level,
+ *   differentiate the levels. e.g.: foo.bar.toto, where foo is the first level,
  *   bar is the second and toto is the last one.
  *   The name could have a maximum of 256 characters, representing just one
  *   level, or several levels with short names.
@@ -154,7 +154,7 @@ ALTER MODULE LOGGER ADD
      || COALESCE(NAME, 'null'));
   END IF;
 
-  -- Validate nullability
+  -- Validate null-ability
   IF (NAME IS NULL) THEN
    SET NAME ='';
   END IF;
@@ -171,8 +171,8 @@ ALTER MODULE LOGGER ADD
    BEGIN
     -- Declare variables.
     DECLARE LENGTH SMALLINT; -- Length of the logger name. Limits the guard.
-    DECLARE POS SMALLINT; -- Position of a dot sign. Checks the boucle guard.
-    DECLARE SUBS_PRE ANCHOR COMPLETE_LOGGER_NAME; -- Sustring before the dot.
+    DECLARE POS SMALLINT; -- Position of a dot sign. Checks the loop guard.
+    DECLARE SUBS_PRE ANCHOR COMPLETE_LOGGER_NAME; -- Substring before the dot.
     DECLARE SUBS_POS ANCHOR COMPLETE_LOGGER_NAME; -- Substring after the dot (current loop.)
 
     DECLARE PARENT ANCHOR LOGDATA.CONF_LOGGERS.LOGGER_ID; -- Parent Id of the current logger.
@@ -210,7 +210,7 @@ ALTER MODULE LOGGER ADD
        END;
      SET QTY = 0;
      -- Takes each level of the logger name (dots), and retrieves or creates
-     -- the hierarchy in the configutation.
+     -- the hierarchy in the configuration.
      WHILE (POS < LENGTH) DO
       IF (QTY >= MAX_LEVELS) THEN
        SIGNAL SQLSTATE 'LG0P2'
@@ -226,7 +226,7 @@ ALTER MODULE LOGGER ADD
 
        CALL ANALYZE_NAME(SUBS_PRE, PARENT, PARENT_LEVEL, PARENT_HIERARCHY);
        SET PARENT_HIERARCHY = PARENT_HIERARCHY || ',' || PARENT;
-      ELSE -- No dot was found (in the remainding string).
+      ELSE -- No dot was found (in the remaining string).
        CALL ANALYZE_NAME(SUBS_POS, PARENT, PARENT_LEVEL, PARENT_HIERARCHY);
        -- Ends the while.
        SET POS = LENGTH;
