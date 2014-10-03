@@ -80,55 +80,55 @@ else
  executeTest LOG4DB2_CACHE_LOGGERS ${PAUSE}
  SUM=$((${SUM}+${RET}))
  export RET=0
- #executeTest LOG4DB2_CASCADE_CALL_LIMIT ${PAUSE}
+ executeTest LOG4DB2_CASCADE_CALL_LIMIT ${PAUSE}
  SUM=$((${SUM}+${RET}))
  export RET=0
- #executeTest LOG4DB2_CONF_APPENDERS ${PAUSE}
+ executeTest LOG4DB2_CONF_APPENDERS ${PAUSE}
  SUM=$((${SUM}+${RET}))
  export RET=0
- #executeTest LOG4DB2_CONFIGURATION ${PAUSE}
+ executeTest LOG4DB2_CONFIGURATION ${PAUSE}
  SUM=$((${SUM}+${RET}))
  export RET=0
- #executeTest LOG4DB2_CONF_LOGGERS ${PAUSE}
+ executeTest LOG4DB2_CONF_LOGGERS ${PAUSE}
  SUM=$((${SUM}+${RET}))
  export RET=0
- #executeTest LOG4DB2_CONF_LOGGERS_DELETE ${PAUSE}
+ executeTest LOG4DB2_CONF_LOGGERS_DELETE ${PAUSE}
  SUM=$((${SUM}+${RET}))
  export RET=0
- #executeTest LOG4DB2_CONF_LOGGERS_EFFECTIVE ${PAUSE}
+ executeTest LOG4DB2_CONF_LOGGERS_EFFECTIVE ${PAUSE}
  SUM=$((${SUM}+${RET}))
  export RET=0
- #executeTest LOG4DB2_CONF_LOGGERS_EFFECTIVE_CASES ${PAUSE}
+ executeTest LOG4DB2_CONF_LOGGERS_EFFECTIVE_CASES ${PAUSE}
  SUM=$((${SUM}+${RET}))
  export RET=0
- #executeTest LOG4DB2_DYNAMIC_APPENDERS ${PAUSE}
+ executeTest LOG4DB2_DYNAMIC_APPENDERS ${PAUSE}
  SUM=$((${SUM}+${RET}))
  export RET=0
- #executeTest LOG4DB2_FUNCTION_GET_DEFINED_PARENT_LOGGER ${PAUSE}
+ executeTest LOG4DB2_FUNCTION_GET_DEFINED_PARENT_LOGGER ${PAUSE}
  SUM=$((${SUM}+${RET}))
  export RET=0
- #executeTest LOG4DB2_GET_LOGGER ${PAUSE}
+ executeTest LOG4DB2_GET_LOGGER ${PAUSE}
  SUM=$((${SUM}+${RET}))
  export RET=0
- #executeTest LOG4DB2_GET_LOGGER_NAME ${PAUSE}
+ executeTest LOG4DB2_GET_LOGGER_NAME ${PAUSE}
  SUM=$((${SUM}+${RET}))
  export RET=0
- #executeTest LOG4DB2_HIERARCHY ${PAUSE}
+ executeTest LOG4DB2_HIERARCHY ${PAUSE}
  SUM=$((${SUM}+${RET}))
  export RET=0
- #executeTest LOG4DB2_LAYOUT ${PAUSE}
+ executeTest LOG4DB2_LAYOUT ${PAUSE}
  SUM=$((${SUM}+${RET}))
  export RET=0
- #executeTest LOG4DB2_LEVELS ${PAUSE}
+ executeTest LOG4DB2_LEVELS ${PAUSE}
  SUM=$((${SUM}+${RET}))
  export RET=0
- #executeTest LOG4DB2_LOGS ${PAUSE}
+ executeTest LOG4DB2_LOGS ${PAUSE}
  SUM=$((${SUM}+${RET}))
  export RET=0
- #executeTest LOG4DB2_MESSAGES ${PAUSE}
+ executeTest LOG4DB2_MESSAGES ${PAUSE}
  SUM=$((${SUM}+${RET}))
  export RET=0
- #executeTest LOG4DB2_REFERENCES ${PAUSE}
+ executeTest LOG4DB2_REFERENCES ${PAUSE}
  SUM=$((${SUM}+${RET}))
 
  if [ "${PAUSE}" != "true" ] ; then
