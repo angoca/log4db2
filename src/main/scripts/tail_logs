@@ -28,7 +28,7 @@
 # Author: Andres Gomez Casanova (AngocA)
 # Made in COLOMBIA.
 
-VAL=$1
+VAL=$(($1-1))
 INC=1
 SECS=$2
 
@@ -42,8 +42,8 @@ if [ -z ${SECS} ] ; then
 fi
 
 I=0
-while (( ${I} < ${VAL} )) ; do
- db2 -x +w "call logadmin.next_logs()" | grep "^  Result set 1$" | grep "^  --------------$" | grep "^  Return Status = 0$" | grep "^$"
+while (( ${I} <= ${VAL} )) ; do
+ db2 -x +w "call logadmin.next_logs()" | grep -v "^  Result set 1$" | grep -v "^  --------------$" | grep -v "^  Return Status = 0$" | grep -v "^$"
  if [ ${I} -ne ${VAL} ] ; then
   # echo "Waiting ${SECS} seconds..."
   sleep ${SECS}
