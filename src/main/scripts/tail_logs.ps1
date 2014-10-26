@@ -53,8 +53,7 @@ if ( $LastExitCode -eq 0 ) {
   ${I}=${I}+${INC}
  }
 } else {
- echo "Please connect to a database before the execution of the installation."
+ echo "Please connect to a database before execute this script."
  echo "Load the DB2 profile with: set-item -path env:DB2CLP -value `"**`$$**`""
- ${Script:retValue}=2
 }
 
