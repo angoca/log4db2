@@ -149,6 +149,7 @@ These are the files included in the released version:
  * `install*` -- Installation files.
  * `README.txt` -- This file.
  * `reinstall*` -- Reinstallation files.
+ * `tail_logs*` -- Script to show the most recent logs.
  * `uninit*` -- Clean environment.
  * `uninstall*` -- Uninstallation files.
  * `doc` directory -- Documentation directory (ErrorCode, ER diagram).
