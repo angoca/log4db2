@@ -28,9 +28,9 @@
 # Author: Andres Gomez Casanova (AngocA)
 # Made in COLOMBIA.
 
-VAL=$(($1-1))
+VAL=${1}
 INC=1
-SECS=$2
+SECS=${2}
 
 if [ -z ${VAL} ] ; then
  INC=0
@@ -41,13 +41,19 @@ if [ -z ${SECS} ] ; then
  SECS=1
 fi
 
-I=0
-while (( ${I} <= ${VAL} )) ; do
- db2 -x +w "call logadmin.next_logs()" | grep -v "^  Result set 1$" | grep -v "^  --------------$" | grep -v "^  Return Status = 0$" | grep -v "^$"
- if [ ${I} -ne ${VAL} ] ; then
-  # echo "Waiting ${SECS} seconds..."
-  sleep ${SECS}
- fi
- I=$((${I}+${INC}))
-done
+db2 connect > /dev/null
+if [ ${?} -eq 0 ] ; then
+ I=0
+ while (( ${I} != ${VAL} )) ; do
+  db2 -x +w "call logadmin.next_logs()" | grep -v "^  Result set 1$" | grep -v "^  --------------$" | grep -v "^  Return Status = 0$" | grep -v "^$"
+  if [ ${I} -ne $((${VAL} - 1)) ] ; then
+   # echo "Waiting ${SECS} seconds..."
+   sleep ${SECS}
+  fi
+  I=$((${I}+${INC}))
+ done
+else
+ echo "Please connect to a database before execute this script."
+fi
+
 
