@@ -32,6 +32,7 @@
 :: Global variables
 set install=0
 set execute=0
+set onlyExec=0
 
 db2 connect > NUL
 if %ERRORLEVEL% NEQ 0 (
@@ -63,6 +64,9 @@ goto:eof
  )
  if /I "%param1%" == "x" (
   set execute=1
+  if /I "%param2%" == "" (
+   set onlyExec=1
+  )
  )
  if /I "%param2%" == "x" (
   set execute=1
@@ -84,7 +88,7 @@ goto:eof
   db2 "DROP SCHEMA ERRORSCHEMA RESTRICT" > NUL
 
   :: Installs the tests.
-  db2 -td@ -f ../sql-pl/Tests_%SCHEMA%.sql
+  db2 -td@ -f %LOG4DB2_SRC_TEST_CODE_PATH%\Tests_%SCHEMA%.sql
  )
 
  :: Execute the tests.
@@ -94,11 +98,12 @@ goto:eof
   db2 "CALL DB2UNIT.CLEAN()"
  )
 
- if %execute% EQU 0 (
-  db2 "CALL LOGADMIN.LOGS(min_level=>4)"
-  db2 "SELECT EXECUTION_ID EXEC_ID, VARCHAR(SUBSTR(TEST_NAME, 1, 32), 32) TEST, \
-    FINAL_STATE STATE, TIME, VARCHAR(SUBSTR(MESSAGE, 1, 128), 128) \
-    FROM ${SCHEMA}.REPORT_TESTS ORDER BY DATE"
+ if %onlyExec% EQU 1 (
+  db2 "CALL LOGADMIN.LOGS(min_level=>5)"
+  db2 "SELECT EXECUTION_ID EXEC_ID, " ^
+    "VARCHAR(SUBSTR(TEST_NAME, 1, 32), 32) TEST, " ^
+    "FINAL_STATE STATE, TIME, VARCHAR(SUBSTR(MESSAGE, 1, 128), 128) " ^
+    "FROM %SCHEMA%.REPORT_TESTS ORDER BY DATE"
  )
 goto:eof
 

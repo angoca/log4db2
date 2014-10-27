@@ -22,7 +22,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-# Execute a test.
+# Install and/or execute a suite of tests.
 #
 # Version: 2014-04-21 1-RC
 # Author: Andres Gomez Casanova (AngocA)
@@ -37,11 +37,11 @@ if ( $LastExitCode -ne 0 ) {
  echo "x for executing"
  echo "The test file should have this structure: Test_<SCHEMA_NAME>.sql"
 } else {
- SCHEMA=$Args[0]
- OPTION_1=$Args[1]
- OPTION_2=$Args[2]
+ ${SCHEMA}=$Args[0]
+ ${OPTION_1}=$Args[1]
+ ${OPTION_2}=$Args[2]
  # Execute the tests.
- if ( "${OPTION_1}" -eq "" -or "${OPTION_1}" -eq "i" -or "${OPTION_2}" -eq "i" ( {
+ if ( "${OPTION_1}" -eq "" -or "${OPTION_1}" -eq "i" -or "${OPTION_2}" -eq "i" ) {
   # Prepares the installation.
   db2 "DELETE FROM LOGS" | Out-Null
   db2 "DROP TABLE ${SCHEMA}.REPORT_TESTS" | Out-Null
@@ -51,7 +51,7 @@ if ( $LastExitCode -ne 0 ) {
   db2 "DROP SCHEMA ERRORSCHEMA RESTRICT" | Out-Null
 
   # Installs the tests.
-  db2 -td@ -f ../sql-pl/Tests_${SCHEMA}.sql
+  db2 -td@ -f ${LOG4DB2_SRC_TEST_CODE_PATH}\Tests_${SCHEMA}.sql
  }
 
  # Execute the tests.
@@ -61,8 +61,8 @@ if ( $LastExitCode -ne 0 ) {
   db2 "CALL DB2UNIT.CLEAN()"
  }
 
- if ( "${OPTION_1}" -eq "" -or "${OPTION_1}" -eq "i" -or "${OPTION_2}" -eq "i" ( {
-  db2 "CALL LOGADMIN.LOGS(min_level=>4)"
+ if ( "${OPTION_1}" -eq "x" -and "${OPTION_2}" -eq "" ) {
+  db2 "CALL LOGADMIN.LOGS(min_level=>5)"
   db2 "SELECT EXECUTION_ID EXEC_ID, VARCHAR(SUBSTR(TEST_NAME, 1, 32), 32) TEST,
     FINAL_STATE STATE, TIME, VARCHAR(SUBSTR(MESSAGE, 1, 128), 128)
     FROM ${SCHEMA}.REPORT_TESTS ORDER BY DATE"
