@@ -96,9 +96,9 @@ goto:eof
  echo ====Next: %schema%
  if "!PAUSE!" == "true" (
   pause
-  call %LOG4DB2_SRC_TEST_SCRIPT_PATH%\test.bat schema i x
+  call %LOG4DB2_SRC_TEST_SCRIPT_PATH%\test.bat %schema% i x
  ) else (
-  call %LOG4DB2_SRC_TEST_SCRIPT_PATH%\test.bat schema x
+  call %LOG4DB2_SRC_TEST_SCRIPT_PATH%\test.bat %schema% x
  )
 goto:eof
 
