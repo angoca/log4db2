@@ -12,7 +12,7 @@ There are three sections:
 BEFORE
 
 * Run all tests to make sure there are not regressions.
-* To change the version constant in the code (12-Version.sql:VERSION):
+* Change the version constant in the code (12-Version.sql:VERSION):
 https://github.com/angoca/log4db2/blob/master/src/main/sql-pl/12-Version.sql
 * Write the changes in the ChangeLog section of the wiki.
 * Update the Prerequisites table from the Install from Sources section of the
@@ -42,7 +42,9 @@ PERFORM
 AFTER
 
 * Change the current development status in source forge.
-* To change the schema name to the new version is all files.
+* Change the schema name to the new version is all files.
 * Check that there are not references to the previous release.
+* Change the version constant in the code (12-Version.sql:VERSION):
+https://github.com/angoca/log4db2/blob/master/src/main/sql-pl/12-Version.sql
 * Commit these changes and publish.
 
