@@ -9,7 +9,7 @@ MESSAGE
 * USER RESPONSE
 
 
-==== LEVELS TABLE
+==== LEVELS table
 
 LG0L1
 LEVEL_ID should be equal or greater than zero.
@@ -48,7 +48,7 @@ the list of LEVELS.
 * You must delete levels by deleting the maximal LEVEL_ID value.
 
 
-==== CONF_LOGGERS TABLE
+==== CONF_LOGGERS table
 
 LG0C1
 ROOT cannot be inserted
@@ -88,7 +88,8 @@ The same son already exist in the database.
 database.
 * Verify the name of the son, or the parent and reissue the query.
 
-==== CONF_LOGGERS_EFFECTIVE TABLE
+
+==== CONF_LOGGERS_EFFECTIVE table
 
 LG0E1
 The LEVEL_ID is the only column that can be updated.
@@ -107,7 +108,7 @@ It cannot be deleted, because this is the origin of the ancestry for any level.
 condition to not delete ROOT logger.
 
 
-==== CONF_APPENDERS TABLE
+==== CONF_APPENDERS table
 
 LG0A1
 APPENDER_ID for appenders should be greater or equal to zero.
@@ -116,7 +117,7 @@ issuing a negative value.
 * Reissue the statement with a positive or zero value.
 
 
-==== CONFIGURATION TABLE
+==== CONFIGURATION table
 
 LG0T1
 Invalid value for defaultRootLevelId
@@ -124,7 +125,7 @@ Invalid value for defaultRootLevelId
 * Verify that the given value can be converted to a SMALLINT.
 
 
-==== GET_DEFINED_PARENT_LOGGER FUNCTION ====
+==== GET_DEFINED_PARENT_LOGGER function
 
 LG0F1
 Invalid given parameter: SON_ID.
@@ -133,7 +134,7 @@ a null value or a negative one.
 * Reissue the command calling the function with a positive or zero value.
 
 
-==== MODIFY_DESCENDANTS PROCEDURE ====
+==== MODIFY_DESCENDANTS procedure
 
 LG0P1
 Invalid given parameter: PARENT or LEVEL.
@@ -143,7 +144,16 @@ null.
 and level not null and greater that 0.
 
 
-==== FUNCTIONS ====
+==== GET_LAST_EXECUTION_ORDER procedure
+
+LG0P2
+Impossible to retrieve the last execution
+* The procedure could not retrieve information of the most recent executed
+test suite in the current session.
+* Execute a Test Suite with the RUN_SUITE procedure, before call this procedure.
+
+
+==== FUNCTIONS
 
 LG001
 Cascade call limit achieved. Log message was written.
