@@ -83,10 +83,10 @@ else
  executeTest LOG4DB2_CASCADE_CALL_LIMIT ${PAUSE}
  SUM=$((${SUM}+${RET}))
  export RET=0
- executeTest LOG4DB2_CONF_APPENDERS ${PAUSE}
+ executeTest LOG4DB2_CONFIGURATION ${PAUSE}
  SUM=$((${SUM}+${RET}))
  export RET=0
- executeTest LOG4DB2_CONFIGURATION ${PAUSE}
+ executeTest LOG4DB2_CONF_APPENDERS ${PAUSE}
  SUM=$((${SUM}+${RET}))
  export RET=0
  executeTest LOG4DB2_CONF_LOGGERS ${PAUSE}
@@ -130,6 +130,8 @@ else
  export RET=0
  executeTest LOG4DB2_REFERENCES ${PAUSE}
  SUM=$((${SUM}+${RET}))
+
+db2 "CALL DB2UNIT.REPORT_RECENT_EXECUTIONS"
 
  if [ "${PAUSE}" != "true" ] ; then
   MILLIS_END=$(date +"%s")
