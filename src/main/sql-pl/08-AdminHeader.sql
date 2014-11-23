@@ -108,3 +108,12 @@ CREATE OR REPLACE VIEW LOG_MESSAGES
   FROM LOGDATA.LOGS AS L LEFT JOIN LOGDATA.LEVELS AS LE
   ON L.LEVEL_ID = LE.LEVEL_ID;
 
+COMMENT ON TABLE LOG_MESSAGES IS 'Log messages with names of levels and loggers';
+
+COMMENT ON LOG_MESSAGES (
+  DATE IS 'Date when the message was generated',
+  LEVEL IS 'Logger level of the message',
+  LOGGER IS 'Name of the associated logger',
+  MESSAGE IS 'Content of the message'
+  );
+
