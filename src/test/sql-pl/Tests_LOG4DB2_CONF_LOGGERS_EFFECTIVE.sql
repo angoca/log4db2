@@ -75,6 +75,9 @@ CREATE OR REPLACE PROCEDURE ONE_TIME_SETUP()
     SET VALUE = '3'
     WHERE KEY = 'defaultRootLevelId';
   CALL DELETE_LAST_MESSAGE_FROM_TRIGGER();
+  UPDATE LOGDATA.CONF_LOGGERS_EFFECTIVE
+    SET LEVEL_ID = 0
+    WHERE LOGGER_ID = 0;
   UPDATE LOGDATA.CONFIGURATION
     SET VALUE = 'false'
     WHERE KEY = 'internalCache';
@@ -106,6 +109,9 @@ CREATE OR REPLACE PROCEDURE ONE_TIME_TEAR_DOWN()
            ('logInternals', 'false'),
            ('secondsToRefresh', '30');
   CALL DELETE_LAST_MESSAGE_FROM_TRIGGER();
+  UPDATE LOGDATA.CONF_LOGGERS_EFFECTIVE
+    SET LEVEL_ID = 0
+    WHERE LOGGER_ID = 0;
  END @
 
 -- Test01: Inserts a normal logger.
@@ -136,11 +142,11 @@ CREATE OR REPLACE PROCEDURE TEST_01()
     ACTUAL_HIERARCHY FROM LOGDATA.CONF_LOGGERS_EFFECTIVE
     WHERE LOGGER_ID = MAX_ID;
 
-  CALL DB2UNIT.ASSERT_INT_EQUALS('Test01: Inserts a normal logger',
+  CALL DB2UNIT.ASSERT_INT_EQUALS('Test01a: Inserts a normal logger',
     EXPECTED_LOGGER, ACTUAL_LOGGER);
-  CALL DB2UNIT.ASSERT_INT_EQUALS('Test01: Inserts a normal logger',
+  CALL DB2UNIT.ASSERT_INT_EQUALS('Test01b: Inserts a normal logger',
     EXPECTED_LEVEL, ACTUAL_LEVEL);
-  CALL DB2UNIT.ASSERT_STRING_EQUALS('Test01: Inserts a normal logger',
+  CALL DB2UNIT.ASSERT_STRING_EQUALS('Test01c: Inserts a normal logger',
     EXPECTED_HIERARCHY, ACTUAL_HIERARCHY);
  END @
 
@@ -227,11 +233,11 @@ CREATE OR REPLACE PROCEDURE TEST_05()
     ACTUAL_HIERARCHY FROM LOGDATA.CONF_LOGGERS_EFFECTIVE
     WHERE LOGGER_ID = MAX_ID;
 
-  CALL DB2UNIT.ASSERT_INT_EQUALS('Test05: Tries to insert a logger with a null '
+  CALL DB2UNIT.ASSERT_INT_EQUALS('Test05a: Tries to insert a logger with a null '
     || 'level', EXPECTED_LOGGER, ACTUAL_LOGGER);
-  CALL DB2UNIT.ASSERT_INT_EQUALS('Test05: Tries to insert a logger with a null '
+  CALL DB2UNIT.ASSERT_INT_EQUALS('Test05b: Tries to insert a logger with a null '
     || 'level', EXPECTED_LEVEL, ACTUAL_LEVEL);
-  CALL DB2UNIT.ASSERT_STRING_EQUALS('Test05: Tries to insert a logger with a '
+  CALL DB2UNIT.ASSERT_STRING_EQUALS('Test05c: Tries to insert a logger with a '
     || 'null level', EXPECTED_HIERARCHY, ACTUAL_HIERARCHY);
  END @
 
@@ -264,11 +270,11 @@ CREATE OR REPLACE PROCEDURE TEST_06()
     ACTUAL_HIERARCHY FROM LOGDATA.CONF_LOGGERS_EFFECTIVE
     WHERE LOGGER_ID = MAX_ID;
 
-  CALL DB2UNIT.ASSERT_INT_EQUALS('Test06: Tries to insert a logger with a '
+  CALL DB2UNIT.ASSERT_INT_EQUALS('Test06a: Tries to insert a logger with a '
     || 'negative level', EXPECTED_LOGGER, ACTUAL_LOGGER);
-  CALL DB2UNIT.ASSERT_INT_EQUALS('Test06: Tries to insert a logger with a '
+  CALL DB2UNIT.ASSERT_INT_EQUALS('Test06b: Tries to insert a logger with a '
     || 'negative level', EXPECTED_LEVEL, ACTUAL_LEVEL);
-  CALL DB2UNIT.ASSERT_STRING_EQUALS('Test06: Tries to insert a logger with a '
+  CALL DB2UNIT.ASSERT_STRING_EQUALS('Test06c: Tries to insert a logger with a '
     || 'negative level', EXPECTED_HIERARCHY, ACTUAL_HIERARCHY);
  END @
 
@@ -301,11 +307,11 @@ CREATE OR REPLACE PROCEDURE TEST_07()
     ACTUAL_HIERARCHY FROM LOGDATA.CONF_LOGGERS_EFFECTIVE
     WHERE LOGGER_ID = MAX_ID;
 
-  CALL DB2UNIT.ASSERT_INT_EQUALS('Test07: Tries to insert a logger with an '
+  CALL DB2UNIT.ASSERT_INT_EQUALS('Test07a: Tries to insert a logger with an '
     || 'inexistant level', EXPECTED_LOGGER, ACTUAL_LOGGER);
-  CALL DB2UNIT.ASSERT_INT_EQUALS('Test07: Tries to insert a logger with an '
+  CALL DB2UNIT.ASSERT_INT_EQUALS('Test07b: Tries to insert a logger with an '
     || 'inexistant level', EXPECTED_LEVEL, ACTUAL_LEVEL);
-  CALL DB2UNIT.ASSERT_STRING_EQUALS('Test07: Tries to insert a logger with an '
+  CALL DB2UNIT.ASSERT_STRING_EQUALS('Test07c: Tries to insert a logger with an '
     || 'inexistant level', EXPECTED_HIERARCHY, ACTUAL_HIERARCHY);
  END @
 
@@ -363,11 +369,11 @@ CREATE OR REPLACE PROCEDURE TEST_09()
     ACTUAL_HIERARCHY FROM LOGDATA.CONF_LOGGERS_EFFECTIVE
     WHERE LOGGER_ID = MAX_ID;
 
-  CALL DB2UNIT.ASSERT_INT_EQUALS('Test09: Tries to insert a logger with an '
+  CALL DB2UNIT.ASSERT_INT_EQUALS('Test09a: Tries to insert a logger with an '
     || 'empty hierarchy', EXPECTED_LOGGER, ACTUAL_LOGGER);
-  CALL DB2UNIT.ASSERT_INT_EQUALS('Test09: Tries to insert a logger with an '
+  CALL DB2UNIT.ASSERT_INT_EQUALS('Test09b: Tries to insert a logger with an '
     || 'empty hierarchy', EXPECTED_LEVEL, ACTUAL_LEVEL);
-  CALL DB2UNIT.ASSERT_STRING_EQUALS('Test09: Tries to insert a logger with an '
+  CALL DB2UNIT.ASSERT_STRING_EQUALS('Test09c: Tries to insert a logger with an '
     || 'empty hierarchy', EXPECTED_HIERARCHY, ACTUAL_HIERARCHY);
  END @
 
@@ -399,11 +405,11 @@ CREATE OR REPLACE PROCEDURE TEST_10()
     ACTUAL_HIERARCHY FROM LOGDATA.CONF_LOGGERS_EFFECTIVE
     WHERE LOGGER_ID = MAX_ID;
 
-  CALL DB2UNIT.ASSERT_INT_EQUALS('Test10: Tries to insert a logger with an '
+  CALL DB2UNIT.ASSERT_INT_EQUALS('Test10a: Tries to insert a logger with an '
     || 'invalid hierarchy', EXPECTED_LOGGER, ACTUAL_LOGGER);
-  CALL DB2UNIT.ASSERT_INT_EQUALS('Test10: Tries to insert a logger with an '
+  CALL DB2UNIT.ASSERT_INT_EQUALS('Test10b: Tries to insert a logger with an '
     || 'invalid hierarchy', EXPECTED_LEVEL, ACTUAL_LEVEL);
-  CALL DB2UNIT.ASSERT_STRING_EQUALS('Test10: Tries to insert a logger with an '
+  CALL DB2UNIT.ASSERT_STRING_EQUALS('Test10c: Tries to insert a logger with an '
     || 'invalid hierarchy', EXPECTED_HIERARCHY, ACTUAL_HIERARCHY);
  END @
 
@@ -624,11 +630,11 @@ CREATE OR REPLACE PROCEDURE TEST_17()
     ACTUAL_HIERARCHY FROM LOGDATA.CONF_LOGGERS_EFFECTIVE
     WHERE LOGGER_ID = MAX_ID;
 
-  CALL DB2UNIT.ASSERT_INT_EQUALS('Test17: Updates the level',
+  CALL DB2UNIT.ASSERT_INT_EQUALS('Test17a: Updates the level',
     EXPECTED_LOGGER, ACTUAL_LOGGER);
-  CALL DB2UNIT.ASSERT_INT_EQUALS('Test17: Updates the level',
+  CALL DB2UNIT.ASSERT_INT_EQUALS('Test17b: Updates the level',
     EXPECTED_LEVEL, ACTUAL_LEVEL);
-  CALL DB2UNIT.ASSERT_STRING_EQUALS('Test17: Updates the level',
+  CALL DB2UNIT.ASSERT_STRING_EQUALS('Test17c: Updates the level',
     EXPECTED_HIERARCHY, ACTUAL_HIERARCHY);
  END @
 
@@ -663,11 +669,11 @@ CREATE OR REPLACE PROCEDURE TEST_18()
     ACTUAL_HIERARCHY FROM LOGDATA.CONF_LOGGERS_EFFECTIVE
     WHERE LOGGER_ID = MAX_ID;
 
-  CALL DB2UNIT.ASSERT_INT_EQUALS('Test18: Updates the level to null',
+  CALL DB2UNIT.ASSERT_INT_EQUALS('Test18a: Updates the level to null',
     EXPECTED_LOGGER, ACTUAL_LOGGER);
-  CALL DB2UNIT.ASSERT_INT_EQUALS('Test18: Updates the level to null',
+  CALL DB2UNIT.ASSERT_INT_EQUALS('Test18b: Updates the level to null',
     EXPECTED_LEVEL, ACTUAL_LEVEL);
-  CALL DB2UNIT.ASSERT_STRING_EQUALS('Test18: Updates the level to null',
+  CALL DB2UNIT.ASSERT_STRING_EQUALS('Test18c: Updates the level to null',
     EXPECTED_HIERARCHY, ACTUAL_HIERARCHY);
  END @
 
@@ -702,11 +708,11 @@ CREATE OR REPLACE PROCEDURE TEST_19()
     ACTUAL_HIERARCHY FROM LOGDATA.CONF_LOGGERS_EFFECTIVE
     WHERE LOGGER_ID = MAX_ID;
 
-  CALL DB2UNIT.ASSERT_INT_EQUALS('Test19: Updates the level to negative',
+  CALL DB2UNIT.ASSERT_INT_EQUALS('Test19a: Updates the level to negative',
     EXPECTED_LOGGER, ACTUAL_LOGGER);
-  CALL DB2UNIT.ASSERT_INT_EQUALS('Test19: Updates the level to negative',
+  CALL DB2UNIT.ASSERT_INT_EQUALS('Test19b: Updates the level to negative',
     EXPECTED_LEVEL, ACTUAL_LEVEL);
-  CALL DB2UNIT.ASSERT_STRING_EQUALS('Test19: Updates the level to negative',
+  CALL DB2UNIT.ASSERT_STRING_EQUALS('Test19c: Updates the level to negative',
     EXPECTED_HIERARCHY, ACTUAL_HIERARCHY);
  END @
 
@@ -741,11 +747,11 @@ CREATE OR REPLACE PROCEDURE TEST_20()
     ACTUAL_HIERARCHY FROM LOGDATA.CONF_LOGGERS_EFFECTIVE
     WHERE LOGGER_ID = MAX_ID;
 
-  CALL DB2UNIT.ASSERT_INT_EQUALS('Test20: Updates the level to inexistant',
+  CALL DB2UNIT.ASSERT_INT_EQUALS('Test20a: Updates the level to inexistant',
     EXPECTED_LOGGER, ACTUAL_LOGGER);
-  CALL DB2UNIT.ASSERT_INT_EQUALS('Test20: Updates the level to inexistant',
+  CALL DB2UNIT.ASSERT_INT_EQUALS('Test20b: Updates the level to inexistant',
     EXPECTED_LEVEL, ACTUAL_LEVEL);
-  CALL DB2UNIT.ASSERT_STRING_EQUALS('Test20: Updates the level to inexistant',
+  CALL DB2UNIT.ASSERT_STRING_EQUALS('Test20c: Updates the level to inexistant',
     EXPECTED_HIERARCHY, ACTUAL_HIERARCHY);
  END @
 
@@ -780,11 +786,11 @@ CREATE OR REPLACE PROCEDURE TEST_21()
     ACTUAL_HIERARCHY FROM LOGDATA.CONF_LOGGERS_EFFECTIVE
     WHERE LOGGER_ID = MAX_ID;
 
-  CALL DB2UNIT.ASSERT_INT_EQUALS('Test21: Updates the level to same',
+  CALL DB2UNIT.ASSERT_INT_EQUALS('Test21a: Updates the level to same',
     EXPECTED_LOGGER, ACTUAL_LOGGER);
-  CALL DB2UNIT.ASSERT_INT_EQUALS('Test21: Updates the level to same',
+  CALL DB2UNIT.ASSERT_INT_EQUALS('Test21b: Updates the level to same',
     EXPECTED_LEVEL, ACTUAL_LEVEL);
-  CALL DB2UNIT.ASSERT_STRING_EQUALS('Test21: Updates the level to same',
+  CALL DB2UNIT.ASSERT_STRING_EQUALS('Test21c: Updates the level to same',
     EXPECTED_HIERARCHY, ACTUAL_HIERARCHY);
  END @
 
@@ -966,11 +972,11 @@ CREATE OR REPLACE PROCEDURE TEST_28()
     ACTUAL_HIERARCHY FROM LOGDATA.CONF_LOGGERS_EFFECTIVE
     WHERE LOGGER_ID = MAX_ID;
 
-  CALL DB2UNIT.ASSERT_INT_EQUALS('Test28: Updates a normal logger changing the '
+  CALL DB2UNIT.ASSERT_INT_EQUALS('Test28a: Updates a normal logger changing the '
     || 'default value', EXPECTED_LOGGER, ACTUAL_LOGGER);
-  CALL DB2UNIT.ASSERT_INT_EQUALS('Test28: Updates a normal logger changing the '
+  CALL DB2UNIT.ASSERT_INT_EQUALS('Test28b: Updates a normal logger changing the '
     || 'default value', EXPECTED_LEVEL, ACTUAL_LEVEL);
-  CALL DB2UNIT.ASSERT_STRING_EQUALS('Test28: Updates a normal logger changing '
+  CALL DB2UNIT.ASSERT_STRING_EQUALS('Test28c: Updates a normal logger changing '
     || 'the default value', EXPECTED_HIERARCHY, ACTUAL_HIERARCHY);
  END @
 
@@ -1012,11 +1018,11 @@ CREATE OR REPLACE PROCEDURE TEST_29()
     ACTUAL_HIERARCHY FROM LOGDATA.CONF_LOGGERS_EFFECTIVE
     WHERE LOGGER_ID = MAX_ID;
 
-  CALL DB2UNIT.ASSERT_INT_EQUALS('Test29: Updates a normal logger changing the '
+  CALL DB2UNIT.ASSERT_INT_EQUALS('Test29a: Updates a normal logger changing the '
     || 'default value', EXPECTED_LOGGER, ACTUAL_LOGGER);
-  CALL DB2UNIT.ASSERT_INT_EQUALS('Test29: Updates a normal logger changing the '
+  CALL DB2UNIT.ASSERT_INT_EQUALS('Test29b: Updates a normal logger changing the '
     || 'default value', EXPECTED_LEVEL, ACTUAL_LEVEL);
-  CALL DB2UNIT.ASSERT_STRING_EQUALS('Test29: Updates a normal logger changing '
+  CALL DB2UNIT.ASSERT_STRING_EQUALS('Test29c: Updates a normal logger changing '
     || 'the default value', EXPECTED_HIERARCHY,
     ACTUAL_HIERARCHY);
  END @
@@ -1053,6 +1059,9 @@ CREATE OR REPLACE PROCEDURE TEST_30()
     SET VALUE = '1'
     WHERE KEY = 'defaultRootLevelId';
   CALL DELETE_LAST_MESSAGE_FROM_TRIGGER();
+  UPDATE LOGDATA.CONF_LOGGERS_EFFECTIVE
+    SET LEVEL_ID = 0
+    WHERE LOGGER_ID = 0;
   CALL LOGGER.REFRESH_CACHE();
   UPDATE LOGDATA.CONF_LOGGERS
     SET LEVEL_ID = EXPECTED_LEVEL
@@ -1061,11 +1070,11 @@ CREATE OR REPLACE PROCEDURE TEST_30()
     ACTUAL_HIERARCHY FROM LOGDATA.CONF_LOGGERS_EFFECTIVE
     WHERE LOGGER_ID = MAX_ID;
 
-  CALL DB2UNIT.ASSERT_INT_EQUALS('Test30: Updates a normal logger changing the '
+  CALL DB2UNIT.ASSERT_INT_EQUALS('Test30a: Updates a normal logger changing the '
     || 'default value', EXPECTED_LOGGER, ACTUAL_LOGGER);
-  CALL DB2UNIT.ASSERT_INT_EQUALS('Test30: Updates a normal logger changing the '
+  CALL DB2UNIT.ASSERT_INT_EQUALS('Test30b: Updates a normal logger changing the '
     || 'default value', EXPECTED_LEVEL, ACTUAL_LEVEL);
-  CALL DB2UNIT.ASSERT_STRING_EQUALS('Test30: Updates a normal logger changing '
+  CALL DB2UNIT.ASSERT_STRING_EQUALS('Test30c: Updates a normal logger changing '
     || 'the default value', EXPECTED_HIERARCHY,
     ACTUAL_HIERARCHY);
  END @
@@ -1217,7 +1226,7 @@ CREATE OR REPLACE PROCEDURE TEST_36()
   SET EXPECTED_LOGGER = MAX_ID + 1;
   SET EXPECTED_LEVEL = 1;
   SET EXPECTED_HIERARCHY = '0,' || CHAR(EXPECTED_LOGGER);
-  UPDATE LOGDATA.CONF_LOGGERS_EFFECTIVE
+  UPDATE LOGDATA.CONF_LOGGERS
     SET LEVEL_ID = EXPECTED_LEVEL
     WHERE LOGGER_ID = 0;
   INSERT INTO LOGDATA.CONF_LOGGERS (NAME, PARENT_ID, LEVEL_ID) VALUES
@@ -1232,11 +1241,11 @@ CREATE OR REPLACE PROCEDURE TEST_36()
     ACTUAL_HIERARCHY FROM LOGDATA.CONF_LOGGERS_EFFECTIVE
     WHERE LOGGER_ID = MAX_ID;
 
-  CALL DB2UNIT.ASSERT_INT_EQUALS('Test36: Updates to null conf_logger. Value '
+  CALL DB2UNIT.ASSERT_INT_EQUALS('Test36a: Updates to null conf_logger. Value '
     || 'from ascendancy', EXPECTED_LOGGER, ACTUAL_LOGGER);
-  CALL DB2UNIT.ASSERT_INT_EQUALS('Test36: Updates to null conf_logger. Value '
+  CALL DB2UNIT.ASSERT_INT_EQUALS('Test36b: Updates to null conf_logger. Value '
     || 'from ascendancy', EXPECTED_LEVEL, ACTUAL_LEVEL);
-  CALL DB2UNIT.ASSERT_STRING_EQUALS('Test36: Updates to null conf_logger. '
+  CALL DB2UNIT.ASSERT_STRING_EQUALS('Test36c: Updates to null conf_logger. '
     || 'Value from ascendancy', EXPECTED_HIERARCHY, ACTUAL_HIERARCHY);
  END @
 
@@ -1274,11 +1283,11 @@ CREATE OR REPLACE PROCEDURE TEST_37()
     ACTUAL_HIERARCHY FROM LOGDATA.CONF_LOGGERS_EFFECTIVE
     WHERE LOGGER_ID = MAX_ID;
 
-  CALL DB2UNIT.ASSERT_INT_EQUALS('Test36: Updates to not null conf_logger. '
+  CALL DB2UNIT.ASSERT_INT_EQUALS('Test36a: Updates to not null conf_logger. '
     || 'Value from conf_loggers', EXPECTED_LOGGER, ACTUAL_LOGGER);
-  CALL DB2UNIT.ASSERT_INT_EQUALS('Test36: Updates to not null conf_logger. '
+  CALL DB2UNIT.ASSERT_INT_EQUALS('Test36b: Updates to not null conf_logger. '
     || 'Value from conf_loggers', EXPECTED_LEVEL, ACTUAL_LEVEL);
-  CALL DB2UNIT.ASSERT_STRING_EQUALS('Test36: Updates to not null conf_logger. '
+  CALL DB2UNIT.ASSERT_STRING_EQUALS('Test36c: Updates to not null conf_logger. '
     || 'Value from conf_loggers', EXPECTED_HIERARCHY, ACTUAL_HIERARCHY);
  END @
 
@@ -1301,7 +1310,7 @@ CREATE OR REPLACE PROCEDURE TEST_38()
   SET EXPECTED_LOGGER = MAX_ID + 1;
   SET EXPECTED_LEVEL = 1;
   SET EXPECTED_HIERARCHY = '0,' || CHAR(EXPECTED_LOGGER);
-  UPDATE LOGDATA.CONF_LOGGERS_EFFECTIVE
+  UPDATE LOGDATA.CONF_LOGGERS
     SET LEVEL_ID = EXPECTED_LEVEL
     WHERE LOGGER_ID = 0;
   INSERT INTO LOGDATA.CONF_LOGGERS (NAME, PARENT_ID, LEVEL_ID) VALUES
@@ -1316,11 +1325,11 @@ CREATE OR REPLACE PROCEDURE TEST_38()
     ACTUAL_HIERARCHY FROM LOGDATA.CONF_LOGGERS_EFFECTIVE
     WHERE LOGGER_ID = MAX_ID;
 
-  CALL DB2UNIT.ASSERT_INT_EQUALS('Test38: Updates to null conf_logger. Value from ascendancy',
+  CALL DB2UNIT.ASSERT_INT_EQUALS('Test38a: Updates to null conf_logger. Value from ascendancy',
     EXPECTED_LOGGER, ACTUAL_LOGGER);
-  CALL DB2UNIT.ASSERT_INT_EQUALS('Test38: Updates to null conf_logger. Value from ascendancy',
+  CALL DB2UNIT.ASSERT_INT_EQUALS('Test38b: Updates to null conf_logger. Value from ascendancy',
     EXPECTED_LEVEL, ACTUAL_LEVEL);
-  CALL DB2UNIT.ASSERT_STRING_EQUALS('Test38: Updates to null conf_logger. Value from ascendancy',
+  CALL DB2UNIT.ASSERT_STRING_EQUALS('Test38c: Updates to null conf_logger. Value from ascendancy',
     EXPECTED_HIERARCHY, ACTUAL_HIERARCHY);
  END @
 
