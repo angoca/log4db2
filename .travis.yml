@@ -35,7 +35,8 @@ before_install:
   - sudo chsh -s /bin/bash db2inst1
   - sudo su - db2inst1 -c "db2 update dbm cfg using SYSADM_GROUP db2iadm1 ; db2stop ; db2start"
   # Creates the database
-  - sudo su - db2inst1 -c "db2 create db log4db2 ; db2 connect to log4db2 ; db2 grant dbadm on database to user $USER ; db2 \"CREATE TABLESPACE SYSTOOLSPACE IN IBMCATGROUP MANAGED BY AUTOMATIC STORAGE USING STOGROUP IBMSTOGROUP EXTENTSIZE 4\""
+  - sudo su - db2inst1 -c "db2 create db log4db2 ; db2 connect to log4db2 ; db2 grant dbadm on database to user $USER
+  - . ~db2inst1/sqllib/db2profile ; db2 connect to db2unit ; db2 update db cfg using CATALOGCACHE_SZ 2048
 
   # Retrieves and extract db2unit
   # TODO Delete next lines. They are temporal for the next db2unit release.
@@ -49,6 +50,7 @@ install:
   - bash -c "if [ '$ENV' = 'test' ]; then . ~db2inst1/sqllib/db2profile ; db2 connect to log4db2 ; cd src/test/scripts ; . ./init-dev ; cd ../../main/scripts ; . ./install ; fi"
 
   # Install db2unit
+  - . ~db2inst1/sqllib/db2profile ; db2 \"CREATE TABLESPACE SYSTOOLSPACE IN IBMCATGROUP MANAGED BY AUTOMATIC STORAGE USING STOGROUP IBMSTOGROUP EXTENTSIZE 4\""
   # - bash -c "if [ '$ENV' = 'test' ]; then . ~db2inst1/sqllib/db2profile ; db2 connect to log4db2 ; cd ; cd db2unit ; . ./install ; fi"
   # TODO Next line is temporal until next db2unit release
   - bash -c "if [ '$ENV' = 'test' ]; then . ~db2inst1/sqllib/db2profile ; db2 connect to log4db2 ; cd ; cd db2unit/target/db2unit/db2unit ; . ./install ; fi"
@@ -108,9 +110,11 @@ script:
 
   - bash -c "if [ '$TESTS' = 'random' ]; then db2 connect to log4db2 ; . /tmp/listOfTestSuites ; /tmp/returnCode ; fi" 
 
+after_script
+  - . ~db2inst1/sqllib/db2profile ; db2 "CALL DB2UNIT.REPORT_RECENT_EXECUTIONS"
+
 after_failure:
   # If there is any error, shows the logs
-  - cat /home/db2inst1/sqllib/db2dump/db2diag.log
   - db2 "call logadmin.logs"
   - db2 "select * from DB2UNIT_1.EXECUTION_REPORTS"
   - db2 "select * from LOG4DB2_APPENDERS.REPORT_TESTS"
@@ -136,4 +140,5 @@ after_failure:
   - db2 "select * from LOG4DB2_MESSAGES.REPORT_TESTS"
   - db2 "select * from LOG4DB2_REFERENCES.REPORT_TESTS"
   - db2 "export to /tmp/sorts.txt of del select * from db2unit_1.sorts" ; cat /tmp/sorts.txt
+  - cat /home/db2inst1/sqllib/db2dump/db2diag.log
 
