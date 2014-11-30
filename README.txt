@@ -2,6 +2,9 @@ log4db2
 =======
 [![log4db2-logo](https://raw.githubusercontent.com/angoca/log4db2/master/doc/log4db2-128.png)](https://github.com/angoca/log4db2/wiki/logo)
 
+[![Download Tar file](https://angoca.github.io/log4db2/images/downloadTar.png)] (https://github.com/angoca/log4db2/releases/download/log4db2-1-Beta-A/log4db2.tar.gz)
+[![Download Zip file](https://angoca.github.io/log4db2/images/downloadZip.png)](https://github.com/angoca/log4db2/releases/download/log4db2-1-Beta-A/log4db2.zip)
+
 Log4db2 is a logging utility for DB2 LUW that uses SQL instructions with SQL
 PL code.
 
