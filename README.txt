@@ -2,14 +2,14 @@ log4db2
 =======
 [![log4db2-logo](https://raw.githubusercontent.com/angoca/log4db2/master/doc/log4db2-128.png)](https://github.com/angoca/log4db2/wiki/logo)
 
-Log4db2 is a logging utility for DB2 for LUW that uses SQL instructions with SQL
+Log4db2 is a logging utility for DB2 LUW that uses SQL instructions with SQL
 PL code.
 
 Its purpose is to provide an easy way to write messages from a SQL routine, with
-the possibility to query these messages directly from the database and view the
-generated output, allowing to monitor the progression of a process. This utility
-aims to reduce the time used for developing, testing, debugging and monitoring
-SQL routines, by centralizing the messages produced by the code.
+the possibility to query these messages directly from the database, allowing to
+monitor the progression of a process.
+This utility aims to reduce the time used for developing, testing, debugging and
+monitoring SQL routines, by centralizing the messages produced by the code.
 
 The idea and architecture of this utility are based on the popular Java logging
 utilities, such as Log4j and slf4j/logback.
@@ -19,9 +19,10 @@ utilities, such as Log4j and slf4j/logback.
  * Logback/SLF4J:
     http://logback.qos.ch/ - http://www.slf4j.org/
 
-The license for the source code is "BSD 2-Clause license", and for the
-documentation is "FreeBSD Documentation license." With these two licenses you
-are free to use, modify and distribute any part of this utility.
+The licenses of this project are:
+
+ * Source code:  BSD 2-Clause license
+ * Documentation: FreeBSD Documentation license.
 
 These are some useful links:
 
@@ -30,15 +31,14 @@ These are some useful links:
  * The wiki is at:
     https://github.com/angoca/log4db2/wiki
  * The last released version is published at:
-    https://sourceforge.net/projects/log4db2/files/
- * The issue tracker is at:
+    https://github.com/angoca/log4db2/releases
+ * The issue tracker for comments and bugs is at:
     https://github.com/angoca/log4db2/issues
- * A blog that explain things about this utility:
-    http://angocadb2.blogspot.fr/
 
 Author:
 
-Andres Gomez Casanova (@angoca)
+Andres Gomez Casanova
+([@AngocA](https://twitter.com/angoca))
 
 
 ------------------
@@ -140,6 +140,7 @@ Check the _Usage_ section for more information about the levels, how to access
 the messages and configure the utility.
 https://github.com/angoca/log4db2/wiki/Usage
 
+
 ---------------------------
 ## FILES AND DIRECTORIES ##
 
@@ -154,6 +155,7 @@ These are the files included in the released version:
  * `uninit*` -- Clean environment.
  * `uninstall*` -- Uninstallation files.
  * `doc` directory -- Documentation directory (ErrorCode, ER diagram).
+ * `examples` directory -- Examples ready to run.
  * `sql-pl` directory -- Directory for all objects: DDL, DML, routines
      definition.
    * `00-AdminObjects.sql` -- Create admin objects: BP, TS and schema.
@@ -178,7 +180,6 @@ These are the files included in the released version:
    * `Appender_CGTT_Drop.sql` -- Drops appender for temporary tables.
    * `Appender_UTL_FILE_Create.sql` -- Appender to write in a file
    * `Appender_UTL_FILE_Drop.sql` -- Drop appender that write in a file.
-
  * `xml` directory -- Directory for XML Schemas, XML files and related scripts
      for appenders configuration.
    * `Appender_UTL_FILE.csv` -- Description of the appender..
@@ -186,8 +187,8 @@ These are the files included in the released version:
    * `10-AppendersXML.sql` -- Registers the XML Schema.
    * `conf_appender_X.xsd` -- XML Schema for the X release.
 
-The * in the install-related files means that several files for each one of
-them can be found:
+The * in the install-related files means that several files for each name
+can be found:
 
  * `.bat` -- Windows Batch file for CMD.exe
  * `.ps1` -- Windows PowerShell
