@@ -1,5 +1,6 @@
-# log4db2 #
------------
+log4db2
+=======
+[![log4db2-logo](https://raw.githubusercontent.com/angoca/log4db2/master/doc/log4db2-128.png)](https://github.com/angoca/log4db2/wiki/logo)
 
 Log4db2 is a logging utility for DB2 for LUW that uses SQL instructions with SQL
 PL code.
