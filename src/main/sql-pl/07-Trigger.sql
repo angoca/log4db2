@@ -195,8 +195,8 @@ COMMENT ON TRIGGER T3_LVL_DEL IS 'Allows to delete just the maximal LEVEL_ID val
 -- Table LOGDATA.CONF_LOGGERS.
 
 /**
- * This trigger checks the insertion or updating in the conf_loggers table to see
- * if the logger_id already exists or retrieve from the sequence.
+ * This trigger checks the insertion or updating in the conf_loggers table; it
+ * also checks if the logger_id already exists.
  *
  * TESTS
  *   TestConfLoggers: Verifies if the different errors are thrown.
