@@ -54,6 +54,7 @@ if [ ${?} -eq 0 ] ; then
  done
 else
  echo "Please connect to a database before execute this script."
+ echo "Remember that to call the script the command is '. ./tail_logs'"
 fi
 
 
