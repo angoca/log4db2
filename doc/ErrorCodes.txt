@@ -144,15 +144,6 @@ null.
 and level not null and greater that 0.
 
 
-==== GET_LAST_EXECUTION_ORDER procedure
-
-LG0P2
-Impossible to retrieve the last execution
-* The procedure could not retrieve information of the most recent executed
-test suite in the current session.
-* Execute a Test Suite with the RUN_SUITE procedure, before call this procedure.
-
-
 ==== FUNCTIONS
 
 LG001
