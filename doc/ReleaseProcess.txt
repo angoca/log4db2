@@ -20,6 +20,9 @@ https://github.com/angoca/log4db2/blob/master/src/main/sql-pl/12-Version.sql
 * Change the version in the documentation (Version:) of all source files.
 * Rename the XML schema for the new version if modified.
 * Make sure the schema reflects the version number to release (all files.)
+* Execute examples.
+* Read the code again.
+* Review the wiki (all pages).
 * Perform last commit and push.
 
 PERFORM
