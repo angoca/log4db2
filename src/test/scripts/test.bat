@@ -95,6 +95,7 @@ goto:eof
  if %execute% EQU 1 (
   db2 "CALL DB2UNIT.CLEAN()"
   db2 "CALL DB2UNIT.RUN_SUITE('%SCHEMA%')"
+  db2 "CALL DB2UNIT.GET_LAST_EXECUTION_ORDER()"
   db2 "CALL DB2UNIT.CLEAN()"
  )
 
