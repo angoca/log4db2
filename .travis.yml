@@ -6,7 +6,7 @@ env:
 before_install:
   # Parallel download
   - mvn > /dev/null &
-  - apt-get update -qq
+  - sudo apt-get update -qq
   - sudo apt-get install aria2 -y
   - sudo ./src/test/travis/update.sh > /dev/null &
 
