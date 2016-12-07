@@ -74,4 +74,12 @@ First, unzip the file log4db2.zip, and then:
     cd ..\..\main\scripts
     install.ps1
 
-	
+In general terms, there is the same set of scripts for each environment. Each
+script performs the same task:
+
+* init: Sets the environment for release mode.
+* install: Installs the framework.
+* reinstall: Desitnalls and installs the framework.
+* tail_logs: shows the  more recent messages in the LOGS table.
+* uninit: Cleans the environment.
+* uninstall: Desintalls the framework.
