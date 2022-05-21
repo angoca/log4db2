@@ -24,14 +24,17 @@
 
 # Reinstall the utility. Calls the uninstall script and then the install one.
 #
-# Version: 2014-02-14 1-RC
+# Version: 2022-05-21 1-RC
 # Author: Andres Gomez Casanova (AngocA)
 # Made in COLOMBIA.
+
+# Security options.
+set -euf
 
 if [ -x init ] ; then
  . ./init
 fi
 
-. ${LOG4DB2_SRC_MAIN_SCRIPT_PATH}/uninstall
-. ${LOG4DB2_SRC_MAIN_SCRIPT_PATH}/install ${1} ${2} ${3}
+. "${LOG4DB2_SRC_MAIN_SCRIPT_PATH}"/uninstall
+. "${LOG4DB2_SRC_MAIN_SCRIPT_PATH}"/install "${1}" "${2}" "${3}"
 

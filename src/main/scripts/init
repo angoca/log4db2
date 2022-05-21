@@ -24,17 +24,20 @@
 
 # Initialize the environment values to run the scripts.
 #
-# Version: 2014-02-14 1-RC
+# Version: 2022-05-20 1-RC
 # Author: Andres Gomez Casanova (AngocA)
 # Made in COLOMBIA.
 
+# Security options.
+set -euf
+
 # This variable indicates the location of the sources, if it has not
 # defined before.
-if [ -z ${LOG4DB2_PATH} ] ; then
- LOG4DB2_PATH=$(echo ${PWD})
+if [ -z "${LOG4DB2_PATH:-}" ] ; then
+ LOG4DB2_PATH="${PWD}"
 fi
 
-if [ -z ${LOG4DB2_SRC_MAIN_CODE_PATH} ] ; then
+if [ -z "${LOG4DB2_SRC_MAIN_CODE_PATH:-}" ] ; then
  export LOG4DB2_SRC_MAIN_CODE_PATH=${LOG4DB2_PATH}/sql-pl
  export LOG4DB2_SRC_MAIN_SCRIPT_PATH=${LOG4DB2_PATH}
 fi
