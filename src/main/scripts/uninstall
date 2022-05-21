@@ -32,13 +32,13 @@
 set -euf
 
 # Checks if there is already a connection established
-db2 connect > /dev/null
+db2 connect >/dev/null
 RET=${?}
-if [[ ${RET} -ne 0 ]] ; then
+if [[ ${RET} -ne 0 ]]; then
  echo "Please connect to a database before the execution of the uninstallation."
  echo "Remember that to call the script the command is '. ./uninstall'"
 else
- if [[ -x init ]] ; then
+ if [[ -x init ]]; then
   . ./init
  fi
  echo Uninstalling log4db2
@@ -48,7 +48,6 @@ else
  db2 -tf "${LOG4DB2_SRC_MAIN_CODE_PATH}"/98-CleanTables.sql
  db2 -tf PACKAGES_TO_DROP_DATA.sql
  db2 -tf "${LOG4DB2_SRC_MAIN_CODE_PATH}"/99-CleanAdmin.sql
- rm  PACKAGES_TO_DROP_SCHEMA.sql
- rm  PACKAGES_TO_DROP_DATA.sql
+ rm PACKAGES_TO_DROP_SCHEMA.sql
+ rm PACKAGES_TO_DROP_DATA.sql
 fi
-

@@ -32,9 +32,8 @@
 set -euf
 
 # When testing, the variables are preserved.
-if [ -z "${LOG4DB2_SRC_TEST_CODE_PATH:-}" ] ; then
+if [ -z "${LOG4DB2_SRC_TEST_CODE_PATH:-}" ]; then
  unset LOG4DB2_SRC_MAIN_CODE_PATH
  unset LOG4DB2_SRC_MAIN_SCRIPT_PATH
  unset LOG4DB2_PATH
 fi
-

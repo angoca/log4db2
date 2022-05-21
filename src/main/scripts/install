@@ -48,7 +48,7 @@ installScript() {
  db2 -tsf "${SCRIPT}"
  RET=${?}
  set -e
- if [ ${RET} -ne 0 ] ; then
+ if [ ${RET} -ne 0 ]; then
   export CONTINUE=1
  fi
  unset SCRIPT
@@ -60,7 +60,7 @@ v10_1() {
  local __retInstall=${1}
  echo "Installing utility for v10.1"
  cd "${LOG4DB2_SRC_MAIN_CODE_PATH}"
- if [ "${ADMIN_INSTALL}" = true ] ; then
+ if [ "${ADMIN_INSTALL}" = true ]; then
   [ "${CONTINUE}" = true ] && installScript 00-AdminObjects.sql
  fi
  [ "${CONTINUE}" = true ] && installScript 01-Tables.sql
@@ -79,7 +79,7 @@ v10_1() {
  cd ../sql-pl
 
  # Temporal capabilities for tables.
- if [ "${TEMPORAL_TABLE}" = true ] && [ "${CONTINUE}" = true ] ; then
+ if [ "${TEMPORAL_TABLE}" = true ] && [ "${CONTINUE}" = true ]; then
   echo "Create table for Time Travel"
   installScript 11-TablesTimeTravel.sql
  fi
@@ -96,7 +96,7 @@ v9_7() {
  local __retInstall=${1}
  echo "Installing utility for DB2 v9.7"
  cd "${LOG4DB2_SRC_MAIN_CODE_PATH}"
- if [ "${ADMIN_INSTALL}" = true ] ; then
+ if [ "${ADMIN_INSTALL}" = true ]; then
   [ "${CONTINUE}" = true ] && installScript 00-AdminObjects.sql
  fi
  [ "${CONTINUE}" = true ] && installScript 01-Tables_v9_7.sql
@@ -125,13 +125,13 @@ checkParam() {
  local PARAM1=${1}
  local PARAM2=${2}
  local PARAM3=${3}
- if [ "${PARAM1}" = "-A" ] || [ "${PARAM2}" = "-A" ] || [ "${PARAM3}" = "-A" ] ; then
+ if [ "${PARAM1}" = "-A" ] || [ "${PARAM2}" = "-A" ] || [ "${PARAM3}" = "-A" ]; then
   export ADMIN_INSTALL=true
  fi
- if [ "${PARAM1}" = "-t" ] || [ "${PARAM2}" = "-t" ] || [ "${PARAM3}" = "-t" ] ; then
+ if [ "${PARAM1}" = "-t" ] || [ "${PARAM2}" = "-t" ] || [ "${PARAM3}" = "-t" ]; then
   export TEMPORAL_TABLE=true
  fi
- if [ "${PARAM1}" = "-v9_7" ] || [ "${PARAM2}" = "-v9_7" ] || [ "${PARAM3}" = "-v9_7" ] ; then
+ if [ "${PARAM1}" = "-v9_7" ] || [ "${PARAM2}" = "-v9_7" ] || [ "${PARAM3}" = "-v9_7" ]; then
   export V9_7=true
  fi
 }
@@ -140,11 +140,10 @@ checkParam() {
 init() {
  local __retInit=${1}
  # Initialize the environment.
- if [ -x init ] ; then
+ if [ -x init ]; then
   . ./init
  else
   echo "Error: File 'init' missing or without execute permissions."
-  exit 1
  fi
 
  echo "log4db2 is licensed under the terms of the Simplified-BSD license"
@@ -154,7 +153,7 @@ init() {
 
  # Checks in which DB2 version the utility will be installed.
  # DB2 v10.1 is the default version.
- if [ "${V9_7}" = true ] ; then
+ if [ "${V9_7}" = true ]; then
   v9_7 retInstall
  else
   v10_1 retInstall
@@ -165,7 +164,7 @@ init() {
  echo "To report an issue or provide feedback, please visit:"
  echo "https://github.com/angoca/log4db2/issues"
  echo
- if [ "${retInstall}" ] ; then
+ if [ "${retInstall}" ]; then
   echo "log4db2 was successfully installed"
   db2 -x "values 'Database: ' || current server"
   db2 -x "values 'Version: ' || logger.version"
@@ -183,23 +182,22 @@ init() {
 
  # Clean environment.
  cd "${LOG4DB2_SRC_MAIN_SCRIPT_PATH}"
- if [ -x uninit ] ; then
+ if [ -x uninit ]; then
   . ./uninit
  else
   echo "Error: File 'uninit' missing or without execute permissions."
-  exit 2
  fi
 
- local  myRetInit=${RET_VALUE}
+ local myRetInit=${RET_VALUE}
  eval "$__retInit"="'${myRetInit}'"
 }
 
 # Checks if there is already a connection established
 set +e
-db2 connect > /dev/null
+db2 connect >/dev/null 2>&1
 RET=${?}
 set -e
-if [ ${RET} -eq 0 ] ; then
+if [ ${RET} -eq 0 ]; then
  init ret "${1:-}" "${2:-}" "${3:-}"
 else
  echo "Please connect to a database before the execution of the installation."
@@ -210,4 +208,3 @@ fi
 unset CONTINUE
 
 return ${ret}
-
