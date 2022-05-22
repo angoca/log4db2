@@ -62,7 +62,7 @@ function installScript {
 
 # Function that install the utility for version 10.1.
 # DB2 v10.1.
-function v10_1() {
+function v10_1 {
  echo "Installing utility for Db2 v10.1 or higher..."
  cd "${LOG4DB2_SRC_MAIN_CODE_PATH}"
  if [ "${ADMIN_INSTALL}" = true ]; then
@@ -96,7 +96,7 @@ function v10_1() {
 
 # Function that install the utility for version 9.7.
 # DB2 v9.7
-function v9_7() {
+function v9_7 {
  echo "Installing utility for DB2 v9.7..."
  cd "${LOG4DB2_SRC_MAIN_CODE_PATH}"
  if [ "${ADMIN_INSTALL}" = true ]; then
@@ -124,7 +124,7 @@ function v9_7() {
 }
 
 # This function checks all parameters and assign them to global variables.
-function checkParam() {
+function checkParam {
  local PARAM1=${1}
  local PARAM2=${2}
  local PARAM3=${3}
@@ -144,7 +144,7 @@ function checkParam() {
 }
 
 # Main function that starts the installation.
-function init() {
+function init {
  # Initialize the environment.
  if [ -x init ]; then
   . ./init
