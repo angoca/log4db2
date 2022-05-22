@@ -8,15 +8,14 @@ different platforms:
 
 These scripts works in two modes:
 
-* Released: This kind of software is used by the end user. The release are
-published in the "releases" section of GitHub and it is distributed via a tar
-or zip file.
-* Development: This is used when the software is being developed, it means,
+* Released: This mode is used by the end user. Releases are published in
+the "releases" section of GitHub and they are distributed via tar and zip files.
+* Development: This is used when the utility is being developed, it means,
 new functionality is added or bugs are fixed. In the `src/test/scripts`
 directory some extra scripts can be found to configure the environment and
 for testing purposes.
 
-# Linux/UNIX/MAC OS
+# Linux/UNIX/Mac OS
 
 ## Release
 
@@ -78,8 +77,9 @@ In general terms, there is the same set of scripts for each environment. Each
 script performs the same task:
 
 * init: Sets the environment for release mode.
-* install: Installs the framework.
-* reinstall: Desitnalls and installs the framework.
+* install: Installs the utility.
+* reinstall: Desitnalls and installs the utility.
 * tail_logs: shows the  more recent messages in the LOGS table.
 * uninit: Cleans the environment.
-* uninstall: Desintalls the framework.
+* uninstall: Desintalls the utility.
+

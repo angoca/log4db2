@@ -122,7 +122,7 @@ ALTER MODULE LOGGER ADD
  END F_GET_TABULATION @
 
 /**
- * Sends a message into the logger system. Before to log this message in an
+ * Sends a message into the logger utility. Before to log this message into an
  * appender, this method verifies the logger level given if it is superior or
  * or equal to the configured level. If not, it skips this process.
  * After validating the level, it parses the message according to the pattern,

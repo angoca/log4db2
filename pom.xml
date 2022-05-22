@@ -104,7 +104,7 @@
  <!-- More Project Information -->
  <name>log4db2</name>
  <description>
-  A logging framework written in SQL-PL for IBM DB2 LUW.
+  A logging utility written in SQL-PL for IBM DB2 LUW.
   </description>
  <url>https://angoca.github.io/log4db2/</url>
  <!-- The first year. -->

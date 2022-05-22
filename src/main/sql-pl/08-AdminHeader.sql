@@ -33,7 +33,7 @@ SET CURRENT SCHEMA LOGGER_1RC;
  * mechanism that separates the configuration from the usage. A person who
  * writes in the logs is not the same person that configures the utility.
  *
- * Version: 2012-10-15 1-RC
+ * Version: 2022-05-22 1-RC
  * Author: Andres Gomez Casanova (AngocA)
  * Made in COLOMBIA.
  */
@@ -95,7 +95,7 @@ ALTER MODULE LOGADMIN PUBLISH
   PROCEDURE DELETE_LOGGERS (
   );
 
--- Reset tables of this framework.
+-- Reset tables of this utility.
 ALTER MODULE LOGADMIN PUBLISH
   PROCEDURE RESET_TABLES (
   );

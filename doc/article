@@ -1,5 +1,5 @@
 titulo
-Using log4db2, a message logging system for DB2
+Using log4db2, a message logging utility for DB2
 
 Abstract
 Breve descripcion del problema que se soluciona utilizando log4db2, el cual permite ver mensajes
@@ -32,10 +32,10 @@ Dificil rastrear las operaciones que realizan objetos dentro de la base de datos
 Un stored procedure que dura varias horas el cual realiza varios pasos, no tiene una manera de ver
 en que paso va, y si termina en error detectar el origen del problema puede ser demorado
 
-Que es un logging system
+Que es un logging utility
 Esto se llama instrumentacion de codigo
 
-Beneficios de utilizar un logging system, y beneficios adicionales de incorporarlo en la DB
+Beneficios de utilizar un logging utility, y beneficios adicionales de incorporarlo en la DB
 
 Por que es importante utilizar log4db2
 
@@ -49,7 +49,7 @@ El enfoque del articulo es atraer a nuevos usuarios
 Explicar que hay otros sistemas de logging, pero no dentro de la base de datos, por lo que no pueden
 recibir logs de rutinas dentro de la base de datos. Decir que tambien hay otro sistema de logging para
 DB2, pero no es escrito en SQL PL sino en C
-Hablar de log4j que es el estandar y basado en el han creado muchos logging systems
+Hablar de log4j que es el estandar y basado en el han creado muchos logging utilities
 
 Decir que log4db2 es basado en el estandar de la industria log4j usando las mas recientes caracteristicas
 de DB2. Igualmente decir que esta en GitHub, y que es OpenSource.

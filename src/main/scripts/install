@@ -28,7 +28,7 @@
 #     This is normally necessary. 
 # -r: Returns error code when finished.
 # -t: Install the utility using time travel in the log.
-# -v9_7: Install the tool for Db2 v9.7.
+# -v9_7: Install the utility for Db2 v9.7.
 #
 # Version: 2022-05-20 1-RC
 # Author: Andres Gomez Casanova (AngocA)

@@ -30,7 +30,7 @@ SET CURRENT SCHEMA LOGGER_1RC @
 /**
  * Implementation of the administrative routines of log4db2.
  *
- * Version: 2014-02-14 1-RC
+ * Version: 2022-05-22 1-RC
  * Author: Andres Gomez Casanova (AngocA)
  * Made in COLOMBIA.
  */
@@ -395,7 +395,7 @@ ALTER MODULE LOGADMIN ADD
  END P_DELETE_LOGGERS @
 
 /**
- * Deletes the content of all tables in this framework.
+ * Deletes the content of all tables in this utility.
  */
 ALTER MODULE LOGADMIN ADD
   PROCEDURE RESET_TABLES (

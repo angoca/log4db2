@@ -172,7 +172,7 @@ ALTER MODULE LOGGER PUBLISH
  END P_LOG_DB2LOGGER  @
 
 /**
- * TODO Writes the provided message in the Java configured facility. This
+ * TODO Writes the provided message in the Java configured tool. This
  * logger could use log4j or slf4j/logback as back-end, it depends on the Java
  * implementation. PUBLISH to ADD.
  *

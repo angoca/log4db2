@@ -42,7 +42,7 @@ SET CURRENT SCHEMA LOGGER_1RC @
 -- 256 chars. foo.bar.toto
 
 /**
- * Registers the logger name in the system, and retrieves the corresponding ID
+ * Registers the logger name in the utility, and retrieves the corresponding ID
  * for that logger. This ID will allow to write messages into that logger if
  * the configuration level allows it. This method processes the logger name
  * in order to remove any leading or trailing blank-space or dot.

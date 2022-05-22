@@ -96,7 +96,7 @@ The LEVEL_ID is the only column that can be updated.
 * Once a logger has been created, most of its properties cannot be changed. The
 LOGGER_ID helps to uniquely identify it. NAME is a unique value in the
 hierarchy. PARENT_ID indicates its ancestry. Remember that this table is managed
-by the application, this means that the users do not have to modify it directly.
+by the utility, this means that the users do not have to modify it directly.
 * Do not try to modify the values of a logger. If a logger was mis-defined,
 create a new one (new LOGGER_ID, correct NAME, probably same PARENT_ID).
 
@@ -148,7 +148,7 @@ and level not null and greater that 0.
 
 LG001
 Cascade call limit achieved. Log message was written.
-* The call has arrive to the limit in cascade call and the log could had not
+* The call has arrived to the limit in cascade call and the log could had not
 be written correctly. It was written as ROOT logger and returned an error to
 the application.
 This message wraps the SQL Code SQL0724, SQLState 54038.

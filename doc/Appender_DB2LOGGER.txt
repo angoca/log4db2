@@ -3,10 +3,10 @@ License.
 
 In order to configure the DB2LOGGER appender you should:
 
- * Install the utility following the steps in DeveloperWorks.
+ * Install the DB2LOGGER facility following the steps in DeveloperWorks.
    * http://www.ibm.com/developerworks/data/library/techarticle/dm-0601khatri/
    * http://www.zinox.com/node/89
- * Verify that the utility works by calling the stored procedures of that tool.
+ * Verify that the facility works by calling its stored procedures.
 
     db2 "CALL DB2.OPEN_LOG('TESTSP',?)"
 
