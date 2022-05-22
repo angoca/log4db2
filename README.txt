@@ -168,9 +168,9 @@ These are the files included in the released version:
    * `02-UtilityHeader.sql` -- Headers of the core tools.
    * `03-UtilityBody.sql` -- Body of the core tools.
    * `04-Appenders.sql` -- Definition of the appenders.
-   * `05-LOG.sql` -- Log procedure definition with its macros.
-   * `06-GET_LOGGER.sql` -- GetLogger procedure definition for v10.1 or upper.
-   * `06-GET_LOGGER_v9_7.sql` -- GetLogger procedure definition for v9.7.
+   * `05-Log.sql` -- Log procedure definition with its macros.
+   * `06-Get_Logger.sql` -- GetLogger procedure definition for v10.1 or upper.
+   * `06-Get_Logger_v9_7.sql` -- GetLogger procedure definition for v9.7.
    * `07-Trigger.sql` -- Trigger of the different tables.
    * `08-AdminHeader.sql` -- Headers of the administration tools.
    * `09-AdminBody.sql` -- Body of the administration tools.

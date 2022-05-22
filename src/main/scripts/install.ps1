@@ -24,7 +24,7 @@
 
 # Installs all scripts of the utility.
 #
-# Version: 2014-02-14 1-RC
+# Version: 2022-05-21 1-RC
 # Author: Andres Gomez Casanova (AngocA)
 # Made in COLOMBIA.
 
@@ -56,8 +56,8 @@ function v10.1($p1) {
  if ( ${Script:continue} ) { installScript ${LOG4DB2_SRC_MAIN_CODE_PATH}\02-UtilityHeader.sql }
  if ( ${Script:continue} ) { installScript ${LOG4DB2_SRC_MAIN_CODE_PATH}\03-UtilityBody.sql }
  if ( ${Script:continue} ) { installScript ${LOG4DB2_SRC_MAIN_CODE_PATH}\04-Appenders.sql }
- if ( ${Script:continue} ) { installScript ${LOG4DB2_SRC_MAIN_CODE_PATH}\05-LOG.sql }
- if ( ${Script:continue} ) { installScript ${LOG4DB2_SRC_MAIN_CODE_PATH}\06-GET_LOGGER.sql }
+ if ( ${Script:continue} ) { installScript ${LOG4DB2_SRC_MAIN_CODE_PATH}\05-Log.sql }
+ if ( ${Script:continue} ) { installScript ${LOG4DB2_SRC_MAIN_CODE_PATH}\06-Get_Logger.sql }
  if ( ${Script:continue} ) { installScript ${LOG4DB2_SRC_MAIN_CODE_PATH}\07-Trigger.sql }
 
  if ( ${Script:continue} ) { installScript ${LOG4DB2_SRC_MAIN_CODE_PATH}\08-AdminHeader.sql }
@@ -90,8 +90,8 @@ function v9.7() {
  if ( ${Script:continue} ) { installScript ${LOG4DB2_SRC_MAIN_CODE_PATH}\02-UtilityHeader.sql }
  if ( ${Script:continue} ) { installScript ${LOG4DB2_SRC_MAIN_CODE_PATH}\03-UtilityBody.sql }
  if ( ${Script:continue} ) { installScript ${LOG4DB2_SRC_MAIN_CODE_PATH}\04-Appenders.sql }
- if ( ${Script:continue} ) { installScript ${LOG4DB2_SRC_MAIN_CODE_PATH}\05-LOG.sql }
- if ( ${Script:continue} ) { installScript ${LOG4DB2_SRC_MAIN_CODE_PATH}\06-GET_LOGGER_v9_7.sql }
+ if ( ${Script:continue} ) { installScript ${LOG4DB2_SRC_MAIN_CODE_PATH}\05-Log.sql }
+ if ( ${Script:continue} ) { installScript ${LOG4DB2_SRC_MAIN_CODE_PATH}\06-Get_Logger_v9_7.sql }
  if ( ${Script:continue} ) { installScript ${LOG4DB2_SRC_MAIN_CODE_PATH}\07-Trigger.sql }
 
  if ( ${Script:continue} ) { installScript ${LOG4DB2_SRC_MAIN_CODE_PATH}\08-AdminHeader.sql }

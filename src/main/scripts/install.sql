@@ -27,7 +27,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 /**
  * Installs all scripts of the utility.
  *
- * Version: 2014-04-03 1-RC
+ * Version: 2022-05-21 1-RC
  * Author: Andres Gomez Casanova (AngocA)
  * Made in COLOMBIA.
  */
@@ -43,10 +43,10 @@ set sqlterminator @
 @@ sql-pl/03-UtilityBody.sql
 PROMPT 04-Appenders.sql
 @@ sql-pl/04-Appenders.sql
-PROMPT 05-LOG.sql
-@@ sql-pl/05-LOG.sql
-PROMPT 06-GET_LOGGER.sql
-@@ sql-pl/06-GET_LOGGER.sql
+PROMPT 05-Log.sql
+@@ sql-pl/05-Log.sql
+PROMPT 06-Get_Logger.sql
+@@ sql-pl/06-Get_Logger.sql
 PROMPT 07-Trigger.sql
 @@ sql-pl/07-Trigger.sql
 
