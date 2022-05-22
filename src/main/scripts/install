@@ -32,33 +32,33 @@
 set -euf
 
 # Global variables
-export CONTINUE=true
-export ADMIN_INSTALL=false
-export TEMPORAL_TABLE=false
-export V9_7=false
+CONTINUE=true
+ADMIN_INSTALL=false
+TEMPORAL_TABLE=false
+V9_7=false
+RET_FUNCTION=0
 
 # Installs a given script.
 # It uses the continue global variable to stop the execution if an error occurs.
 #
 # 1) Filename of the script to execute.
-installScript() {
- SCRIPT=${1}
+function installScript {
+ local SCRIPT=${1}
+
  echo "${SCRIPT}"
  set +e
  db2 -tsf "${SCRIPT}"
  RET=${?}
  set -e
  if [ ${RET} -ne 0 ]; then
-  export CONTINUE=1
+  CONTINUE=true
  fi
- unset SCRIPT
 }
 
 # Function that install the utility for version 10.1.
 # DB2 v10.1.
-v10_1() {
- local __retInstall=${1}
- echo "Installing utility for v10.1"
+function v10_1() {
+ echo "Installing utility for v10.1 or higher..."
  cd "${LOG4DB2_SRC_MAIN_CODE_PATH}"
  if [ "${ADMIN_INSTALL}" = true ]; then
   [ "${CONTINUE}" = true ] && installScript 00-AdminObjects.sql
@@ -67,8 +67,8 @@ v10_1() {
  [ "${CONTINUE}" = true ] && installScript 02-UtilityHeader.sql
  [ "${CONTINUE}" = true ] && installScript 03-UtilityBody.sql
  [ "${CONTINUE}" = true ] && installScript 04-Appenders.sql
- [ "${CONTINUE}" = true ] && installScript 05-LOG.sql
- [ "${CONTINUE}" = true ] && installScript 06-GET_LOGGER.sql
+ [ "${CONTINUE}" = true ] && installScript 05-Log.sql
+ [ "${CONTINUE}" = true ] && installScript 06-Get_Logger.sql
  [ "${CONTINUE}" = true ] && installScript 07-Trigger.sql
 
  [ "${CONTINUE}" = true ] && installScript 08-AdminHeader.sql
@@ -80,21 +80,19 @@ v10_1() {
 
  # Temporal capabilities for tables.
  if [ "${TEMPORAL_TABLE}" = true ] && [ "${CONTINUE}" = true ]; then
-  echo "Create table for Time Travel"
   installScript 11-TablesTimeTravel.sql
  fi
 
  [ "${CONTINUE}" = true ] && installScript 12-Version.sql
 
- local myRetInstall=${CONTINUE}
- eval "$__retInstall"="'${myRetInstall}'"
+ [ "${CONTINUE}" = true ] && RET=0 || RET=1
+ return ${RET}
 }
 
 # Function that install the utility for version 9.7.
 # DB2 v9.7
-v9_7() {
- local __retInstall=${1}
- echo "Installing utility for DB2 v9.7"
+function v9_7() {
+ echo "Installing utility for DB2 v9.7..."
  cd "${LOG4DB2_SRC_MAIN_CODE_PATH}"
  if [ "${ADMIN_INSTALL}" = true ]; then
   [ "${CONTINUE}" = true ] && installScript 00-AdminObjects.sql
@@ -103,8 +101,8 @@ v9_7() {
  [ "${CONTINUE}" = true ] && installScript 02-UtilityHeader.sql
  [ "${CONTINUE}" = true ] && installScript 03-UtilityBody.sql
  [ "${CONTINUE}" = true ] && installScript 04-Appenders.sql
- [ "${CONTINUE}" = true ] && installScript 05-LOG.sql
- [ "${CONTINUE}" = true ] && installScript 06-GET_LOGGER_v9_7.sql
+ [ "${CONTINUE}" = true ] && installScript 05-Log.sql
+ [ "${CONTINUE}" = true ] && installScript 06-Get_Logger_v9_7.sql
  [ "${CONTINUE}" = true ] && installScript 07-Trigger.sql
 
  [ "${CONTINUE}" = true ] && installScript 08-AdminHeader.sql
@@ -116,95 +114,103 @@ v9_7() {
 
  [ "${CONTINUE}" = true ] && installScript 12-Version.sql
 
- local myRetInstall=${CONTINUE}
- eval "$__retInstall"="'${myRetInstall}'"
+ [ "${CONTINUE}" = true ] && RET=0 || RET=1
+ return ${RET}
 }
 
 # This function checks all parameters and assign them to global variables.
-checkParam() {
+function checkParam() {
  local PARAM1=${1}
  local PARAM2=${2}
  local PARAM3=${3}
  if [ "${PARAM1}" = "-A" ] || [ "${PARAM2}" = "-A" ] || [ "${PARAM3}" = "-A" ]; then
-  export ADMIN_INSTALL=true
+  ADMIN_INSTALL=true
  fi
  if [ "${PARAM1}" = "-t" ] || [ "${PARAM2}" = "-t" ] || [ "${PARAM3}" = "-t" ]; then
-  export TEMPORAL_TABLE=true
+  TEMPORAL_TABLE=true
  fi
  if [ "${PARAM1}" = "-v9_7" ] || [ "${PARAM2}" = "-v9_7" ] || [ "${PARAM3}" = "-v9_7" ]; then
-  export V9_7=true
+  V9_7=true
  fi
 }
 
 # Main function that starts the installation.
-init() {
- local __retInit=${1}
+function init() {
  # Initialize the environment.
  if [ -x init ]; then
   . ./init
+
+  echo "log4db2 is licensed under the terms of the Simplified-BSD license."
+  echo
+
+  # Check the given parameters.
+  checkParam "${1}" "${2}" "${3}"
+
+  # Checks in which DB2 version the utility will be installed.
+  # DB2 v10.1 is the default version.
+  set +e
+  if [ "${V9_7}" = true ]; then
+   v9_7
+   RET_VALUE=${?}
+  else
+   v10_1
+   RET_VALUE=${?}
+  fi
+  set -e
+
+  echo
+  if [ ${RET_VALUE} -eq 0 ] ; then
+   echo "Please visit the wiki to learn how to use and configure this utility"
+   echo "https://github.com/angoca/log4db2/wiki"
+   echo
+   echo "To report an issue or provide feedback, please visit:"
+   echo "https://github.com/angoca/log4db2/issues"
+   echo
+   echo "log4db2 was successfully installed"
+   db2 -x "values 'Database: ' || current server"
+   db2 -x "values 'Version: ' || logger.version"
+   db2 -x "select 'Schema: ' || base_moduleschema from syscat.modules where moduleschema = 'SYSPUBLIC' and modulename = 'LOGGER'"
+  else
+   echo "Check the ERROR(s) and reinstall the utility"
+   echo "For more information visit check the FAQs:"
+   echo "https://github.com/angoca/log4db2/wiki/FAQs"
+   echo
+   echo "You can also check the install guide:"
+   echo "https://github.com/angoca/log4db2/wiki/Install"
+   RET_VALUE=18
+  fi
+  unset CONTINUE
+ 
+  # Clean environment.
+  cd "${LOG4DB2_SRC_MAIN_SCRIPT_PATH}"
+  if [ -x uninit ]; then
+   . ./uninit
+  else
+   echo "Error: File 'uninit' missing or without execute permissions."
+   RET_VALUE=17
+  fi
+
  else
   echo "Error: File 'init' missing or without execute permissions."
+  RET_VALUE=16
  fi
 
- echo "log4db2 is licensed under the terms of the Simplified-BSD license"
-
- # Check the given parameters.
- checkParam "${2}" "${3}" "${4}"
-
- # Checks in which DB2 version the utility will be installed.
- # DB2 v10.1 is the default version.
- if [ "${V9_7}" = true ]; then
-  v9_7 retInstall
- else
-  v10_1 retInstall
- fi
-
- echo "Please visit the wiki to learn how to use and configure this utility"
- echo "https://github.com/angoca/log4db2/wiki"
- echo "To report an issue or provide feedback, please visit:"
- echo "https://github.com/angoca/log4db2/issues"
- echo
- if [ "${retInstall}" ]; then
-  echo "log4db2 was successfully installed"
-  db2 -x "values 'Database: ' || current server"
-  db2 -x "values 'Version: ' || logger.version"
-  db2 -x "select 'Schema: ' || base_moduleschema from syscat.modules where moduleschema = 'SYSPUBLIC' and modulename = 'LOGGER'"
-  RET_VALUE=0
- else
-  echo "Check the ERROR(s) and reinstall the utility"
-  echo "For more information visit check the FAQs:"
-  echo "https://github.com/angoca/log4db2/wiki/FAQs"
-  echo "You can also check the install guide:"
-  echo "https://github.com/angoca/log4db2/wiki/Install"
-  RET_VALUE=1
- fi
- unset CONTINUE
-
- # Clean environment.
- cd "${LOG4DB2_SRC_MAIN_SCRIPT_PATH}"
- if [ -x uninit ]; then
-  . ./uninit
- else
-  echo "Error: File 'uninit' missing or without execute permissions."
- fi
-
- local myRetInit=${RET_VALUE}
- eval "$__retInit"="'${myRetInit}'"
+ return ${RET_VALUE}
 }
 
-# Checks if there is already a connection established
+# Checks if there is a connection already established.
 set +e
 db2 connect >/dev/null 2>&1
 RET=${?}
 set -e
 if [ ${RET} -eq 0 ]; then
- init ret "${1:-}" "${2:-}" "${3:-}"
+ init "${1:-}" "${2:-}" "${3:-}"
+ RET=${?}
 else
  echo "Please connect to a database before the execution of the installation."
  echo "Remember that to call the script the command is '. ./install'"
- ret=2
+ RET=19
 fi
 
-unset CONTINUE
+return ${RET}
 
-return ${ret}
