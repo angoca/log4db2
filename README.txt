@@ -17,15 +17,24 @@ monitoring SQL routines, by centralizing the messages produced by the code.
 The idea and architecture of this utility are based on the popular Java logging
 utilities, such as Log4j and slf4j/logback.
 
- * Log4j:
-    http://logging.apache.org/log4j
- * Logback/SLF4J:
-    http://logback.qos.ch/ - http://www.slf4j.org/
+ * Log4j - http://logging.apache.org/log4j
+ * Logback/SLF4J -  http://logback.qos.ch/ - http://www.slf4j.org/
 
 The licenses of this project are:
 
- * Source code:  BSD 2-Clause license
- * Documentation: FreeBSD Documentation license.
+  * For the source code is "BSD 2-Clause license".
+  * For the documentation is "FreeBSD Documentation license."
+ 
+With these two licenses you are free to use, modify and distribute any part of this 
+utility.
+
+Author:
+
+Andres Gomez Casanova
+([@AngocA](https://twitter.com/angoca))
+
+
+## Links for more information ##
 
 These are some useful links:
 
@@ -37,11 +46,6 @@ These are some useful links:
     https://github.com/angoca/log4db2/releases
  * The issue tracker for comments and bugs is at:
     https://github.com/angoca/log4db2/issues
-
-Author:
-
-Andres Gomez Casanova
-([@AngocA](https://twitter.com/angoca))
 
 
 ------------------
@@ -63,11 +67,10 @@ Just follow these steps:
 
     tar -zxvf log4db2.tar.gz
     cd log4db2
-    . ./init
     . ./install
 
-Make sure to put the dot before the command. This will source the values and
-use the current connection.
+Make sure to put the dot (source command) before the script. This will source the
+values and use the current connection.
 
 **Windows Terminal (CMD - db2clp)**:
 
@@ -85,7 +88,7 @@ First, unzip the file log4db2.zip, and then:
     .\init.ps1
     .\install.ps1
 
-====
+### Check install ###
 
 After the install, all statements should have been successful.
 
@@ -115,19 +118,22 @@ This could be the structure of your routine's code (Procedure or function).
       DECLARE LOGGER_ID SMALLINT;
       -- Your declarations
 
-      LOGGER.GET_LOGGER('Your.Hierarchy', LOGGER_ID);
+      CALL LOGGER.GET_LOGGER('Your.Hierarchy', LOGGER_ID);
       -- Your code
-      LOGGER.INFO(LOGGER_ID, 'Your message');
+      CALL LOGGER.INFO(LOGGER_ID, 'Your message');
       -- Your code
      END @
+
+As you can see, there is a call to GET_LOGGER to register the logger, and get its
+id. Then, you write messages by providing the id and the text. That's all.
 
 ### 2. Invoke the code ###
 
 Then, you invoke your code (Depending if it is a stored procedure or a
 function.)
 
-    CALL HELLO_WORLD();
-    VALUES HELLO_WORLD();
+    CALL HELLO_WORLD(); -- Stored procedure.
+    VALUES HELLO_WORLD(); -- Function.
 
 ### 3. Check the results ###
 
@@ -140,12 +146,12 @@ From the CLP is:
     db2 "CALL LOGADMIN.LOGS()"
 
 Check the _Usage_ section for more information about the levels, how to access
-the messages and configure the utility.
+the messages and configure the utility:
 https://github.com/angoca/log4db2/wiki/Usage
 
 
 ---------------------------
-## FILES AND DIRECTORIES ##
+## Files and directories ##
 
 These are the files included in the released version:
 
