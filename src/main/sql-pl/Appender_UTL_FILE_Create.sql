@@ -29,8 +29,8 @@ SET CURRENT SCHEMA LOGGER_1RC @
 
 /**
  * Implementation of the included appenders that do not necessarily work on
- * Express-C edition. Here you can find how log4db2 interacts with different
- * components to log messages.
+ * Community/Express-C edition. Here you can find how log4db2 interacts with
+ * different components to log messages.
  *
  * Version: 2014-04-02 1-RC
  * Author: Andres Gomez Casanova (AngocA)
@@ -47,8 +47,8 @@ ALTER MODULE LOGGER PUBLISH
 
 /**
  * Writes the provided message in a file via UTL_FILE built-in functions.
- * This appender cannot be used in Express-C edition due to restrictions of
- * the built-in modules in this edition.
+ * This appender cannot be used in Community/Express-C edition due to
+ * restrictions of the built-in modules in this edition.
  * The implementation retrieves the filename from a global variable, and
  * keeps the handler there, in order to reduce the overhead by opening and
  * closing the file for each call.

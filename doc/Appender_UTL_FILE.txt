@@ -13,7 +13,7 @@ Once you have finished, you can use this appender to log your messages.
 
 # Prerequisites #
 
-Before to start, make sure you do not have an Express-C edition:
+Before to start, make sure you do not have an Community/Express-C edition:
 
     db2licm -l
 
