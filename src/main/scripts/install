@@ -23,6 +23,12 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 # Installs all scripts of the utility.
+# It receives the following parameters:
+# -A: Do not create physical objects, like bufferpool, tablespace, schemas.
+#     This is normally necessary. 
+# -r: Returns error code when finished.
+# -t: Install the utility using time travel in the log.
+# -v9_7: Install the tool for Db2 v9.7.
 #
 # Version: 2022-05-20 1-RC
 # Author: Andres Gomez Casanova (AngocA)
@@ -33,8 +39,9 @@ set -euf
 
 # Global variables
 CONTINUE=true
-ADMIN_INSTALL=false
+ADMIN_INSTALL=true
 TEMPORAL_TABLE=false
+RETURN_CODE=false
 V9_7=false
 RET_FUNCTION=0
 
@@ -46,19 +53,17 @@ function installScript {
  local SCRIPT=${1}
 
  echo "${SCRIPT}"
- set +e
  db2 -tsf "${SCRIPT}"
  RET=${?}
- set -e
  if [ ${RET} -ne 0 ]; then
-  CONTINUE=true
+  CONTINUE=false
  fi
 }
 
 # Function that install the utility for version 10.1.
 # DB2 v10.1.
 function v10_1() {
- echo "Installing utility for v10.1 or higher..."
+ echo "Installing utility for Db2 v10.1 or higher..."
  cd "${LOG4DB2_SRC_MAIN_CODE_PATH}"
  if [ "${ADMIN_INSTALL}" = true ]; then
   [ "${CONTINUE}" = true ] && installScript 00-AdminObjects.sql
@@ -123,14 +128,18 @@ function checkParam() {
  local PARAM1=${1}
  local PARAM2=${2}
  local PARAM3=${3}
- if [ "${PARAM1}" = "-A" ] || [ "${PARAM2}" = "-A" ] || [ "${PARAM3}" = "-A" ]; then
-  ADMIN_INSTALL=true
+ local PARAM4=${4}
+ if [ "${PARAM1}" = "-A" ] || [ "${PARAM2}" = "-A" ] || [ "${PARAM3}" = "-A" ] || [ "${PARAM4}" = "-A" ]; then
+  ADMIN_INSTALL=false
  fi
- if [ "${PARAM1}" = "-t" ] || [ "${PARAM2}" = "-t" ] || [ "${PARAM3}" = "-t" ]; then
+ if [ "${PARAM1}" = "-t" ] || [ "${PARAM2}" = "-t" ] || [ "${PARAM3}" = "-t" ] || [ "${PARAM4}" = "-t" ]; then
   TEMPORAL_TABLE=true
  fi
- if [ "${PARAM1}" = "-v9_7" ] || [ "${PARAM2}" = "-v9_7" ] || [ "${PARAM3}" = "-v9_7" ]; then
+ if [ "${PARAM1}" = "-v9_7" ] || [ "${PARAM2}" = "-v9_7" ] || [ "${PARAM3}" = "-v9_7" ] || [ "${PARAM4}" = "-v9_7" ]; then
   V9_7=true
+ fi
+ if [ "${PARAM1}" = "-r" ] || [ "${PARAM2}" = "-r" ] || [ "${PARAM3}" = "-r" ] || [ "${PARAM4}" = "-r" ]; then
+  RETURN_CODE=true
  fi
 }
 
@@ -144,7 +153,7 @@ function init() {
   echo
 
   # Check the given parameters.
-  checkParam "${1}" "${2}" "${3}"
+  checkParam "${1}" "${2}" "${3}" "${4}"
 
   # Checks in which DB2 version the utility will be installed.
   # DB2 v10.1 is the default version.
@@ -160,18 +169,18 @@ function init() {
 
   echo
   if [ ${RET_VALUE} -eq 0 ] ; then
-   echo "Please visit the wiki to learn how to use and configure this utility"
+   echo "Please visit the wiki to learn how to use and configure this utility:"
    echo "https://github.com/angoca/log4db2/wiki"
    echo
    echo "To report an issue or provide feedback, please visit:"
    echo "https://github.com/angoca/log4db2/issues"
    echo
-   echo "log4db2 was successfully installed"
+   echo "log4db2 was successfully installed."
    db2 -x "values 'Database: ' || current server"
    db2 -x "values 'Version: ' || logger.version"
    db2 -x "select 'Schema: ' || base_moduleschema from syscat.modules where moduleschema = 'SYSPUBLIC' and modulename = 'LOGGER'"
   else
-   echo "Check the ERROR(s) and reinstall the utility"
+   echo "Check the ERROR(s) and reinstall the utility."
    echo "For more information visit check the FAQs:"
    echo "https://github.com/angoca/log4db2/wiki/FAQs"
    echo
@@ -195,6 +204,7 @@ function init() {
   RET_VALUE=16
  fi
 
+ set +e
  return ${RET_VALUE}
 }
 
@@ -204,13 +214,16 @@ db2 connect >/dev/null 2>&1
 RET=${?}
 set -e
 if [ ${RET} -eq 0 ]; then
- init "${1:-}" "${2:-}" "${3:-}"
+ init "${1:-}" "${2:-}" "${3:-}" "${4:-}"
  RET=${?}
+ set -e
 else
  echo "Please connect to a database before the execution of the installation."
  echo "Remember that to call the script the command is '. ./install'"
  RET=19
 fi
 
-return ${RET}
+if [ "${RETURN_CODE}" = "true" ]; then
+ return ${RET}
+fi
 
