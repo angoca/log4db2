@@ -102,9 +102,7 @@ information, please visit the _configuration_ section:
 
 
 -----------
-## Usage ##
-
-### 1. Write the code ###
+## Write code ##
 
 This could be the structure of your routine's code (Procedure or function).
 
@@ -116,14 +114,21 @@ This could be the structure of your routine's code (Procedure or function).
 
       CALL LOGGER.GET_LOGGER('Your.Hierarchy', LOGGER_ID);
       -- Your code
-      CALL LOGGER.INFO(LOGGER_ID, 'Your message');
+      CALL LOGGER.INFO(LOGGER_ID, 'Your informational message');
+      -- Your code
+      CALL LOGGER.ERROR(LOGGER_ID, 'Your error message (important!)');
+      -- Your code
+      CALL LOGGER.DEBUG(LOGGER_ID, 'Your message for debugging purposes');
       -- Your code
      END @
 
-As you can see, there is a call to GET_LOGGER to register the logger, and get its
-id. Then, you write messages by providing the id and the text. That's all.
+As you can see, there is a call to GET_LOGGER to register the logger, and obtain its
+id. Then, you write messages by providing the id and the text. That's all!
 
-### 2. Invoke the code ###
+-----------
+## Execution ##
+
+### 1. Invoke the code ###
 
 Then, you invoke your code (Depending if it is a stored procedure or a
 function.)
@@ -131,7 +136,7 @@ function.)
     CALL HELLO_WORLD(); -- Stored procedure.
     VALUES HELLO_WORLD(); -- Function.
 
-### 3. Check the results ###
+### 2. Check the logs ###
 
 This is the easiest way to check the log messages.
 
@@ -145,6 +150,28 @@ Check the _Usage_ section for more information about the levels, how to access
 the messages and configure the utility: 
 [wiki/Usage](https://github.com/angoca/log4db2/wiki/Usage).
 
+### 3. Changing the verbosity ###
+
+Obtain the logger id:
+
+    db2 "CALL LOGGER.GET_LOGGER('Your.Hierarchy', ?)"
+    
+As part of the output, it will be something like"
+
+    Value of output parameters
+    --------------------------
+    Parameter Name  : LOG_ID
+    Parameter Value : 5
+    
+In this example, the assigned id (LOG_ID) for the logger hierarchy 'Your.Hierarchy' is 5.
+With this number, you can modify the level of that logger:
+
+    UPDATE LOGDATA.CONF_LOGGERS
+      SET LEVEL_ID = 2
+      WHERE LOGGER_ID = 5;
+
+Depending of the logger levels on the code, and the confiration, you can see more messages
+or less messages in the logs.
 
 ---------------------------
 ## Files and directories ##
