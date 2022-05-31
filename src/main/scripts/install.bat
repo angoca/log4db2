@@ -33,7 +33,6 @@
 set continue=1
 set adminInstall=1
 set temporalTable=0
-set v9_7=0
 set retValue=0
 
 :: Main call.
@@ -94,34 +93,6 @@ goto:eof
  if %continue% EQU 1 call:installScript %LOG4DB2_SRC_MAIN_CODE_PATH%\12-Version.sql
 goto:eof
 
-:: Function that install the utility for version 9.7.
-:: DB2 v9.7
-:v9.7
- echo Installing utility for v9.7
- if %adminInstall% EQU 1 (
-  if %continue% EQU 1 call:installScript %LOG4DB2_SRC_MAIN_CODE_PATH%\00-AdminObjects.sql
- )
- if %continue% EQU 1 call:installScript %LOG4DB2_SRC_MAIN_CODE_PATH%\01-Tables_v9_7.sql
- if %continue% EQU 1 call:installScript %LOG4DB2_SRC_MAIN_CODE_PATH%\02-UtilityHeader.sql
- if %continue% EQU 1 call:installScript %LOG4DB2_SRC_MAIN_CODE_PATH%\03-UtilityBody.sql
- if %continue% EQU 1 call:installScript %LOG4DB2_SRC_MAIN_CODE_PATH%\04-Appenders.sql
- if %continue% EQU 1 call:installScript %LOG4DB2_SRC_MAIN_CODE_PATH%\05-Log.sql
- if %continue% EQU 1 call:installScript %LOG4DB2_SRC_MAIN_CODE_PATH%\06-Get_Logger_v9_7.sql
- if %continue% EQU 1 call:installScript %LOG4DB2_SRC_MAIN_CODE_PATH%\07-Trigger.sql
-
- if %continue% EQU 1 call:installScript %LOG4DB2_SRC_MAIN_CODE_PATH%\08-AdminHeader.sql
- if %continue% EQU 1 call:installScript %LOG4DB2_SRC_MAIN_CODE_PATH%\09-AdminBody.sql
-
- cd %LOG4DB2_SRC_MAIN_CODE_PATH%
- cd ..
- cd xml
- if %continue% EQU 1 call:installScript 10-AppendersXML.sql
- cd ..
- cd scripts 2> NUL
-
- if %continue% EQU 1 call:installScript %LOG4DB2_SRC_MAIN_CODE_PATH%\12-Version.sql
-goto:eof
-
 :: This function checks all parameters and assign them to global variables.
 :checkParam
  set param1=%1
@@ -145,15 +116,6 @@ goto:eof
  if /I "%param3%" == "-t" (
   set temporalTable=1
  )
- if /I "%param1%" == "-v9_7" (
-  set v9_7=1
- )
- if /I "%param2%" == "-v9_7" (
-  set v9_7=1
- )
- if /I "%param3%" == "-v9_7" (
-  set v9_7=1
- )
  set param1=
  set param2=
  set param3=
@@ -173,11 +135,7 @@ goto:eof
 
  :: Checks in which DB2 version the utility will be installed.
  :: DB2 v10.1 is the default version.
- if %v9_7% EQU 1 (
-  call:v9.7
- ) else (
-  call:v10.1
- )
+ call:v10.1
 
  echo Please visit the wiki to learn how to use and configure this utility
  echo https://github.com/angoca/log4db2/wiki
@@ -200,7 +158,6 @@ goto:eof
  )
 
  :: Clean environment.
- set v9_7=
  set adminInstall=
  set temporalTable=
  if EXIST uninit.bat (

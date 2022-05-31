@@ -32,7 +32,6 @@
 ${Script:continue}=1
 ${Script:adminInstall}=1
 ${Script:temporalTable}=0
-${Script:v97}=0
 ${Script:retValue}=0
 
 # Installs a given script in DB2.
@@ -79,34 +78,6 @@ function v10.1($p1) {
  if ( ${Script:continue} ) { installScript ${LOG4DB2_SRC_MAIN_CODE_PATH}\12-Version.sql }
 }
 
-# Function that install the utility for version 9.7.
-# DB2 v9.7
-function v9.7() {
- echo "Installing utility for DB2 v9.7"
- if ( ${Script:adminInstall} ) {
-  if ( ${Script:continue} ) { installScript ${LOG4DB2_SRC_MAIN_CODE_PATH}\00-AdminObjects.sql }
- }
- if ( ${Script:continue} ) { installScript ${LOG4DB2_SRC_MAIN_CODE_PATH}\01-Tables_v9_7.sql }
- if ( ${Script:continue} ) { installScript ${LOG4DB2_SRC_MAIN_CODE_PATH}\02-UtilityHeader.sql }
- if ( ${Script:continue} ) { installScript ${LOG4DB2_SRC_MAIN_CODE_PATH}\03-UtilityBody.sql }
- if ( ${Script:continue} ) { installScript ${LOG4DB2_SRC_MAIN_CODE_PATH}\04-Appenders.sql }
- if ( ${Script:continue} ) { installScript ${LOG4DB2_SRC_MAIN_CODE_PATH}\05-Log.sql }
- if ( ${Script:continue} ) { installScript ${LOG4DB2_SRC_MAIN_CODE_PATH}\06-Get_Logger_v9_7.sql }
- if ( ${Script:continue} ) { installScript ${LOG4DB2_SRC_MAIN_CODE_PATH}\07-Trigger.sql }
-
- if ( ${Script:continue} ) { installScript ${LOG4DB2_SRC_MAIN_CODE_PATH}\08-AdminHeader.sql }
- if ( ${Script:continue} ) { installScript ${LOG4DB2_SRC_MAIN_CODE_PATH}\09-AdminBody.sql }
-
- cd ${LOG4DB2_SRC_MAIN_CODE_PATH}
- cd ..
- cd xml
- if ( ${Script:continue} ) { installScript 10-AppendersXML.sql }
- cd ..
- cd scripts | Out-Null
-
- if ( ${Script:continue} ) { installScript ${LOG4DB2_SRC_MAIN_CODE_PATH}\12-Version.sql }
-}
-
 # This function checks all parameters and assign them to global variables.
 function checkParam($p1, $p2, $p3) {
  $param1=${p1}
@@ -117,9 +88,6 @@ function checkParam($p1, $p2, $p3) {
  }
  if ( "${param1}" -eq "-t" -or "${param2}" -eq "-t" -or "${param3}" -eq "-t" ) {
   ${Script:temporalTable}=1
- }
- if ( "${param1}" -eq "-v9_7" -or "${param2}" -eq "-v9_7" -or "${param3}" -eq "-v9_7" ) {
-  ${Script:v97}=1
  }
 }
 
@@ -136,11 +104,7 @@ function init($p1, $p2, $p3) {
 
  # Checks in which DB2 version the utility will be installed.
  # DB2 v10.1 is the default version.
- if ( ${Script:v97} ) {
-  v9.7
- } else {
-  v10.1
- }
+ v10.1
 
  echo "Please visit the wiki to learn how to use and configure this utility"
  echo "https://github.com/angoca/log4db2/wiki"

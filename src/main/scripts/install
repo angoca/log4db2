@@ -28,7 +28,6 @@
 #     This is normally necessary. 
 # -r: Returns error code when finished.
 # -t: Install the utility using time travel in the log.
-# -v9_7: Install the utility for Db2 v9.7.
 #
 # Version: 2022-05-20 1-RC
 # Author: Andres Gomez Casanova (AngocA)
@@ -42,7 +41,6 @@ CONTINUE=true
 ADMIN_INSTALL=true
 TEMPORAL_TABLE=false
 RETURN_CODE=false
-V9_7=false
 RET_FUNCTION=0
 
 # Installs a given script.
@@ -94,35 +92,6 @@ function v10_1 {
  return ${RET}
 }
 
-# Function that install the utility for version 9.7.
-# DB2 v9.7
-function v9_7 {
- echo "Installing utility for DB2 v9.7..."
- cd "${LOG4DB2_SRC_MAIN_CODE_PATH}"
- if [ "${ADMIN_INSTALL}" = true ]; then
-  [ "${CONTINUE}" = true ] && installScript 00-AdminObjects.sql
- fi
- [ "${CONTINUE}" = true ] && installScript 01-Tables_v9_7.sql
- [ "${CONTINUE}" = true ] && installScript 02-UtilityHeader.sql
- [ "${CONTINUE}" = true ] && installScript 03-UtilityBody.sql
- [ "${CONTINUE}" = true ] && installScript 04-Appenders.sql
- [ "${CONTINUE}" = true ] && installScript 05-Log.sql
- [ "${CONTINUE}" = true ] && installScript 06-Get_Logger_v9_7.sql
- [ "${CONTINUE}" = true ] && installScript 07-Trigger.sql
-
- [ "${CONTINUE}" = true ] && installScript 08-AdminHeader.sql
- [ "${CONTINUE}" = true ] && installScript 09-AdminBody.sql
-
- cd ../xml
- [ "${CONTINUE}" = true ] && installScript 10-AppendersXML.sql
- cd ../sql-pl
-
- [ "${CONTINUE}" = true ] && installScript 12-Version.sql
-
- [ "${CONTINUE}" = true ] && RET=0 || RET=1
- return ${RET}
-}
-
 # This function checks all parameters and assign them to global variables.
 function checkParam {
  local PARAM1=${1}
@@ -134,9 +103,6 @@ function checkParam {
  fi
  if [ "${PARAM1}" = "-t" ] || [ "${PARAM2}" = "-t" ] || [ "${PARAM3}" = "-t" ] || [ "${PARAM4}" = "-t" ]; then
   TEMPORAL_TABLE=true
- fi
- if [ "${PARAM1}" = "-v9_7" ] || [ "${PARAM2}" = "-v9_7" ] || [ "${PARAM3}" = "-v9_7" ] || [ "${PARAM4}" = "-v9_7" ]; then
-  V9_7=true
  fi
  if [ "${PARAM1}" = "-r" ] || [ "${PARAM2}" = "-r" ] || [ "${PARAM3}" = "-r" ] || [ "${PARAM4}" = "-r" ]; then
   RETURN_CODE=true
@@ -158,13 +124,8 @@ function init {
   # Checks in which DB2 version the utility will be installed.
   # DB2 v10.1 is the default version.
   set +e
-  if [ "${V9_7}" = true ]; then
-   v9_7
-   RET_VALUE=${?}
-  else
-   v10_1
-   RET_VALUE=${?}
-  fi
+  v10_1
+  RET_VALUE=${?}
   set -e
 
   echo
