@@ -51,8 +51,13 @@ function installScript {
  local SCRIPT=${1}
 
  echo "${SCRIPT}"
- db2 -tsf "${SCRIPT}"
- RET=${?}
+ if [ "${VERBOSE:-}" = "true" ]; then
+  db2 -tvsf "${SCRIPT}"
+  RET=${?}
+ else
+  db2 -tsf "${SCRIPT}"
+  RET=${?}
+ fi
  if [ ${RET} -ne 0 ]; then
   CONTINUE=false
  fi
