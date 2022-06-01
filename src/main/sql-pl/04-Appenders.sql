@@ -40,7 +40,8 @@ SET PATH = SYSPROC, LOGGER_1RC @
 
 /**
  * Writes the given message in the log table. This is a pure SQL implementation,
- * without any external call.
+ * without any external call. If there is not a partition to insert in the LOGS
+ * table, it will add an extra partition.
  *
  * IN LOGGER_ID
  *   Identification of the associated logger.
@@ -65,6 +66,25 @@ ALTER MODULE LOGGER PUBLISH
   NO EXTERNAL ACTION
   PARAMETER CCSID UNICODE
  P_LOG_TABLES: BEGIN
+  DECLARE STMT VARCHAR(256);
+  DECLARE NO_PARTITION CONDITION FOR SQLSTATE '22525';
+  DECLARE PARTITION_EXIST CONDITION FOR SQLSTATE '56016';
+  -- If the partition already exist, just continue.
+  -- This could happen when parallel execution.
+  DECLARE CONTINUE HANDLER FOR PARTITION_EXIST
+   BEGIN
+   END;
+  DECLARE CONTINUE HANDLER FOR NO_PARTITION
+   BEGIN
+    SET STMT = 'ALTER TABLE LOGS ADD PARTITION STARTING ''' || CURRENT DATE
+      || ''' ENDING ''' || (CURRENT DATE + 1 DAY) || ''' EXCLUSIVE';
+    EXECUTE IMMEDIATE STMT;
+
+    -- Retry.
+    INSERT INTO LOGDATA.LOGS (LEVEL_ID, LOGGER_ID, MESSAGE) VALUES
+      (LEVEL_ID, LOGGER_ID, MESSAGE);
+   END;
+
   INSERT INTO LOGDATA.LOGS (LEVEL_ID, LOGGER_ID, MESSAGE) VALUES
     (LEVEL_ID, LOGGER_ID, MESSAGE);
  END P_LOG_TABLES @
@@ -72,7 +92,8 @@ ALTER MODULE LOGGER PUBLISH
 /**
  * Writes the given message in the log table. This is a pure SQL implementation,
  * without any external call. This procedure is exactly the same as LOG_TABLES,
- * the difference is that this is declared as Autonomous.
+ * the difference is that this is declared as Autonomous. If there is not a
+ * partition to insert in the LOGS table, it will add an extra partition.
  *
  * IN LOGGER_ID
  *   Identification of the associated logger.
@@ -98,6 +119,25 @@ ALTER MODULE LOGGER PUBLISH
   NO EXTERNAL ACTION
   PARAMETER CCSID UNICODE
  P_LOG_TABLES_AUTONOMOUS: BEGIN
+  DECLARE STMT VARCHAR(256);
+  DECLARE NO_PARTITION CONDITION FOR SQLSTATE '22525';
+  DECLARE PARTITION_EXIST CONDITION FOR SQLSTATE '56016';
+  -- If the partition already exist, just continue.
+  -- This could happen when parallel execution.
+  DECLARE CONTINUE HANDLER FOR PARTITION_EXIST
+   BEGIN
+   END;
+  DECLARE CONTINUE HANDLER FOR NO_PARTITION
+   BEGIN
+    SET STMT = 'ALTER TABLE LOGS ADD PARTITION STARTING ''' || CURRENT DATE
+      || ''' ENDING ''' || (CURRENT DATE + 1 DAY) || ''' EXCLUSIVE';
+    EXECUTE IMMEDIATE STMT;
+
+    -- Retry.
+    INSERT INTO LOGDATA.LOGS (LEVEL_ID, LOGGER_ID, MESSAGE) VALUES
+      (LEVEL_ID, LOGGER_ID, MESSAGE);
+   END;
+
   INSERT INTO LOGDATA.LOGS (LEVEL_ID, LOGGER_ID, MESSAGE) VALUES
     (LEVEL_ID, LOGGER_ID, MESSAGE);
  END P_LOG_TABLES_AUTONOMOUS @
