@@ -37,3 +37,4 @@ if [ -z "${LOG4DB2_SRC_TEST_CODE_PATH:-}" ]; then
  unset LOG4DB2_SRC_MAIN_SCRIPT_PATH
  unset LOG4DB2_PATH
 fi
+set +euf

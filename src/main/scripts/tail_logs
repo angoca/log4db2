@@ -32,6 +32,8 @@ VAL=${1}
 INC=1
 SECS=${2}
 
+set -euf
+
 if [ -z ${VAL} ] ; then
  INC=0
  VAL=2
@@ -56,5 +58,5 @@ else
  echo "Please connect to a database before execute this script."
  echo "Remember that to call the script the command is '. ./tail_logs'"
 fi
-
+set +euf
 

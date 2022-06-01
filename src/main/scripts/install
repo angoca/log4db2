@@ -190,6 +190,7 @@ else
 fi
 
 if [ "${RETURN_CODE}" = "true" ]; then
+ set +euf
  return ${RET}
 fi
-
+set +euf
