@@ -28,9 +28,9 @@
 # Author: Andres Gomez Casanova (AngocA)
 # Made in COLOMBIA.
 
-VAL=${1}
+VAL=${1:-}
 INC=1
-SECS=${2}
+SECS=${2:-}
 
 # Security options.
 set -euf
@@ -44,6 +44,7 @@ if [ -z ${SECS:-} ] ; then
  SECS=1
 fi
 
+db2 set serveroutput on
 db2 connect > /dev/null
 if [ ${?} -eq 0 ] ; then
  I=0
