@@ -39,3 +39,4 @@ fi
 set +u
 . "${LOG4DB2_SRC_MAIN_SCRIPT_PATH}"/install "${1}" "${2}" "${3}" "${4}"
 set +ef
+
