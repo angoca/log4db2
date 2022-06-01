@@ -1,14 +1,14 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
- <!-- Copyright (c) 2012 - 2014, Andres Gomez Casanova (AngocA) All rights
+    <!-- Copyright (c) 2012 - 2014, Andres Gomez Casanova (AngocA) All rights
   reserved. -->
- <!-- Redistribution and use in source and binary forms, with or without
+    <!-- Redistribution and use in source and binary forms, with or without
   modification, are permitted provided that the following conditions are met: -->
- <!-- 1. Redistributions of source code must retain the above copyright notice,
+    <!-- 1. Redistributions of source code must retain the above copyright notice,
   this list of conditions and the following disclaimer. -->
- <!-- 2. Redistributions in binary form must reproduce the above copyright
+    <!-- 2. Redistributions in binary form must reproduce the above copyright
   notice, this list of conditions and the following disclaimer in the documentation
   and/or other materials provided with the distribution. -->
- <!-- THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+    <!-- THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
   "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED
   TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
   PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS
@@ -18,155 +18,136 @@
   CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
   OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE
   USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. -->
-
- <modelVersion>4.0.0</modelVersion>
-
- <!-- The Basics -->
- <groupId>com.github.angoca</groupId>
- <artifactId>log4db2</artifactId>
- <version>1-RC-SNAPSHOT</version>
- <packaging>pom</packaging>
-
- <!-- Build Settings -->
- <!-- "Project Build" contains more elements than just the BaseBuild set -->
- <build>
-  <defaultGoal>clean assembly:single</defaultGoal>
-  <pluginManagement>
-   <plugins>
-
-    <!-- Cleans the target directory. -->
-    <!-- mvn clean -->
-    <plugin>
-     <artifactId>maven-clean-plugin</artifactId>
-     <version>2.5</version>
-     <executions>
-      <execution>
-       <id>auto-clean</id>
-       <phase>initialize</phase>
-       <goals>
-        <goal>clean</goal>
-       </goals>
-      </execution>
-     </executions>
-    </plugin>
-   </plugins>
-  </pluginManagement>
-  <plugins>
-
-   <!-- Packs all files in a tar. -->
-   <!-- mvn assembly:single -->
-   <plugin>
-    <artifactId>maven-assembly-plugin</artifactId>
-    <version>2.4</version>
-    <configuration>
-     <appendAssemblyId>false</appendAssemblyId>
-     <finalName>log4db2</finalName>
-     <descriptors>
-      <descriptor>src/main/assembly/assembly.xml</descriptor>
-     </descriptors>
-    </configuration>
-    <!-- Creates the assembly as part of package -->
-    <executions>
-     <execution>
-      <id>make-assembly</id>
-      <phase>package</phase>
-      <goals>
-       <goal>single</goal>
-      </goals>
-     </execution>
-    </executions>
-   </plugin>
-
-   <!-- Creates the site -->
-   <!-- mvn site -->
-   <plugin>
-    <groupId>org.apache.maven.plugins</groupId>
-     <artifactId>maven-site-plugin</artifactId>
-      <version>3.3</version>
-      <configuration>
-      <locales>en</locales>
-     </configuration>
-    </plugin>
-
-  </plugins>
- </build>
-
- <reporting>
-  <plugins>
-   <plugin>
-    <groupId>org.apache.maven.plugins</groupId>
-    <artifactId>maven-project-info-reports-plugin</artifactId>
-    <version>2.7</version>
-   </plugin>
-  </plugins>
- </reporting>
-
- <!-- More Project Information -->
- <name>log4db2</name>
- <description>
-  A logging utility written in SQL-PL for IBM DB2 LUW.
+    <modelVersion>4.0.0</modelVersion>
+    <!-- The Basics -->
+    <groupId>com.github.angoca</groupId>
+    <artifactId>log4db2</artifactId>
+    <version>1-RC-SNAPSHOT</version>
+    <packaging>pom</packaging>
+    <!-- Build Settings -->
+    <!-- "Project Build" contains more elements than just the BaseBuild set -->
+    <build>
+        <defaultGoal>clean assembly:single</defaultGoal>
+        <pluginManagement>
+            <plugins>
+                <!-- Cleans the target directory. -->
+                <!-- mvn clean -->
+                <plugin>
+                    <artifactId>maven-clean-plugin</artifactId>
+                    <version>2.5</version>
+                    <executions>
+                        <execution>
+                            <id>auto-clean</id>
+                            <phase>initialize</phase>
+                            <goals>
+                                <goal>clean</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+        <plugins>
+            <!-- Packs all files in a tar. -->
+            <!-- mvn assembly:single -->
+            <plugin>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <version>2.4</version>
+                <configuration>
+                    <appendAssemblyId>false</appendAssemblyId>
+                    <finalName>log4db2</finalName>
+                    <descriptors>
+                        <descriptor>src/main/assembly/assembly.xml</descriptor>
+                    </descriptors>
+                </configuration>
+                <!-- Creates the assembly as part of package -->
+                <executions>
+                    <execution>
+                        <id>make-assembly</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <!-- Creates the site -->
+            <!-- mvn site -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-site-plugin</artifactId>
+                <version>3.3</version>
+                <configuration>
+                    <locales>en</locales>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+    <reporting>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-project-info-reports-plugin</artifactId>
+                <version>2.7</version>
+            </plugin>
+        </plugins>
+    </reporting>
+    <!-- More Project Information -->
+    <name>log4db2</name>
+    <description>A logging utility written in SQL-PL for IBM DB2 LUW.
   </description>
- <url>https://angoca.github.io/log4db2/</url>
- <!-- The first year. -->
- <inceptionYear>2012</inceptionYear>
- <licenses>
-  <license>
-   <name>BSD 2-Clauses License</name>
-   <distribution>repo</distribution>
-   <comments>
-    The Simplified BSD license is for the code (core, test, examples).
+    <url>https://angoca.github.io/log4db2/</url>
+    <!-- The first year. -->
+    <inceptionYear>2012</inceptionYear>
+    <licenses>
+        <license>
+            <name>BSD 2-Clauses License</name>
+            <distribution>repo</distribution>
+            <comments>The Simplified BSD license is for the code (core, test, examples).
    </comments>
-  </license>
-  <license>
-   <name>FreeBSD Documentation License</name>
-   <distribution>repo</distribution>
-   <comments>
-    This license is for the documentation, that is in the /doc directory and in
+        </license>
+        <license>
+            <name>FreeBSD Documentation License</name>
+            <distribution>repo</distribution>
+            <comments>This license is for the documentation, that is in the /doc directory and in
     the Wiki.
    </comments>
-  </license>
- </licenses>
-
- <developers>
-  <developer>
-   <id>angoca</id>
-   <name>Andres Gomez Casanova</name>
-   <email>angoca at yahoo dot com</email>
-   <timezone>-5</timezone>
-   <url>http://angoca.users.sourceforge.net/</url>
-   <roles>
-    <role>Designer</role>
-    <role>Developer</role>
-   </roles>
-   <properties>
-    <picUrl>
-     https://secure.gravatar.com/avatar/6998587ec6de0bab814c70777bcdd2ce.png
+        </license>
+    </licenses>
+    <developers>
+        <developer>
+            <id>angoca</id>
+            <name>Andres Gomez Casanova</name>
+            <email>angoca at yahoo dot com</email>
+            <timezone>-5</timezone>
+            <url>http://angoca.users.sourceforge.net/</url>
+            <roles>
+                <role>Designer</role>
+                <role>Developer</role>
+            </roles>
+            <properties>
+                <picUrl>https://secure.gravatar.com/avatar/6998587ec6de0bab814c70777bcdd2ce.png
     </picUrl>
-   </properties>
-  </developer>
- </developers>
-
- <!-- Environment Settings -->
- <issueManagement>
-  <system>GitHub</system>
-  <url>https://github.com/angoca/log4db2/issues</url>
- </issueManagement>
-
- <scm>
-  <connection>scm:git:ssh://github.com/angoca/log4db2.git</connection>
-  <developerConnection>
-   scm:git:ssh://git@github.com/angoca/log4db2.git
+            </properties>
+        </developer>
+    </developers>
+    <!-- Environment Settings -->
+    <issueManagement>
+        <system>GitHub</system>
+        <url>https://github.com/angoca/log4db2/issues</url>
+    </issueManagement>
+    <scm>
+        <connection>scm:git:ssh://github.com/angoca/log4db2.git</connection>
+        <developerConnection>scm:git:ssh://git@github.com/angoca/log4db2.git
   </developerConnection>
-  <url>https://github.com/angoca/log4db2</url>
-  <tag>HEAD</tag>
- </scm>
-
- <distributionManagement>
-  <repository>
-   <id>internal.repo</id>
-   <name>Temporary Staging Repository</name>
-   <url>file://${project.build.directory}/mvn-repo</url>
-  </repository>
- </distributionManagement>
+        <url>https://github.com/angoca/log4db2</url>
+        <tag>HEAD</tag>
+    </scm>
+    <distributionManagement>
+        <repository>
+            <id>internal.repo</id>
+            <name>Temporary Staging Repository</name>
+            <url>file://${project.build.directory}/mvn-repo</url>
+        </repository>
+    </distributionManagement>
 </project>
-
