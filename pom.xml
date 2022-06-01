@@ -168,9 +168,5 @@
    <url>file://${project.build.directory}/mvn-repo</url>
   </repository>
  </distributionManagement>
-
- <prerequisites>
-  <maven>3.1.1</maven>
- </prerequisites>
 </project>
 
