@@ -12,6 +12,7 @@ There are three sections:
 BEFORE
 
 * Run all tests to make sure there are not regressions.
+* Update the Maven plugins - mvn versions:display-plugin-updates.
 * Change the version constant in the code (12-Version.sql:VERSION):
 https://github.com/angoca/log4db2/blob/master/src/main/sql-pl/12-Version.sql
 * Write the changes in the ChangeLog section of the wiki.
