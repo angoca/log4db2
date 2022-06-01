@@ -254,32 +254,48 @@ COMMENT ON CONSTRAINT REFERENCES.LOG_REF_FK_CONF_LOGGERS IS
 COMMENT ON CONSTRAINT REFERENCES.LOG_REF_FK_CONF_APPEND IS
   'Relationship with ConfAppenders';
 
+--#SET TERMINATOR @
 -- Table for the pure SQL Tables appender.
 -- TODO make tests in order to check in a auto generated column for an id
 -- does not impact the performance, and provides a better way to sort messages.
 -- This ID column could be hidden to the user. The benefit is that the logs
 -- could be accessed via an index, but it impacts the writes, because this
 -- structure has to be maintained.
-CREATE TABLE LOGS (
-  DATE CHAR(13) FOR BIT DATA NOT NULL IMPLICITLY HIDDEN,
-  LEVEL_ID SMALLINT,
-  LOGGER_ID SMALLINT,
-  MESSAGE VARCHAR(512) NOT NULL
-  ) IN LOG_DATA_SPACE;
+BEGIN
+  DECLARE STMT VARCHAR(512);
+
+  SET STMT = 'CREATE TABLE LOGS ('
+    || 'DATE_UNIQ CHAR(13) FOR BIT DATA NOT NULL IMPLICITLY HIDDEN, '
+    || 'TIMESTAMP TIMESTAMP DEFAULT CURRENT TIMESTAMP, '
+    || 'LEVEL_ID SMALLINT, '
+    || 'LOGGER_ID SMALLINT, '
+    || 'MESSAGE VARCHAR(512) NOT NULL '
+    || ') IN LOG_DATA_SPACE '
+    || 'PARTITION BY RANGE (TIMESTAMP)( '
+    || 'STARTING ''' || (CURRENT DATE - 1 DAY)
+    || ''' ENDING ''' || (CURRENT DATE) || ''' EXCLUSIVE EVERY 1 DAY)';
+  -- Debug
+  -- CALL DBMS_OUTPUT.PUT_LINE(STMT);
+  EXECUTE IMMEDIATE STMT;
+END@
+
+--#SET TERMINATOR ;
 
 ALTER TABLE LOGS
   PCTFREE 0
   APPEND ON
   VOLATILE CARDINALITY;
 
--- PERF: Not Logged Initially could improve the performance.
+-- PERF: Not Logged Initially could improve the performance, but it does not
+-- work for HADR or other facilities based on transaction logs.
 -- ALTER TABLE LOGS
 --   ACTIVATE NOT LOGGED INITIALLY;
 
 COMMENT ON TABLE LOGS IS 'Table where the logs are written';
 
 COMMENT ON LOGS (
-  DATE IS 'Date where the event was reported',
+  DATE_UNIQ IS 'Unique date',
+  TIMESTAMP IS 'Date where the event was reported. Could be repeated',
   LEVEL_ID IS 'Log level',
   LOGGER_ID IS 'Logger that generated this message',
   MESSAGE IS 'Message logged'
