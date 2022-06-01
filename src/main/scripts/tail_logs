@@ -32,14 +32,15 @@ VAL=${1}
 INC=1
 SECS=${2}
 
+# Security options.
 set -euf
 
-if [ -z ${VAL} ] ; then
+if [ -z ${VAL:-} ] ; then
  INC=0
  VAL=2
 fi
 
-if [ -z ${SECS} ] ; then
+if [ -z ${SECS:-} ] ; then
  SECS=1
 fi
 
@@ -47,7 +48,9 @@ db2 connect > /dev/null
 if [ ${?} -eq 0 ] ; then
  I=0
  while (( ${I} != ${VAL} )) ; do
+  set +e
   db2 -x +w "call logadmin.next_logs()" | grep -v "^  Result set 1$" | grep -v "^  --------------$" | grep -v "^  Return Status = 0$" | grep -v "^$"
+  set -e
   if [ ${I} -ne $((${VAL} - 1)) ] ; then
    # echo "Waiting ${SECS} seconds..."
    sleep ${SECS}
