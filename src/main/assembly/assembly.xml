@@ -51,7 +51,7 @@
    <fileMode>0666</fileMode>
    <outputDirectory>sql-pl</outputDirectory>
   </fileSet>
-  <!-- Scripts -->
+  <!-- Scripts for Linux / UNIX -->
   <fileSet>
    <directory>src/main/scripts</directory>
    <includes>
@@ -60,12 +60,13 @@
     <include>**/reinstall</include>
     <include>**/uninit</include>
     <include>**/uninstall</include>
+    <include>**/tail_logs</include>
    </includes>
    <fileMode>0777</fileMode>
    <lineEnding>lf</lineEnding>
    <outputDirectory>/</outputDirectory>
   </fileSet>
-  <!-- Scripts -->
+  <!-- Scripts for Windows -->
   <fileSet>
    <directory>src/main/scripts</directory>
    <includes>
@@ -89,10 +90,11 @@
   <fileSet>
    <directory>doc</directory>
    <includes>
-    <include>**/Appender_DB2LOGGER.txt</include>
     <include>**/COPYING.txt</include>
     <include>**/ER-diagram.png</include>
     <include>**/ErrorCodes.txt</include>
+    <!-- All extra appenders -->
+    <include>**/Appender_DB2LOGGER.txt</include>
    </includes>
    <outputDirectory>doc</outputDirectory>
   </fileSet>
