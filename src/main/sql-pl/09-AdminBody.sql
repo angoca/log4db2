@@ -39,7 +39,7 @@ SET CURRENT SCHEMA LOGGER_1RC @
  * Timestamp for the paging.
  */
 ALTER MODULE LOGADMIN ADD
-  VARIABLE PAGE_DATE TIMESTAMP @
+  VARIABLE PAGE_DATE ANCHOR LOGDATA.LOGS.TIMESTAMP@
 
 /**
  * Deletes a value in the loggers cache.
@@ -263,9 +263,9 @@ ALTER MODULE LOGADMIN ADD
 
 /**
  * Returns an opened cursor showing the more recent log messages truncated to 72
- * characters by default and the date limited to the hour part with milliseconds.
- * The concurrence is uncommitted read. This procedure is useful to see the
- * progress of the generated logs.
+ * characters by default and the date limited to the hour part with
+ * milliseconds. The concurrence is uncommitted read. This procedure is useful
+ * to see the progress of the generated logs.
  *
  * IN LENGTH
  *   Message length. By default this value is 72 characters.
@@ -285,17 +285,21 @@ ALTER MODULE LOGADMIN ADD
   NO EXTERNAL ACTION
   PARAMETER CCSID UNICODE
  P_NEXT_LOGS: BEGIN
-  DECLARE NEXT_DATE TIMESTAMP;
-  DECLARE STMT ANCHOR LOGGER.MESSAGE;
+  DECLARE NEXT_DATE ANCHOR LOGDATA.LOGS.TIMESTAMP;
+  DECLARE STMT VARCHAR(512);
   DECLARE C CURSOR
     WITH RETURN TO CALLER
     FOR RS;
 
   -- This query could be expensive when there is a lot of data.
-  SET NEXT_DATE = (SELECT TIMESTAMP(MAX(DATE_UNIQ)) FROM LOGDATA.LOGS);
+  SET NEXT_DATE = (SELECT MAX(TIMESTAMP) FROM LOGDATA.LOGS);
+
+  -- Shows the max date
+  -- Debug purposes
+  --CALL SYSIBMADM.DBMS_OUTPUT.PUT_LINE('Max time: ' || NEXT_DATE);
 
   SET STMT = 'SELECT TIME, MESSAGE FROM ('
-    || 'SELECT TIMESTAMP AS TIME, '
+    || 'SELECT L.DATE_UNIQ, L.TIMESTAMP AS TIME, '
     || 'SUBSTR(L.MESSAGE, 1, ' || LENGTH || ') AS MESSAGE '
     || 'FROM LOGDATA.LOGS AS L ';
   IF (MIN_LEVEL = -1) THEN
@@ -315,12 +319,11 @@ ALTER MODULE LOGADMIN ADD
       || 'AND ';
    END IF;
    SET STMT = STMT
-     || 'L.DATE_UNIQ > CAST(''' || LOGADMIN.PAGE_DATE || ''' AS CHAR(13) FOR BIT DATA) ';
+     || 'L.TIMESTAMP > ''' || LOGADMIN.PAGE_DATE || ''' ';
   END IF;
   SET STMT = STMT
-    || 'ORDER BY L.DATE_UNIQ DESC '
     || 'WITH UR '
-    || ') ORDER BY TIME'
+    || ') ORDER BY DATE_UNIQ DESC'
     ;
   IF (LOGGER.GET_VALUE(LOGGER.LOG_INTERNALS) = LOGGER.VAL_TRUE) THEN
    INSERT INTO LOGDATA.LOGS (LEVEL_ID, LOGGER_ID, MESSAGE) VALUES
@@ -328,11 +331,11 @@ ALTER MODULE LOGADMIN ADD
    COMMIT;
   END IF;
 
+  -- Ddebug purposes.
+  --CALL SYSIBMADM.DBMS_OUTPUT.PUT_LINE('Statement: ' || STMT);
+
   SET LOGADMIN.PAGE_DATE = NEXT_DATE;
   PREPARE RS FROM STMT;
-
-  -- Shows the max date
-  CALL DBMS_OUTPUT.PUT_LINE(NEXT_DATE);
 
   OPEN C;
  END P_NEXT_LOGS @
