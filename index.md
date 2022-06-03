@@ -152,23 +152,9 @@ the messages and configure the utility:
 
 ### 3. Changing the verbosity ###
 
-Obtain the logger id:
+The easiest way to change the logger configuration is by calling the following stores procedure.
 
-    db2 "CALL LOGGER.GET_LOGGER('Your.Hierarchy', ?)"
-    
-As part of the output, it will be something like"
-
-    Value of output parameters
-    --------------------------
-    Parameter Name  : LOG_ID
-    Parameter Value : 5
-    
-In this example, the assigned id (LOG_ID) for the logger hierarchy 'Your.Hierarchy' is 5.
-With this number, you can modify the level of that logger:
-
-    UPDATE LOGDATA.CONF_LOGGERS
-      SET LEVEL_ID = 2
-      WHERE LOGGER_ID = 5;
+    db2 "CALL logadmin.register_logger('Your.Hierarchy', 5)"
 
 Depending of the logger levels on the code, and the confiration, you can see more messages
 or less messages in the logs.
