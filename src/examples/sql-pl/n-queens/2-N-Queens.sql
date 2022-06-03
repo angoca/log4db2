@@ -128,7 +128,6 @@ CREATE OR REPLACE PROCEDURE SOLVE_N_QUEENS(
  END P_SOLVE_N_QUEENS
 @
 
-
 /**
  * Main procedure to solve the n-queen algoritm.
  * 
