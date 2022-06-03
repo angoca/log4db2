@@ -356,7 +356,7 @@ ALTER MODULE LOGADMIN ADD
  * POS
  *   If the given name is valid, and if the logger does not exist, a new logger
  *   is created in the CONF_LOGGERS table; if the logger exist, its ID is
-*    returned. Finally, the given level is associated with the logger.
+ *   returned. Finally, the given level is associated with the logger.
  */
 ALTER MODULE LOGADMIN ADD
   PROCEDURE REGISTER_LOGGER (
@@ -378,6 +378,51 @@ ALTER MODULE LOGADMIN ADD
     SET LEVEL_ID = LEVEL
     WHERE LOGGER_ID = LOGGER;
 END P_REGISTER_LOGGER @
+
+/**
+ * Register a logger with a given level name.
+ *
+ * IN LOGGER_NAME
+ *   Name of the logger. This string has to be separated by dots to
+ *   differentiate the levels. e.g.: foo.bar.toto, where foo is the first level,
+ *   bar is the second and toto is the last one.
+ *   The name could have a maximum of 256 characters, representing just one
+ *   level, or several levels with short names.
+ * IN LEVEL_NAME
+ *   Name of de log level to be assigned.
+ * PRE
+ *   No preconditions.
+ * POS
+ *   If the given name is valid, and if the logger does not exist, a new logger
+ *   is created in the CONF_LOGGERS table; if the logger exist, its ID is
+ *   returned. Finally, the given level is associated with the logger.
+ */
+ALTER MODULE LOGADMIN ADD
+  PROCEDURE REGISTER_LOGGER_NAME (
+  IN LOGGER_NAME ANCHOR LOGGER.COMPLETE_LOGGER_NAME,
+  IN LEVEL_NAME ANCHOR LOGDATA.LEVELS.NAME
+  )
+  LANGUAGE SQL
+  SPECIFIC P_REGISTER_LOGGER_NAME
+  DYNAMIC RESULT SETS 0
+  MODIFIES SQL DATA
+  NOT DETERMINISTIC
+  NO EXTERNAL ACTION
+  PARAMETER CCSID UNICODE
+ P_REGISTER_LOGGER_NAME: BEGIN
+  DECLARE LOGGER ANCHOR LOGDATA.CONF_LOGGERS.LOGGER_ID;
+  DECLARE LVL_ID ANCHOR LOGDATA.LEVELS.LEVEL_ID;
+
+  CALL LOGGER.GET_LOGGER(LOGGER_NAME, LOGGER);
+  SET LVL_ID = (SELECT LEVEL_ID FROM LOGDATA.LEVELS WHERE NAME = LEVEL_NAME);
+  IF (LVL_ID IS NULL) THEN
+   SIGNAL SQLSTATE VALUE 'LG0L6'
+    SET MESSAGE_TEXT = 'The given logger name has not been found' ;
+  END IF;
+  UPDATE LOGDATA.CONF_LOGGERS
+    SET LEVEL_ID = LVL_ID
+    WHERE LOGGER_ID = LOGGER;
+END P_REGISTER_LOGGER_NAME @
 
 /**
  * Delete all loggers from CONF_LOGGERS and CONF_LOGGERS_EFFECTIVE, and resets
