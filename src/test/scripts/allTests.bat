@@ -70,7 +70,7 @@ if %ERRORLEVEL% NEQ 0 (
  )
  db2 -tf !LOG4DB2_SRC_MAIN_CODE_PATH!\96-CleanTriggers.sql +O
  call !LOG4DB2_SRC_TEST_SCRIPT_PATH!\test.bat !LOG4DB2_SRC_TEST_CODE_PATH!\!TEST!.sql
- db2 -tf !LOG4DB2_SRC_MAIN_CODE_PATH!\07-Trigger.sql +O
+ db2 -tf !LOG4DB2_SRC_MAIN_CODE_PATH!\40-Trigger.sql +O
  call:executeTest LOG4DB2_GET_LOGGER
  call:executeTest LOG4DB2_GET_LOGGER_NAME
  call:executeTest LOG4DB2_HIERARCHY

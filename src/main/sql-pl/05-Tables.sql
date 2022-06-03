@@ -30,7 +30,6 @@ SET CURRENT SCHEMA LOGDATA;
 /**
  * Defines the DDL of many objects:
  * - Tables
- * - Sequences
  * - Referential integrity
  * And also some DML for the basic content for the utility to run.
  *
@@ -254,59 +253,6 @@ COMMENT ON CONSTRAINT REFERENCES.LOG_REF_FK_CONF_LOGGERS IS
 COMMENT ON CONSTRAINT REFERENCES.LOG_REF_FK_CONF_APPEND IS
   'Relationship with ConfAppenders';
 
---#SET TERMINATOR @
--- Table for the pure SQL Tables appender.
--- TODO make tests in order to check in a auto generated column for an id
--- does not impact the performance, and provides a better way to sort messages.
--- This ID column could be hidden to the user. The benefit is that the logs
--- could be accessed via an index, but it impacts the writes, because this
--- structure has to be maintained.
-BEGIN
-  DECLARE STMT VARCHAR(512);
-
-  SET STMT = 'CREATE TABLE LOGS ('
-    || 'DATE_UNIQ CHAR(13) FOR BIT DATA NOT NULL IMPLICITLY HIDDEN, '
-    || 'TIMESTAMP TIMESTAMP DEFAULT CURRENT TIMESTAMP, '
-    || 'LEVEL_ID SMALLINT, '
-    || 'LOGGER_ID SMALLINT, '
-    || 'MESSAGE VARCHAR(512) NOT NULL '
-    || ') IN LOG_DATA_SPACE '
-    || 'PARTITION BY RANGE (TIMESTAMP)( '
-    || 'STARTING ''' || (CURRENT DATE - 1 DAY)
-    || ''' ENDING ''' || (CURRENT DATE) || ''' EXCLUSIVE EVERY 1 DAY)';
-  -- Debug
-  -- CALL DBMS_OUTPUT.PUT_LINE(STMT);
-  EXECUTE IMMEDIATE STMT;
-END@
-
---#SET TERMINATOR ;
-
-CREATE INDEX IDX_LOGS ON LOGS (TIMESTAMP);
-
-ALTER TABLE LOGS
-  PCTFREE 0
-  APPEND ON
-  VOLATILE CARDINALITY;
-
--- PERF: Not Logged Initially could improve the performance, but it does not
--- work for HADR or other facilities based on transaction logs.
--- ALTER TABLE LOGS
---   ACTIVATE NOT LOGGED INITIALLY;
-
-COMMENT ON TABLE LOGS IS 'Table where the logs are written';
-
-COMMENT ON LOGS (
-  DATE_UNIQ IS 'Unique date',
-  TIMESTAMP IS 'Date where the event was reported. Could be repeated',
-  LEVEL_ID IS 'Log level',
-  LOGGER_ID IS 'Logger that generated this message',
-  MESSAGE IS 'Message logged'
-  );
-
-CREATE OR REPLACE PUBLIC ALIAS LOGS FOR TABLE LOGS;
-
-COMMENT ON PUBLIC ALIAS LOGS IS 'log4db2 logs';
-
 -- Global configuration.
 -- autonomousLogging: Write in LOGS table with an autonomous procedure.
 -- defaultRootLevelId: Default ROOT logger when it is not defined (not cached)
@@ -362,5 +308,4 @@ RUNSTATS ON TABLE LOGDATA.APPENDERS ON ALL COLUMNS AND INDEXES ALL;
 RUNSTATS ON TABLE LOGDATA.CONF_APPENDERS ON ALL COLUMNS AND INDEXES ALL;
   -- <<< db2diag
 RUNSTATS ON TABLE LOGDATA.REFERENCES ON ALL COLUMNS AND INDEXES ALL;
-RUNSTATS ON TABLE LOGDATA.LOGS ON ALL COLUMNS AND INDEXES ALL;
 

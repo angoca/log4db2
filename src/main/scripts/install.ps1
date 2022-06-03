@@ -44,38 +44,38 @@ function installScript($script) {
  }
 }
 
-# Function that install the utility for version 10.1.
-# DB2 v10.1.
+# Function that install the utility for Db2 10.1 or higher.
 function v10.1($p1) {
- echo "Installing utility for v10.1"
+ echo "Installing utility for Db2 v10.1 or higher..."
  if ( ${Script:adminInstall} ) {
   if ( ${Script:continue} ) { installScript ${LOG4DB2_SRC_MAIN_CODE_PATH}\00-AdminObjects.sql }
  }
- if ( ${Script:continue} ) { installScript ${LOG4DB2_SRC_MAIN_CODE_PATH}\01-Tables.sql }
- if ( ${Script:continue} ) { installScript ${LOG4DB2_SRC_MAIN_CODE_PATH}\02-UtilityHeader.sql }
- if ( ${Script:continue} ) { installScript ${LOG4DB2_SRC_MAIN_CODE_PATH}\03-UtilityBody.sql }
- if ( ${Script:continue} ) { installScript ${LOG4DB2_SRC_MAIN_CODE_PATH}\04-Appenders.sql }
- if ( ${Script:continue} ) { installScript ${LOG4DB2_SRC_MAIN_CODE_PATH}\05-Log.sql }
- if ( ${Script:continue} ) { installScript ${LOG4DB2_SRC_MAIN_CODE_PATH}\06-Get_Logger.sql }
- if ( ${Script:continue} ) { installScript ${LOG4DB2_SRC_MAIN_CODE_PATH}\07-Trigger.sql }
-
- if ( ${Script:continue} ) { installScript ${LOG4DB2_SRC_MAIN_CODE_PATH}\08-AdminHeader.sql }
- if ( ${Script:continue} ) { installScript ${LOG4DB2_SRC_MAIN_CODE_PATH}\09-AdminBody.sql }
+ if ( ${Script:continue} ) { installScript ${LOG4DB2_SRC_MAIN_CODE_PATH}\05-Tables.sql }
+ if ( ${Script:continue} ) { installScript ${LOG4DB2_SRC_MAIN_CODE_PATH}\10-LogsTable.sql }
+ if ( ${Script:continue} ) { installScript ${LOG4DB2_SRC_MAIN_CODE_PATH}\15-UtilityHeader.sql }
+ if ( ${Script:continue} ) { installScript ${LOG4DB2_SRC_MAIN_CODE_PATH}\20-UtilityBody.sql }
+ if ( ${Script:continue} ) { installScript ${LOG4DB2_SRC_MAIN_CODE_PATH}\25-Appenders.sql }
+ if ( ${Script:continue} ) { installScript ${LOG4DB2_SRC_MAIN_CODE_PATH}\30-Log.sql }
+ if ( ${Script:continue} ) { installScript ${LOG4DB2_SRC_MAIN_CODE_PATH}\35-Get_Logger.sql }
+ if ( ${Script:continue} ) { installScript ${LOG4DB2_SRC_MAIN_CODE_PATH}\40-Trigger.sql }
 
  cd ${LOG4DB2_SRC_MAIN_CODE_PATH}
  cd ..
  cd xml
- if ( ${Script:continue} ) { installScript 10-AppendersXML.sql }
+ if ( ${Script:continue} ) { installScript 45-AppendersXML.sql }
  cd ..
  cd scripts 2>&1 | Out-Null
+
+ if ( ${Script:continue} ) { installScript ${LOG4DB2_SRC_MAIN_CODE_PATH}\50-AdminHeader.sql }
+ if ( ${Script:continue} ) { installScript ${LOG4DB2_SRC_MAIN_CODE_PATH}\55-AdminBody.sql }
 
  # Temporal capabilities for tables.
  if ( ( ${Script:temporalTable} ) -and ( ${Script:continue} ) ) {
   echo "Create table for Time Travel"
-  installScript ${LOG4DB2_SRC_MAIN_CODE_PATH}\11-TablesTimeTravel.sql
+  installScript ${LOG4DB2_SRC_MAIN_CODE_PATH}\60-TablesTimeTravel.sql
  }
 
- if ( ${Script:continue} ) { installScript ${LOG4DB2_SRC_MAIN_CODE_PATH}\12-Version.sql }
+ if ( ${Script:continue} ) { installScript ${LOG4DB2_SRC_MAIN_CODE_PATH}\65-Version.sql }
 }
 
 # This function checks all parameters and assign them to global variables.
@@ -103,7 +103,6 @@ function init($p1, $p2, $p3) {
  checkParam ${p1} ${p2} ${p3}
 
  # Checks in which DB2 version the utility will be installed.
- # DB2 v10.1 is the default version.
  v10.1
 
  echo "Please visit the wiki to learn how to use and configure this utility"

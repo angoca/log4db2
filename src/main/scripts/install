@@ -42,6 +42,7 @@ ADMIN_INSTALL=true
 TEMPORAL_TABLE=false
 RETURN_CODE=false
 RET_FUNCTION=0
+PARTITIONED_TABLE=false
 
 # Installs a given script.
 # It uses the continue global variable to stop the execution if an error occurs.
@@ -63,35 +64,39 @@ function installScript {
  fi
 }
 
-# Function that install the utility for version 10.1.
-# DB2 v10.1.
+# Function that install the utility for Db2 10.1 or higher.
 function v10_1 {
  echo "Installing utility for Db2 v10.1 or higher..."
  cd "${LOG4DB2_SRC_MAIN_CODE_PATH}"
  if [ "${ADMIN_INSTALL}" = true ]; then
   [ "${CONTINUE}" = true ] && installScript 00-AdminObjects.sql
  fi
- [ "${CONTINUE}" = true ] && installScript 01-Tables.sql
- [ "${CONTINUE}" = true ] && installScript 02-UtilityHeader.sql
- [ "${CONTINUE}" = true ] && installScript 03-UtilityBody.sql
- [ "${CONTINUE}" = true ] && installScript 04-Appenders.sql
- [ "${CONTINUE}" = true ] && installScript 05-Log.sql
- [ "${CONTINUE}" = true ] && installScript 06-Get_Logger.sql
- [ "${CONTINUE}" = true ] && installScript 07-Trigger.sql
-
- [ "${CONTINUE}" = true ] && installScript 08-AdminHeader.sql
- [ "${CONTINUE}" = true ] && installScript 09-AdminBody.sql
+ [ "${CONTINUE}" = true ] && installScript 05-Tables.sql
+ if [ "${PARTITIONED_TABLE}" = true ]; then
+  [ "${CONTINUE}" = true ] && installScript 10-LogsTablePartitioned.sql
+ else
+  [ "${CONTINUE}" = true ] && installScript 10-LogsTable.sql
+ fi
+ [ "${CONTINUE}" = true ] && installScript 15-UtilityHeader.sql
+ [ "${CONTINUE}" = true ] && installScript 20-UtilityBody.sql
+ [ "${CONTINUE}" = true ] && installScript 25-Appenders.sql
+ [ "${CONTINUE}" = true ] && installScript 30-Log.sql
+ [ "${CONTINUE}" = true ] && installScript 35-Get_Logger.sql
+ [ "${CONTINUE}" = true ] && installScript 40-Trigger.sql
 
  cd ../xml
- [ "${CONTINUE}" = true ] && installScript 10-AppendersXML.sql
+ [ "${CONTINUE}" = true ] && installScript 45-AppendersXML.sql
  cd ../sql-pl
+
+ [ "${CONTINUE}" = true ] && installScript 50-AdminHeader.sql
+ [ "${CONTINUE}" = true ] && installScript 55-AdminBody.sql
 
  # Temporal capabilities for tables.
  if [ "${TEMPORAL_TABLE}" = true ] && [ "${CONTINUE}" = true ]; then
-  installScript 11-TablesTimeTravel.sql
+  installScript 60-TablesTimeTravel.sql
  fi
 
- [ "${CONTINUE}" = true ] && installScript 12-Version.sql
+ [ "${CONTINUE}" = true ] && installScript 65-Version.sql
 
  [ "${CONTINUE}" = true ] && RET=0 || RET=1
  return ${RET}
@@ -111,6 +116,9 @@ function checkParam {
  fi
  if [ "${PARAM1}" = "-r" ] || [ "${PARAM2}" = "-r" ] || [ "${PARAM3}" = "-r" ] || [ "${PARAM4}" = "-r" ]; then
   RETURN_CODE=true
+ fi
+ if [ "${PARAM1}" = "-p" ] || [ "${PARAM2}" = "-p" ] || [ "${PARAM3}" = "-p" ] || [ "${PARAM4}" = "-p" ]; then
+  PARTITIONED_TABLE=true
  fi
 }
 
@@ -141,6 +149,12 @@ function init {
    echo "To report an issue or provide feedback, please visit:"
    echo "https://github.com/angoca/log4db2/issues"
    echo
+   if [ "${PARTITIONED_TABLE}" = true ]; then
+    echo "Remember to add a table partition to the LOGS table before using this utility."
+    echo "You should run a similar command to the next one:"
+    echo "    ALTER TABLE LOGS ADD PARTITION STARTING '$(date +%D)' ENDING '$(date +%D)' EXCLUSIVE"
+    echo
+   fi
    echo "log4db2 was successfully installed."
    db2 -x "values 'Database: ' || current server"
    db2 -x "values 'Version: ' || logger.version"

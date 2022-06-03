@@ -34,32 +34,31 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 PROMPT 00-AdminObjects.sql
 @@ sql-pl/00-AdminObjects.sql
-PROMPT 01-Tables.sql
-@@ sql-pl/01-Tables.sql
-PROMPT 02-UtilityHeader.sql
-@@ sql-pl/02-UtilityHeader.sql
-PROMPT 03-UtilityBody.sql
+PROMPT 05-Tables.sql
+@@ sql-pl/05-Tables.sql
+PROMPT 10-LogsTable.sql
+@@ sql-pl/10-LogsTable.sql
+PROMPT 15-UtilityHeader.sql
+@@ sql-pl/15-UtilityHeader.sql
+PROMPT 20-UtilityBody.sql
 set sqlterminator @
-@@ sql-pl/03-UtilityBody.sql
-PROMPT 04-Appenders.sql
-@@ sql-pl/04-Appenders.sql
-PROMPT 05-Log.sql
-@@ sql-pl/05-Log.sql
-PROMPT 06-Get_Logger.sql
-@@ sql-pl/06-Get_Logger.sql
-PROMPT 07-Trigger.sql
-@@ sql-pl/07-Trigger.sql
+@@ sql-pl/20-UtilityBody.sql
+PROMPT 25-Appenders.sql
+@@ sql-pl/25-Appenders.sql
+PROMPT 30-Log.sql
+@@ sql-pl/30-Log.sql
+PROMPT 35-Get_Logger.sql
+@@ sql-pl/35-Get_Logger.sql
+PROMPT 40-Trigger.sql
+@@ sql-pl/40-Trigger.sql
 
-PROMPT 08-AdminHeader.sql
+PROMPT 50-AdminHeader.sql
 set sqlterminator ;
-@@ sql-pl/08-AdminHeader.sql
-PROMPT 09-AdminBody.sql
+@@ sql-pl/50-AdminHeader.sql
+PROMPT 55-AdminBody.sql
 set sqlterminator @
-@@ sql-pl/09-AdminBody.sql
+@@ sql-pl/55-AdminBody.sql
 
-PROMPT 10-AppendersXML.sql
-@@ sql-pl/10-AppendersXML.sql
-
-PROMPT 12-Version.sql
-@@ sql-pl/12-Version.sql
+PROMPT 65-Version.sql
+@@ sql-pl/65-Version.sql
 

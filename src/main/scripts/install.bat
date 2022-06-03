@@ -59,38 +59,38 @@ goto:eof
  set script=
 goto:eof
 
-:: Function that installs the utility for version 10.1.
-:: DB2 v10.1
+:: Function that installs the utility for Db2 10.1 or higher.
 :v10.1
- echo Installing utility for v10.1
+ echo Installing utility for Db2 v10.1 or higher...
  if %adminInstall% EQU 1 (
   if %continue% EQU 1 call:installScript %LOG4DB2_SRC_MAIN_CODE_PATH%\00-AdminObjects.sql
  )
- if %continue% EQU 1 call:installScript %LOG4DB2_SRC_MAIN_CODE_PATH%\01-Tables.sql
- if %continue% EQU 1 call:installScript %LOG4DB2_SRC_MAIN_CODE_PATH%\02-UtilityHeader.sql
- if %continue% EQU 1 call:installScript %LOG4DB2_SRC_MAIN_CODE_PATH%\03-UtilityBody.sql
- if %continue% EQU 1 call:installScript %LOG4DB2_SRC_MAIN_CODE_PATH%\04-Appenders.sql
- if %continue% EQU 1 call:installScript %LOG4DB2_SRC_MAIN_CODE_PATH%\05-Log.sql
- if %continue% EQU 1 call:installScript %LOG4DB2_SRC_MAIN_CODE_PATH%\06-Get_Logger.sql
- if %continue% EQU 1 call:installScript %LOG4DB2_SRC_MAIN_CODE_PATH%\07-Trigger.sql
-
- if %continue% EQU 1 call:installScript %LOG4DB2_SRC_MAIN_CODE_PATH%\08-AdminHeader.sql
- if %continue% EQU 1 call:installScript %LOG4DB2_SRC_MAIN_CODE_PATH%\09-AdminBody.sql
+ if %continue% EQU 1 call:installScript %LOG4DB2_SRC_MAIN_CODE_PATH%\05-Tables.sql
+ if %continue% EQU 1 call:installScript %LOG4DB2_SRC_MAIN_CODE_PATH%\10-LogsTable.sql
+ if %continue% EQU 1 call:installScript %LOG4DB2_SRC_MAIN_CODE_PATH%\15-UtilityHeader.sql
+ if %continue% EQU 1 call:installScript %LOG4DB2_SRC_MAIN_CODE_PATH%\20-UtilityBody.sql
+ if %continue% EQU 1 call:installScript %LOG4DB2_SRC_MAIN_CODE_PATH%\25-Appenders.sql
+ if %continue% EQU 1 call:installScript %LOG4DB2_SRC_MAIN_CODE_PATH%\30-Log.sql
+ if %continue% EQU 1 call:installScript %LOG4DB2_SRC_MAIN_CODE_PATH%\35-Get_Logger.sql
+ if %continue% EQU 1 call:installScript %LOG4DB2_SRC_MAIN_CODE_PATH%\40-Trigger.sql
 
  cd %LOG4DB2_SRC_MAIN_CODE_PATH%
  cd ..
  cd xml
- if %continue% EQU 1 call:installScript 10-AppendersXML.sql
+ if %continue% EQU 1 call:installScript 45-AppendersXML.sql
  cd ..
  cd scripts 2> NUL
+
+ if %continue% EQU 1 call:installScript %LOG4DB2_SRC_MAIN_CODE_PATH%\50-AdminHeader.sql
+ if %continue% EQU 1 call:installScript %LOG4DB2_SRC_MAIN_CODE_PATH%\55-AdminBody.sql
 
  :: Temporal capabilities for tables.
  if %temporalTable% EQU 1 if %continue% EQU 1 (
   echo Create table for Time Travel
-  call:installScript %LOG4DB2_SRC_MAIN_CODE_PATH%\11-TablesTimeTravel.sql
+  call:installScript %LOG4DB2_SRC_MAIN_CODE_PATH%\60-TablesTimeTravel.sql
  )
 
- if %continue% EQU 1 call:installScript %LOG4DB2_SRC_MAIN_CODE_PATH%\12-Version.sql
+ if %continue% EQU 1 call:installScript %LOG4DB2_SRC_MAIN_CODE_PATH%\65-Version.sql
 goto:eof
 
 :: This function checks all parameters and assign them to global variables.
@@ -134,7 +134,6 @@ goto:eof
  call:checkParam %1 %2 %3
 
  :: Checks in which DB2 version the utility will be installed.
- :: DB2 v10.1 is the default version.
  call:v10.1
 
  echo Please visit the wiki to learn how to use and configure this utility
