@@ -29,7 +29,7 @@ SET CURRENT SCHEMA LOGGER_1RC @
 
 /**
  * Contains the complete implementation of the GET_LOGGER procedure. This is one
- * of the most important and longest routines in the utility; for this reason it
+ * of the most important and largest routines in the utility; for this reason it
  * is in a dedicated file.
  *
  * Version: 2014-02-14 1-RC
@@ -105,14 +105,20 @@ ALTER MODULE LOGGER ADD
    SET NAME ='';
   END IF;
 
+  -- Validate the name is not root.
+  IF (UPPER(NAME) = 'ROOT') THEN
+   SET LOG_ID=0;
+  END IF;
+
   -- Checks the value in the cache if active.
   BEGIN
    DECLARE CONTINUE HANDLER FOR ARRAY_ERROR
      SET LOG_ID = NULL;
-   IF (CACHE = TRUE) THEN
+   IF (CACHE = TRUE AND LOG_ID IS NULL) THEN
     SET LOG_ID = LOGGERS_ID_CACHE[NAME];
    END IF;
   END;
+
   IF (LOG_ID IS NULL) THEN
    BEGIN
     -- Declare variables.
