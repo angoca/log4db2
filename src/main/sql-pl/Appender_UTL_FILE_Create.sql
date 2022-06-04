@@ -28,11 +28,11 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 SET CURRENT SCHEMA LOGGER_1RC @
 
 /**
- * Implementation of the included appenders that do not necessarily work on
- * Community/Express-C edition. Here you can find how log4db2 interacts with
- * different components to log messages.
+ * Implementation of the file appender. This appender writes the messages into
+ * a file. The file is specified via an XML configuration file. This appender
+ * could not work on Community/Express-C edition.
  *
- * Version: 2014-04-02 1-RC
+ * Version: 2022-06-03 1-RC
  * Author: Andres Gomez Casanova (AngocA)
  * Made in COLOMBIA.
  */
@@ -112,5 +112,5 @@ ALTER MODULE LOGGER PUBLISH
   CALL UTL_FILE.FFLUSH(UTL_FILE_HANDLER);
  END P_LOG_UTL_FILE @
 
-INSERT INTO LOGDATA.APPENDERS (APPENDER_ID, NAME) VALUES (3, 'UTL_FILE') @
+INSERT INTO LOGDATA.APPENDERS (APPENDER_ID, NAME) VALUES (2, 'UTL_FILE') @
 
