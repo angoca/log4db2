@@ -62,7 +62,7 @@ BEGIN
  SET FIRST_NAMES[7] = 'Angelica';
  SET FIRST_NAMES[8] = 'Oscar';
  SET FIRST_NAMES[9] = 'Liliana';
- SET FIRST_NAMES[10] = 'Eugenia';
+ SET FIRST_NAMES[10] = 'Nicolas';
  SET LAST_NAMES[1] = 'Gomez';
  SET LAST_NAMES[2] = 'Casanova';
  SET LAST_NAMES[3] = 'Alvarez';
