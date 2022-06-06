@@ -7,7 +7,7 @@ possible the environment where you execute this utility:
  * DB2 (edition, version, fixpack)
  * Utility (version)
 
-And explain us what you did, what you git, and what you did not get.
+And explain us what you did, what you get, and what you did not get.
 
 Do not worry about labels or milestones, once we will see your issue, we will
 assign the corresponding values.
