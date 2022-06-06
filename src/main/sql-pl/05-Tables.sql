@@ -259,7 +259,7 @@ CREATE TABLE LICENSE (
   LINE VARCHAR(80)
   );
 
-COMMENT ON TABLE LICENSE IS 'License of db2unit';
+COMMENT ON TABLE LICENSE IS 'License of log4db2';
 
 COMMENT ON LICENSE (
   NUMBER IS 'Number of the line',
