@@ -253,6 +253,19 @@ COMMENT ON CONSTRAINT REFERENCES.LOG_REF_FK_CONF_LOGGERS IS
 COMMENT ON CONSTRAINT REFERENCES.LOG_REF_FK_CONF_APPEND IS
   'Relationship with ConfAppenders';
 
+-- Table for the license.
+CREATE TABLE LICENSE (
+  NUMBER SMALLINT,
+  LINE VARCHAR(80)
+  );
+
+COMMENT ON TABLE LICENSE IS 'License of db2unit';
+
+COMMENT ON LICENSE (
+  NUMBER IS 'Number of the line',
+  LINE IS 'Content of the license'
+  );
+
 -- Global configuration.
 -- autonomousLogging: Write in LOGS table with an autonomous procedure.
 -- defaultRootLevelId: Default ROOT logger when it is not defined (not cached)
@@ -298,6 +311,33 @@ INSERT INTO CONF_APPENDERS (NAME, APPENDER_ID, CONFIGURATION,
 INSERT INTO REFERENCES (LOGGER_ID, APPENDER_REF_ID)
   VALUES (0, 1);
   -- <<< db2diag
+
+INSERT INTO LICENSE (NUMBER, LINE) VALUES
+  (1, ' log4db2: A logging utility like log4j for IBM DB2 SQL PL.'),
+  (2, ' Copyright (c) 2012 - 202, Andres Gomez Casanova (@AngocA)'),
+  (3, ' All rights reserved.'),
+  (4, ' '),
+  (5, ' Redistribution and use in source and binary forms, with or without'),
+  (6, ' modification, are permitted provided that the following conditions are met:'),
+  (7, ' '),
+  (8, ' 1. Redistributions of source code must retain the above copyright notice, this'),
+  (9, '    list of conditions and the following disclaimer.'),
+  (10, ' 2. Redistributions in binary form must reproduce the above copyright notice,'),
+  (11, '    this list of conditions and the following disclaimer in the documentation'),
+  (12, '    and/or other materials provided with the distribution.'),
+  (13, ' '),
+  (14, 'THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND'),
+  (15, 'ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED'),
+  (16, 'WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE'),
+  (17, 'DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE'),
+  (18, 'FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL'),
+  (19, 'DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR'),
+  (20, 'SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER'),
+  (21, 'CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,'),
+  (22, 'OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE'),
+  (23, 'OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.'),
+  (24, ''),
+  (25, ' Andres Gomez Casanova <angocaATyahooDOTcom>');
 
 -- Runstats on all tables.
 RUNSTATS ON TABLE LOGDATA.CONFIGURATION ON ALL COLUMNS AND INDEXES ALL;

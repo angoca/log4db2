@@ -107,6 +107,11 @@ ALTER MODULE LOGADMIN PUBLISH
   PROCEDURE RESET_TABLES (
   );
 
+--Shows the license of this utility.
+ALTER MODULE LOGADMIN PUBLISH
+  PROCEDURE LICENSE (
+  );
+
 -- View to retrieve the logger name with level and logger name in characters.
 -- There could be repeated timestamps.
 CREATE OR REPLACE VIEW LOG_MESSAGES
