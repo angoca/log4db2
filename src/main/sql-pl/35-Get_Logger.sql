@@ -80,7 +80,6 @@ ALTER MODULE LOGGER ADD
                     -- for the same logger name. However, if the configuration
                     -- is deleted, a new logger_id should be retrieved.
   NO EXTERNAL ACTION
-  PARAMETER CCSID UNICODE
  P_GET_LOGGER: BEGIN
   DECLARE INTERNAL BOOLEAN DEFAULT FALSE; -- Internal logging.
   -- Handles the limit cascade call.
