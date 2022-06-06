@@ -37,42 +37,65 @@ SET CURRENT SCHEMA LOGDATA;
  * Made in COLOMBIA.
  */
 
--- Buffer pool for log data.
-CREATE BUFFERPOOL LOG_CONF_BP
-  PAGESIZE 4K;
+--#SET TERMINATOR @
+BEGIN
+ DECLARE STMT VARCHAR(512);
+ DECLARE OBJECT_EXIST CONDITION FOR SQLSTATE '42710';
+ DECLARE CONTINUE HANDLER FOR OBJECT_EXIST
+  BEGIN
+  END;
 
--- Buffer pool for log data.
-CREATE BUFFERPOOL LOG_BP
-  PAGESIZE 8K;
+ -- Buffer pool for log data.
+ SET STMT = 'CREATE BUFFERPOOL LOG_CONF_BP
+   PAGESIZE 4K';
+ EXECUTE IMMEDIATE STMT;
 
--- Tablespace for logger utility.
-CREATE TABLESPACE LOGGER_SPACE
-  PAGESIZE 4 K
-  BUFFERPOOL LOG_CONF_BP;
+ -- Buffer pool for log data.
+ SET STMT = 'CREATE BUFFERPOOL LOG_BP
+  PAGESIZE 8K';
+ EXECUTE IMMEDIATE STMT;
+ 
+ -- Tablespace for logger utility.
+ SET STMT = 'CREATE TABLESPACE LOGGER_SPACE
+   PAGESIZE 4 K
+   BUFFERPOOL LOG_CONF_BP';
+ EXECUTE IMMEDIATE STMT;
+ 
+ SET STMT = 'COMMENT ON TABLESPACE LOGGER_SPACE IS
+   ''All configuration tables for the logger utility''';
+ EXECUTE IMMEDIATE STMT;
+ 
+ -- Tablespace for logs (data).
+ -- PERF: Try to change the configuration to improve the performance:
+ -- LARGE tablespace (more rows per page)
+ -- EXTENT SIZE (bigger=less preallocation)
+ -- PREFETCHSIZE (faster analyses, less sync IO)
+ SET STMT = 'CREATE TABLESPACE LOG_DATA_SPACE
+   PAGESIZE 8 K
+   EXTENTSIZE 64
+   PREFETCHSIZE AUTOMATIC
+   BUFFERPOOL LOG_BP';
+ EXECUTE IMMEDIATE STMT;
+ 
+ SET STMT = 'COMMENT ON TABLESPACE LOGGER_SPACE IS
+   ''Logs in an independent tablespace''';
+ EXECUTE IMMEDIATE STMT;
+ 
+ -- Schema for logger tables.
+ SET STMT = 'CREATE SCHEMA LOGDATA';
+ EXECUTE IMMEDIATE STMT;
+ 
+ SET STMT = 'COMMENT ON SCHEMA LOGDATA IS
+   ''Schema for table of the log4db2 utility''';
+ EXECUTE IMMEDIATE STMT;
+ 
+ -- Schema for logger utility's objects.
+ SET STMT = 'CREATE SCHEMA LOGGER_1RC';
+ EXECUTE IMMEDIATE STMT;
+ 
+ SET STMT = 'COMMENT ON SCHEMA LOGGER_1RC IS
+   ''Schema for objects of the log4db2 utility''';
+ EXECUTE IMMEDIATE STMT;
 
-COMMENT ON TABLESPACE LOGGER_SPACE IS
-  'All configuration tables for the logger utility';
-
--- Tablespace for logs (data).
--- PERF: Try to change the configuration to improve the performance:
--- LARGE tablespace (more rows per page)
--- EXTENT SIZE (bigger=less preallocation)
--- PREFETCHSIZE (faster analyses, less sync IO)
-CREATE TABLESPACE LOG_DATA_SPACE
-  PAGESIZE 8 K
-  EXTENTSIZE 64
-  PREFETCHSIZE AUTOMATIC
-  BUFFERPOOL LOG_BP;
-
-COMMENT ON TABLESPACE LOGGER_SPACE IS 'Logs in an independent tablespace';
-
--- Schema for logger tables.
-CREATE SCHEMA LOGDATA;
-
-COMMENT ON SCHEMA LOGDATA IS 'Schema for table of the log4db2 utility';
-
--- Schema for logger utility's objects.
-CREATE SCHEMA LOGGER_1RC;
-
-COMMENT ON SCHEMA LOGGER_1RC IS 'Schema for objects of the log4db2 utility';
+END@
 
