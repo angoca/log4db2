@@ -58,7 +58,7 @@ This variable is initialized via the `init` script.
 Before installing the scripts in a database, a connection to it has to be
 established. If not, an error will be raised.
 
-**Linux/UNIX/MAC OS**:
+**Linux/UNIX/Mac OS**:
 
 Just follow these steps:
 
@@ -173,30 +173,34 @@ These are the files included in the released version:
  * `doc` directory -- Documentation directory (ErrorCode, ER diagram).
  * `sql-pl` directory -- Directory for all objects: DDL, DML, routines
      definition.
-   * `AdminBody.sql` -- Body of the administration tools.
-   * `AdminHeader.sql` -- Headers of the administration tools.
-   * `Appenders.sql` -- Definition of the appenders.
-   * `Appenders_No_ExpC.sql` -- Appenders for DB2 no Community/Express-C (LOG_UTL_FILE).
-    This is not included in the installation.
-   * `CleanObjects.sql` -- Remove all objects.
-   * `CleanTables.sql` -- Remove all tables.
-   * `CleanTriggers.sql` -- Remove all triggers.
-   * `Get_Logger.sql` -- GetLogger procedure definition for v10.1 or upper.
-   * `Get_Logger_v9_7.sql` -- GetLogger procedure definition for v9.7.
-   * `Log.sql` -- Log procedure definition with its macros.
-   * `Tables.sql` -- Tables, tablespaces, bufferpools, schemas, and DML.
-   * `TablesTimeTravel.sql` -- Modifications for Time Travel.
-   * `Tables_v9_7.sql` - Tables, tablespaces, bufferpools, schemas, and DML for
-       v9.7.
-   * `Trigger.sql` -- Trigger of the different tables.
-   * `UtilityBody.sql` -- Body of the core tools.
-   * `UtilityHeader.sql` -- Headers of the core tools.
-      
+   * `00-AdminObjects.sql` -- Create admin objects: BP, TS and schema.
+   * `05-Tables.sql` -- Tables, DML statement and runstats.
+   * `10-LogsTable.sql` -- Logs table - regular.
+   * `10-LogsTablePartitioned.sql` -- Logs table - partitioned.
+   * `15-UtilityHeader.sql` -- Headers of the core tools.
+   * `20-UtilityBody.sql` -- Body of the core tools.
+   * `25-Appenders.sql` -- Definition of the appenders.
+   * `30-Log.sql` -- Log procedure definition with its macros.
+   * `35-Get_Logger.sql` -- GetLogger procedure definition for v10.1 or upper.
+   * `40-Trigger.sql` -- Trigger of the different tables.
+   * `50-AdminHeader.sql` -- Headers of the administration tools.
+   * `55-AdminBody.sql` -- Body of the administration tools.
+   * `60-TablesTimeTravel.sql` -- Modifications for Time Travel.
+   * `65-Version.sql` -- Version of the utility.
+   * `96-CleanTriggers.sql` -- Remove all triggers.
+   * `97-CleanObjects.sql` -- Remove all objects.
+   * `98-CleanTables.sql` -- Remove all tables.
+   * `99-CleanAdmin.sql` -- Remove all tables.
+   * `Appender_CGTT_Create.sql` -- Appender for temporary tables.
+   * `Appender_CGTT_Drop.sql` -- Drops appender for temporary tables.
+   * `Appender_UTL_FILE_Create.sql` -- Appender to write in a file
+   * `Appender_UTL_FILE_Drop.sql` -- Drop appender that write in a file.
  * `xml` directory -- Directory for XML Schemas, XML files and related scripts
      for appenders configuration.
+   * `45-AppendersXML.sql` -- Registers the XML Schema.
+   * `Appender_UTL_FILE.csv` -- Description of the appender..
    * `Appender_UTL_FILE.xml` -- Configuration for LOG_UTL_FILE appender.
-   * `AppendersXML.sql` -- Registers the XML Schema.
-   * `conf_appender.xsd` -- XML Schema.
+   * `conf_appender_X.xsd` -- XML Schema for the X release.
 
 The * in the install-related files means that several files for each one of
 them can be found:
