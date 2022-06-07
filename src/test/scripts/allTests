@@ -42,6 +42,7 @@ executeTest() {
   . ${LOG4DB2_SRC_TEST_SCRIPT_PATH}/test ${SCHEMA} x
   export RET=$(tail -1 /tmp/db2unit.output | awk '/Return Status/ {print $4}')
  fi
+ echo "^^^^^Prev: ${SCHEMA}"
 }
 
 . ./init-dev
