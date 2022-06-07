@@ -266,51 +266,17 @@ COMMENT ON LICENSE (
   LINE IS 'Content of the license'
   );
 
--- Global configuration.
--- autonomousLogging: Write in LOGS table with an autonomous procedure.
--- defaultRootLevelId: Default ROOT logger when it is not defined (not cached)
--- internalCache: Use internal cache instead of SELECT for each time.
--- logInternals: Logs internal messages.
--- secondsToRefresh: Quantity of second before refresh the conf.
-INSERT INTO CONFIGURATION (KEY, VALUE)
-  VALUES ('autonomousLogging', 'true'),
-         ('defaultRootLevelId', '3'),
-         ('internalCache', 'true'),
-         ('logInternals', 'false'),
-         ('secondsToRefresh', '30');
-
 -- Levels of the logger utility.
 INSERT INTO LEVELS (LEVEL_ID, NAME)
-  VALUES (0, 'off'),
-         (1, 'fatal'),
-         (2, 'error'),
-         (3, 'warn'),
-         (4, 'info'),
-         (5, 'debug');
+  VALUES (0, 'off');
 
 -- Root logger.
 INSERT INTO CONF_LOGGERS (LOGGER_ID, NAME, PARENT_ID, LEVEL_ID)
-  VALUES (0, 'ROOT', NULL, 3);
+  VALUES (0, 'ROOT', NULL, 0);
 
 -- Root logger in effective, it cannot be deleted after.
 INSERT INTO CONF_LOGGERS_EFFECTIVE (LOGGER_ID, LEVEL_ID, HIERARCHY)
-  VALUES (0, 3, '0');
-
--- Basic appenders.
-INSERT INTO APPENDERS (APPENDER_ID, NAME)
-  VALUES (0, 'Null'),
-         (1, 'Tables');
-
--- Configuration for included appender.
-INSERT INTO CONF_APPENDERS (NAME, APPENDER_ID, CONFIGURATION,
-  PATTERN)
-  VALUES ('Null', 0, NULL, NULL),
-         ('Tables', 1, NULL, '[%p] %c -%T%m');
-
--- Configuration for appender - logger.
-INSERT INTO REFERENCES (LOGGER_ID, APPENDER_REF_ID)
-  VALUES (0, 1);
-  -- <<< db2diag
+  VALUES (0, 0, '0');
 
 INSERT INTO LICENSE (NUMBER, LINE) VALUES
   (1, ' log4db2: A logging utility like log4j for IBM DB2 SQL PL.'),
@@ -338,14 +304,4 @@ INSERT INTO LICENSE (NUMBER, LINE) VALUES
   (23, 'OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.'),
   (24, ''),
   (25, ' Andres Gomez Casanova <angocaATyahooDOTcom>');
-
--- Runstats on all tables.
-RUNSTATS ON TABLE LOGDATA.CONFIGURATION ON ALL COLUMNS AND INDEXES ALL;
-RUNSTATS ON TABLE LOGDATA.LEVELS ON ALL COLUMNS AND INDEXES ALL;
-RUNSTATS ON TABLE LOGDATA.CONF_LOGGERS ON ALL COLUMNS AND INDEXES ALL;
-RUNSTATS ON TABLE LOGDATA.CONF_LOGGERS_EFFECTIVE ON ALL COLUMNS AND INDEXES ALL;
-RUNSTATS ON TABLE LOGDATA.APPENDERS ON ALL COLUMNS AND INDEXES ALL;
-RUNSTATS ON TABLE LOGDATA.CONF_APPENDERS ON ALL COLUMNS AND INDEXES ALL;
-  -- <<< db2diag
-RUNSTATS ON TABLE LOGDATA.REFERENCES ON ALL COLUMNS AND INDEXES ALL;
 
