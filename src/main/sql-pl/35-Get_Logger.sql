@@ -89,15 +89,15 @@ ALTER MODULE LOGGER ADD
       || COALESCE(NAME, 'null'));
 
   -- Internal logging.
-  IF (GET_VALUE(LOG_INTERNALS) = VAL_TRUE) THEN
-   SET INTERNAL = TRUE;
-  END IF;
+  --IF (GET_VALUE(LOG_INTERNALS) = VAL_TRUE) THEN
+  -- SET INTERNAL = TRUE;
+  --END IF;
 
-  IF (INTERNAL = TRUE) THEN
-   INSERT INTO LOGDATA.LOGS (DATE_UNIQ, LEVEL_ID, LOGGER_ID, MESSAGE) VALUES
-     (GENERATE_UNIQUE(), 4, -1, 'Getting logger name for '
-     || COALESCE(NAME, 'null'));
-  END IF;
+  --IF (INTERNAL = TRUE) THEN
+  -- INSERT INTO LOGDATA.LOGS (DATE_UNIQ, LEVEL_ID, LOGGER_ID, MESSAGE) VALUES
+  --   (GENERATE_UNIQUE(), 4, -1, 'Getting logger name for '
+  --   || COALESCE(NAME, 'null'));
+  --END IF;
 
   -- Validate null-ability
   IF (NAME IS NULL) THEN
@@ -242,18 +242,18 @@ ALTER MODULE LOGGER ADD
      BEGIN
       SET LOGGERS_ID_CACHE[NAME] = LOG_ID;
       -- Internal logging.
-      IF (INTERNAL = TRUE) THEN
-       INSERT INTO LOGDATA.LOGS (DATE_UNIQ, LEVEL_ID, LOGGER_ID, MESSAGE) VALUES
-         (GENERATE_UNIQUE(), 4, -1, 'Logger not in cache ' || NAME || ' with ' || LOG_ID );
-      END IF;
+      --IF (INTERNAL = TRUE) THEN
+      -- INSERT INTO LOGDATA.LOGS (DATE_UNIQ, LEVEL_ID, LOGGER_ID, MESSAGE) VALUES
+      --   (GENERATE_UNIQUE(), 4, -1, 'Logger not in cache ' || NAME || ' with ' || LOG_ID );
+      --END IF;
      END;
     END IF;
    END;
   END IF;
   -- Internal logging.
-  IF (INTERNAL = TRUE) THEN
-   INSERT INTO LOGDATA.LOGS (DATE_UNIQ, LEVEL_ID, LOGGER_ID, MESSAGE) VALUES
-     (GENERATE_UNIQUE(), 4, -1, 'Logger ID for ' || NAME || ' is ' || COALESCE(LOG_ID, -1));
-  END IF;
+  --IF (INTERNAL = TRUE) THEN
+  -- INSERT INTO LOGDATA.LOGS (DATE_UNIQ, LEVEL_ID, LOGGER_ID, MESSAGE) VALUES
+  --   (GENERATE_UNIQUE(), 4, -1, 'Logger ID for ' || NAME || ' is ' || COALESCE(LOG_ID, -1));
+  --END IF;
  END P_GET_LOGGER @
 

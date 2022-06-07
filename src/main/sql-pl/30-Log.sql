@@ -258,9 +258,9 @@ ALTER MODULE LOGGER ADD
    END;
 
   -- Internal logging.
-  IF (GET_VALUE(LOG_INTERNALS) = VAL_TRUE) THEN
-   SET INTERNAL = TRUE;
-  END IF;
+  --IF (GET_VALUE(LOG_INTERNALS) = VAL_TRUE) THEN
+  -- SET INTERNAL = TRUE;
+  --END IF;
 
   -- The given logger is invalid
   IF (LOG_ID IS NULL OR LOG_ID < -1) THEN
@@ -292,10 +292,10 @@ ALTER MODULE LOGGER ADD
   -- Checks if the current level is at least equal to the provided level.
   IF (CURRENT_LEVEL_ID >= LEV_ID AND LEV_ID > 0) THEN
    -- Internal logging.
-   IF (INTERNAL = TRUE) THEN
-    INSERT INTO LOGDATA.LOGS (LEVEL_ID, LOGGER_ID, MESSAGE) VALUES
-      (4, -1, 'Logging enable for level ' || LEV_ID || ' logger ' || LOG_ID);
-   END IF;
+   --IF (INTERNAL = TRUE) THEN
+   -- INSERT INTO LOGDATA.LOGS (LEVEL_ID, LOGGER_ID, MESSAGE) VALUES
+   --   (4, -1, 'Logging enable for level ' || LEV_ID || ' logger ' || LOG_ID);
+   --END IF;
 
    -- Retrieves all the configurations for the appenders in references table.
    OPEN REFERENCES;
@@ -306,12 +306,12 @@ ALTER MODULE LOGGER ADD
    -- Iterates over the results.
    WHILE (AT_END = FALSE) DO
     SET ACTIVE = IS_LOGGER_ACTIVE(HIERARCHY, LOGGER_ID_FETCHED);
-   -- Internal logging.
-    IF (INTERNAL = TRUE) THEN
-     INSERT INTO LOGDATA.LOGS (LEVEL_ID, LOGGER_ID, MESSAGE) VALUES
-       (4, -1, 'Active logger ' || LOGGER_ID_FETCHED || ' value '
-       || BOOL_TO_CHAR(ACTIVE));
-    END IF;
+    -- Internal logging.
+    --IF (INTERNAL = TRUE) THEN
+    -- INSERT INTO LOGDATA.LOGS (LEVEL_ID, LOGGER_ID, MESSAGE) VALUES
+    --   (4, -1, 'Active logger ' || LOGGER_ID_FETCHED || ' value '
+    --   || BOOL_TO_CHAR(ACTIVE));
+    --END IF;
     -- Checks if the appender should receive this log.
     IF (ACTIVE = TRUE) THEN
      IF (LVL_REF IS NOT NULL AND LEV_ID > LVL_REF) THEN
@@ -320,10 +320,10 @@ ALTER MODULE LOGGER ADD
     END IF;
     IF (ACTIVE = TRUE) THEN
      -- Internal logging.
-     IF (INTERNAL = TRUE) THEN
-      INSERT INTO LOGDATA.LOGS (LEVEL_ID, LOGGER_ID, MESSAGE) VALUES
-        (4, -1, 'Processing pattern ' || PATTERN);
-     END IF;
+     --IF (INTERNAL = TRUE) THEN
+     -- INSERT INTO LOGDATA.LOGS (LEVEL_ID, LOGGER_ID, MESSAGE) VALUES
+     --   (4, -1, 'Processing pattern ' || PATTERN);
+     --END IF;
 
      -- Format the message according to the pattern.
      SET NEW_MESSAGE = PATTERN;
@@ -364,10 +364,10 @@ ALTER MODULE LOGGER ADD
      CASE APPENDER_ID
        WHEN 1 THEN -- Pure SQL PL, writes in table.
         -- Internal logging.
-        IF (INTERNAL = TRUE) THEN
-         INSERT INTO LOGDATA.LOGS (LEVEL_ID, LOGGER_ID, MESSAGE) VALUES
-           (4, -1, 'Logging in tables');
-        END IF;
+        --IF (INTERNAL = TRUE) THEN
+        -- INSERT INTO LOGDATA.LOGS (LEVEL_ID, LOGGER_ID, MESSAGE) VALUES
+        --   (4, -1, 'Logging in tables');
+        --END IF;
         IF (GET_VALUE(AUTONOMOUS_LOGGING) = VAL_TRUE) THEN
          CALL LOG_TABLES_AUTONOMOUS(LOG_ID, LEV_ID, NEW_MESSAGE);
         ELSE
@@ -398,30 +398,30 @@ ALTER MODULE LOGGER ADD
            END;
          SET CALL = 'CALL LOG_' || APPEND_NAME || '(?, ?, ?, ?)';
          -- Internal logging.
-         IF (INTERNAL = TRUE) THEN
-          INSERT INTO LOGDATA.LOGS (LEVEL_ID, LOGGER_ID, MESSAGE) VALUES
-            (4, -1, 'Appender call: ' || COALESCE(CALL,'NULL'));
-         END IF;
+         --IF (INTERNAL = TRUE) THEN
+         -- INSERT INTO LOGDATA.LOGS (LEVEL_ID, LOGGER_ID, MESSAGE) VALUES
+         --   (4, -1, 'Appender call: ' || COALESCE(CALL,'NULL'));
+         --END IF;
          PREPARE STMT FROM CALL;
          IF (CONT = TRUE) THEN
           EXECUTE STMT USING LOG_ID, LEV_ID, NEW_MESSAGE, CONFIGURATION;
          END IF;
         END DYNAMIC;
      END CASE;
-    ELSE
-       -- Internal logging.
-     IF (INTERNAL = TRUE) THEN
-      INSERT INTO LOGDATA.LOGS (LEVEL_ID, LOGGER_ID, MESSAGE) VALUES
-        (4, -1, 'Non active logger' );
-     END IF;
+    --ELSE
+     -- Internal logging.
+     --IF (INTERNAL = TRUE) THEN
+     -- INSERT INTO LOGDATA.LOGS (LEVEL_ID, LOGGER_ID, MESSAGE) VALUES
+     --   (4, -1, 'Non active logger' );
+     --END IF;
     END IF;
     FETCH REFERENCES INTO LOGGER_ID_FETCHED, CURRENT_APPENDER_NAME, APPENDER_ID,
       CONFIGURATION, PATTERN, LVL_REF, APPEND_NAME;
    END WHILE;
    CLOSE REFERENCES;
-  ELSEIF (LOG_ID = -1) THEN
+  -- Internal logging ELSEIF (LOG_ID = -1) THEN
    -- When the logger id is -1, this is for internal logging.
-   CALL LOG_TABLES(LOG_ID, LEV_ID, MESSAGE);
+   --CALL LOG_TABLES(LOG_ID, LEV_ID, MESSAGE);
   END IF;
  END P_LOG @
 
