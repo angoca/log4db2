@@ -1,4 +1,4 @@
-Copyright (c) 2012 - 2014, Andres Gomez Casanova (AngocA) <angocaATyahooDOTcom>.
+Copyright (c) 2012 - 2022, Andres Gomez Casanova (AngocA) <angocaATyahooDOTcom>.
 All rights reserved.
 
 FreeBSD Documentation License

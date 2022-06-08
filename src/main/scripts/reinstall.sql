@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2013 - 2014, Andres Gomez Casanova (AngocA)
+Copyright (c) 2013 - 2022, Andres Gomez Casanova (AngocA)
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
