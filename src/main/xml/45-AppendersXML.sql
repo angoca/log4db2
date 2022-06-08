@@ -31,7 +31,7 @@ SET CURRENT SCHEMA LOGGER_1 @
  * Implementation of the included appenders. Here you can find how log4db2
  * interacts with different components to log messages.
  *
- * Version: 2022-06-03 1-RC
+ * Version: 2022-06-03 v1
  * Author: Andres Gomez Casanova (AngocA)
  * Made in COLOMBIA.
  */
@@ -40,7 +40,7 @@ SET PATH = SYSPROC, LOGGER_1 @
 
 -- Configuration
 
-REGISTER XMLSCHEMA 'http://angoca.github.io/log4db2/conf_appender/1-RC' FROM 'conf_appender_1-RC.xsd'
+REGISTER XMLSCHEMA 'http://angoca.github.io/log4db2/conf_appender/v1' FROM 'conf_appender_v1.xsd'
   AS CONF_APPENDERS @
 
 COMPLETE XMLSCHEMA CONF_APPENDERS @

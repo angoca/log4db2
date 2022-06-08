@@ -28,7 +28,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 /**
  * DDL to activate the TimeTravel features in some tables.
  *
- * Version: 2022-06-03 1-RC
+ * Version: 2022-06-03 v1
  * Author: Andres Gomez Casanova (AngocA)
  * Made in COLOMBIA.
  */

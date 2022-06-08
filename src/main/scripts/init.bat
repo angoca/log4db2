@@ -25,7 +25,7 @@
 
 :: Initialize the environment values to run the scripts.
 ::
-:: Version: 2014-02-14 1-RC
+:: Version: 2014-02-14 v1
 :: Author: Andres Gomez Casanova (AngocA)
 :: Made in COLOMBIA.
 

@@ -36,7 +36,7 @@ SET CURRENT SCHEMA FAKELOGDATA;
  * - Referential integrity
  * And also some DML for the basic content for the utility to run.
  *
- * Version: 2022-06-03 1-RC
+ * Version: 2022-06-03 v1
  * Author: Andres Gomez Casanova (AngocA)
  * Made in COLOMBIA.
  */

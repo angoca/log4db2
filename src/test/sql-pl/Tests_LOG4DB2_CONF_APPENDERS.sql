@@ -28,7 +28,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 /**
  * Tests for the conf_appenders table.
  *
- * Version: 2022-06-07 1-RC
+ * Version: 2022-06-07 v1
  * Author: Andres Gomez Casanova (AngocA)
  * Made in COLOMBIA.
  */

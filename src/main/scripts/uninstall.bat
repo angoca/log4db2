@@ -25,7 +25,7 @@
 
 :: Uninstalls all the components of this utility.
 ::
-:: Version: 2014-02-14 1-RC
+:: Version: 2014-02-14 v1
 :: Author: Andres Gomez Casanova (AngocA)
 :: Made in COLOMBIA.
 

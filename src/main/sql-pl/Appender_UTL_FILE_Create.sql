@@ -32,7 +32,7 @@ SET CURRENT SCHEMA LOGGER_1 @
  * a file. The file is specified via an XML configuration file. This appender
  * could not work on Community/Express-C edition.
  *
- * Version: 2022-06-05 1-RC
+ * Version: 2022-06-05 v1
  * Author: Andres Gomez Casanova (AngocA)
  * Made in COLOMBIA.
  */

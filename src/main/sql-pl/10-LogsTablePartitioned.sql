@@ -32,7 +32,7 @@ SET CURRENT SCHEMA LOGDATA;
  * in this project. When using a partitioned table, it is necessary to create a
  * partition just after the installation in order to use the utility.
  *
- * Version: 2022-06-03 1-RC
+ * Version: 2022-06-03 v1
  * Author: Andres Gomez Casanova (AngocA)
  * Made in COLOMBIA.
  */

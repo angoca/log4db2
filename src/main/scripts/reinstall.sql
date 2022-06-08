@@ -25,7 +25,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 /**
  * Reinstall the utility. Calls the uninstall script and then the install one.
  *
- * Version: 2022-06-01 1-RC
+ * Version: 2022-06-01 v1
  * Author: Andres Gomez Casanova (AngocA)
  * Made in COLOMBIA.
  */

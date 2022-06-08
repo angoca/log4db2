@@ -28,7 +28,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 -- Runs the n-queens algorithm.
 --
 -- Author: Andres Gomez Casanova (AngocA)
--- Version: 2022-06-02 1-RC
+-- Version: 2022-06-02 v1
 -- Made in COLOMBIA.
 
 -- Activates the standard output for the current session.

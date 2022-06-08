@@ -27,7 +27,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 /**
  * Installs all scripts of the utility.
  *
- * Version: 2022-05-21 1-RC
+ * Version: 2022-05-21 v1
  * Author: Andres Gomez Casanova (AngocA)
  * Made in COLOMBIA.
  */

@@ -31,7 +31,7 @@ SET CURRENT SCHEMA LOGGER_1 @
  * Defines the triggers for the different tables. The creation order is
  * important to validate something before other thing.
  *
- * Version: 2022-06-03 1-RC
+ * Version: 2022-06-03 v1
  * Author: Andres Gomez Casanova (AngocA)
  * Made in COLOMBIA.
  */

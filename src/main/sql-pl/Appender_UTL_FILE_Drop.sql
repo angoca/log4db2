@@ -30,7 +30,7 @@ SET CURRENT SCHEMA LOGGER_1 @
 /**
  * Drops the appender implementation that writes the message to a file.
  *
- * Version: 2022-06-08 1-RC
+ * Version: 2022-06-08 v1
  * Author: Andres Gomez Casanova (AngocA)
  * Made in COLOMBIA.
  */

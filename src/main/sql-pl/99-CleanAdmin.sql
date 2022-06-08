@@ -30,7 +30,7 @@ SET CURRENT SCHEMA LOGDATA;
 /**
  * Drops all admin objects: schemas, tablespaces and bufferpools.
  *
- * Version: 2014-07-31 1-RC
+ * Version: 2014-07-31 v1
  * Author: Andres Gomez Casanova (AngocA)
  * Made in COLOMBIA.
  */

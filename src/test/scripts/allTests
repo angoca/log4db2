@@ -25,7 +25,7 @@
 # Execute all tests. When argument -np is specified, the tests are run without
 # pauses between them.
 #
-# Version: 2022-06-07 1-RC
+# Version: 2022-06-07 v1
 # Author: Andres Gomez Casanova (AngocA)
 # Made in COLOMBIA.
 

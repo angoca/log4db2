@@ -32,7 +32,7 @@ SET CURRENT SCHEMA LOGGER_1 @
  * of the most important and largest routines in the utility; for this reason it
  * is in a dedicated file.
  *
- * Version: 2022-06-06 1-RC
+ * Version: 2022-06-06 v1
  * Author: Andres Gomez Casanova (AngocA)
  * Made in COLOMBIA.
  */

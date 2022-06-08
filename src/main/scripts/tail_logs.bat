@@ -25,7 +25,7 @@
 
 :: Performs the equivalent of "tail -f" with the LOGS table.
 ::
-:: Version: 2014-10-22 1-RC
+:: Version: 2014-10-22 v1
 :: Author: Andres Gomez Casanova (AngocA)
 :: Made in COLOMBIA.
 

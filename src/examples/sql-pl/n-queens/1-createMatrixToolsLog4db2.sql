@@ -34,7 +34,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 --   SERVEROUTPUT ON.
 --
 -- Author: Andres Gomez Casanova (AngocA)
--- Version: 2022-06-03 1-RC
+-- Version: 2022-06-03 v1
 -- Made in COLOMBIA.
 
 -- A column of a matrix.

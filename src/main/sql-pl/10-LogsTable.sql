@@ -31,7 +31,7 @@ SET CURRENT SCHEMA LOGDATA;
  * Defines the DDL for the LOGS table which is the most important and used table
  * in this project.
  *
- * Version: 2022-06-03 1-RC
+ * Version: 2022-06-03 v1
  * Author: Andres Gomez Casanova (AngocA)
  * Made in COLOMBIA.
  */

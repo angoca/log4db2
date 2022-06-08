@@ -28,7 +28,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 -- Drops all matrix objects.
 --
 -- Author: Andres Gomez Casanova (AngocA)
--- Version: 2022-06-02 1-RC
+-- Version: 2022-06-02 v1
 -- Made in COLOMBIA.
 
 DROP PROCEDURE PRINT_INTEGER_MATRIX@

@@ -24,7 +24,7 @@
 
 # Install and/or execute a suite of tests.
 #
-# Version: 2022-06-01 1-RC
+# Version: 2022-06-01 v1
 # Author: Andres Gomez Casanova (AngocA)
 # Made in COLOMBIA.
 

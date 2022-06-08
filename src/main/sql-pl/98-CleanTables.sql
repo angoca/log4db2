@@ -30,7 +30,7 @@ SET CURRENT SCHEMA LOGDATA;
 /**
  * Drops all alias and tables.
  *
- * Version: 2022-06-07 1-RC
+ * Version: 2022-06-07 v1
  * Author: Andres Gomez Casanova (AngocA)
  * Made in COLOMBIA.
  */

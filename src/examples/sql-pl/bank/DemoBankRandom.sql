@@ -30,7 +30,7 @@ SET CURRENT SCHEMA DEMOBANK @
 /**
  * Random execution of the DemoBank.
  *
- * Version: 2022-06-01 1-RC
+ * Version: 2022-06-01 v1
  * Author: Andres Gomez Casanova (AngocA)
  * Made in COLOMBIA.
  */

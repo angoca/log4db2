@@ -18,9 +18,9 @@
  CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
  OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE
  USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. -->
-<log4db2 xmlns="http://angoca.github.io/log4db2/conf_appender/1-RC"
+<log4db2 xmlns="http://angoca.github.io/log4db2/conf_appender/v1"
  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
- xsi:schemaLocation="http://angoca.github.io/log4db2/conf_appender/1-RC http://angoca.github.io/log4db2/conf_appender_1-RC.xsd">
+ xsi:schemaLocation="http://angoca.github.io/log4db2/conf_appender/v1 http://angoca.github.io/log4db2/conf_appender_v1.xsd">
  <appender>
   <name>UTL_FILE</name>
   <configuration>

@@ -30,7 +30,7 @@ SET CURRENT SCHEMA LOGGER_1FAKE@
 /**
  * Drops the routines associated with the utility.
  *
- * Version: 2014-05-24 1-RC
+ * Version: 2014-05-24 v1
  * Author: Andres Gomez Casanova (AngocA)
  * Made in COLOMBIA.
  */

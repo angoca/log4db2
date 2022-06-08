@@ -33,7 +33,7 @@ SET CURRENT SCHEMA LOGGER_1;
  * mechanism that separates the configuration from the usage. A person who
  * writes in the logs is not the same person that configures the utility.
  *
- * Version: 2022-06-03 1-RC
+ * Version: 2022-06-03 v1
  * Author: Andres Gomez Casanova (AngocA)
  * Made in COLOMBIA.
  */

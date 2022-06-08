@@ -31,7 +31,7 @@ SET CURRENT SCHEMA LOGGER_1FAKE @
  * Fake implementation of log4db2 to disable it without affecting the depending
  * code.
  *
- * Version: 2014-05-24 1-RC
+ * Version: 2014-05-24 v1
  * Author: Andres Gomez Casanova (AngocA)
  * Made in COLOMBIA.
  */

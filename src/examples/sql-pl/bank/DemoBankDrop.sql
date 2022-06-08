@@ -30,7 +30,7 @@ SET CURRENT SCHEMA DEMOBANK @
 /**
  * Drops objects of the DemoBank.
  *
- * Version: 2014-04-21 1-RC
+ * Version: 2014-04-21 v1
  * Author: Andres Gomez Casanova (AngocA)
  * Made in COLOMBIA.
  */
