@@ -55,6 +55,7 @@ https://github.com/angoca/log4db2/blob/master/src/main/sql-pl/65-Version.sql
 * Commit these changes and publish.
 * Create a new usage video with the recent version. The steps to follow are the ones from main page or getting started wiki page.
 * Regenerate the documentation from ReadTheDocs.
+* Rename the XML file for the new version.
 
 Logos
 
