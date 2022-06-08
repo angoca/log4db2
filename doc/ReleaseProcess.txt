@@ -13,8 +13,8 @@ BEFORE
 
 * Run all tests to make sure there are not regressions.
 * Update the Maven plugins - mvn versions:display-plugin-updates.
-* Change the version constant in the code (12-Version.sql:VERSION):
-https://github.com/angoca/log4db2/blob/master/src/main/sql-pl/12-Version.sql
+* Change the version-date constant in the code (65-Version.sql:VERSION):
+https://github.com/angoca/log4db2/blob/master/src/main/sql-pl/65-Version.sql
 * Write the changes in the ChangeLog section of the wiki.
 * Update the release.yml file under .github.
 * Update the Prerequisites table from the Install from Sources section of the
@@ -49,8 +49,8 @@ AFTER
 
 * Change the schema name to the new version is all files.
 * Check that there are not references to the previous release.
-* Change the version constant in the code (12-Version.sql:VERSION):
-https://github.com/angoca/log4db2/blob/master/src/main/sql-pl/12-Version.sql
+* Change the version-date constant in the code (65-Version.sql:VERSION):
+https://github.com/angoca/log4db2/blob/master/src/main/sql-pl/65-Version.sql
 * Commit these changes and publish.
 * Create a new usage video with the recent version. The steps to follow are the ones from main page or getting started wiki page.
 * Regenerate the documentation from ReadTheDocs.
