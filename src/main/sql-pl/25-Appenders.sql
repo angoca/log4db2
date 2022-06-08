@@ -36,7 +36,7 @@ SET CURRENT SCHEMA LOGGER_1RC @
  * Made in COLOMBIA.
  */
 
-SET PATH = SYSPROC, LOGGER_1RC @
+SET PATH = SYSPROC, LOGGER_1RC, SYSIBMADM @
 
 /**
  * Writes the given message in the log table. This is a pure SQL implementation,
