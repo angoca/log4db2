@@ -150,25 +150,7 @@ CREATE OR REPLACE PROCEDURE TEAR_DOWN()
 
 CREATE OR REPLACE PROCEDURE ONE_TIME_TEAR_DOWN()
  BEGIN
-  DELETE FROM LOGDATA.REFERENCES;
-  DELETE FROM LOGDATA.CONF_APPENDERS;
-  DELETE FROM LOGDATA.APPENDERS;
-  INSERT INTO LOGDATA.APPENDERS (APPENDER_ID, NAME)
-    VALUES (0, 'Null'),
-           (1, 'Tables');
-  INSERT INTO LOGDATA.CONF_APPENDERS (REF_ID, NAME, APPENDER_ID, CONFIGURATION,
-    PATTERN)
-    VALUES (1, 'Tables', 1, NULL, '[%p] %c -%T%m');
-  -- Configuration for appender - logger.
-  INSERT INTO LOGDATA.REFERENCES (LOGGER_ID, APPENDER_REF_ID)
-    VALUES (0, 1);
-  DELETE FROM LOGDATA.CONFIGURATION;
-  INSERT INTO LOGDATA.CONFIGURATION (KEY, VALUE)
-    VALUES ('autonomousLogging', 'true'),
-           ('defaultRootLevelId', '3'),
-           ('internalCache', 'true'),
-           ('logInternals', 'false'),
-           ('secondsToRefresh', '30');
+  CALL LOGGER_1RC.LOGADMIN.RESET_TABLES();
  END @
 
 -- Tests

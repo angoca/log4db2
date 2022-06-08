@@ -102,18 +102,7 @@ CREATE OR REPLACE PROCEDURE TEAR_DOWN()
 
 CREATE OR REPLACE PROCEDURE ONE_TIME_TEAR_DOWN()
  BEGIN
-  DELETE FROM LOGDATA.CONF_LOGGERS
-    WHERE LOGGER_ID <> 0;
-  UPDATE LOGDATA.CONF_LOGGERS
-    SET LEVEL_ID = 3
-    WHERE LOGGER_ID = 0;
-  DELETE FROM LOGDATA.CONFIGURATION;
-  INSERT INTO LOGDATA.CONFIGURATION (KEY, VALUE)
-    VALUES ('autonomousLogging', 'true'),
-           ('defaultRootLevelId', '3'),
-           ('internalCache', 'true'),
-           ('logInternals', 'false'),
-           ('secondsToRefresh', '30');
+  CALL LOGGER_1RC.LOGADMIN.RESET_TABLES();
   CALL LOGGER.UNLOAD_CONF();
  END @
 

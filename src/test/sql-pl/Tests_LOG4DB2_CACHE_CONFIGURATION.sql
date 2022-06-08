@@ -60,13 +60,7 @@ CREATE OR REPLACE PROCEDURE TEAR_DOWN()
 
 CREATE OR REPLACE PROCEDURE ONE_TIME_TEAR_DOWN()
  P_ONE_TIME_TEAR_DOWN: BEGIN
-  DELETE FROM LOGDATA.CONFIGURATION;
-  INSERT INTO LOGDATA.CONFIGURATION (KEY, VALUE)
-    VALUES ('autonomousLogging', 'false'),
-           ('defaultRootLevelId', '3'),
-           ('internalCache', 'true'),
-           ('logInternals', 'false'),
-           ('secondsToRefresh', '30');
+  CALL LOGGER_1RC.LOGADMIN.RESET_TABLES();
   CALL LOGGER.ACTIVATE_CACHE();
   CALL LOGGER.REFRESH_CACHE();
  END P_ONE_TIME_TEAR_DOWN @
