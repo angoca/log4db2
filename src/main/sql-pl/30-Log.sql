@@ -228,7 +228,7 @@ ALTER MODULE LOGGER ADD
     ON C.APPENDER_ID = A.APPENDER_ID
     -- 5 active appenders is already too much.
     OPTIMIZE FOR 5 ROW
-    WITH UR; -- <<< db2diag
+    WITH UR;
   -- Ignore warning when the value has been truncate.
   DECLARE CONTINUE HANDLER FOR TRUNCATED_STRING
     BEGIN
@@ -280,7 +280,7 @@ ALTER MODULE LOGGER ADD
   END IF;
 
   -- Retrieves the current level in the configuration for the given logger.
-  SET LOGGER_DATA = GET_LOGGER_DATA(LOG_ID); -- <<< db2diag
+  SET LOGGER_DATA = GET_LOGGER_DATA(LOG_ID);
   SET CURRENT_LEVEL_ID = LOGGER_DATA.LEVEL_ID;
   SET HIERARCHY = LOGGER_DATA.HIERARCHY;
 
@@ -365,7 +365,7 @@ ALTER MODULE LOGGER ADD
 
      -- Checks the values
      CASE APPENDER_ID
-       WHEN 1 THEN -- Pure SQL PL, writes in table.
+       WHEN 1 THEN -- LOG_TABLES/LOG_TABLES_AUTONOMOUS: Pure SQL PL, writes in table.
         -- Internal logging.
         --IF (INTERNAL = TRUE) THEN
         -- INSERT INTO LOGDATA.LOGS (LEVEL_ID, LOGGER_ID, MESSAGE) VALUES
@@ -376,7 +376,7 @@ ALTER MODULE LOGGER ADD
         ELSE
          CALL LOG_TABLES(LOG_ID, LEV_ID, NEW_MESSAGE);
         END IF;
-       WHEN 0 THEN -- Drops the message.
+       WHEN 0 THEN -- LOG_NULL: Drops the message.
         CALL LOG_NULL(LOG_ID, LEV_ID, NEW_MESSAGE, CONFIGURATION);
        ELSE -- Execute any other appender.
         DYNAMIC : BEGIN
