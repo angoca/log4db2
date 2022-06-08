@@ -22,7 +22,8 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-# Execute all tests.
+# Execute all tests. When argument -np is specified, the tests are run without
+# pauses between them.
 #
 # Version: 2022-06-07 1-RC
 # Author: Andres Gomez Casanova (AngocA)
