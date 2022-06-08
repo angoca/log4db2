@@ -22,7 +22,7 @@
     <!-- The Basics -->
     <groupId>com.github.angoca</groupId>
     <artifactId>log4db2</artifactId>
-    <version>1-RC</version>
+    <version>1-RC-SNAPSHOT</version>
     <packaging>pom</packaging>
     <!-- Build Settings -->
     <!-- "Project Build" contains more elements than just the BaseBuild set -->
@@ -182,7 +182,7 @@
         <developerConnection>scm:git:ssh://git@github.com/angoca/log4db2.git
   </developerConnection>
         <url>https://github.com/angoca/log4db2</url>
-        <tag>log4db2-1-RC</tag>
+        <tag>HEAD</tag>
     </scm>
     <distributionManagement>
         <repository>
