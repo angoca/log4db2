@@ -22,7 +22,7 @@ A clear and concise description of what you expected to happen.
 **Db2 installation (please complete the following information):**
  - Server OS: [e.g. AIX]
  - Db2 version with fixpack [e.g. 11.5 FP 5]
- - Log4db2 version [e.g. 1RC]
+ - Log4db2 version [e.g. 1RC, 1]
 
 **Additional context**
 Add any other context about the problem here.
