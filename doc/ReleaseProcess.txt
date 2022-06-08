@@ -32,7 +32,7 @@ https://github.com/angoca/log4db2/blob/master/src/main/sql-pl/65-Version.sql
 
 PERFORM
 
-* Execute mvn release:prepare providing a valid TAG (1-RC, 1) and a SNAPSHOT for
+* Execute mvn release:prepare providing a valid TAG (1-RC, v1) and a SNAPSHOT for
   the next release
 * Once finished, execute mvn release:perform.
   (If problems, mvn release:rollback)

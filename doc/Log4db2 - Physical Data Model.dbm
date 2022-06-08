@@ -8,7 +8,7 @@
     <eAnnotations xmi:id="_9rTtYJAsEeObMML58c1U2Q" source="DATABASE_AUTHOR_EANNOTATION">
       <details xmi:id="_9rUUcJAsEeObMML58c1U2Q" key="DATABASE_AUTHOR_EANNOTATION_NAME" value="AngocA"/>
       <details xmi:id="_9tKukJAsEeObMML58c1U2Q" key="DATABASE_AUTHOR_EANNOTATION_COMPANY" value=""/>
-      <details xmi:id="_-SiFcJAsEeObMML58c1U2Q" key="DATABASE_AUTHOR_EANNOTATION_VERSION" value="1-RC"/>
+      <details xmi:id="_-SiFcJAsEeObMML58c1U2Q" key="DATABASE_AUTHOR_EANNOTATION_VERSION" value="v1"/>
       <details xmi:id="__KirgJAsEeObMML58c1U2Q" key="DATABASE_AUTHOR_EANNOTATION_COPYRIGHT" value=""/>
     </eAnnotations>
   </LUW:LUWDatabase>
