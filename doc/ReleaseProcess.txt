@@ -16,8 +16,9 @@ BEFORE
 * Change the version constant in the code (12-Version.sql:VERSION):
 https://github.com/angoca/log4db2/blob/master/src/main/sql-pl/12-Version.sql
 * Write the changes in the ChangeLog section of the wiki.
+* Update the release.yml file under .github.
 * Update the Prerequisites table from the Install from Sources section of the
-  wiki.
+  wiki, for compatibility with _db2unit_.
 * Change the version in the documentation (Version:) of all source files.
 * Rename the XML schema for the new version if modified.
 * Make sure the schema reflects the version number to release (all files.)
