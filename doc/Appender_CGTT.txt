@@ -11,7 +11,7 @@ behavior, you are free to modify the source code of the appender.
 You need to have a user with the rights to create a tablespace.
 
 
-# Code and configuration #
+# Installation and configuration #
 
  * Install the appender from file:
 
@@ -22,16 +22,19 @@ You need to have a user with the rights to create a tablespace.
 
 # Test the appender #
 
-Execute the appender directly, without log4db2, in order to test if the
-appender is correctly configured. Sometimes there are file permissions problems,
-or the path is wrong.
+Execute the appender directly, without using _log4db2_ routines, in order to
+check if the appender is correctly configured.
 
-    db2 "CALL LOGGER.LOG_CGTT(0, 1, 'Message to log', NULL))"
+    db2 "CALL LOGGER.LOG_CGTT(0, 1, 'Message to log', NULL)"
+
+You can check the table and its content by issuing:
+
+    db2 "select * from LOGDATA.TEMP_LOGS"
 
 Once you have finished this, you are ready to log!
 
 
-# Uninstall
+# Uninstall #
 
 If you want to remove the configuration, and supposing you kept the same IDs,
 just execute the following script:

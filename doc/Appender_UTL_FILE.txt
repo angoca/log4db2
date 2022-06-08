@@ -28,7 +28,7 @@ Probably you need to create the directory:
     mkdir -p /home/db2inst1/log4db2
 
 
-# Code #
+# Installation #
 
  * Install the appender from file:
 
@@ -43,13 +43,16 @@ Probably you need to create the directory:
  Appender_UTL_FILE.csv. Once modified, import it in the database.
 
     cd xml
-    db2 "IMPORT FROM Appender_UTL_FILE.csv OF DEL XMLPARSE STRIP WHITESPACE XMLVALIDATE USING SCHEMA LOGGER_1RC.CONF_APPENDERS INSERT INTO LOGDATA.CONF_APPENDERS"
+    db2 "IMPORT FROM Appender_UTL_FILE.csv OF DEL XMLPARSE STRIP WHITESPACE
+         XMLVALIDATE USING SCHEMA LOGGER_1RC.CONF_APPENDERS
+         INSERT INTO LOGDATA.CONF_APPENDERS(REF_ID,NAME,APPENDER_ID,CONFIGURATION,PATTERN,LEVEL_ID)"
     cd ..
 
-If the previous method did not work, you can also modify the next sentence:
+If the previous method did not work, you can also modify the next sentence. You
+should probably adjust the home directory to you own one.
 
     INSERT INTO LOGDATA.CONF_APPENDERS (REF_ID, NAME, APPENDER_ID,
-      CONFIGURATION, PATTERN, LEVEL_ID) VALUES (3, 'Local file', 3, '
+      CONFIGURATION, PATTERN, LEVEL_ID) VALUES (2, 'Local file', 2, '
       <log4db2>
        <appender>
         <name>UTL_FILE</name>
@@ -65,7 +68,7 @@ If the previous method did not work, you can also modify the next sentence:
 
     db2 "
     INSERT INTO LOGDATA.REFERENCES (LOGGER_ID, APPENDER_REF_ID)
-      VALUES (0, 3)
+      VALUES (0, 2)
     "
 
 
@@ -99,6 +102,7 @@ Once you have finished this, you are ready to log!
 If you want to remove the configuration, and supposing you kept the same IDs,
 just execute the following script:
 
+    db2 "DELETE FROM LOGDATA.CONF_APPENDERS WHERE REF_ID = 2"
     cd sql-pl
     db2 -tf Appender_UTL_FILE_Drop.sql
     cd ..

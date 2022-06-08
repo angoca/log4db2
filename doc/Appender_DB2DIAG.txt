@@ -1,29 +1,54 @@
 This documentation is licensed under the terms of the FreeBSD Documentation
 License.
 
+**NOTE**: This appender is not yet developed. It will be include at
+`25-Appenders.sql` on the `LOGGER.LOG_DB2DIAG` routine.
+
+
+# Installation and configuration #
+
 In order to configure the DB2DIAG appender you should:
 
  * Install the C stored procedure that will log into the DB2DIAG.
- * Modify the LOGGER.LOG procedure to include the new appender. Look for the
-   >>> and <<< symbols.
 
-       WHEN 2 THEN -- Writes in the db2diag.log file via a function.
-         CALL LOG_DB2DIAG(LOG_ID, LEV_ID, NEW_MESSAGE, CONFIGURATION);
-
- * Insert your appender in the list of appenders.
+ * Register your appender in the list of appenders.
 
     INSERT INTO LOGDATA.APPENDERS (APPENDER_ID, NAME)
-      VALUES (2, 'DB2DIAG');
+      VALUES (5, 'DB2DIAG');
+
+   If you reset the tables, the appender will be deleted, and you will need to
+   register it again.
 
  * Add your own configuration or update the existing one.
 
     INSERT INTO LOGDATA.CONF_APPENDERS (REF_ID, NAME, APPENDER_ID,
-      CONFIGURATION, PATTERN) VALUES (2, 'DB2DIAG', 2, NULL, '[%p] %c - %m');
+      CONFIGURATION, PATTERN) VALUES (5, 'DB2DIAG', 2, NULL, '[%p] %c - %m');
 
  * Associate the conf_appender to a logger via the references table.
 
     INSERT INTO LOGDATA.REFERENCES (LOGGER_ID, APPENDER_REF_ID)
-      VALUES (0, 2);
+      VALUES (0, 5);
 
-Ready to log!
+
+# Test the appender #
+
+In order to validate the logger, you can call it directly to verify it.
+
+    db2 "CALL LOGGER.LOG_DB2DIAG(0, 1, 'Message to log', NULL)"
+
+You can check the db2diag.log file by issuing in another terminal:
+
+    db2diag -f
+
+If you see the log message, you are ready to log!
+
+
+# Uninstall #
+
+To remove the db2diag logger, you just need to unregister the logger.
+
+    DELETE FROM LOGDATA.REFERENCES WHERE APPENDER_REF_ID = 5;
+    DELETE FROM LOGDATA.CONF_APPENDERS WHERE REF_ID = 5 ;
+    DELETE FROM LOGDATA.APPENDERS WHERE APPENDER_ID = 5 ;
+    ALTER MODULE LOGGER DROP SPECIFIC PROCEDURE P_LOG_DB2DIAG ;
 

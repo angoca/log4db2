@@ -1,11 +1,18 @@
 This documentation is licensed under the terms of the FreeBSD Documentation
 License.
 
+**NOTE**: This appender is not yet developed. It will be include at
+`25-Appenders.sql` on the `LOGGER.LOG_DB2LOGGER` routine.
+
+
+# Installation and configuration #
+
 In order to configure the DB2LOGGER appender you should:
 
- * Install the DB2LOGGER facility following the steps in DeveloperWorks.
-   * http://www.ibm.com/developerworks/data/library/techarticle/dm-0601khatri/
-   * http://www.zinox.com/node/89
+ * Install the DB2LOGGER facility following the steps in [DeveloperWorks (no
+   longer working)](http://www.ibm.com/developerworks/data/library/techarticle/dm-0601khatri/).
+   You can also check the Vikran page: from 117 
+   https://www.zinox.com/archives/117 to 140 https://www.zinox.com/archives/140.
  * Verify that the facility works by calling its stored procedures.
 
     db2 "CALL DB2.OPEN_LOG('TESTSP',?)"
@@ -14,34 +21,45 @@ In order to configure the DB2LOGGER appender you should:
     db2 "CALL DB2.LOGGER(h,'Logger test')"
     db2 "CALL DB2.CLOSE_LOG(h)"
 
- * Modify the LOGGER.LOG procedure to include the new appender. Look for the
-   >>> and <<< symbols.
-
-       WHEN 4 THEN -- Sends the log to the DB2LOGGER in C.
-         CALL LOG_DB2LOGGER(LOG_ID, LEV_ID, NEW_MESSAGE, CONFIGURATION);
-
  * Insert your appender in the list of appenders.
 
     INSERT INTO LOGDATA.APPENDERS (APPENDER_ID, NAME)
-      VALUES (4, 'DB2LOGGER');
+      VALUES (6, 'DB2LOGGER');
 
  * Add your own configuration or update the existing one.
 
     INSERT INTO LOGDATA.CONF_APPENDERS (REF_ID, NAME, APPENDER_ID,
-      CONFIGURATION, PATTERN) VALUES (4, 'DB2LOGGER', 4, NULL, '[%p] %c - %m');
+      CONFIGURATION, PATTERN) VALUES (6, 'DB2LOGGER', 6, NULL, '[%p] %c - %m');
 
  * Associate the conf_appender to a logger via the references table.
 
     INSERT INTO LOGDATA.REFERENCES (LOGGER_ID, APPENDER_REF_ID)
-      VALUES (0, 4);
+      VALUES (0, 6);
 
- * Set the variable each time it will be used (drawback :( )
+
+# Test the appender #
+
+ * Set the variable each time it will be used (this is a drawback :( ).
 
     db2 "CALL DB2.OPEN_LOG('TESTSP',LOGGER.DB2LOGGER_HANDLER)"
+
+ * Call the logger directly:
+
+    db2 "CALL LOGGER.LOG_DB2DIAG(0, 1, 'Message to log', NULL)"
+
+ * Check the generated output in the log file.
 
  * Once used, do not forget to close the files.
 
     db2 "CALL DB2.CLOSE_LOG(LOGGER.DB2LOGGER_HANDLER)"
 
-Ready to log!
+
+# Uninstall #
+
+To remove the db2diag logger, you just need to unregister the logger.
+
+    DELETE FROM LOGDATA.REFERENCES WHERE APPENDER_REF_ID = 6;
+    DELETE FROM LOGDATA.CONF_APPENDERS WHERE REF_ID = 6 ;
+    DELETE FROM LOGDATA.APPENDERS WHERE APPENDER_ID = 6 ;
+    ALTER MODULE LOGGER DROP SPECIFIC PROCEDURE P_LOG_DB2LOGGER ;
 
