@@ -20,6 +20,7 @@ https://github.com/angoca/log4db2/blob/master/src/main/sql-pl/65-Version.sql
 * Update the Prerequisites table from the Install from Sources section of the
   wiki, for compatibility with _db2unit_.
 * Change the version in the documentation (Version:) of all source files.
+* Update the year of the copyright.
 * Rename the XML schema for the new version if modified.
 * Make sure the schema reflects the version number to release (all files.)
 * Execute examples.
