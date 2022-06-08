@@ -62,7 +62,7 @@ BEGIN
  EXECUTE IMMEDIATE STMT;
  
  SET STMT = 'COMMENT ON TABLESPACE LOGGER_SPACE IS
-   ''All configuration tables for the logger utility''';
+   ''log4db2: All configuration tables for the logger utility''';
  EXECUTE IMMEDIATE STMT;
  
  -- Tablespace for logs (data).
@@ -78,7 +78,7 @@ BEGIN
  EXECUTE IMMEDIATE STMT;
  
  SET STMT = 'COMMENT ON TABLESPACE LOGGER_SPACE IS
-   ''Logs in an independent tablespace''';
+   ''log4db2: Logs in an independent tablespace''';
  EXECUTE IMMEDIATE STMT;
  
  -- Schema for logger tables.
@@ -86,7 +86,7 @@ BEGIN
  EXECUTE IMMEDIATE STMT;
  
  SET STMT = 'COMMENT ON SCHEMA LOGDATA IS
-   ''Schema for table of the log4db2 utility''';
+   ''log4db2: Schema for table of the log4db2 utility''';
  EXECUTE IMMEDIATE STMT;
  
  -- Schema for logger utility's objects.
@@ -94,7 +94,7 @@ BEGIN
  EXECUTE IMMEDIATE STMT;
  
  SET STMT = 'COMMENT ON SCHEMA LOGGER_1RC IS
-   ''Schema for objects of the log4db2 utility''';
+   ''log4db2: Schema for objects of the log4db2 utility''';
  EXECUTE IMMEDIATE STMT;
 
 END@
