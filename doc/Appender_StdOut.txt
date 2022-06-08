@@ -1,0 +1,49 @@
+This documentation is licensed under the terms of the FreeBSD Documentation
+License.
+
+In order to install and configure the Global Temporary table appender you should
+execute the scripts described here. If you want to change the configuration or
+behavior, you are free to modify the source code of the appender.
+
+
+# Installation and configuration #
+
+ * Install the appender from file:
+
+    cd sql-pl
+    db2 -tsf Appender_StdOut_Create.sql
+    cd ..
+
+ * Activate the standard output.
+
+    db2 SET SERVEROUTPUT ON
+
+
+# Test the appender #
+
+Execute the appender directly, without _log4db2_ routines, in order to test if
+the appender is correctly configured.
+
+    db2 "CALL LOGGER.LOG_STDOUT(0, 1, 'Message to log', NULL)"
+
+When calling the stored procedure, if you see an extra message in the standard
+output, it means the appender is working.
+
+If you do not see anything in the _db2clp_, remember to activate the output:
+
+    db2 SET SERVEROUTPUT ON
+
+You can also verify the stdout by calling this module:
+
+    db2 "CALL DBMS_OUTPUT.PUT_LINE('StdOut Test')"
+
+
+# Uninstall
+
+If you want to remove the configuration, and supposing you kept the same IDs,
+just execute the following script:
+
+    cd sql-pl
+    db2 -tf Appender_StdOut_Drop.sql
+    cd ..
+
