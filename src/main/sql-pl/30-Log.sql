@@ -32,7 +32,7 @@ SET CURRENT SCHEMA LOGGER_1RC @
  * longest stored procedure in the utility; for this reason it is in a
  * dedicated file.
  *
- * Version: 2014-02-14 1-RC
+ * Version: 2022-06-08 1-RC
  * Author: Andres Gomez Casanova (AngocA)
  * Made in COLOMBIA.
  */

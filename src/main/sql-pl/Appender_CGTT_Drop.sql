@@ -30,7 +30,7 @@ SET CURRENT SCHEMA LOGGER_1RC @
 /**
  * Drops the appender implementation of writing in a global temporary table.
  *
- * Version: 2014-04-26 1-RC
+ * Version: 2022-06-08 1-RC
  * Author: Andres Gomez Casanova (AngocA)
  * Made in COLOMBIA.
  */

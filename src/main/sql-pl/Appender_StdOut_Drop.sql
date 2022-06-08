@@ -30,7 +30,7 @@ SET CURRENT SCHEMA LOGGER_1RC @
 /**
  * Drops the appender implementation of writing in the standard output.
  *
- * Version: 2022-06-07 1-RC
+ * Version: 2022-06-08 1-RC
  * Author: Andres Gomez Casanova (AngocA)
  * Made in COLOMBIA.
  */

@@ -30,7 +30,7 @@ SET CURRENT SCHEMA LOGGER_1RC;
 /**
  * Drops the routines associated with the utility.
  *
- * Version: 2022-05-21 1-RC
+ * Version: 2022-06-20 1-RC
  * Author: Andres Gomez Casanova (AngocA)
  * Made in COLOMBIA.
  */

@@ -25,7 +25,7 @@
 
 :: Installs all scripts of the utility.
 ::
-:: Version: 2022-05-21 1-RC
+:: Version: 2022-06-03 1-RC
 :: Author: Andres Gomez Casanova (AngocA)
 :: Made in COLOMBIA.
 

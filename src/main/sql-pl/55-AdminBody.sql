@@ -30,7 +30,7 @@ SET CURRENT SCHEMA LOGGER_1RC @
 /**
  * Implementation of the administrative routines of log4db2.
  *
- * Version: 2022-05-22 1-RC
+ * Version: 2022-06-08 1-RC
  * Author: Andres Gomez Casanova (AngocA)
  * Made in COLOMBIA.
  */

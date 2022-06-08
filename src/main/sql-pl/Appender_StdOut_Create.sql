@@ -33,7 +33,7 @@ SET CURRENT SCHEMA LOGGER_1RC @
  *   SET SERVEROUTPUT ON
  * The buffer can be easily filled if a log of messages are generated.
  *
- * Version: 2022-06-07 1-RC
+ * Version: 2022-06-08 1-RC
  * Author: Andres Gomez Casanova (AngocA)
  * Made in COLOMBIA.
  */

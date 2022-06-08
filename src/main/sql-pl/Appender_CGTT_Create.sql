@@ -30,7 +30,7 @@ SET CURRENT SCHEMA LOGGER_1RC @
 /**
  * Appender implementation that uses a global temporary table.
  *
- * Version: 2014-04-25 1-RC
+ * Version: 2022-06-05 1-RC
  * Author: Andres Gomez Casanova (AngocA)
  * Made in COLOMBIA.
  */

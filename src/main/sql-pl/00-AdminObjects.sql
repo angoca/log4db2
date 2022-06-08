@@ -32,7 +32,7 @@ SET CURRENT SCHEMA LOGDATA;
  * - Bufferpool
  * - Tablespaces
  *
- * Version: 2014-07-31 1-RC
+ * Version: 2022-06-08 1-RC
  * Author: Andres Gomez Casanova (AngocA)
  * Made in COLOMBIA.
  */

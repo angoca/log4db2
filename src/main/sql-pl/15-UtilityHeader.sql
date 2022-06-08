@@ -30,7 +30,7 @@ SET CURRENT SCHEMA LOGGER_1RC;
 /**
  * Defines the headers of the public procedures and functions.
  *
- * Version: 2014-02-14 1-RC
+ * Version: 2022-06-03 1-RC
  * Author: Andres Gomez Casanova (AngocA)
  * Made in COLOMBIA.
  */
