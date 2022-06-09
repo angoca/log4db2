@@ -154,7 +154,7 @@ the messages and configure the utility:
 
 The easiest way to change the logger configuration is by calling the following stores procedure.
 
-    db2 "CALL logadmin.register_logger_name('Your.Hierarchy', 'DEBUG')"
+    db2 "CALL logadmin.register_logger_name('Your.Hierarchy', 'debug')"
 
 Depending of the logger levels on the code, and the confiration, you can see more messages
 or less messages in the logs.
