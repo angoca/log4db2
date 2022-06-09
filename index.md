@@ -13,7 +13,7 @@ The idea and architecture of this utility are based on the popular Java logging
 utilities, such as Log4j and slf4j/logback.
 
  * [Log4j](http://logging.apache.org/log4j).
- * [Logback/SLF4J](http://logback.qos.ch/ [http://www.slf4j.org/).
+ * [Logback](http://logback.qos.ch/)/[SLF4J](http://www.slf4j.org/).
 
 The licenses of this project are:
 
