@@ -22,14 +22,20 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-# Install and/or execute a suite of tests.
+# Install and/or execute a suite of tests. It receives these arguments:
+# schemaName: The name of the file in the local directory and the schema to
+# install or execute.
+# i: To install the tests suite and show logs.
+# x: To execute the tests suite.
+# If only the schema is given, it will install the tests suite.
 #
-# Version: 2022-06-02 v1
+# Version: 2022-06-09 v1
 # Author: Andres Gomez Casanova (AngocA)
 # Made in COLOMBIA.
 
 db2 connect > /dev/null
-if [ ${?} -ne 0 ] ; then
+RET=${?}
+if [ ${RET} -ne 0 ] ; then
  echo "Please connect to a database before the execution of the test."
  echo "Remember that to call the script the command is '. ./test <TestSuite> {i} {x}'"
  echo "i for installing (by default)"
@@ -39,42 +45,52 @@ else
  SCHEMA=${1}
  OPTION_1=${2}
  OPTION_2=${3}
- # Execute the tests.
- if [ "${OPTION_1}" = "" -o "${OPTION_1}" = "i" -o "${OPTION_2}" = "i" ] ; then
-  # Prepares the installation.
-  db2 "DELETE FROM LOGS" > /dev/null
-  db2 "DROP TABLE ${SCHEMA}.REPORT_TESTS" > /dev/null
-  db2 "EXPORT TO PACKAGES_TO_DROP_SCHEMA.sql OF DEL MODIFIED BY NOCHARDEL SELECT 'DROP PACKAGE ${SCHEMA}.' || TRIM(PKGNAME) || ';' FROM SYSCAT.PACKAGES WHERE PKGSCHEMA LIKE '${SCHEMA}%'"
-  db2 -tf PACKAGES_TO_DROP_SCHEMA.sql > /dev/null
-  rm PACKAGES_TO_DROP_SCHEMA.sql > /dev/null
-  db2 "CALL SYSPROC.ADMIN_DROP_SCHEMA('${SCHEMA}', NULL, 'ERRORSCHEMA', 'ERRORTABLE')" > /dev/null
-  db2 "SELECT VARCHAR(SUBSTR(DIAGTEXT, 1, 256), 256) AS ERROR FROM ERRORSCHEMA.ERRORTABLE" 2> /dev/null
-  db2 "DROP TABLE ERRORSCHEMA.ERRORTABLE" > /dev/null
-  db2 "DROP SCHEMA ERRORSCHEMA RESTRICT" > /dev/null
 
-  # Installs the tests.
-  db2 -td@ -f ${LOG4DB2_SRC_TEST_CODE_PATH}/Tests_${SCHEMA}.sql
- fi
+ if [ -z "${SCHEMA:-}" ]; then
+  echo "ERROR: You should provide an schema name, which is also the file name."
+  echo "Schema: LOG4DB2_OTHER"
+  echo "File: Tests_LOG4DB2_OTHER.sql"
+ else
 
- # Execute the tests.
- if [ "${OPTION_1}" = "x" -o "${OPTION_2}" = "x" ] ; then
-  db2 "CALL DB2UNIT.CLEAN()"
-  echo "Executing tests suite."
-  db2 -r /tmp/db2unit.output "CALL DB2UNIT.RUN_SUITE('${SCHEMA}')"
-  echo "Retrieving test execution order."
-  db2 "CALL DB2UNIT.GET_LAST_EXECUTION_ORDER()"
-  echo "Cleaning"
-  db2 "CALL DB2UNIT.CLEAN()"
-  db2 "CALL LOGADMIN.DELETE_LOGGERS()"
- fi
+  # Execute the tests.
+  if [ "${OPTION_1}" = "" ] || [ "${OPTION_1}" = "i" ] || [ "${OPTION_2}" = "i" ] ; then
+   # Prepares the installation.
+   db2 "DELETE FROM LOGS" > /dev/null
+   db2 "DROP TABLE ${SCHEMA}.REPORT_TESTS" > /dev/null
+   TMP_FILE=PACKAGES_TO_DROP_SCHEMA.sql
+   db2 "EXPORT TO ${TMP_FILE} OF DEL MODIFIED BY NOCHARDEL SELECT 'DROP PACKAGE ${SCHEMA}.' || TRIM(PKGNAME) || ';' FROM SYSCAT.PACKAGES WHERE PKGSCHEMA LIKE '${SCHEMA}%'"
+   db2 -tf ${TMP_FILE} > /dev/null
+   rm ${TMP_FILE} > /dev/null
+   db2 "CALL SYSPROC.ADMIN_DROP_SCHEMA('${SCHEMA}', NULL, 'ERRORSCHEMA', 'ERRORTABLE')" > /dev/null
+   db2 "SELECT VARCHAR(SUBSTR(DIAGTEXT, 1, 256), 256) AS ERROR FROM ERRORSCHEMA.ERRORTABLE" 2> /dev/null
+   db2 "DROP TABLE ERRORSCHEMA.ERRORTABLE" > /dev/null
+   db2 "DROP SCHEMA ERRORSCHEMA RESTRICT" > /dev/null
 
- if [ ! '(' "${OPTION_1}" = "x" -a "${OPTION_2}" = "" ')' ] ; then
-  echo "Showing generated logs"
-  db2 "CALL LOGADMIN.LOGS(min_level=>5)"
-  echo "Showing report"
-  db2 "SELECT EXECUTION_ID EXEC_ID, VARCHAR(SUBSTR(TEST_NAME, 1, 32), 32) TEST,
-    FINAL_STATE STATE, TIME, VARCHAR(SUBSTR(MESSAGE, 1, 96), 96) MESSAGE
-    FROM ${SCHEMA}.REPORT_TESTS ORDER BY DATE"
+   # Installs the tests.
+   db2 -td@ -f "${LOG4DB2_SRC_TEST_CODE_PATH}"/"Tests_${SCHEMA}.sql"
+  fi
+
+  # Execute the tests.
+  if [ "${OPTION_1}" = "x" ] || [ "${OPTION_2}" = "x" ] ; then
+   db2 "CALL DB2UNIT.CLEAN()"
+   echo "Executing tests suite."
+   db2 -r /tmp/db2unit.output "CALL DB2UNIT.RUN_SUITE('${SCHEMA}')"
+   echo "Retrieving test execution order."
+   db2 "CALL DB2UNIT.GET_LAST_EXECUTION_ORDER()"
+   echo "Cleaning"
+   db2 "CALL DB2UNIT.CLEAN()"
+   db2 "CALL LOGADMIN.DELETE_LOGGERS()"
+
+  fi
+
+  if { [ "${OPTION_1}" = "x" ] && [ "${OPTION_2}" = "i" ]; } || { [ "${OPTION_1}" = "i" ] && [ "${OPTION_2}" = "x" ]; }  ; then
+   echo "Showing generated logs"
+   db2 "CALL LOGADMIN.LOGS(min_level=>5)"
+   echo "Showing report"
+   db2 "SELECT EXECUTION_ID EXEC_ID, VARCHAR(SUBSTR(TEST_NAME, 1, 32), 32) TEST,
+     FINAL_STATE STATE, TIME, VARCHAR(SUBSTR(MESSAGE, 1, 96), 96) MESSAGE
+     FROM ${SCHEMA}.REPORT_TESTS ORDER BY DATE"
+  fi
  fi
 fi
 
