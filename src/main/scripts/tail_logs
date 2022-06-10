@@ -64,7 +64,9 @@ if [ ${RET} -eq 0 ] ; then
    # echo "Waiting ${SECS} seconds..."
    sleep ${SECS}
   fi
+  set +e
   (( I = I + INC ))
+  set -e
  done
 else
  echo "Please connect to a database before execute this script."
