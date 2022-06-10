@@ -1,11 +1,12 @@
-log4db2
-=======
+# log4db2 #
+-----------
+
 [![log4db2-logo](https://raw.githubusercontent.com/angoca/log4db2/master/doc/log4db2-128.png)](https://github.com/angoca/log4db2/wiki/logo)
 
 [![Download Tar file](https://raw.githubusercontent.com/angoca/log4db2/gh-pages/images/downloadTar.png)](https://github.com/angoca/log4db2/releases/download/log4db2-1-RC/log4db2.tar.gz)
 [![Download Zip file](https://raw.githubusercontent.com/angoca/log4db2/gh-pages/images/downloadZip.png)](https://github.com/angoca/log4db2/releases/download/log4db2-1-RC/log4db2.zip)
 
-Log4db2 is a logging utility for DB2 LUW that uses SQL instructions with SQL
+Log4db2 is a logging utility for Db2 for LUW that uses SQL instructions with SQL
 PL code.
 
 Its purpose is to provide an easy way to write messages from a SQL routine, with
@@ -25,15 +26,15 @@ The licenses of this project are:
   * For the source code is "BSD 2-Clause license".
   * For the documentation is "FreeBSD Documentation license."
  
-With these two licenses you are free to use, modify and distribute any part of this 
-utility.
+With these two licenses you are free to use, modify and distribute any part of
+this utility.
 
 Author:
 
-Andres Gomez Casanova
-([@AngocA](https://twitter.com/angoca))
+Andres Gomez Casanova (@AngocA)
 
 
+------------------
 ## Links for more information ##
 
 These are some useful links:
@@ -46,6 +47,8 @@ These are some useful links:
     https://github.com/angoca/log4db2/releases
  * The issue tracker for comments and bugs is at:
     https://github.com/angoca/log4db2/issues
+ * A blog that explain things about this utility:
+    https://angocadb2.blogspot.com/2012/06/log4db2-logging-in-sql-pl-db2.html
 
 
 ------------------
@@ -61,7 +64,7 @@ This variable is initialized via the `init` script.
 Before installing the scripts in a database, a connection to it has to be
 established. If not, an error will be raised.
 
-**Linux/UNIX/MAC OS**:
+**Linux/UNIX/Mac OS**:
 
 Just follow these steps:
 
@@ -92,8 +95,8 @@ First, unzip the file log4db2.zip, and then:
 
 After the install, all statements should have been successful.
 
-A more detailed guide to install the utility can be found in the _Install_
-section of the wiki:
+A more detailed guide to install the utility can be found in the
+_Install_ section of the wiki:
 https://github.com/angoca/log4db2/wiki/Install
 
 You can also install the utility from the sources and run the examples and
@@ -106,9 +109,7 @@ https://github.com/angoca/log4db2/wiki/Configuration
 
 
 -----------
-## Usage ##
-
-### 1. Write the code ###
+## Write code ##
 
 This could be the structure of your routine's code (Procedure or function).
 
@@ -120,14 +121,22 @@ This could be the structure of your routine's code (Procedure or function).
 
       CALL LOGGER.GET_LOGGER('Your.Hierarchy', LOGGER_ID);
       -- Your code
-      CALL LOGGER.INFO(LOGGER_ID, 'Your message');
+      CALL LOGGER.INFO(LOGGER_ID, 'Your informational message');
+      -- Your code
+      CALL LOGGER.ERROR(LOGGER_ID, 'Your error message (important!)');
+      -- Your code
+      CALL LOGGER.DEBUG(LOGGER_ID, 'Your message for debugging purposes');
       -- Your code
      END @
 
-As you can see, there is a call to GET_LOGGER to register the logger, and get its
-id. Then, you write messages by providing the id and the text. That's all.
+As you can see, there is a call to GET_LOGGER to register the logger, and obtain
+its id. Then, you write messages by providing the id and the text. That's all!
 
-### 2. Invoke the code ###
+
+-----------
+## Execution ##
+
+### 1. Invoke the code ###
 
 Then, you invoke your code (Depending if it is a stored procedure or a
 function.)
@@ -135,7 +144,7 @@ function.)
     CALL HELLO_WORLD(); -- Stored procedure.
     VALUES HELLO_WORLD(); -- Function.
 
-### 3. Check the results ###
+### 2. Check the logs ###
 
 This is the easiest way to check the log messages.
 
@@ -148,6 +157,16 @@ From the CLP is:
 Check the _Usage_ section for more information about the levels, how to access
 the messages and configure the utility:
 https://github.com/angoca/log4db2/wiki/Usage
+
+### 3. Changing the verbosity ###
+
+The easiest way to change the logger configuration is by calling the following
+stored procedure.
+
+    db2 "CALL logadmin.register_logger_name('Your.Hierarchy', 'debug')"
+
+Depending of the logger levels on the code, and the confiration, you can see
+more messages or less messages in the logs.
 
 
 ---------------------------
