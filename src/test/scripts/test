@@ -84,6 +84,7 @@ else
   fi
 
   if { [ "${OPTION_1}" = "x" ] && [ "${OPTION_2}" = "i" ]; } || { [ "${OPTION_1}" = "i" ] && [ "${OPTION_2}" = "x" ]; }  ; then
+   # Shows the logs only when installing and executing.
    echo "Showing generated logs"
    db2 "CALL LOGADMIN.LOGS(min_level=>5)"
    echo "Showing report"
