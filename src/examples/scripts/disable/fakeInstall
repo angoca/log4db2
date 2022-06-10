@@ -24,7 +24,7 @@
 
 # Installs the fake body.
 #
-# Version: 2014-05-24 v1
+# Version: 2022-06-09 v1
 # Author: Andres Gomez Casanova (AngocA)
 # Made in COLOMBIA.
 
@@ -33,27 +33,32 @@ export continue=true
 # Installs a given script.
 installScript() {
  script=${1}
- echo $script
- db2 -tsf ${script}
- if [ ${?} -ne 0 ] ; then
+ echo "${script}"
+ db2 -tsf "${script}"
+ RET=${?}
+ if [ ${RET} -ne 0 ] ; then
   export continue=false
  fi
  unset script
 }
 
 install() {
- if [ -x init ] ; then
-  . ./init
+ if [ -x ./init ]; then
+  # To run from release.
+  . ../init
+ elif  [ -x ../scripts/init ]; then
+  # To run from sources.
+  . ../../../main/scripts/init
  fi
 
  echo "log4db2 is licensed under the terms of the Simplified-BSD license"
- echo "Installing utility"
- [ ${continue} == true ] && installScript ${LOG4DB2_SRC_MAIN_CODE_PATH}/../../examples/sql-pl/disable/FakeTables.sql
- [ ${continue} == true ] && installScript ${LOG4DB2_SRC_MAIN_CODE_PATH}/../../examples/sql-pl/disable/FakeUtilityHeader.sql
- [ ${continue} == true ] && installScript ${LOG4DB2_SRC_MAIN_CODE_PATH}/../../examples/sql-pl/disable/FakeUtilityBody.sql
+ echo "Installing fake utility"
+ [ ${continue} == true ] && installScript "${LOG4DB2_SRC_MAIN_CODE_PATH}"/../../examples/sql-pl/disable/FakeTables.sql
+ [ ${continue} == true ] && installScript "${LOG4DB2_SRC_MAIN_CODE_PATH}"/../../examples/sql-pl/disable/FakeUtilityHeader.sql
+ [ ${continue} == true ] && installScript "${LOG4DB2_SRC_MAIN_CODE_PATH}"/../../examples/sql-pl/disable/FakeUtilityBody.sql
 
  echo "Please visit the wiki to learn how to use and configure this utility"
- echo "https://github.com/angoca/log4db2/wiki"
+ echo "https://github.com/angoca/log4db2/wiki/Examples#fake-installation"
  echo "To report an issue or provide feedback, please visit:"
  echo "https://github.com/angoca/log4db2/issues"
  echo
@@ -66,11 +71,12 @@ install() {
 
 # Checks if there is already a connection established
 db2 connect > /dev/null
-if [ ${?} -eq 0 ] ; then
+RET=${?}
+if [ ${RET} -eq 0 ] ; then
  install
 else
  echo "Please connect to a database before the execution of the installation."
- echo "Remember that to call the script the command is '. ./install'"
+ echo "Remember that to call the script the command is '. ./fakeInstall'"
 fi
 unset continue
 
