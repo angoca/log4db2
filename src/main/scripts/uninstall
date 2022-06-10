@@ -56,4 +56,3 @@ else
  echo "log4db2 completely uninstalled."
 fi
 set +euf
-

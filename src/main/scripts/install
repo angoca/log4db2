@@ -25,7 +25,7 @@
 # Installs all scripts of the utility.
 # It receives the following parameters:
 # -A: Do not create physical objects, like bufferpool, tablespace, schemas.
-#     This is normally necessary. 
+#     This is normally necessary.
 # -r: Returns error code when finished.
 # -t: Install the utility using time travel in the log.
 #
@@ -141,7 +141,7 @@ function init {
   set -e
 
   echo
-  if [ ${RET_VALUE} -eq 0 ] ; then
+  if [ ${RET_VALUE} -eq 0 ]; then
    echo "Please visit the wiki to learn how to use and configure this utility:"
    echo "https://github.com/angoca/log4db2/wiki"
    echo
@@ -168,7 +168,7 @@ function init {
    RET_VALUE=18
   fi
   unset CONTINUE
- 
+
   # Clean environment.
   cd "${LOG4DB2_SRC_MAIN_SCRIPT_PATH}"
   if [ -x uninit ]; then
@@ -207,4 +207,3 @@ if [ "${RETURN_CODE}" = "true" ]; then
  return ${RET}
 fi
 set +euf
-
