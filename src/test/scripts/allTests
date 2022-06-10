@@ -41,7 +41,7 @@ executeTest() {
  SCHEMA=${1}
  PAUSE=${2}
  echo "====>Next: ${SCHEMA}"
- if [ "${PAUSE}" = "true" ] ; then
+ if [ "${PAUSE}" = "true" ]; then
   read -r -p "Press enter to continue"
   . "${LOG4DB2_SRC_TEST_SCRIPT_PATH}"/test "${SCHEMA}" i x
  elif [ "${INSTALL}" = "true" ]; then
@@ -56,13 +56,13 @@ executeTest() {
 
 . ./init-dev
 
-db2 connect > /dev/null
+db2 connect >/dev/null
 RET=${?}
-if [ ${RET} -ne 0 ] ; then
+if [ ${RET} -ne 0 ]; then
  echo "Please connect to a database before the execution of the tests."
  echo "Remember that to call the script the command is '. ./allTests'"
 else
- if [ "${ARG}" = "-np" ] ; then
+ if [ "${ARG}" = "-np" ]; then
   TIME_INI=$(date +"%T")
   MILLIS_INI=$(date +"%s")
   echo "Executing (not installing) without pauses."
@@ -72,7 +72,7 @@ else
  else
   PAUSE=true
  fi
- if [ "${PAUSE}" = "true" ] ; then
+ if [ "${PAUSE}" = "true" ]; then
   echo "Executing all tests with pauses in between."
  else
   echo "Executing all tests."
@@ -83,82 +83,81 @@ else
  SUM=${RET}
  export RET=0
  executeTest LOG4DB2_APPENDERS_IMPLEMENTATION ${PAUSE}
- (( SUM = SUM + RET ))
+ ((SUM = SUM + RET))
  export RET=0
  executeTest LOG4DB2_CACHE_CONFIGURATION ${PAUSE}
- (( SUM = SUM + RET ))
+ ((SUM = SUM + RET))
  export RET=0
  executeTest LOG4DB2_CACHE_LEVELS ${PAUSE}
- (( SUM = SUM + RET ))
+ ((SUM = SUM + RET))
  export RET=0
  executeTest LOG4DB2_CACHE_LOGGERS ${PAUSE}
- (( SUM = SUM + RET ))
+ ((SUM = SUM + RET))
  export RET=0
  executeTest LOG4DB2_CASCADE_CALL_LIMIT ${PAUSE}
- (( SUM = SUM + RET ))
+ ((SUM = SUM + RET))
  export RET=0
  executeTest LOG4DB2_CONFIGURATION ${PAUSE}
- (( SUM = SUM + RET ))
+ ((SUM = SUM + RET))
  export RET=0
  executeTest LOG4DB2_CONF_APPENDERS ${PAUSE}
- (( SUM = SUM + RET ))
+ ((SUM = SUM + RET))
  export RET=0
  executeTest LOG4DB2_CONF_LOGGERS ${PAUSE}
- (( SUM = SUM + RET ))
+ ((SUM = SUM + RET))
  export RET=0
  executeTest LOG4DB2_CONF_LOGGERS_DELETE ${PAUSE}
- (( SUM = SUM + RET ))
+ ((SUM = SUM + RET))
  export RET=0
  executeTest LOG4DB2_CONF_LOGGERS_EFFECTIVE ${PAUSE}
- (( SUM = SUM + RET ))
+ ((SUM = SUM + RET))
  export RET=0
  executeTest LOG4DB2_CONF_LOGGERS_EFFECTIVE_CASES ${PAUSE}
- (( SUM = SUM + RET ))
+ ((SUM = SUM + RET))
  export RET=0
  executeTest LOG4DB2_DYNAMIC_APPENDERS ${PAUSE}
- (( SUM = SUM + RET ))
+ ((SUM = SUM + RET))
  export RET=0
  executeTest LOG4DB2_FUNCTION_GET_DEFINED_PARENT_LOGGER ${PAUSE}
- (( SUM = SUM + RET ))
+ ((SUM = SUM + RET))
  export RET=0
  executeTest LOG4DB2_GET_LOGGER ${PAUSE}
- (( SUM = SUM + RET ))
+ ((SUM = SUM + RET))
  export RET=0
  executeTest LOG4DB2_GET_LOGGER_NAME ${PAUSE}
- (( SUM = SUM + RET ))
+ ((SUM = SUM + RET))
  export RET=0
  executeTest LOG4DB2_HIERARCHY ${PAUSE}
- (( SUM = SUM + RET ))
+ ((SUM = SUM + RET))
  export RET=0
  executeTest LOG4DB2_LAYOUT ${PAUSE}
- (( SUM = SUM + RET ))
+ ((SUM = SUM + RET))
  export RET=0
  executeTest LOG4DB2_LEVELS ${PAUSE}
- (( SUM = SUM + RET ))
+ ((SUM = SUM + RET))
  export RET=0
  executeTest LOG4DB2_LOGS ${PAUSE}
- (( SUM = SUM + RET ))
+ ((SUM = SUM + RET))
  export RET=0
  executeTest LOG4DB2_MESSAGES ${PAUSE}
- (( SUM = SUM + RET ))
+ ((SUM = SUM + RET))
  export RET=0
  executeTest LOG4DB2_REFERENCES ${PAUSE}
- (( SUM = SUM + RET ))
+ ((SUM = SUM + RET))
 
  if [ "${ARG}" != "-i" ]; then
   db2 "CALL DB2UNIT.REPORT_RECENT_EXECUTIONS"
  fi
 
- if [ "${PAUSE}" = "false" ] && [ "${INSTALL}" = "false" ] ; then
+ if [ "${PAUSE}" = "false" ] && [ "${INSTALL}" = "false" ]; then
   MILLIS_END=$(date +"%s")
   TIME_END=$(date +"%T")
   echo "Difference:"
   echo "${TIME_INI} start"
   echo "${TIME_END} end"
-  (( DIFF = MILLIS_END - MILLIS_INI ))
+  ((DIFF = MILLIS_END - MILLIS_INI))
   echo "${DIFF} seconds"
  fi
 fi
 
 return ${SUM}
-

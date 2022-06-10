@@ -33,9 +33,9 @@
 # Author: Andres Gomez Casanova (AngocA)
 # Made in COLOMBIA.
 
-db2 connect > /dev/null
+db2 connect >/dev/null
 RET=${?}
-if [ ${RET} -ne 0 ] ; then
+if [ ${RET} -ne 0 ]; then
  echo "Please connect to a database before the execution of the test."
  echo "Remember that to call the script the command is '. ./test <TestSuite> {i} {x}'"
  echo "i for installing (by default)"
@@ -53,25 +53,25 @@ else
  else
 
   # Execute the tests.
-  if [ "${OPTION_1}" = "" ] || [ "${OPTION_1}" = "i" ] || [ "${OPTION_2}" = "i" ] ; then
+  if [ "${OPTION_1}" = "" ] || [ "${OPTION_1}" = "i" ] || [ "${OPTION_2}" = "i" ]; then
    # Prepares the installation.
-   db2 "DELETE FROM LOGS" > /dev/null
-   db2 "DROP TABLE ${SCHEMA}.REPORT_TESTS" > /dev/null
+   db2 "DELETE FROM LOGS" >/dev/null
+   db2 "DROP TABLE ${SCHEMA}.REPORT_TESTS" >/dev/null
    TMP_FILE=PACKAGES_TO_DROP_SCHEMA.sql
    db2 "EXPORT TO ${TMP_FILE} OF DEL MODIFIED BY NOCHARDEL SELECT 'DROP PACKAGE ${SCHEMA}.' || TRIM(PKGNAME) || ';' FROM SYSCAT.PACKAGES WHERE PKGSCHEMA LIKE '${SCHEMA}%'"
-   db2 -tf ${TMP_FILE} > /dev/null
-   rm ${TMP_FILE} > /dev/null
-   db2 "CALL SYSPROC.ADMIN_DROP_SCHEMA('${SCHEMA}', NULL, 'ERRORSCHEMA', 'ERRORTABLE')" > /dev/null
-   db2 "SELECT VARCHAR(SUBSTR(DIAGTEXT, 1, 256), 256) AS ERROR FROM ERRORSCHEMA.ERRORTABLE" 2> /dev/null
-   db2 "DROP TABLE ERRORSCHEMA.ERRORTABLE" > /dev/null
-   db2 "DROP SCHEMA ERRORSCHEMA RESTRICT" > /dev/null
+   db2 -tf ${TMP_FILE} >/dev/null
+   rm ${TMP_FILE} >/dev/null
+   db2 "CALL SYSPROC.ADMIN_DROP_SCHEMA('${SCHEMA}', NULL, 'ERRORSCHEMA', 'ERRORTABLE')" >/dev/null
+   db2 "SELECT VARCHAR(SUBSTR(DIAGTEXT, 1, 256), 256) AS ERROR FROM ERRORSCHEMA.ERRORTABLE" 2>/dev/null
+   db2 "DROP TABLE ERRORSCHEMA.ERRORTABLE" >/dev/null
+   db2 "DROP SCHEMA ERRORSCHEMA RESTRICT" >/dev/null
 
    # Installs the tests.
    db2 -td@ -f "${LOG4DB2_SRC_TEST_CODE_PATH}"/"Tests_${SCHEMA}.sql"
   fi
 
   # Execute the tests.
-  if [ "${OPTION_1}" = "x" ] || [ "${OPTION_2}" = "x" ] ; then
+  if [ "${OPTION_1}" = "x" ] || [ "${OPTION_2}" = "x" ]; then
    db2 "CALL DB2UNIT.CLEAN()"
    echo "Executing tests suite."
    db2 -r /tmp/db2unit.output "CALL DB2UNIT.RUN_SUITE('${SCHEMA}')"
@@ -83,7 +83,7 @@ else
 
   fi
 
-  if { [ "${OPTION_1}" = "x" ] && [ "${OPTION_2}" = "i" ]; } || { [ "${OPTION_1}" = "i" ] && [ "${OPTION_2}" = "x" ]; }  ; then
+  if { [ "${OPTION_1}" = "x" ] && [ "${OPTION_2}" = "i" ]; } || { [ "${OPTION_1}" = "i" ] && [ "${OPTION_2}" = "x" ]; }; then
    # Shows the logs only when installing and executing.
    echo "Showing generated logs"
    db2 "CALL LOGADMIN.LOGS(min_level=>5)"
@@ -94,4 +94,3 @@ else
   fi
  fi
 fi
-
