@@ -54,13 +54,13 @@ fi
 
 function generateFirtName {
  FIRST_NAMES=(Andres David Humberto Alicia Olga Rafael Angelica Oscar Liliana Nicolas)
- (( POS = RANDOM % 10 ))
+ ((POS = RANDOM % 10))
  echo "${FIRST_NAMES[${POS}]}"
 }
 
 function generateLastName {
  LAST_NAMES=(Gomez Casanova Alvarez Sanchez Ortiz Orjuela Ceron Jurado Martinez Jimenez)
- (( POS = RANDOM % 10 ))
+ ((POS = RANDOM % 10))
  echo "${LAST_NAMES[${POS}]}"
 }
 
@@ -68,7 +68,7 @@ function writeRandomAccount {
  db2 -x "SELECT ACCOUNT_NUM
    FROM DEMOBANK.ACCOUNTS
    ORDER BY RAND()
-   FETCH FIRST 1 ROW ONLY;" > "${TEMP_ACCOUNT_FILE}"
+   FETCH FIRST 1 ROW ONLY;" >"${TEMP_ACCOUNT_FILE}"
 }
 
 function session {
@@ -80,112 +80,111 @@ function session {
  TEMP_BALANCE_FILE=/tmp/demobankBalanceNumber_${SESSION_ID}
 
  echo "${SESSION_ID} Connected"
- db2 connect to "${DATABASE}" > /dev/null
- db2 "CALL LOGGER.ERROR(0, 'Started ${SESSION_ID}');" > /dev/null
+ db2 connect to "${DATABASE}" >/dev/null
+ db2 "CALL LOGGER.ERROR(0, 'Started ${SESSION_ID}');" >/dev/null
 
  ITERATION=0
- (( MAX = 1000 / SESSIONS ))
+ ((MAX = 1000 / SESSIONS))
  while [ ${ITERATION} -lt ${MAX} ]; do
-  (( OPER = RANDOM % 100 ))
+  ((OPER = RANDOM % 100))
   if [ ${OPER} -le 5 ]; then # 5% of the operations.
    # echo "${SESSION_ID} ${ITERATION} Create account"
-   db2 "CALL LOGGER.INFO(0, 'Session ${SESSION_ID}-${ITERATION}: Create account option');" > /dev/null
+   db2 "CALL LOGGER.INFO(0, 'Session ${SESSION_ID}-${ITERATION}: Create account option');" >/dev/null
 
    FIRST_NAME=$(generateFirtName)
    LAST_NAME=$(generateLastName)
-   db2 "CALL DEMOBANK.CREATE_ACCOUNT('${FIRST_NAME}', '${LAST_NAME}', ?)" > /dev/null
-   db2 "CALL LOGGER.DEBUG(0, 'Session ${SESSION_ID}-${ITERATION}: Account created for ${FIRST_NAME} ${LAST_NAME}');" > /dev/null
+   db2 "CALL DEMOBANK.CREATE_ACCOUNT('${FIRST_NAME}', '${LAST_NAME}', ?)" >/dev/null
+   db2 "CALL LOGGER.DEBUG(0, 'Session ${SESSION_ID}-${ITERATION}: Account created for ${FIRST_NAME} ${LAST_NAME}');" >/dev/null
 
   elif [ ${OPER} -le 15 ]; then # 10% of the operations.
    # echo "${SESSION_ID} ${ITERATION} Get balance"
-   db2 "CALL LOGGER.INFO(0, 'Session ${SESSION_ID}-${ITERATION}: Get balance option');" > /dev/null
+   db2 "CALL LOGGER.INFO(0, 'Session ${SESSION_ID}-${ITERATION}: Get balance option');" >/dev/null
 
    writeRandomAccount
    ACCOUNT_NUMBER=$(cat "${TEMP_ACCOUNT_FILE}")
 
    if [ -n "${ACCOUNT_NUMBER}" ]; then
-    db2 "CALL DEMOBANK.GET_BALANCE(${ACCOUNT_NUMBER}, ?)" | awk '/Parameter Value/ {print $4}' > "${TEMP_BALANCE_FILE}"
+    db2 "CALL DEMOBANK.GET_BALANCE(${ACCOUNT_NUMBER}, ?)" | awk '/Parameter Value/ {print $4}' >"${TEMP_BALANCE_FILE}"
 
-    db2 "CALL LOGGER.DEBUG (0, 'Session ${SESSION_ID}-${ITERATION}: The balance for the ${ACCOUNT_NUMBER} account is $(cat "${TEMP_BALANCE_FILE}")')" > /dev/null
+    db2 "CALL LOGGER.DEBUG (0, 'Session ${SESSION_ID}-${ITERATION}: The balance for the ${ACCOUNT_NUMBER} account is $(cat "${TEMP_BALANCE_FILE}")')" >/dev/null
    else
-    db2 "CALL LOGGER.DEBUG (0, 'Session ${SESSION_ID}-${ITERATION}: Invalid account')" > /dev/null
+    db2 "CALL LOGGER.DEBUG (0, 'Session ${SESSION_ID}-${ITERATION}: Invalid account')" >/dev/null
    fi
 
   elif [ ${OPER} -le 30 ]; then # 15% of the operations.
    # echo "${SESSION_ID} ${ITERATION} Deposit"
-   db2 "CALL LOGGER.INFO(0, 'Session ${SESSION_ID}-${ITERATION}: Deposit option');" > /dev/null
+   db2 "CALL LOGGER.INFO(0, 'Session ${SESSION_ID}-${ITERATION}: Deposit option');" >/dev/null
 
    writeRandomAccount
    ACCOUNT_NUMBER=$(cat "${TEMP_ACCOUNT_FILE}")
-   (( AMOUNT = RANDOM / 3 ))
+   ((AMOUNT = RANDOM / 3))
 
    if [ -n "${ACCOUNT_NUMBER}" ]; then
-    db2 "CALL DEMOBANK.DEPOSIT(${ACCOUNT_NUMBER}, ${AMOUNT})" > /dev/null
+    db2 "CALL DEMOBANK.DEPOSIT(${ACCOUNT_NUMBER}, ${AMOUNT})" >/dev/null
    else
-    db2 "CALL LOGGER.DEBUG (0, 'Session ${SESSION_ID}-${ITERATION}: Invalid account')" > /dev/null
+    db2 "CALL LOGGER.DEBUG (0, 'Session ${SESSION_ID}-${ITERATION}: Invalid account')" >/dev/null
    fi
 
   elif [ ${OPER} -le 90 ]; then # 60% of the operations.
    # echo "${SESSION_ID} ${ITERATION} Withdrawal"
-   db2 "CALL LOGGER.INFO(0, 'Session ${SESSION_ID}-${ITERATION}: Withdrawal option');" > /dev/null
+   db2 "CALL LOGGER.INFO(0, 'Session ${SESSION_ID}-${ITERATION}: Withdrawal option');" >/dev/null
 
    writeRandomAccount
    ACCOUNT_NUMBER=$(cat "${TEMP_ACCOUNT_FILE}")
-   (( AMOUNT = RANDOM / 32 ))
+   ((AMOUNT = RANDOM / 32))
 
    if [ -n "${ACCOUNT_NUMBER}" ]; then
-    db2 "CALL DEMOBANK.WITHDRAWAL(${ACCOUNT_NUMBER}, ${AMOUNT})" > /dev/null
+    db2 "CALL DEMOBANK.WITHDRAWAL(${ACCOUNT_NUMBER}, ${AMOUNT})" >/dev/null
    else
-    db2 "CALL LOGGER.DEBUG (0, 'Session ${SESSION_ID}-${ITERATION}: Invalid account')" > /dev/null
+    db2 "CALL LOGGER.DEBUG (0, 'Session ${SESSION_ID}-${ITERATION}: Invalid account')" >/dev/null
    fi
 
   elif [ ${OPER} -lt 98 ]; then # 8% of the operations.
    # echo "${SESSION_ID} ${ITERATION} Transfer"
-   db2 "CALL LOGGER.INFO(0, 'Session ${SESSION_ID}-${ITERATION}: Tranfer option');" > /dev/null
+   db2 "CALL LOGGER.INFO(0, 'Session ${SESSION_ID}-${ITERATION}: Tranfer option');" >/dev/null
 
    writeRandomAccount
    ORIGIN_NUMBER=$(cat "${TEMP_ACCOUNT_FILE}")
    writeRandomAccount
    DEST_NUMBER=$(cat "${TEMP_ACCOUNT_FILE}")
-   (( AMOUNT = RANDOM / 3 ))
+   ((AMOUNT = RANDOM / 3))
 
    if [ -n "${ORIGIN_NUMBER}" ] && [ -n "${DEST_NUMBER}" ]; then
-    db2 "CALL DEMOBANK.TRANSFER(${ORIGIN_NUMBER}, ${DEST_NUMBER}, ${AMOUNT})" > /dev/null
+    db2 "CALL DEMOBANK.TRANSFER(${ORIGIN_NUMBER}, ${DEST_NUMBER}, ${AMOUNT})" >/dev/null
    else
-    db2 "CALL LOGGER.DEBUG (0, 'Session ${SESSION_ID}-${ITERATION}: Invalid account')" > /dev/null
+    db2 "CALL LOGGER.DEBUG (0, 'Session ${SESSION_ID}-${ITERATION}: Invalid account')" >/dev/null
    fi
 
   else # 2% of the operations.
    # echo "${SESSION_ID} ${ITERATION} Delete account"
-   db2 "CALL LOGGER.INFO(0, 'Session ${SESSION_ID}-${ITERATION}: Delete account option');" > /dev/null
+   db2 "CALL LOGGER.INFO(0, 'Session ${SESSION_ID}-${ITERATION}: Delete account option');" >/dev/null
 
    writeRandomAccount
    ACCOUNT_NUMBER=$(cat "${TEMP_ACCOUNT_FILE}")
 
    if [ -n "${ACCOUNT_NUMBER}" ]; then
-    db2 "CALL DEMOBANK.CLOSE_ACCOUNT(${ACCOUNT_NUMBER}, ${AMOUNT})" > /dev/null
+    db2 "CALL DEMOBANK.CLOSE_ACCOUNT(${ACCOUNT_NUMBER}, ${AMOUNT})" >/dev/null
    else
-    db2 "CALL LOGGER.DEBUG (0, 'Session ${SESSION_ID}-${ITERATION}: Invalid account')" > /dev/null
+    db2 "CALL LOGGER.DEBUG (0, 'Session ${SESSION_ID}-${ITERATION}: Invalid account')" >/dev/null
    fi
 
   fi
 
-  (( ITERATION = ITERATION + 1 ))
+  ((ITERATION = ITERATION + 1))
  done
 
+ db2 "CALL LOGGER.WARN(0, 'Session ${SESSIONS}-${ITERATION}: Cleaning ${SESSION_ID}');" >/dev/null
+ rm "${TEMP_ACCOUNT_FILE}" 2>/dev/null
+ rm "${TEMP_BALANCE_FILE}" 2>/dev/null
 
- db2 "CALL LOGGER.WARN(0, 'Session ${SESSIONS}-${ITERATION}: Cleaning ${SESSION_ID}');" > /dev/null
- rm "${TEMP_ACCOUNT_FILE}" 2> /dev/null
- rm "${TEMP_BALANCE_FILE}" 2> /dev/null
-
- db2 "CALL LOGGER.ERROR(0, 'Session ${SESSIONS}-${ITERATION}: Finished ${SESSION_ID}');" > /dev/null
+ db2 "CALL LOGGER.ERROR(0, 'Session ${SESSIONS}-${ITERATION}: Finished ${SESSION_ID}');" >/dev/null
  echo "Session ${SESSION_ID} finished."
 }
 
 I=1
 while [ ${I} -le "${SESSIONS}" ]; do
- (session ${I})&
- (( I = I + 1 ))
+ (session ${I}) &
+ ((I = I + 1))
 done
 
 echo "Main execution finished."

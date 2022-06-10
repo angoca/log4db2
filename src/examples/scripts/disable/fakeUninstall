@@ -29,16 +29,16 @@
 # Made in COLOMBIA.
 
 # Checks if there is already a connection established
-db2 connect > /dev/null
+db2 connect >/dev/null
 RET=${?}
-if [[ ${RET} -ne 0 ]] ; then
+if [[ ${RET} -ne 0 ]]; then
  echo "Please connect to a database before the execution of the uninstallation."
  echo "Remember that to call the script the command is '. ./uninstall'"
 else
  if [ -x ./init ]; then
   # To run from release.
   . ../init
- elif  [ -x ../scripts/init ]; then
+ elif [ -x ../scripts/init ]; then
   # To run from sources.
   . ../../../main/scripts/init
  fi
@@ -47,4 +47,3 @@ else
  db2 -tf "${LOG4DB2_SRC_MAIN_CODE_PATH}"/../../examples/sql-pl/disable/FakeCleanObjects.sql
  db2 -tf "${LOG4DB2_SRC_MAIN_CODE_PATH}"/../../examples/sql-pl/disable/FakeCleanTables.sql
 fi
-

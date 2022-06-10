@@ -36,7 +36,7 @@ installScript() {
  echo "${script}"
  db2 -tsf "${script}"
  RET=${?}
- if [ ${RET} -ne 0 ] ; then
+ if [ ${RET} -ne 0 ]; then
   export continue=false
  fi
  unset script
@@ -46,7 +46,7 @@ install() {
  if [ -x ./init ]; then
   # To run from release.
   . ../init
- elif  [ -x ../scripts/init ]; then
+ elif [ -x ../scripts/init ]; then
   # To run from sources.
   . ../../../main/scripts/init
  fi
@@ -62,7 +62,7 @@ install() {
  echo "To report an issue or provide feedback, please visit:"
  echo "https://github.com/angoca/log4db2/issues"
  echo
- if [ ${continue} == true ] ; then
+ if [ ${continue} == true ]; then
   echo "fake log4db2 was successfully installed"
  else
   echo "Check the error(s) and reinstall the utility"
@@ -70,13 +70,12 @@ install() {
 }
 
 # Checks if there is already a connection established
-db2 connect > /dev/null
+db2 connect >/dev/null
 RET=${?}
-if [ ${RET} -eq 0 ] ; then
+if [ ${RET} -eq 0 ]; then
  install
 else
  echo "Please connect to a database before the execution of the installation."
  echo "Remember that to call the script the command is '. ./fakeInstall'"
 fi
 unset continue
-
