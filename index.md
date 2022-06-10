@@ -1,12 +1,13 @@
 # log4db2 #
 -----------
 
-Log4db2 is a logging utility for DB2 for LUW that uses SQL instructions with SQL
+Log4db2 is a logging utility for Db2 for LUW that uses SQL instructions with SQL
 PL code.
 
 Its purpose is to provide an easy way to write messages from a SQL routine, with
-the possibility to query these messages directly from the database, allowing to monitor the progression of a process.
-This utility aims to reduce the time used for developing, testing, debugging and 
+the possibility to query these messages directly from the database, allowing to
+monitor the progression of a process.
+This utility aims to reduce the time used for developing, testing, debugging and
 monitoring SQL routines, by centralizing the messages produced by the code.
 
 The idea and architecture of this utility are based on the popular Java logging
@@ -20,12 +21,12 @@ The licenses of this project are:
   * For the source code is "BSD 2-Clause license".
   * For the documentation is "FreeBSD Documentation license."
  
-With these two licenses you are free to use, modify and distribute any part of this
-utility.
+With these two licenses you are free to use, modify and distribute any part of
+this utility.
 
 Author:
 
-Andres Gomez Casanova (@angoca)
+Andres Gomez Casanova ([@AngocA](https://twitter.com/angoca))
 
 
 ------------------
@@ -89,7 +90,8 @@ First, unzip the file log4db2.zip, and then:
 
 After the install, all statements should have been successful.
 
-A more detailed guide to install the utility can be found in the [_Install_](https://github.com/angoca/log4db2/wiki/Install)
+A more detailed guide to install the utility can be found in the
+[_Install_](https://github.com/angoca/log4db2/wiki/Install)
 section of the wiki.
 
 You can also install the utility from the sources and run the examples and
@@ -122,8 +124,9 @@ This could be the structure of your routine's code (Procedure or function).
       -- Your code
      END @
 
-As you can see, there is a call to GET_LOGGER to register the logger, and obtain its
-id. Then, you write messages by providing the id and the text. That's all!
+As you can see, there is a call to GET_LOGGER to register the logger, and obtain
+its id. Then, you write messages by providing the id and the text. That's all!
+
 
 -----------
 ## Execution ##
@@ -147,17 +150,19 @@ From the CLP is:
     db2 "CALL LOGADMIN.LOGS()"
 
 Check the _Usage_ section for more information about the levels, how to access
-the messages and configure the utility: 
+the messages and configure the utility:
 [wiki/Usage](https://github.com/angoca/log4db2/wiki/Usage).
 
 ### 3. Changing the verbosity ###
 
-The easiest way to change the logger configuration is by calling the following stores procedure.
+The easiest way to change the logger configuration is by calling the following
+stored procedure.
 
     db2 "CALL logadmin.register_logger_name('Your.Hierarchy', 'debug')"
 
-Depending of the logger levels on the code, and the confiration, you can see more messages
-or less messages in the logs.
+Depending of the logger levels on the code, and the confiration, you can see
+more messages or less messages in the logs.
+
 
 ---------------------------
 ## Files and directories ##
@@ -165,12 +170,15 @@ or less messages in the logs.
 These are the files included in the released version:
 
  * `COPYING.txt` -- License for the code (BSD license - OpenSource).
- * `init*` -- Environment configuration. 
+ * `init*` -- Environment configuration.
  * `install*` -- Installation files.
  * `README.txt` -- This file.
  * `reinstall*` -- Reinstallation files.
+ * `tail_logs*` -- Script to show the most recent logs.
+ * `uninit*` -- Clean environment.
  * `uninstall*` -- Uninstallation files.
  * `doc` directory -- Documentation directory (ErrorCode, ER diagram).
+ * `examples` directory -- Examples ready to run.
  * `sql-pl` directory -- Directory for all objects: DDL, DML, routines
      definition.
    * `00-AdminObjects.sql` -- Create admin objects: BP, TS and schema.
@@ -202,8 +210,8 @@ These are the files included in the released version:
    * `Appender_UTL_FILE.xml` -- Configuration for LOG_UTL_FILE appender.
    * `conf_appender_X.xsd` -- XML Schema for the X release.
 
-The * in the install-related files means that several files for each one of
-them can be found:
+The * in the install-related files means that several files for each name
+can be found:
 
  * `.bat` -- Windows Batch file for CMD.exe
  * `.ps1` -- Windows PowerShell
