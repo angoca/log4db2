@@ -29,8 +29,10 @@ SET CURRENT SCHEMA DEMOBANK @
 
 /**
  * Objects with logger for the DemoBank.
+ * Logger levels can be change with:
+ * db2 "CALL logadmin.register_logger_name('DemoBank.Operation', 'info')"
  *
- * Version: 2014-04-21 v1
+ * Version: 2022-06-09 v1
  * Author: Andres Gomez Casanova (AngocA)
  * Made in COLOMBIA.
  */
@@ -71,7 +73,7 @@ CREATE PROCEDURE CREATE_ACCOUNT (
     RESIGNAL SQLSTATE 'BK001';
    END;
 
-  CALL LOGGER.GET_LOGGER('DemoBank.Operation.Create', LOGGER_ID);
+  CALL LOGGER.GET_LOGGER('DemoBank.Account.Create', LOGGER_ID);
   BEGIN ATOMIC
    SELECT ACCOUNT_NUM INTO ACCOUNT FROM FINAL TABLE (
      INSERT INTO ACCOUNTS (FIRST_NAME, LAST_NAME, BALANCE)
@@ -290,7 +292,7 @@ CREATE PROCEDURE CLOSE_ACCOUNT (
     RESIGNAL SQLSTATE 'BK006';
    END;
 
-  CALL LOGGER.GET_LOGGER('DemoBank.Operation.Close', LOGGER_ID);
+  CALL LOGGER.GET_LOGGER('DemoBank.Account.Close', LOGGER_ID);
 
   OPEN C;
   FETCH C INTO BALANCE;
