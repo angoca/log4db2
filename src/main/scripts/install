@@ -29,7 +29,7 @@
 # -r: Returns error code when finished.
 # -t: Install the utility using time travel in the log.
 #
-# Version: 2022-06-03 v1
+# Version: 2022-06-09 v1
 # Author: Andres Gomez Casanova (AngocA)
 # Made in COLOMBIA.
 
@@ -41,7 +41,6 @@ CONTINUE=true
 ADMIN_INSTALL=true
 TEMPORAL_TABLE=false
 RETURN_CODE=false
-RET_FUNCTION=0
 PARTITIONED_TABLE=false
 
 # Installs a given script.
